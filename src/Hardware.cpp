@@ -1,4 +1,5 @@
 #include "Hardware.h"
 
-Hardware::Hardware() {
+Hardware::Hardware()
+{
 }
