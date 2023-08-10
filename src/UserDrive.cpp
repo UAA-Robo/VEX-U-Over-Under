@@ -1,11 +1,38 @@
 #include "UserDrive.h"
 
-UserDrive::UserDrive(Hardware* hardware, RobotConfig* robotConfig, Telemetry* telemetry): Drive(hardware, robotConfig, telemetry),
-macro_running(false), macro_recording(false)  
-{}
+UserDrive::UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry) : Drive(hardware, robotConfig, telemetry) 
+{
+    macro_running = false;
+    macro_recording = false;
+}
 
 void UserDrive::drive()
-{   
+{
+    drivetrain_controls();
+}
+
+void UserDrive::drivetrain_controls()
+{
+    const int DEADZONE = 2;
+
+    double forward_backward = (double)hw->controller.Axis3.position(vex::percentUnits::pct);
+    double turning = (double)hw->controller.Axis1.position(vex::percentUnits::pct);
+
+    if (std::abs(forward_backward) < DEADZONE)
+    {
+        forward_backward = 0;
+    }
+
+    if (std::abs(turning) < DEADZONE)
+    {
+        turning = 0;
+    }
+
+    // std::cout << hw->controller.Axis1.position(vex::percentUnits::pct) << " "
+    //           << hw->controller.Axis3.position(vex::percentUnits::pct)<< std::endl;
+    //std::cout << forward_backward << " " << turning << std::endl;
+
+    move_drivetrain({forward_backward, turning});
     getInputs(macro_inputs[macro_loop_iteration]) // Get inputs from controller or recorded macro
     macroControls(); // Run macro controls from user input
     testPrint(); // Prints when A, B, X, or Y are pressed on Brain Screen

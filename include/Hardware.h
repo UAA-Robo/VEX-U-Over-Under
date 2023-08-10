@@ -7,28 +7,29 @@ class Hardware
 public:
     Hardware();
     vex::brain brain;
+    vex::controller controller = vex::controller(vex::primary);
+
 
     // Drive train
-    vex::motor_group::motor_group_motors drive_train = vex::motor_group::motor_group_motors::motor_group_motors(11, 12, 13, 17, 19, 18);
+    vex::motor_group drivetrain = vex::motor_group(
+        front_left_drivetrain_motor, middle_left_drivetrain_motor, back_left_drivetrain_motor,
+        front_right_drivetrain_motor, middle_right_drivetrain_motor, back_right_drivetrain_motor);
 
-    // radio 20
+    // Left motors
+    vex::motor_group left_drivetrain_motors = vex::motor_group(
+        front_left_drivetrain_motor, middle_left_drivetrain_motor, back_left_drivetrain_motor);
 
-    // Left wheels: Front 11, Middle 12, Back 13
-    vex::motor_group::motor_group_motors left_wheels = vex::motor_group::motor_group_motors::motor_group_motors(11, 12, 13);
-
-    // Right wheels: Front 17, Middle 19, Back 18 (right side reversed?)
-    vex::motor_group::motor_group_motors right_wheels = vex::motor_group::motor_group_motors::motor_group_motors(17, 19, 18);
-
-public:
-    // Individual Motors
+    // Right motors
+    vex::motor_group right_drivetrain_motors = vex::motor_group(
+        front_right_drivetrain_motor, middle_right_drivetrain_motor, back_right_drivetrain_motor);
 
     // Left
-    vex::motor front_left_wheel = vex::motor::motor(int32_t 11, vex::gearSetting gears);
-    vex::motor middle_left_wheel = vex::motor::motor(int32_t 12, vex::gearSetting gears);
-    vex::motor back_left_wheel = vex::motor::motor(int32_t 13, vex::gearSetting gears);
+    vex::motor front_left_drivetrain_motor = vex::motor(vex::PORT11, vex::ratio6_1, false);
+    vex::motor middle_left_drivetrain_motor = vex::motor(vex::PORT12, vex::ratio6_1, false);
+    vex::motor back_left_drivetrain_motor = vex::motor(vex::PORT13, vex::ratio6_1, false);
 
     // Right
-    vex::motor front_right_wheel = vex::motor::motor(int32_t 17, vex::gearSetting gears, bool reverse);
-    vex::motor middle_right_wheel = vex::motor::motor(int32_t 19, vex::gearSetting gears, bool reverse);
-    vex::motor back_right_wheel = vex::motor::motor(int32_t 18, vex::gearSetting gears, bool reverse);
+    vex::motor front_right_drivetrain_motor = vex::motor(vex::PORT17, vex::ratio6_1, true);
+    vex::motor middle_right_drivetrain_motor = vex::motor(vex::PORT19, vex::ratio6_1, true);
+    vex::motor back_right_drivetrain_motor = vex::motor(vex::PORT18, vex::ratio6_1, true);
 };
