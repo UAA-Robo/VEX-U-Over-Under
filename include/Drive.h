@@ -17,11 +17,6 @@ protected:
     RobotConfig *rc;
     Telemetry *tm;
 
-    // Needed?
-    double output_volt;
-    double Kp = 0.9;
-    double Ki = 0.3;
-    double Kd = 0.6;
 
     /// @brief      Calculates the velocity in RPMs that the left and right drivetrain wheels should recieve based on
     ///             the horizontal percentage and vertical percentage passed in. Automatically scales the velocities

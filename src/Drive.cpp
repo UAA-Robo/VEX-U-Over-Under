@@ -40,7 +40,7 @@ void Drive::move_drivetrain(std::pair<double, double> velocity_percent)
 
 void Drive::move_drivetrain_distance(std::pair<double, double> velocity_percent, double distance)
 {
-    double number_wheel_revolutions = distance / rc->WHEELCIRC;
+    double number_wheel_revolutions = distance / (4 * 3.14); // (4 * 3.14) should be rc->WHEELCIRC in the future
 
     std::pair<double, double> velocity = calculate_drivetrain_velocity(velocity_percent);
 
@@ -54,3 +54,4 @@ void Drive::move_drivetrain_distance(std::pair<double, double> velocity_percent,
     hw->back_right_drivetrain_motor.spinFor(number_wheel_revolutions, vex::rotationUnits::rev, velocity.second, vex::velocityUnits::pct, false);
     hw->middle_right_drivetrain_motor.spinFor(number_wheel_revolutions, vex::rotationUnits::rev, velocity.first, vex::velocityUnits::pct, false);
     hw->front_right_drivetrain_motor.spinFor(number_wheel_revolutions, vex::rotationUnits::rev, velocity.second, vex::velocityUnits::pct);
+}

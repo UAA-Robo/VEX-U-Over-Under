@@ -26,5 +26,9 @@ void UserDrive::drivetrain_controls()
         turning = 0;
     }
 
+    // std::cout << hw->controller.Axis1.position(vex::percentUnits::pct) << " "
+    //           << hw->controller.Axis3.position(vex::percentUnits::pct)<< std::endl;
+    //std::cout << forward_backward << " " << turning << std::endl;
+
     move_drivetrain({forward_backward, turning});
 }
