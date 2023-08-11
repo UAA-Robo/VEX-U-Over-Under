@@ -1,25 +1,38 @@
 #pragma once
 #include "Drive.h"
 
+
+struct input_int {
+    int value;
+    int previous;
+};
+struct input_bool {
+    bool value;
+    bool previous;
+};
+
 class UserDrive : public Drive
 {
 public:
     UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry);
     void drive();
+    /// @brief Controls for recording and running macros
     void macroControls();
     void testPrint();
 
 private:
-    void getInputs(int32_t*); // Pass in macro_inputs[macro_loop_iteration] (even if macro is not running)
+    void getInputs();
+    void setPreviousInputs();
 
     int macro_loop_iteration;
+    int macro_length;
     bool macro_running, macro_recording;
-    int32_t forward_backward, left_right;
-    bool button_L1, button_L2, button_R1, button_R2, button_A, button_B,
+    input_int forward_backward, left_right;
+    input_bool button_L1, button_L2, button_R1, button_R2, button_A, button_B,
     button_X, button_Y, button_up, button_down, button_left, button_right;
-    std::vector<int32_t> *macro_inputs = new std::vector<int32_t>;
+    //bool button_down_previous, button_up_previous;
+    std::vector<std::vector<int>> macro_inputs;
 
-private:
     /// @brief  Controls drivetrain based on controller joysticks. Up/down on the left joystick is forward/backward.
     //          Left/right on the right joystick is turning.
     void drivetrain_controls();
