@@ -18,6 +18,7 @@ public:
     void drive();
     /// @brief Controls for recording and running macros
     void macroControls();
+    /// @brief Function to test macro feature by printing key presses (A, B, X, Y)
     void testPrint();
 
 private:

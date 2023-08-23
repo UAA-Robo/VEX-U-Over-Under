@@ -57,6 +57,7 @@ void UserDrive::drivetrain_controls()
 }
 
 
+// Function to get all inputs either from controller or macro
 void UserDrive::getInputs()
 {
     if (macro_running)
@@ -81,8 +82,10 @@ void UserDrive::getInputs()
     {
         if (macro_recording) {
             hw->controller.Screen.print("MACRO: RECORDING");
-            macro_inputs[macro_loop_iteration].push_back(hw->controller.Axis3.position(vex::percent));
-            macro_inputs[macro_loop_iteration].push_back(hw->controller.Axis1.position(vex::percent));
+            macro_inputs[macro_loop_iteration].push_back(hw->controller.Axis3.position(vex::percent
+            ));
+            macro_inputs[macro_loop_iteration].push_back(hw->controller.Axis1.position(vex::percent
+            ));
             macro_inputs[macro_loop_iteration].push_back((int)hw->controller.ButtonL1.pressing());
             macro_inputs[macro_loop_iteration].push_back((int)hw->controller.ButtonL2.pressing());
             macro_inputs[macro_loop_iteration].push_back((int)hw->controller.ButtonR1.pressing());
@@ -114,6 +117,8 @@ void UserDrive::getInputs()
     }
 }
 
+
+// Function called at end of drive to record previous inputs for comparison on next call
 void UserDrive::setPreviousInputs()
 {
     forward_backward.previous = forward_backward.value;
@@ -131,6 +136,8 @@ void UserDrive::setPreviousInputs()
     button_right.previous = button_right.value;
 }
 
+
+// Function called in drive to control macro operations
 void UserDrive::macroControls()
 {
     if (button_down.value == true && button_down.previous == false && !macro_running)
@@ -166,6 +173,7 @@ void UserDrive::macroControls()
 }
 
 
+// Function testPrint to test macro function
 void UserDrive::testPrint()
 {
     hw->brain.Screen.clearScreen(0);
