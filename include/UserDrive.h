@@ -27,7 +27,7 @@ private:
 
     int macro_loop_iteration;
     int macro_length;
-    bool macro_running, macro_recording;
+    bool IS_MACRO_RUNNING, IS_MACRO_RECORDING;
     input_int forward_backward, left_right;
     input_bool button_L1, button_L2, button_R1, button_R2, button_A, button_B,
     button_X, button_Y, button_up, button_down, button_left, button_right;

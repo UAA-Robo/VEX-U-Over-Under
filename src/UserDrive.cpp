@@ -3,8 +3,8 @@
 
 UserDrive::UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry) : Drive(hardware, robotConfig, telemetry) 
 {
-    macro_running = false;
-    macro_recording = false;
+    IS_MACRO_RUNNING = false;
+    IS_MACRO_RECORDING = false;
     macro_length = -2;
     forward_backward.previous = 0;
     left_right.previous = 0;
@@ -35,8 +35,8 @@ void UserDrive::drive()
 
 
     setPreviousInputs(); // Tracks previous inputs to compare to
-    if (macro_loop_iteration == macro_length) macro_running = false;
-    if (macro_recording || macro_running) ++macro_loop_iteration; // Last item
+    if (macro_loop_iteration == macro_length) IS_MACRO_RUNNING = false;
+    if (macro_recording || IS_MACRO_RUNNING) ++macro_loop_iteration; // Last item
 }
 
 void UserDrive::drivetrain_controls()
@@ -60,7 +60,7 @@ void UserDrive::drivetrain_controls()
 // Function to get all inputs either from controller or macro
 void UserDrive::getInputs()
 {
-    if (macro_running)
+    if (IS_MACRO_RUNNING)
     {
         hw->controller.Screen.print("MACRO: RUNNING");
         forward_backward.value = macro_inputs[macro_loop_iteration][0];
@@ -80,7 +80,7 @@ void UserDrive::getInputs()
     }
     else
     {
-        if (macro_recording) {
+        if (IS_MACRO_RECORDING) {
             hw->controller.Screen.print("MACRO: RECORDING");
             macro_inputs[macro_loop_iteration].push_back(hw->controller.Axis3.position(vex::percent
             ));
@@ -140,33 +140,33 @@ void UserDrive::setPreviousInputs()
 // Function called in drive to control macro operations
 void UserDrive::macroControls()
 {
-    if (button_down.value == true && button_down.previous == false && !macro_running)
+    if (button_down.value == true && button_down.previous == false && !IS_MACRO_RUNNING)
     {
-        if (macro_recording) { // Stop recording macro
+        if (IS_MACRO_RECORDING) { // Stop recording macro
             hw->controller.Screen.print("MACRO: STOP RECORD");
             macro_length = macro_loop_iteration;
             macro_loop_iteration = -1;
-            macro_recording = false;
+            IS_MACRO_RECORDING = false;
         }
-        else if (!macro_recording) { // Start recording macro
+        else if (!IS_MACRO_RECORDING) { // Start recording macro
             hw->controller.Screen.print("MACRO: START RECORD");
             if (macro_inputs.size() != 0) macro_inputs.clear();
             macro_inputs.push_back(std::vector<int>());
             macro_loop_iteration = -1;
-            macro_recording = true;
+            IS_MACRO_RECORDING = true;
         }
     }
-    if (button_up.value == true && button_up.previous == false && !macro_recording)
+    if (button_up.value == true && button_up.previous == false && !IS_MACRO_RECORDING)
     {
-        if (macro_running) { // Stop running macro
+        if (IS_MACRO_RUNNING) { // Stop running macro
             hw->controller.Screen.print("MACRO: STOP RUN");
             macro_loop_iteration = -1;
-            macro_running = false;
+            IS_MACRO_RUNNING = false;
         }
-        else if (!macro_running) { // Start running macro
+        else if (!IS_MACRO_RUNNING) { // Start running macro
             hw->controller.Screen.print("MACRO: START RUN");
             macro_loop_iteration = -1;
-            macro_running = true;
+            IS_MACRO_RUNNING = true;
         }
     }
     
