@@ -26,17 +26,17 @@ void UserDrive::drive()
 {
     hw->controller.Screen.clearScreen();
     hw->controller.Screen.setCursor(1, 1);
-    getInputs(); // Get inputs from controller or recorded macro
-    macroControls(); // Run macro controls from user input
-    testPrint(); // Prints when A, B, X, or Y are pressed on Brain Screen
+    get_inputs();
+    macro_controls();
+    test_print();
     drivetrain_controls();
 
 
 
 
-    setPreviousInputs(); // Tracks previous inputs to compare to
+    set_previous_inputs(); // Tracks previous inputs to compare to
     if (macro_loop_iteration == macro_length) IS_MACRO_RUNNING = false;
-    if (macro_recording || IS_MACRO_RUNNING) ++macro_loop_iteration; // Last item
+    if (IS_MACRO_RECORDING || IS_MACRO_RUNNING) ++macro_loop_iteration; // Last item
 }
 
 void UserDrive::drivetrain_controls()
@@ -57,69 +57,60 @@ void UserDrive::drivetrain_controls()
 }
 
 
-// Function to get all inputs either from controller or macro
-void UserDrive::getInputs()
+void UserDrive::get_inputs()
 {
+    std::vector<int*> input_list;
+    std::vector<int*> controller_values;
+    // List of inputs by address
+    input_list[0] = &forward_backward.value;
+    input_list[1] = &left_right.value;
+    input_list[2] = &button_L1.value;
+    input_list[3] = &button_L2.value;
+    input_list[4] = &button_R1.value;
+    input_list[5] = &button_R2.value;
+    input_list[6] = &button_A.value;
+    input_list[7] = &button_B.value;
+    input_list[8] = &button_X.value;
+    input_list[9] = &button_Y.value;
+    input_list[10] = &button_up.value;
+    input_list[11] = &button_down.value;
+    input_list[12] = &button_left.value;
+    input_list[13] = &button_right.value;
+    // List of controller values
+    controller_values[0] = hw->controller.Axis3.position(vex::percentUnits::pct);
+    controller_values[1] = hw->controller.Axis1.position(vex::percentUnits::pct);
+    controller_values[2] = hw->controller.ButtonL1.pressing();
+    controller_values[3] = hw->controller.ButtonL2.pressing();
+    controller_values[4] = hw->controller.ButtonR1.pressing();
+    controller_values[5] = hw->controller.ButtonR2.pressing();
+    controller_values[6] = hw->controller.ButtonA.pressing();
+    controller_values[7] = hw->controller.ButtonB.pressing();
+    controller_values[8] = hw->controller.ButtonX.pressing();
+    controller_values[9] = hw->controller.ButtonY.pressing();
+    controller_values[10] = hw->controller.ButtonUp.pressing();
+    controller_values[11] = hw->controller.ButtonDown.pressing();
+    controller_values[12] = hw->controller.ButtonLeft.pressing();
+    controller_values[13] = hw->controller.ButtonRight.pressing();
+
     if (IS_MACRO_RUNNING)
     {
         hw->controller.Screen.print("MACRO: RUNNING");
-        forward_backward.value = macro_inputs[macro_loop_iteration][0];
-        left_right.value = macro_inputs[macro_loop_iteration][1];
-        button_L1.value = (bool)macro_inputs[macro_loop_iteration][2];
-        button_L2.value = (bool)macro_inputs[macro_loop_iteration][3];
-        button_R1.value = (bool)macro_inputs[macro_loop_iteration][4];
-        button_R2.value = (bool)macro_inputs[macro_loop_iteration][5];
-        button_A.value = (bool)macro_inputs[macro_loop_iteration][6];
-        button_B.value = (bool)macro_inputs[macro_loop_iteration][7];
-        button_X.value = (bool)macro_inputs[macro_loop_iteration][8];
-        button_Y.value = (bool)macro_inputs[macro_loop_iteration][9];
+        for (int i = 0; i < input_list.size(); ++i) *input_list[i] = macro_inputs[macro_loop_iteration][i];
         button_up.value = hw->controller.ButtonUp.pressing(); // Stop running macro early by user input
         button_down.value = false; // Cannot record a macro while running a macro!
-        button_left.value = (bool)macro_inputs[macro_loop_iteration][12];
-        button_right.value = (bool)macro_inputs[macro_loop_iteration][13];
     }
-    else
-    {
-        if (IS_MACRO_RECORDING) {
-            hw->controller.Screen.print("MACRO: RECORDING");
-            macro_inputs[macro_loop_iteration].push_back(hw->controller.Axis3.position(vex::percent
-            ));
-            macro_inputs[macro_loop_iteration].push_back(hw->controller.Axis1.position(vex::percent
-            ));
-            macro_inputs[macro_loop_iteration].push_back((int)hw->controller.ButtonL1.pressing());
-            macro_inputs[macro_loop_iteration].push_back((int)hw->controller.ButtonL2.pressing());
-            macro_inputs[macro_loop_iteration].push_back((int)hw->controller.ButtonR1.pressing());
-            macro_inputs[macro_loop_iteration].push_back((int)hw->controller.ButtonR2.pressing());
-            macro_inputs[macro_loop_iteration].push_back((int)hw->controller.ButtonA.pressing());
-            macro_inputs[macro_loop_iteration].push_back((int)hw->controller.ButtonB.pressing());
-            macro_inputs[macro_loop_iteration].push_back((int)hw->controller.ButtonX.pressing());
-            macro_inputs[macro_loop_iteration].push_back((int)hw->controller.ButtonY.pressing());
-            macro_inputs[macro_loop_iteration].push_back(0); // Cannot run a macro while recording a macro!
-            button_down.value = hw->controller.ButtonDown.pressing(); // Stop recording macro
-            macro_inputs[macro_loop_iteration].push_back((int)hw->controller.ButtonLeft.pressing());
-            macro_inputs[macro_loop_iteration].push_back((int)hw->controller.ButtonRight.pressing());
-            macro_inputs.push_back(std::vector<int>());
-        }
-        forward_backward.value = hw->controller.Axis3.position(vex::percent);
-        left_right.value = hw->controller.Axis1.position(vex::percent);
-        button_L1.value = hw->controller.ButtonL1.pressing();
-        button_L2.value = hw->controller.ButtonL2.pressing();
-        button_R1.value = hw->controller.ButtonR1.pressing();
-        button_R2.value = hw->controller.ButtonR2.pressing();
-        button_A.value = hw->controller.ButtonA.pressing();
-        button_B.value = hw->controller.ButtonB.pressing();
-        button_X.value = hw->controller.ButtonX.pressing();
-        button_Y.value = hw->controller.ButtonY.pressing();
-        button_up.value = hw->controller.ButtonUp.pressing();
+    else for (int i = 0; i < input_list.size(); ++i) *input_list[i] = *controller_values[i];
+    if (IS_MACRO_RECORDING) {
+        hw->controller.Screen.print("MACRO: RECORDING");
+        for (int i = 0; i < input_list.size(); ++i) macro_inputs[macro_loop_iteration][i].push_back(*controller_values[i]);
+        macro_inputs[macro_loop_iteration][10] = 0;
         button_down.value = hw->controller.ButtonDown.pressing();
-        button_left.value = hw->controller.ButtonLeft.pressing();
-        button_right.value = hw->controller.ButtonRight.pressing();
+        macro_inputs.push_back(std::vector<int>());
     }
 }
 
 
-// Function called at end of drive to record previous inputs for comparison on next call
-void UserDrive::setPreviousInputs()
+void UserDrive::set_previous_inputs()
 {
     forward_backward.previous = forward_backward.value;
     left_right.previous = left_right.value;
@@ -137,10 +128,10 @@ void UserDrive::setPreviousInputs()
 }
 
 
-// Function called in drive to control macro operations
-void UserDrive::macroControls()
+
+void UserDrive::macro_controls()
 {
-    if (button_down.value == true && button_down.previous == false && !IS_MACRO_RUNNING)
+    if (button_down.value && !button_down.previous && !IS_MACRO_RUNNING)
     {
         if (IS_MACRO_RECORDING) { // Stop recording macro
             hw->controller.Screen.print("MACRO: STOP RECORD");
@@ -156,7 +147,7 @@ void UserDrive::macroControls()
             IS_MACRO_RECORDING = true;
         }
     }
-    if (button_up.value == true && button_up.previous == false && !IS_MACRO_RECORDING)
+    if (button_up.value && !button_up.previous && !IS_MACRO_RECORDING)
     {
         if (IS_MACRO_RUNNING) { // Stop running macro
             hw->controller.Screen.print("MACRO: STOP RUN");
@@ -173,8 +164,7 @@ void UserDrive::macroControls()
 }
 
 
-// Function testPrint to test macro function
-void UserDrive::testPrint()
+void UserDrive::test_print()
 {
     hw->brain.Screen.clearScreen(0);
     if (button_A.value) hw->brain.Screen.printAt(10, 20, "%c", 'A');
