@@ -4,23 +4,28 @@
 UserDrive::UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry) : 
 Drive(hardware, robotConfig, telemetry) 
 {
+
     IS_MACRO_RUNNING = false;
     IS_MACRO_RECORDING = false;
     macro_length = -2;
-    forward_backward.previous = 0;
-    left_right.previous = 0;
-    button_A.previous = 0;
-    button_B.previous = 0;
-    button_X.previous = 0;
-    button_Y.previous = 0;
-    button_L1.previous = 0;
-    button_L2.previous = 0;
-    button_R1.previous = 0;
-    button_R2.previous = 0;
-    button_up.previous = 0;
-    button_down.previous = 0;
-    button_left.previous = 0;
-    button_right.previous = 0;
+    
+    // List of inputs by address
+    input_list[0] = &forward_backward;
+    input_list[1] = &left_right;
+    input_list[2] = &button_L1;
+    input_list[3] = &button_L2;
+    input_list[4] = &button_R1;
+    input_list[5] = &button_R2;
+    input_list[6] = &button_A;
+    input_list[7] = &button_B;
+    input_list[8] = &button_X;
+    input_list[9] = &button_Y;
+    input_list[10] = &button_up;
+    input_list[11] = &button_down;
+    input_list[12] = &button_left;
+    input_list[13] = &button_right;
+
+    for (int i = 0; i < input_list.size(); ++i) input_list[i]->previous = 0;
 }
 
 void UserDrive::drive()
@@ -31,9 +36,6 @@ void UserDrive::drive()
     macro_controls();
     test_print();
     drivetrain_controls();
-
-
-
 
     set_previous_inputs(); // Tracks previous inputs to compare to
     if (macro_loop_iteration == macro_length) IS_MACRO_RUNNING = false;
@@ -71,21 +73,7 @@ void UserDrive::get_inputs()
             controller_values.push_back(0);
         }
     }
-    // List of inputs by address
-    input_list[0] = &forward_backward;
-    input_list[1] = &left_right;
-    input_list[2] = &button_L1;
-    input_list[3] = &button_L2;
-    input_list[4] = &button_R1;
-    input_list[5] = &button_R2;
-    input_list[6] = &button_A;
-    input_list[7] = &button_B;
-    input_list[8] = &button_X;
-    input_list[9] = &button_Y;
-    input_list[10] = &button_up;
-    input_list[11] = &button_down;
-    input_list[12] = &button_left;
-    input_list[13] = &button_right;
+
     // List of controller values
     controller_values[0] = hw->controller.Axis3.position(vex::percentUnits::pct);
     controller_values[1] = hw->controller.Axis1.position(vex::percentUnits::pct);
