@@ -14,7 +14,9 @@ private:
     struct input {
     int value;
     int previous;
-    };  
+    };
+    std::vector<input*> input_list;
+    std::vector<int32_t> controller_values;
     /// @brief Controls for recording and running macros
     void macro_controls();
 
