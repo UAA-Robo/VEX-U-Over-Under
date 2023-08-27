@@ -2,7 +2,7 @@
 
 Hardware::Hardware()
 {
-    // Indivudal Motors
+    // Individual Motors
 
     // Left
     front_left_drivetrain_motor.setBrake(vex::brakeType::brake);
@@ -20,4 +20,5 @@ Hardware::Hardware()
 
     // Drivetrain
     drivetrain.setStopping(vex::brakeType::brake);
+
 }
