@@ -4,11 +4,21 @@
 UserDrive::UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry) : 
 Drive(hardware, robotConfig, telemetry) 
 {
-
     IS_MACRO_RUNNING = false;
     IS_MACRO_RECORDING = false;
     macro_length = -2;
-    
+
+    if (input_list.size() == 0) // Setup vector
+    {
+        input_list.reserve(14);
+        controller_values.reserve(14);
+        
+        for (int i = 0; i < 14; ++i) 
+        {
+            input_list.push_back(0);
+            controller_values.push_back(0);
+        }
+    }
     // List of inputs by address
     input_list[0] = &forward_backward;
     input_list[1] = &left_right;
@@ -26,6 +36,7 @@ Drive(hardware, robotConfig, telemetry)
     input_list[13] = &button_right;
 
     for (int i = 0; i < input_list.size(); ++i) input_list[i]->previous = 0;
+
 }
 
 void UserDrive::drive()
@@ -36,6 +47,9 @@ void UserDrive::drive()
     macro_controls();
     test_print();
     drivetrain_controls();
+
+
+
 
     set_previous_inputs(); // Tracks previous inputs to compare to
     if (macro_loop_iteration == macro_length) IS_MACRO_RUNNING = false;
@@ -62,17 +76,6 @@ void UserDrive::drivetrain_controls()
 
 void UserDrive::get_inputs()
 {
-    if (input_list.size() == 0) // Setup vector
-    {
-        input_list.reserve(14);
-        controller_values.reserve(14);
-        
-        for (int i = 0; i < 14; ++i) 
-        {
-            input_list.push_back(0);
-            controller_values.push_back(0);
-        }
-    }
 
     // List of controller values
     controller_values[0] = hw->controller.Axis3.position(vex::percentUnits::pct);
@@ -93,8 +96,10 @@ void UserDrive::get_inputs()
     if (IS_MACRO_RUNNING)
     {
         hw->controller.Screen.print("MACRO: RUNNING");
-        for (int i = 0; i < input_list.size(); ++i) input_list[i]->value = macro_inputs
-        [macro_loop_iteration][i];
+        for (int i = 0; i < input_list.size(); ++i) 
+        {
+            input_list[i]->value = macro_inputs[macro_loop_iteration][i];
+        }
         button_up.value = hw->controller.ButtonUp.pressing(); // Stop running macro early by user
                                                               // input
         button_down.value = false; // Cannot record a macro while running a macro!
@@ -143,7 +148,8 @@ void UserDrive::macro_controls()
             macro_loop_iteration = -1;
             IS_MACRO_RUNNING = false;
         }
-        else if (!IS_MACRO_RUNNING) { // Start running macro
+        else if (!IS_MACRO_RUNNING) // Start running macro
+        { 
             hw->controller.Screen.print("MACRO: START RUN");
             macro_loop_iteration = -1;
             IS_MACRO_RUNNING = true;
