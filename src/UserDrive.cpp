@@ -1,42 +1,59 @@
 #include "UserDrive.h"
 #include "iostream"
 
-UserDrive::UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry) : Drive(hardware, robotConfig, telemetry) 
+UserDrive::UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry) : 
+Drive(hardware, robotConfig, telemetry) 
 {
-    macro_running = false;
-    macro_recording = false;
+    IS_MACRO_RUNNING = false;
+    IS_MACRO_RECORDING = false;
     macro_length = -2;
-    forward_backward.previous = 0;
-    left_right.previous = 0;
-    button_A.previous = false;
-    button_B.previous = false;
-    button_X.previous = false;
-    button_Y.previous = false;
-    button_L1.previous = false;
-    button_L2.previous = false;
-    button_R1.previous = false;
-    button_R2.previous = false;
-    button_up.previous = false;
-    button_down.previous = false;
-    button_left.previous = false;
-    button_right.previous = false;
+
+    if (input_list.size() == 0) // Setup vector
+    {
+        input_list.reserve(14);
+        controller_values.reserve(14);
+        
+        for (int i = 0; i < 14; ++i) 
+        {
+            input_list.push_back(0);
+            controller_values.push_back(0);
+        }
+    }
+    // List of inputs by address
+    input_list[0] = &forward_backward;
+    input_list[1] = &left_right;
+    input_list[2] = &button_L1;
+    input_list[3] = &button_L2;
+    input_list[4] = &button_R1;
+    input_list[5] = &button_R2;
+    input_list[6] = &button_A;
+    input_list[7] = &button_B;
+    input_list[8] = &button_X;
+    input_list[9] = &button_Y;
+    input_list[10] = &button_up;
+    input_list[11] = &button_down;
+    input_list[12] = &button_left;
+    input_list[13] = &button_right;
+
+    for (int i = 0; i < input_list.size(); ++i) input_list[i]->previous = 0;
+
 }
 
 void UserDrive::drive()
 {
     hw->controller.Screen.clearScreen();
     hw->controller.Screen.setCursor(1, 1);
-    getInputs(); // Get inputs from controller or recorded macro
-    macroControls(); // Run macro controls from user input
-    testPrint(); // Prints when A, B, X, or Y are pressed on Brain Screen
+    get_inputs();
+    macro_controls();
+    test_print();
     drivetrain_controls();
 
 
 
 
-    setPreviousInputs(); // Tracks previous inputs to compare to
-    if (macro_loop_iteration == macro_length) macro_running = false;
-    if (macro_recording || macro_running) ++macro_loop_iteration; // Last item
+    set_previous_inputs(); // Tracks previous inputs to compare to
+    if (macro_loop_iteration == macro_length) IS_MACRO_RUNNING = false;
+    if (IS_MACRO_RECORDING || IS_MACRO_RUNNING) ++macro_loop_iteration; // Last item
 }
 
 void UserDrive::drivetrain_controls()
@@ -57,116 +74,92 @@ void UserDrive::drivetrain_controls()
 }
 
 
-void UserDrive::getInputs()
+void UserDrive::get_inputs()
 {
-    if (macro_running)
+
+    // List of controller values
+    controller_values[0] = hw->controller.Axis3.position(vex::percentUnits::pct);
+    controller_values[1] = hw->controller.Axis1.position(vex::percentUnits::pct);
+    controller_values[2] = (int32_t)hw->controller.ButtonL1.pressing();
+    controller_values[3] = (int32_t)hw->controller.ButtonL2.pressing();
+    controller_values[4] = (int32_t)hw->controller.ButtonR1.pressing();
+    controller_values[5] = (int32_t)hw->controller.ButtonR2.pressing();
+    controller_values[6] = (int32_t)hw->controller.ButtonA.pressing();
+    controller_values[7] = (int32_t)hw->controller.ButtonB.pressing();
+    controller_values[8] = (int32_t)hw->controller.ButtonX.pressing();
+    controller_values[9] = (int32_t)hw->controller.ButtonY.pressing();
+    controller_values[10] = (int32_t)hw->controller.ButtonUp.pressing();
+    controller_values[11] = (int32_t)hw->controller.ButtonDown.pressing();
+    controller_values[12] = (int32_t)hw->controller.ButtonLeft.pressing();
+    controller_values[13] = (int32_t)hw->controller.ButtonRight.pressing();
+    
+    if (IS_MACRO_RUNNING)
     {
         hw->controller.Screen.print("MACRO: RUNNING");
-        forward_backward.value = macro_inputs[macro_loop_iteration][0];
-        left_right.value = macro_inputs[macro_loop_iteration][1];
-        button_L1.value = (bool)macro_inputs[macro_loop_iteration][2];
-        button_L2.value = (bool)macro_inputs[macro_loop_iteration][3];
-        button_R1.value = (bool)macro_inputs[macro_loop_iteration][4];
-        button_R2.value = (bool)macro_inputs[macro_loop_iteration][5];
-        button_A.value = (bool)macro_inputs[macro_loop_iteration][6];
-        button_B.value = (bool)macro_inputs[macro_loop_iteration][7];
-        button_X.value = (bool)macro_inputs[macro_loop_iteration][8];
-        button_Y.value = (bool)macro_inputs[macro_loop_iteration][9];
-        button_up.value = hw->controller.ButtonUp.pressing(); // Stop running macro early by user input
-        button_down.value = false; // Cannot record a macro while running a macro!
-        button_left.value = (bool)macro_inputs[macro_loop_iteration][12];
-        button_right.value = (bool)macro_inputs[macro_loop_iteration][13];
-    }
-    else
-    {
-        if (macro_recording) {
-            hw->controller.Screen.print("MACRO: RECORDING");
-            macro_inputs[macro_loop_iteration].push_back(hw->controller.Axis3.position(vex::percent));
-            macro_inputs[macro_loop_iteration].push_back(hw->controller.Axis1.position(vex::percent));
-            macro_inputs[macro_loop_iteration].push_back((int)hw->controller.ButtonL1.pressing());
-            macro_inputs[macro_loop_iteration].push_back((int)hw->controller.ButtonL2.pressing());
-            macro_inputs[macro_loop_iteration].push_back((int)hw->controller.ButtonR1.pressing());
-            macro_inputs[macro_loop_iteration].push_back((int)hw->controller.ButtonR2.pressing());
-            macro_inputs[macro_loop_iteration].push_back((int)hw->controller.ButtonA.pressing());
-            macro_inputs[macro_loop_iteration].push_back((int)hw->controller.ButtonB.pressing());
-            macro_inputs[macro_loop_iteration].push_back((int)hw->controller.ButtonX.pressing());
-            macro_inputs[macro_loop_iteration].push_back((int)hw->controller.ButtonY.pressing());
-            macro_inputs[macro_loop_iteration].push_back(0); // Cannot run a macro while recording a macro!
-            button_down.value = hw->controller.ButtonDown.pressing(); // Stop recording macro
-            macro_inputs[macro_loop_iteration].push_back((int)hw->controller.ButtonLeft.pressing());
-            macro_inputs[macro_loop_iteration].push_back((int)hw->controller.ButtonRight.pressing());
-            macro_inputs.push_back(std::vector<int>());
+        for (int i = 0; i < input_list.size(); ++i) 
+        {
+            input_list[i]->value = macro_inputs[macro_loop_iteration][i];
         }
-        forward_backward.value = hw->controller.Axis3.position(vex::percent);
-        left_right.value = hw->controller.Axis1.position(vex::percent);
-        button_L1.value = hw->controller.ButtonL1.pressing();
-        button_L2.value = hw->controller.ButtonL2.pressing();
-        button_R1.value = hw->controller.ButtonR1.pressing();
-        button_R2.value = hw->controller.ButtonR2.pressing();
-        button_A.value = hw->controller.ButtonA.pressing();
-        button_B.value = hw->controller.ButtonB.pressing();
-        button_X.value = hw->controller.ButtonX.pressing();
-        button_Y.value = hw->controller.ButtonY.pressing();
-        button_up.value = hw->controller.ButtonUp.pressing();
+        button_up.value = hw->controller.ButtonUp.pressing(); // Stop running macro early by user
+                                                              // input
+        button_down.value = false; // Cannot record a macro while running a macro!
+    }
+    else for (int i = 0; i < input_list.size(); ++i) input_list[i]->value = controller_values[i];
+    if (IS_MACRO_RECORDING) {
+        hw->controller.Screen.print("MACRO: RECORDING");
+        for (int i = 0; i < input_list.size(); ++i) macro_inputs[macro_loop_iteration].
+        push_back(controller_values[i]);
+        macro_inputs[macro_loop_iteration][10] = 0;
         button_down.value = hw->controller.ButtonDown.pressing();
-        button_left.value = hw->controller.ButtonLeft.pressing();
-        button_right.value = hw->controller.ButtonRight.pressing();
+        macro_inputs.push_back(std::vector<int>());
     }
 }
 
-void UserDrive::setPreviousInputs()
+
+void UserDrive::set_previous_inputs()
 {
-    forward_backward.previous = forward_backward.value;
-    left_right.previous = left_right.value;
-    button_A.previous = button_A.value;
-    button_B.previous = button_B.value;
-    button_X.previous = button_Y.value;
-    button_L1.previous = button_L1.value;
-    button_L2.previous = button_L2.value;
-    button_R1.previous = button_R1.value;
-    button_R2.previous = button_R2.value;
-    button_up.previous = button_up.value;
-    button_down.previous = button_down.value;
-    button_left.previous = button_left.value;
-    button_right.previous = button_right.value;
+    for (int i = 0; i < input_list.size(); ++i) input_list[i]->previous = input_list[i]->value;
 }
 
-void UserDrive::macroControls()
+
+
+void UserDrive::macro_controls()
 {
-    if (button_down.value == true && button_down.previous == false && !macro_running)
+    if (button_down.value && !button_down.previous && !IS_MACRO_RUNNING)
     {
-        if (macro_recording) { // Stop recording macro
+        if (IS_MACRO_RECORDING) { // Stop recording macro
             hw->controller.Screen.print("MACRO: STOP RECORD");
             macro_length = macro_loop_iteration;
             macro_loop_iteration = -1;
-            macro_recording = false;
+            IS_MACRO_RECORDING = false;
         }
-        else if (!macro_recording) { // Start recording macro
+        else if (!IS_MACRO_RECORDING) { // Start recording macro
             hw->controller.Screen.print("MACRO: START RECORD");
             if (macro_inputs.size() != 0) macro_inputs.clear();
             macro_inputs.push_back(std::vector<int>());
             macro_loop_iteration = -1;
-            macro_recording = true;
+            IS_MACRO_RECORDING = true;
         }
     }
-    if (button_up.value == true && button_up.previous == false && !macro_recording)
+    if (button_up.value && !button_up.previous && !IS_MACRO_RECORDING)
     {
-        if (macro_running) { // Stop running macro
+        if (IS_MACRO_RUNNING) { // Stop running macro
             hw->controller.Screen.print("MACRO: STOP RUN");
             macro_loop_iteration = -1;
-            macro_running = false;
+            IS_MACRO_RUNNING = false;
         }
-        else if (!macro_running) { // Start running macro
+        else if (!IS_MACRO_RUNNING) // Start running macro
+        { 
             hw->controller.Screen.print("MACRO: START RUN");
             macro_loop_iteration = -1;
-            macro_running = true;
+            IS_MACRO_RUNNING = true;
         }
     }
     
 }
 
 
-void UserDrive::testPrint()
+void UserDrive::test_print()
 {
     hw->brain.Screen.clearScreen(0);
     if (button_A.value) hw->brain.Screen.printAt(10, 20, "%c", 'A');

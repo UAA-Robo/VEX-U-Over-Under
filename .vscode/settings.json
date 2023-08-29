@@ -1,8 +1,14 @@
 {
-    "files.associations": {
-        "iterator": "cpp",
-        "random": "cpp"
-    },
-    "C_Cpp.errorSquiggles": "disabled",
-    "C_Cpp.default.compilerPath": "e:\\MSYS2\\mingw64\\bin\\c++.exe"
+	"files.associations": {
+		"iterator": "cpp",
+		"random": "cpp"
+	},
+	"C_Cpp.errorSquiggles": "disabled",
+	"C_Cpp.default.compilerPath": "e:\\MSYS2\\mingw64\\bin\\c++.exe",
+	"editor.rulers": [
+		100
+	],
+	"C_Cpp.default.systemIncludePath": [
+		"${config:vexrobotics.vexcode.Cpp.Sdk.Home}/V5/V5_20220726_10_00_00/vexv5/gcc/include/sys"
+	]
 }

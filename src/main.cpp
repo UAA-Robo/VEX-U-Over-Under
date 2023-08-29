@@ -69,7 +69,8 @@ void usercontrol(void) {
   //icebot = new Robot();
   while (true) {
     icebot->drive();
-    vex::wait(20, vex::msec); // Sleep the task for a short amount of time to prevent wasted resources.
+    // Sleep the task for a short amount of time to prevent wasted resources.
+    vex::wait(20, vex::msec); 
   }
 }
 
