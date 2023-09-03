@@ -1,36 +1,39 @@
 #include <Logger.h>
 
-Logger::Logger(Hardware* hardware, std::string fileName, std::vector<std::string> cols) {
+Logger::Logger(Hardware* hardware, std::string file_name, std::vector<std::string> column_names) {
     hw = hardware;
-    file = fileName;
+    file = file_name;
     
     if (hw->brain.SDcard.isInserted()){
-        dataLog.open(file, std::ofstream::out | std::ofstream::trunc);
+        data_log.open(file, std::ofstream::out | std::ofstream::trunc);
         
         //Label column names
-        dataLog << "secElapsed, ";
-        for (int i = 0; i < cols.size() - 1; i++) {
-            dataLog << cols.at(i) << ", ";
+        data_log << "secElapsed, ";
+        for (int i = 0; i < column_names.size() - 1; i++) {
+            data_log << column_names.at(i) << ", ";
         }
-        dataLog << cols.at(cols.size() - 1) << "\n";
-        dataLog.close();
+        data_log << column_names.at(column_names.size() - 1) << "\n";
+        data_log.close();
     }
     
 }
+
+
 Logger::~Logger() {
-    dataLog.close();
+    data_log.close();
 }
 
-void Logger::addData(std::vector<double> row) {
-    if (hw->brain.SDcard.isInserted()){
-        dataLog.open(file, std::ofstream::app);
 
-        dataLog << hw->brain.timer(vex::timeUnits::sec) << ", ";
+void Logger::add_data(std::vector<double> row) {
+    if (hw->brain.SDcard.isInserted()){
+        data_log.open(file, std::ofstream::app);
+
+        data_log << hw->brain.timer(vex::timeUnits::sec) << ", ";
 
         for (int i = 0; i < row.size() - 1; i++) {
-            dataLog << row.at(i) << ", ";
+            data_log << row.at(i) << ", ";
         }
-        dataLog << row.at(row.size() - 1) << "\n";
-        dataLog.close();
+        data_log << row.at(row.size() - 1) << "\n";
+        data_log.close();
     }
 }
