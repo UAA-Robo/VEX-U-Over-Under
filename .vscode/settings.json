@@ -1,7 +1,9 @@
 {
 	"files.associations": {
 		"iterator": "cpp",
-		"random": "cpp"
+		"random": "cpp",
+		"optional": "cpp",
+		"system_error": "cpp"
 	},
 	"C_Cpp.errorSquiggles": "disabled",
 	"C_Cpp.default.compilerPath": "e:\\MSYS2\\mingw64\\bin\\c++.exe",
