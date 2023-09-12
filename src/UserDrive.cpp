@@ -41,12 +41,20 @@ Drive(hardware, robotConfig, telemetry)
 
 void UserDrive::drive()
 {
+
     hw->controller.Screen.clearScreen();
-    hw->controller.Screen.setCursor(1, 1);
+    hw->controller.Screen.setCursor(1,1);
+    hw->controller.Screen.print("(%.1lf, %.1lf)", tm->x_position, tm->y_position);
+    hw->controller.Screen.setCursor(2,1);
+    hw->controller.Screen.print("%.1lf deg", tm->heading);
+
+
     get_inputs();
     macro_controls();
     test_print();
     drivetrain_controls();
+
+
 
 
 

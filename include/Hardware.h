@@ -1,6 +1,5 @@
 #pragma once
 #include "vex.h"
-#include "Controller.h"
 
 /// @brief    Stores the electronics (controller, sensors, motors, etc.) used by the other classes.
 class Hardware {
@@ -8,7 +7,7 @@ class Hardware {
 public:
     Hardware();
     vex::brain brain;
-    Controller controller = Controller(vex::controllerType::primary);
+    vex::controller controller = vex::controller(vex::controllerType::primary);
 
     // Drive train
     vex::motor_group drivetrain = vex::motor_group(
@@ -33,5 +32,9 @@ public:
     vex::motor middle_right_drivetrain_motor = vex::motor(vex::PORT19, vex::ratio6_1, true);
     vex::motor back_right_drivetrain_motor = vex::motor(vex::PORT18, vex::ratio6_1, true);
 
+    // Odometry Wheels
+    vex::rotation left_odometry =  vex::rotation(vex::PORT8, true);
+    vex::rotation right_odometry =  vex::rotation(vex::PORT7);
+    vex::rotation back_odometry =  vex::rotation(vex::PORT8);
 
 };
