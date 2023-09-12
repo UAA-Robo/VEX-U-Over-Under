@@ -1,0 +1,21 @@
+
+      // bool zz = false;
+      // for (int yy = 0; yy < nodesY; yy++)
+      // {
+      //   for (int xx = 0; xx < nodesX; xx++)
+      //   {
+      //     if (this->nodes[yy][xx] == nullptr || this->nodes[yy][xx] == NULL)
+      //     {
+      //       zz = true;
+      //       break;
+      //     }
+      //     else
+      //     {
+      //       std::cout << "(" << this->nodes[yy][xx]->x << ", " << this->nodes[yy][xx]->y << ")\n";
+      //     }
+      //   }
+      //   if (zz)
+      //   {
+      //     break;
+      //   }
+      // }
