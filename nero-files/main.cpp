@@ -393,7 +393,8 @@ void forbidTriangle(Graph graph, Node *a, Node *b)
     {
       for (int xx = xo; xx >= x; xx--)
       {
-        graph.getNode(xx, y)->forbidden = true;
+        graph.forbidNode(graph.getNode(xx, y));
+        // graph.getNode(xx, y)->forbidden = true;
       }
 
       x--;
@@ -407,7 +408,8 @@ void forbidTriangle(Graph graph, Node *a, Node *b)
     {
       for (int xx = xo; xx <= x; xx++)
       {
-        graph.getNode(xx, y)->forbidden = true;
+        graph.forbidNode(graph.getNode(xx, y));
+        // graph.getNode(xx, y)->forbidden = true;
       }
       x++;
       y--;
@@ -420,7 +422,8 @@ void forbidTriangle(Graph graph, Node *a, Node *b)
     {
       for (int xx = xo; xx >= x; xx--)
       {
-        graph.getNode(xx, y)->forbidden = true;
+        graph.forbidNode(graph.getNode(xx, y));
+        // graph.getNode(xx, y)->forbidden = true;
       }
       x--;
       y++;
@@ -433,7 +436,8 @@ void forbidTriangle(Graph graph, Node *a, Node *b)
     {
       for (int xx = xo; xx <= x; xx++)
       {
-        graph.getNode(xx, y)->forbidden = true;
+        graph.forbidNode(graph.getNode(xx, y));
+        // graph.getNode(xx, y)->forbidden = true;
       }
       x++;
       y++;
@@ -447,7 +451,8 @@ void forbidRectangle(Graph graph, Node *topLeftPoint, Node *topRightPoint, Node 
   {
     for (int x = topLeftPoint->x; x <= topRightPoint->x; x++)
     {
-      graph.getNode(x, y)->forbidden = true;
+      graph.forbidNode(graph.getNode(x, y));
+      // graph.getNode(x, y)->forbidden = true;
     }
   }
 }
@@ -577,9 +582,12 @@ int main()
                                                graph.getNode(BAR_MAIN_START_X, BAR_MAIN_START_Y + BAR_MAIN_SIZE_Y),
                                                graph.getNode(BAR_MAIN_START_X + BAR_MAIN_SIZE_X, BAR_MAIN_START_Y + BAR_MAIN_SIZE_Y)));
 
+  std::ofstream pathFile("path.txt");
+  pathFile << path.size();
   for (int i = path.size() - 1; i >= 0; i--)
   {
-    std::cout << "(" << path[i]->x << ", " << path[i]->y << ")\n";
+    // std::cout << "(" << path[i]->x << ", " << path[i]->y << ")\n";
+    pathFile << "" << path[i]->x << " " << path[i]->y << "\n";
   }
 
   // forbidTriangle(graph, graph.getNode(0, ROLLER_SIZE), graph.getNode(ROLLER_SIZE, 0));
