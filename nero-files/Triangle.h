@@ -1,15 +1,14 @@
 #pragma once
-#include <tuple>
 
 class Triangle
 {
 public:
   int points;
-  std::tuple<int, int> rightAnglePoint;
-  std::tuple<int, int> sidePointA;
-  std::tuple<int, int> sidePointB;
+  Node *rightAnglePoint;
+  Node *sidePointA;
+  Node *sidePointB;
 
-  Triangle(std::tuple<int, int> rightAnglePoint, std::tuple<int, int> sidePointA, std::tuple<int, int> sidePointB)
+  Triangle(Node *rightAnglePoint, Node *sidePointA, Node *sidePointB)
   {
     this->points = 3;
     this->rightAnglePoint = rightAnglePoint;
