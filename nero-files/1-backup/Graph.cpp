@@ -2,19 +2,19 @@
 #include <iostream>
 #include "Graph.h"
 
-Graph::Graph(int nodesX, int nodesY)
+Graph::Graph(int xNodes, int yNodes)
 {
-  this->nodesX = nodesX;
-  this->nodesY = nodesY;
-  this->nodes = new Node **[nodesY];
-  for (int x = 0; x < nodesY; x++)
+  this->xNodes = xNodes;
+  this->yNodes = yNodes;
+  this->nodes = new Node **[yNodes];
+  for (int x = 0; x < yNodes; x++)
   {
-    this->nodes[x] = new Node *[nodesX];
+    this->nodes[x] = new Node *[xNodes];
   }
 
-  for (int y = 0; y < nodesY; y++)
+  for (int y = 0; y < yNodes; y++)
   {
-    for (int x = 0; x < nodesX; x++)
+    for (int x = 0; x < xNodes; x++)
     {
       Node *tempNode = new Node(x, y);
       this->nodes[y][x] = tempNode;
@@ -33,7 +33,7 @@ Graph::Graph(int nodesX, int nodesY)
         // top left point
         // no W, N, NW, NE, SW
       }
-      else if (y == nodesY - 1 && x == 0)
+      else if (y == yNodes - 1 && x == 0)
       {
         // bottom left point
         // no S, W, SW, SE, NW
@@ -44,7 +44,7 @@ Graph::Graph(int nodesX, int nodesY)
         this->nodes[y - 1][x + 1]->addNeighbor(this->nodes[y][x]); // NE
         this->nodes[y - 1][x]->addNeighbor(this->nodes[y][x]);     // N
       }
-      else if (y == nodesY - 1 && x == nodesX - 1)
+      else if (y == yNodes - 1 && x == xNodes - 1)
       {
         // bottom right point
         // no S, E, SE, SW, NE
@@ -57,7 +57,7 @@ Graph::Graph(int nodesX, int nodesY)
         this->nodes[y - 1][x - 1]->addNeighbor(this->nodes[y][x]); // NW
         this->nodes[y][x - 1]->addNeighbor(this->nodes[y][x]);     // W
       }
-      else if (y == 0 && x == nodesX - 1)
+      else if (y == 0 && x == xNodes - 1)
       {
         // top right point
         // no N, E, NE, NW, ES
@@ -75,7 +75,7 @@ Graph::Graph(int nodesX, int nodesY)
 
         this->nodes[y][x - 1]->addNeighbor(this->nodes[y][x]); // W
       }
-      else if (y == nodesY - 1)
+      else if (y == yNodes - 1)
       {
         // bottom row
         // no SW, S, SE
@@ -101,7 +101,7 @@ Graph::Graph(int nodesX, int nodesY)
         this->nodes[y - 1][x + 1]->addNeighbor(this->nodes[y][x]); // NE
         this->nodes[y - 1][x]->addNeighbor(this->nodes[y][x]);     // N
       }
-      else if (x == nodesX - 1)
+      else if (x == xNodes - 1)
       {
         // right column
         // no EN, E, ES
@@ -140,9 +140,9 @@ Graph::Graph(int nodesX, int nodesY)
     };
   };
 
-  // for (int y = 0; y < nodesY; y++)
+  // for (int y = 0; y < yNodes; y++)
   // {
-  //   for (int x = 0; x < nodesX; x++)
+  //   for (int x = 0; x < xNodes; x++)
   //   {
   //     Node *tempNode = new Node(y, x);
   //     this->nodes[y][x] = tempNode;
@@ -162,9 +162,9 @@ Graph::Graph(int nodesX, int nodesY)
 
 // Graph::~Graph()
 // {
-//   for (int y = 0; y < this->nodesY; y++)
+//   for (int y = 0; y < this->yNodes; y++)
 //   {
-//     for (int x = 0; x < this->nodesX; x++)
+//     for (int x = 0; x < this->xNodes; x++)
 //     {
 //       // this->nodes[y][x] = nullptr;
 //       delete this->nodes[y][x];

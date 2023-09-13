@@ -4,11 +4,11 @@
 class Graph
 {
 public:
-  int nodesX;
-  int nodesY;
+  int xNodes;
+  int yNodes;
   Node ***nodes;
 
-  Graph(int nodesX, int nodesY);
+  Graph(int xNodes, int yNodes);
   // ~Graph();
   Node *getNode(int x, int y);
 };
