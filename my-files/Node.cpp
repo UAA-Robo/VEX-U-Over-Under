@@ -9,6 +9,7 @@ Node::Node(int x, int y)
   this->y = y;
   this->visited = false;
   this->parent = nullptr;
+  this->forbidden = false;
 };
 
 // Node::~Node()

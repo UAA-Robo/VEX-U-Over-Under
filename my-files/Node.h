@@ -9,6 +9,7 @@ public:
   int x;
   int y;
   bool visited;
+  bool forbidden;
   Node *parent;
   vector<Node *> neighbors;
 
