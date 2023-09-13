@@ -11,11 +11,27 @@
 #include <ostream>
 #include <string>
 #include <cstdio>
+#include <SDL2/SDL.h>
 
 #include "Node.h"
 #include "Graph.h"
 #include "Triangle.h"
 #include "Rectangle.h"
+
+// double const ZONE_SIZE = 1;
+double const CELL_SIZE = 5;
+
+void drawCell(SDL_Renderer *renderer, Node *node)
+{
+  SDL_Rect cell;
+  cell.x = node->x * CELL_SIZE;
+  cell.y = node->y * CELL_SIZE;
+  cell.h = CELL_SIZE;
+  cell.w = CELL_SIZE;
+
+  SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+  SDL_RenderFillRect(renderer, &cell);
+}
 
 std::ostream &operator<<(std::ostream &os, Node *const &m)
 {
@@ -465,7 +481,7 @@ std::vector<Node *> getNodesInsideShape(Rectangle rectangle)
 {
 }
 
-int main()
+int main(int argv, char **args)
 {
   std::random_device rd;
   std::mt19937 rng(rd());
@@ -582,13 +598,15 @@ int main()
                                                graph.getNode(BAR_MAIN_START_X, BAR_MAIN_START_Y + BAR_MAIN_SIZE_Y),
                                                graph.getNode(BAR_MAIN_START_X + BAR_MAIN_SIZE_X, BAR_MAIN_START_Y + BAR_MAIN_SIZE_Y)));
 
-  std::ofstream pathFile("path.txt");
-  pathFile << path.size();
+  std::remove("path.txt");
+  std::ofstream fileWritePath("path.txt");
+  fileWritePath << path.size();
   for (int i = path.size() - 1; i >= 0; i--)
   {
     // std::cout << "(" << path[i]->x << ", " << path[i]->y << ")\n";
-    pathFile << "" << path[i]->x << " " << path[i]->y << "\n";
+    fileWritePath << "" << path[i]->x << " " << path[i]->y << "\n";
   }
+  fileWritePath.close();
 
   // forbidTriangle(graph, graph.getNode(0, ROLLER_SIZE), graph.getNode(ROLLER_SIZE, 0));
   // forbidTriangle(graph, graph.getNode(FIELD_SIZE - 1 - ROLLER_SIZE, 0), graph.getNode(FIELD_SIZE - 1, ROLLER_SIZE));
@@ -605,8 +623,8 @@ int main()
     forbidRectangle(graph, rectangle.topLeftPoint, rectangle.topRightPoint, rectangle.bottomLeftPoint, rectangle.bottomRightPoint);
   }
 
-  std::remove("data.txt");
-  std::ofstream file("data.txt");
+  std::remove("forbidden-nodes.txt");
+  std::ofstream fileWriteForbiddenNodes("forbidden-nodes.txt");
 
   for (int x = 0; x < X_NODES; x++)
   {
@@ -614,10 +632,268 @@ int main()
     {
       if (graph.getNode(x, y)->forbidden)
       {
-        file << graph.getNode(x, y)->x << " " << graph.getNode(x, y)->y << std::endl;
+        fileWriteForbiddenNodes << graph.getNode(x, y)->x << " " << graph.getNode(x, y)->y << std::endl;
       }
     }
   }
 
-  file.close();
+  fileWriteForbiddenNodes.close();
+
+  std::vector<Node *> pathNodes;
+  std::vector<SDL_Rect> pathRects;
+
+  std::ifstream fileReadPath("path.txt");
+
+  std::string xx;
+  std::string yy;
+
+  while (getline(fileReadPath, xx, ' '))
+  {
+    getline(fileReadPath, yy, '\n');
+    pathRects.push_back(SDL_Rect{std::stoi(xx) * 5, std::stoi(yy) * 5, 5, 5});
+  }
+  fileReadPath.close();
+
+  std::vector<SDL_Rect> selectedNodes;
+
+  // int grid_cell_size = 5;
+  int grid_cell_size = CELL_SIZE;
+  int grid_width = 138;
+  int grid_height = 138;
+
+  // + 1 so that the last grid lines fit in the screen.
+  int window_width = (grid_width * grid_cell_size) + 1;
+  int window_height = (grid_height * grid_cell_size) + 1;
+
+  // Place the grid cursor in the middle of the screen.
+  SDL_Rect grid_cursor = {
+      // .x = (grid_width - 1) / 2 * grid_cell_size,
+      // .y = (grid_height - 1) / 2 * grid_cell_size,
+      .w = grid_cell_size,
+      .h = grid_cell_size,
+  };
+
+  // The cursor ghost is a cursor that always shows in the cell below the
+  // mouse cursor.
+  // SDL_Rect grid_cursor_ghost = {grid_cursor.x, grid_cursor.y, grid_cell_size,
+  //                               grid_cell_size};
+  SDL_Rect grid_cursor_ghost = {0, 0, grid_cell_size,
+                                grid_cell_size};
+
+  // Dark theme.
+  // SDL_Color grid_background = {22, 22, 22, 255}; // Barely Black
+  // SDL_Color grid_line_color = {44, 44, 44, 255}; // Dark grey
+  // SDL_Color grid_cursor_ghost_color = {44, 44, 44, 255};
+  // SDL_Color grid_cursor_color = {255, 255, 255, 255}; // White
+
+  // Light Theme.
+  SDL_Color grid_background = {233, 233, 233, 255}; // Barely white
+  SDL_Color grid_line_color = {200, 200, 200, 255}; // Very light grey
+  SDL_Color grid_cursor_ghost_color = {200, 200, 200, 255};
+  SDL_Color grid_cursor_color = {160, 160, 160, 255}; // Grey
+
+  if (SDL_Init(SDL_INIT_VIDEO) < 0)
+  {
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Initialize SDL: %s",
+                 SDL_GetError());
+    return EXIT_FAILURE;
+  }
+
+  SDL_Window *window;
+  SDL_Renderer *renderer;
+  if (SDL_CreateWindowAndRenderer(window_width, window_height, 0, &window,
+                                  &renderer) < 0)
+  {
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
+                 "Create window and renderer: %s", SDL_GetError());
+    return EXIT_FAILURE;
+  }
+
+  SDL_SetWindowTitle(window, "SDL Grid");
+
+  SDL_bool quit = SDL_FALSE;
+  SDL_bool mouse_active = SDL_FALSE;
+  SDL_bool mouse_hover = SDL_FALSE;
+
+  std::string x;
+  std::string y;
+  std::ifstream fileReadForbiddenNodes("forbidden-nodes.txt");
+
+  std::vector<Node *> forbiddenNodes;
+  Node *node;
+
+  while (getline(fileReadForbiddenNodes, x, ' '))
+  {
+    getline(fileReadForbiddenNodes, y, '\n');
+    forbiddenNodes.push_back(new Node(std::stoi(x), std::stoi(y)));
+  }
+  fileReadForbiddenNodes.close();
+
+  while (!quit)
+  {
+    SDL_Event event;
+    while (SDL_PollEvent(&event))
+    {
+      switch (event.type)
+      {
+      case SDL_KEYDOWN:
+        switch (event.key.keysym.sym)
+        {
+        case SDLK_w:
+        case SDLK_UP:
+          // grid_cursor.y -= grid_cell_size;
+          break;
+        case SDLK_s:
+        case SDLK_DOWN:
+          // grid_cursor.y += grid_cell_size;
+          break;
+        case SDLK_a:
+        case SDLK_LEFT:
+          // grid_cursor.x -= grid_cell_size;
+          break;
+        case SDLK_d:
+        case SDLK_RIGHT:
+          // grid_cursor.x += grid_cell_size;
+          break;
+        }
+        break;
+      case SDL_MOUSEBUTTONDOWN:
+      {
+
+        bool nodeAllowed = true;
+        int xx = (event.motion.x / grid_cell_size) * grid_cell_size;
+        int yy = (event.motion.y / grid_cell_size) * grid_cell_size;
+
+        for (Node *forbiddenNode : forbiddenNodes)
+        {
+          if (forbiddenNode->x * grid_cell_size == xx && forbiddenNode->y * grid_cell_size == yy)
+          {
+            nodeAllowed = false;
+          }
+        }
+        if (nodeAllowed)
+        {
+          bool isNotDuplicate = true;
+          for (SDL_Rect node : selectedNodes)
+          {
+            if (node.x == xx && node.y == yy)
+            {
+              isNotDuplicate = false;
+            }
+          }
+          if (isNotDuplicate)
+          {
+
+            selectedNodes.push_back(SDL_Rect{
+                .x = (event.motion.x / grid_cell_size) * grid_cell_size,
+                .y = (event.motion.y / grid_cell_size) * grid_cell_size,
+                .w = grid_cell_size,
+                .h = grid_cell_size,
+            });
+          }
+        }
+      }
+      break;
+
+        // if (grid_cursor.x == NULL)
+        // {
+        //   std::cout << grid_cursor.x;
+        //   grid_cursor.x = (event.motion.x / grid_cell_size) * grid_cell_size;
+        //   grid_cursor.y = (event.motion.y / grid_cell_size) * grid_cell_size;
+        // }
+        // grid_cursor.x = (event.motion.x / grid_cell_size) * grid_cell_size;
+        // grid_cursor.y = (event.motion.y / grid_cell_size) * grid_cell_size;
+        // SDL_Rect cell = {
+
+      case SDL_MOUSEMOTION:
+        grid_cursor_ghost.x = (event.motion.x / grid_cell_size) * grid_cell_size;
+        grid_cursor_ghost.y = (event.motion.y / grid_cell_size) * grid_cell_size;
+
+        if (!mouse_active)
+        {
+          mouse_active = SDL_TRUE;
+        }
+        break;
+      case SDL_WINDOWEVENT:
+        if (event.window.event == SDL_WINDOWEVENT_ENTER && !mouse_hover)
+          mouse_hover = SDL_TRUE;
+        else if (event.window.event == SDL_WINDOWEVENT_LEAVE && mouse_hover)
+          mouse_hover = SDL_FALSE;
+        break;
+      case SDL_QUIT:
+        quit = SDL_TRUE;
+        break;
+      }
+    }
+
+    // Draw grid background.
+    SDL_SetRenderDrawColor(renderer, grid_background.r, grid_background.g,
+                           grid_background.b, grid_background.a);
+    SDL_RenderClear(renderer);
+
+    // Draw grid lines.
+    SDL_SetRenderDrawColor(renderer, grid_line_color.r, grid_line_color.g,
+                           grid_line_color.b, grid_line_color.a);
+
+    for (int x = 0; x < 1 + grid_width * grid_cell_size;
+         x += grid_cell_size)
+    {
+      SDL_RenderDrawLine(renderer, x, 0, x, window_height);
+    }
+
+    for (int y = 0; y < 1 + grid_height * grid_cell_size;
+         y += grid_cell_size)
+    {
+      SDL_RenderDrawLine(renderer, 0, y, window_width, y);
+    }
+
+    // Draw grid ghost cursor.
+    if (mouse_active && mouse_hover)
+    {
+      SDL_SetRenderDrawColor(renderer, grid_cursor_ghost_color.r,
+                             grid_cursor_ghost_color.g,
+                             grid_cursor_ghost_color.b,
+                             grid_cursor_ghost_color.a);
+      SDL_RenderFillRect(renderer, &grid_cursor_ghost);
+    }
+
+    // Draw grid cursor.
+    SDL_SetRenderDrawColor(renderer, grid_cursor_color.r,
+                           grid_cursor_color.g, grid_cursor_color.b,
+                           grid_cursor_color.a);
+    SDL_RenderFillRect(renderer, &grid_cursor);
+    for (auto cell : selectedNodes)
+    {
+      SDL_RenderFillRect(renderer, &cell);
+    }
+
+    for (Node *node : forbiddenNodes)
+    {
+      drawCell(renderer, node);
+    }
+
+    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+    for (SDL_Rect rect : pathRects)
+    {
+
+      SDL_RenderFillRect(renderer, &rect);
+    }
+
+    SDL_RenderPresent(renderer);
+  }
+
+  SDL_DestroyRenderer(renderer);
+  SDL_DestroyWindow(window);
+  SDL_Quit();
+
+  std::remove("selected-nodes.txt");
+  std::ofstream fileWriteSelectedNodes("selected-nodes.txt");
+  for (auto cell : selectedNodes)
+  {
+    // std::cout << "(" << cell.x << ", " << cell.y << ")\n";
+    fileWriteSelectedNodes << "(" << cell.x << ", " << cell.y << ")\n";
+  }
+  fileWriteSelectedNodes.close();
+
+  return EXIT_SUCCESS;
 }
