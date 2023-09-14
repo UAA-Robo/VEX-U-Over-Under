@@ -1,4 +1,5 @@
 // Graph snapshot to create a timeline
+// Free memory
 
 #include <map>
 #include <vector>
