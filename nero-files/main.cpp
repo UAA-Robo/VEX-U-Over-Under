@@ -1,3 +1,5 @@
+// Graph snapshot to create a timeline
+
 #include <map>
 #include <vector>
 #include <cmath>

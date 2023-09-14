@@ -24,4 +24,5 @@ public:
   std::vector<Node *> getForbiddenNodes();
   std::vector<Node *> getPath(Node *origin, Node *destination);
   std::vector<Node *> getRandomPath();
+  Node **getSnapshot();
 };

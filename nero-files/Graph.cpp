@@ -272,3 +272,15 @@ void Graph::reset()
     }
   }
 }
+
+Node **Graph::getSnapshot()
+{
+  Node **newGraph;
+
+  for (int y = 0; y < this->yNodes; y++)
+  {
+    for (int x = 0; x < this->xNodes; x++)
+    {
+    }
+  }
+}
