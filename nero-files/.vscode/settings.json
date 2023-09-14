@@ -57,6 +57,7 @@
     "thread": "cpp",
     "typeinfo": "cpp",
     "set": "cpp",
-    "climits": "cpp"
+    "climits": "cpp",
+    "cinttypes": "cpp"
   }
 }
