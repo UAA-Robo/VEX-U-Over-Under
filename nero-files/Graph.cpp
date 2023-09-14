@@ -1,7 +1,9 @@
 #include "Graph.h"
 #include <iostream>
 #include <time.h>
-#include <cstdlib>
+#include <fstream>
+#include <ostream>
+#include <string>
 
 int Graph::getEdgeCost(Node *a, Node *b)
 {
@@ -21,15 +23,14 @@ int Graph::getEdgeCost(Node *a, Node *b)
   }
 }
 
-std::vector<Node *> Graph::reconstructPath(Node *currentNode)
+std::vector<Node *> Graph::reconstructPath(Node *currentNode, std::map<Node *, Node *> cameFrom)
 {
   std::vector<Node *> path;
-  path.push_back(currentNode);
 
-  while (currentNode->parent != NULL)
+  while (currentNode != cameFrom[currentNode])
   {
-    currentNode = currentNode->parent;
     path.push_back(currentNode);
+    currentNode = cameFrom[currentNode];
   }
 
   return path;
@@ -188,13 +189,17 @@ std::vector<Node *> Graph::getForbiddenNodes()
 // A* algorithm
 std::vector<Node *> Graph::getPath(Node *origin, Node *destination)
 {
-  this->reset();
+  // this->reset();
 
+  std::remove("snapshots.txt");
+  std::ofstream fileWriteSnapshot("snapshots.txt");
   std::set<Node *> frontier;
+  std::map<Node *, Node *> cameFrom;
   std::map<Node *, int> gScores;
   std::map<Node *, int> fScores;
 
   frontier.insert(origin);
+  cameFrom[origin] = origin;
   gScores[origin] = 0;
   fScores[origin] = this->heuristic(origin, destination);
 
@@ -212,11 +217,22 @@ std::vector<Node *> Graph::getPath(Node *origin, Node *destination)
       }
     }
 
+    for (auto node : cameFrom)
+    {
+      fileWriteSnapshot << std::to_string(node.first->x) << " " << std::to_string(node.first->y) << " " << std::to_string(node.second->x) << " " << std::to_string(node.second->y) << " ";
+      //   fileWriteSnapshot << std::to_string(node.first->x) +
+      //                            " " + std::to_string(node.first->y) +
+      //                            " " + std::to_string(node.second->x) +
+      //                            " " + std::to_string(node.second->y) + " ";
+    }
+    fileWriteSnapshot << "X ";
+
     frontier.erase(currentNode);
 
     if (currentNode == destination)
     {
-      return reconstructPath(currentNode);
+      return reconstructPath(currentNode, cameFrom);
+      fileWriteSnapshot.close();
     }
 
     for (Node *neighbor : currentNode->neighbors)
@@ -225,7 +241,7 @@ std::vector<Node *> Graph::getPath(Node *origin, Node *destination)
 
       if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
       {
-        neighbor->parent = currentNode;
+        cameFrom[neighbor] = currentNode;
         gScores[neighbor] = neighborGScore;
         fScores[neighbor] = neighborGScore + this->heuristic(neighbor, destination);
 
@@ -262,7 +278,7 @@ std::vector<Node *> Graph::getRandomPath()
   } while (c < 5 || this->nodes[originY][originX]->forbidden || this->nodes[destinationY][destinationX]->forbidden);
 
   // this->reset();
-  std::cout << originX << ", " << originY << "\t" << destinationX << ", " << destinationY << "\n";
+  // std::cout << originX << ", " << originY << "\t" << destinationX << ", " << destinationY << "\n";
   return getPath(this->nodes[originY][originX], this->nodes[destinationY][destinationX]);
   // return getPath(this->nodes[50][50], this->nodes[30][30]);
 }
@@ -277,3 +293,115 @@ void Graph::reset()
     }
   }
 }
+
+std::vector<std::vector<Node *> *> Graph::getRandomPathSnapshots()
+{
+  srand(time(0));
+
+  // std::random_device rd;
+  std::mt19937 rng(rand());
+  std::uniform_int_distribution<int> randX(0, this->xNodes - 1);
+  std::uniform_int_distribution<int> randY(0, this->yNodes - 1);
+
+  int originX;
+  int originY;
+  int destinationX;
+  int destinationY;
+  int c = 0;
+  do
+  {
+    originX = randX(rng);
+    originY = randY(rng);
+    destinationX = randX(rng);
+    destinationY = randY(rng);
+    c++;
+  } while (c < 5 || this->nodes[originY][originX]->forbidden || this->nodes[destinationY][destinationX]->forbidden);
+
+  // this->reset();
+  // std::cout << originX << ", " << originY << "\t" << destinationX << ", " << destinationY << "\n";
+  return getPathSnapshots(this->nodes[originY][originX], this->nodes[destinationY][destinationX]);
+  // return getPath(this->nodes[50][50], this->nodes[30][30]);
+}
+
+std::vector<std::vector<Node *> *> Graph::getPathSnapshots(Node *origin, Node *destination)
+{
+  // this->reset();
+
+  std::remove("snapshots.txt");
+  std::ofstream fileWriteSnapshot("snapshots.txt");
+  std::set<Node *> frontier;
+  std::map<Node *, Node *> cameFrom;
+  std::map<Node *, int> gScores;
+  std::map<Node *, int> fScores;
+  std::vector<std::vector<Node *> *> snapshots;
+
+  frontier.insert(origin);
+  cameFrom[origin] = origin;
+  gScores[origin] = 0;
+  fScores[origin] = this->heuristic(origin, destination);
+
+  while (frontier.size() > 0)
+  {
+    snapshots.push_back(new std::vector<Node *>);
+    int lowestFScore = 2147483647;
+    Node *currentNode;
+
+    for (Node *node : frontier)
+    {
+      if (fScores.find(node) == fScores.end() || fScores[node] < lowestFScore)
+      {
+        lowestFScore = fScores[node];
+        currentNode = node;
+      }
+    }
+
+    Node *temp = currentNode;
+    snapshots.back()->push_back(temp);
+    while (temp != cameFrom[temp])
+    {
+      snapshots.back()->push_back(cameFrom[temp]);
+      temp = cameFrom[temp];
+    }
+
+    for (auto node : cameFrom)
+    {
+      fileWriteSnapshot << std::to_string(node.first->x) << " " << std::to_string(node.first->y) << " " << std::to_string(node.second->x) << " " << std::to_string(node.second->y) << " ";
+      //   fileWriteSnapshot << std::to_string(node.first->x) +
+      //                            " " + std::to_string(node.first->y) +
+      //                            " " + std::to_string(node.second->x) +
+      //                            " " + std::to_string(node.second->y) + " ";
+    }
+    fileWriteSnapshot << "X ";
+
+    frontier.erase(currentNode);
+
+    if (currentNode == destination)
+    {
+      // return reconstructPath(currentNode, cameFrom);
+      fileWriteSnapshot.close();
+      return snapshots;
+    }
+
+    for (Node *neighbor : currentNode->neighbors)
+    {
+      int neighborGScore = gScores[currentNode] + getEdgeCost(currentNode, neighbor);
+
+      if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
+      {
+        cameFrom[neighbor] = currentNode;
+        gScores[neighbor] = neighborGScore;
+        fScores[neighbor] = neighborGScore + this->heuristic(neighbor, destination);
+
+        if (frontier.find(neighbor) == frontier.end())
+        {
+          frontier.insert(neighbor);
+        }
+      }
+    }
+  }
+  throw std::runtime_error("ERROR 100");
+}
+
+// std::vector<std::vector<Node *> *> Graph::reconstructPath(Node *currentNode, std::map<Node *, Node *> cameFrom)
+// {
+// }
