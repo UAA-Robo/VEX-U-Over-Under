@@ -282,11 +282,11 @@ void forbidTriangle(Graph graph, Node *a, Node *b)
   }
 }
 
-void drawCell(SDL_Renderer *renderer, Node *node, SDL_Color color)
+void drawCell(SDL_Renderer *renderer, Node *node, SDL_Color color, int yOffset, int xPadding, int yPadding)
 {
   SDL_Rect cell{
-      .x = node->x * CELL_SIZE,
-      .y = node->y * CELL_SIZE,
+      .x = (node->x * CELL_SIZE) + xPadding,
+      .y = (node->y * CELL_SIZE) + yOffset + yPadding,
       .w = CELL_SIZE,
       .h = CELL_SIZE,
   };
@@ -351,12 +351,17 @@ int SDL(Graph graph, std::vector<Node *> forbiddenNodes, std::vector<Node *> pat
   }
 
   // SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-  // SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+  SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
   SDL_SetWindowTitle(window, "Pathfinding");
 
   SDL_bool quit = SDL_FALSE;
   SDL_bool mouse_active = SDL_FALSE;
   SDL_bool mouse_hover = SDL_FALSE;
+
+  int yOffset = 0;
+  int scrollSensitivity = 100;
+  int xPadding = 100;
+  int yPadding = 100;
 
   while (!quit)
   {
@@ -453,6 +458,22 @@ int SDL(Graph graph, std::vector<Node *> forbiddenNodes, std::vector<Node *> pat
         else if (event.window.event == SDL_WINDOWEVENT_LEAVE && mouse_hover)
           mouse_hover = SDL_FALSE;
         break;
+      case SDL_MOUSEWHEEL:
+        // scroll up
+        if (event.wheel.y > 0)
+        {
+          yOffset = yOffset + (event.wheel.y * scrollSensitivity);
+        }
+        // scroll down
+        else if (event.wheel.y < 0)
+        {
+          yOffset = yOffset + (event.wheel.y * scrollSensitivity);
+        }
+        else
+        {
+          yOffset = 0;
+        }
+        break;
       case SDL_QUIT:
         quit = SDL_TRUE;
         break;
@@ -471,13 +492,13 @@ int SDL(Graph graph, std::vector<Node *> forbiddenNodes, std::vector<Node *> pat
     for (int x = 0; x < 1 + graph.xNodes * CELL_SIZE;
          x += CELL_SIZE)
     {
-      SDL_RenderDrawLine(renderer, x, 0, x, window_height);
+      SDL_RenderDrawLine(renderer, x + xPadding, 0 + yOffset + yPadding, x + xPadding, window_height + yOffset + yPadding);
     }
 
     for (int y = 0; y < 1 + graph.yNodes * CELL_SIZE;
          y += CELL_SIZE)
     {
-      SDL_RenderDrawLine(renderer, 0, y, window_width, y);
+      SDL_RenderDrawLine(renderer, 0 + xPadding, y + yOffset + yPadding, window_width + xPadding, y + yOffset + yPadding);
     }
 
     // Draw grid ghost cursor.
@@ -498,14 +519,14 @@ int SDL(Graph graph, std::vector<Node *> forbiddenNodes, std::vector<Node *> pat
 
     for (Node *node : forbiddenNodes)
     {
-      drawCell(renderer, node, forbiddenNodesColor);
+      drawCell(renderer, node, forbiddenNodesColor, yOffset, xPadding, yPadding);
     }
 
     SDL_Color pathNodesColor = {0, 255, 0, 255};
     SDL_SetRenderDrawColor(renderer, pathNodesColor.r, pathNodesColor.g, pathNodesColor.b, pathNodesColor.a);
     for (Node *node : pathNodes)
     {
-      drawCell(renderer, node, pathNodesColor);
+      drawCell(renderer, node, pathNodesColor, yOffset, xPadding, yPadding);
     }
 
     SDL_RenderPresent(renderer);
