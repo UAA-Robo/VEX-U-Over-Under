@@ -5,7 +5,7 @@
 // #include <utility>
 // #include <tuple>
 #include <random>
-// #include <chrono>
+#include <chrono>
 #include <fstream>
 // #include <ostream>
 // #include <string>
@@ -331,6 +331,8 @@ int SDL(Graph *graph, std::vector<Node *> forbiddenNodes, std::vector<Node *> pa
   int yPadding = 100;
 
   int nodesSelected = 0;
+  int paths = 0;
+  int durationTotal = 0;
 
   Button button = Button(k,
                          graph,
@@ -368,7 +370,13 @@ int SDL(Graph *graph, std::vector<Node *> forbiddenNodes, std::vector<Node *> pa
           // break;
           break;
         case SDLK_SPACE:
+          auto start = std::chrono::high_resolution_clock::now();
           pathNodes = graph->getRandomPath();
+          auto stop = std::chrono::high_resolution_clock::now();
+          auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+          std::cout << duration.count() << std::endl;
+          paths++;
+          durationTotal += duration.count();
           break;
         }
         break;
@@ -546,6 +554,8 @@ int SDL(Graph *graph, std::vector<Node *> forbiddenNodes, std::vector<Node *> pa
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   SDL_Quit();
+
+  std::cout << (durationTotal / paths) << std::endl;
 
   return EXIT_SUCCESS;
 }
