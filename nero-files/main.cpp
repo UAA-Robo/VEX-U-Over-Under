@@ -317,8 +317,8 @@ int SDL(Graph *graph, std::vector<Node *> forbiddenNodes, std::vector<Node *> pa
     return EXIT_FAILURE;
   }
 
-  // SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-  SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+  SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+  // SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
   SDL_SetWindowTitle(window, "Pathfinding");
 
   SDL_bool quit = SDL_FALSE;
@@ -370,7 +370,9 @@ int SDL(Graph *graph, std::vector<Node *> forbiddenNodes, std::vector<Node *> pa
           // break;
           break;
         case SDLK_SPACE:
+          std::cout << "AAAAAA\n";
           auto start = std::chrono::high_resolution_clock::now();
+          pathNodes.clear();
           pathNodes = graph->getRandomPath();
           auto stop = std::chrono::high_resolution_clock::now();
           auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);

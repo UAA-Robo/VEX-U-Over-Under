@@ -1,5 +1,7 @@
 #include "Graph.h"
 #include <iostream>
+#include <time.h>
+#include <cstdlib>
 
 int Graph::getEdgeCost(Node *a, Node *b)
 {
@@ -238,8 +240,10 @@ std::vector<Node *> Graph::getPath(Node *origin, Node *destination)
 }
 std::vector<Node *> Graph::getRandomPath()
 {
-  std::random_device rd;
-  std::mt19937 rng(rd());
+  srand(time(0));
+
+  // std::random_device rd;
+  std::mt19937 rng(rand());
   std::uniform_int_distribution<int> randX(0, this->xNodes - 1);
   std::uniform_int_distribution<int> randY(0, this->yNodes - 1);
 
@@ -247,17 +251,18 @@ std::vector<Node *> Graph::getRandomPath()
   int originY;
   int destinationX;
   int destinationY;
-
+  int c = 0;
   do
   {
     originX = randX(rng);
     originY = randY(rng);
     destinationX = randX(rng);
     destinationY = randY(rng);
-  } while (this->nodes[originY][originX]->forbidden || this->nodes[destinationY][destinationX]->forbidden);
+    c++;
+  } while (c < 5 || this->nodes[originY][originX]->forbidden || this->nodes[destinationY][destinationX]->forbidden);
 
   // this->reset();
-  // std::cout << originX << ", " << originY << "\t" << destinationX << ", " << destinationY << "\n";
+  std::cout << originX << ", " << originY << "\t" << destinationX << ", " << destinationY << "\n";
   return getPath(this->nodes[originY][originX], this->nodes[destinationY][destinationX]);
   // return getPath(this->nodes[50][50], this->nodes[30][30]);
 }
