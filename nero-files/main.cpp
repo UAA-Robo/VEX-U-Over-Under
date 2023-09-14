@@ -17,6 +17,7 @@
 #include "Graph.h"
 #include "Triangle.h"
 #include "Rectangle.h"
+#include "Button.h"
 
 // in inches
 double const FIELD_SIZE = 138.73;
@@ -31,146 +32,106 @@ int const BUFFER_NODES_NUMBER = 2;
 int const X_NODES = FIELD_SIZE / NODE_SIZE;
 int const Y_NODES = FIELD_SIZE / NODE_SIZE;
 
-int heuristic(Node *currentNode, Node *destination)
-{
-  int dx = abs(currentNode->x - destination->x);
-  int dy = abs(currentNode->y - destination->y);
+// std::vector<Node *> AStar(Graph* graph, Node *origin, Node *destination, int (*heuristic)(Node *, Node *))
+// {
+//   std::set<Node *> frontier;
+//   std::map<Node *, int> gScores;
+//   std::map<Node *, int> fScores;
 
-  return 10 * (dx + dy) + (14 - 2 * 10) * std::min(dx, dy);
-}
+//   frontier.insert(origin);
+//   gScores[origin] = 0;
+//   fScores[origin] = heuristic(origin, destination);
 
-std::vector<Node *> reconstructPath(Node *currentNode)
-{
-  std::vector<Node *> path;
-  path.push_back(currentNode);
+//   while (frontier.size() > 0)
+//   {
+//     int lowestFScore = 2147483647;
+//     Node *currentNode;
 
-  while (currentNode->parent != NULL)
-  {
-    currentNode = currentNode->parent;
-    path.push_back(currentNode);
-  }
+//     for (Node *node : frontier)
+//     {
+//       if (fScores.find(node) == fScores.end() || fScores[node] < lowestFScore)
+//       {
+//         lowestFScore = fScores[node];
+//         currentNode = node;
+//       }
+//     }
 
-  return path;
-}
+//     frontier.erase(currentNode);
 
-int getEdgeCost(Node *a, Node *b)
-{
-  // if nodes are diagonal neighbors
-  if ((b->x == a->x + 1 && b->y == a->y) || (b->x == a->x - 1 && b->y == a->y) || (b->x == a->x && b->y == a->y + 1) || (b->x == a->x && b->y == a->y - 1))
-  {
-    return 10;
-  }
-  // if nodes are orthogonal neighbors
-  else if ((b->x == a->x + 1 && b->y == a->y + 1) || (b->x == a->x + 1 && b->y == a->y - 1) || (b->x == a->x - 1 && b->y == a->y + 1) || (b->x == a->x - 1 && b->y == a->y - 1))
-  {
-    return 14;
-  }
-  else
-  {
-    throw std::runtime_error("ERROR 001");
-  }
-}
+//     if (currentNode == destination)
+//     {
+//       return reconstructPath(currentNode);
+//     }
 
-std::vector<Node *> AStar(Graph graph, Node *origin, Node *destination, int (*heuristic)(Node *, Node *))
-{
-  std::set<Node *> frontier;
-  std::map<Node *, int> gScores;
-  std::map<Node *, int> fScores;
+//     for (Node *neighbor : currentNode->neighbors)
+//     {
+//       int neighborGScore = gScores[currentNode] + getEdgeCost(currentNode, neighbor);
 
-  frontier.insert(origin);
-  gScores[origin] = 0;
-  fScores[origin] = heuristic(origin, destination);
+//       if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
+//       {
+//         neighbor->parent = currentNode;
+//         gScores[neighbor] = neighborGScore;
+//         fScores[neighbor] = neighborGScore + heuristic(neighbor, destination);
 
-  while (frontier.size() > 0)
-  {
-    int lowestFScore = 2147483647;
-    Node *currentNode;
+//         if (frontier.find(neighbor) == frontier.end())
+//         {
+//           frontier.insert(neighbor);
+//         }
+//       }
+//     }
+//   }
+//   throw std::runtime_error("ERROR 002");
+// }
 
-    for (Node *node : frontier)
-    {
-      if (fScores.find(node) == fScores.end() || fScores[node] < lowestFScore)
-      {
-        lowestFScore = fScores[node];
-        currentNode = node;
-      }
-    }
+// std::vector<Node *> ThetaStar(Graph* graph, Node *origin, Node *destination, int (*h)(Node *, Node *))
+// {
+//   std::set<Node *> frontier;
+//   std::set<Node *> explored;
+//   std::map<Node *, int> gScores;
+//   std::map<Node *, int> fScores;
 
-    frontier.erase(currentNode);
+//   frontier.insert(origin);
+//   gScores[origin] = 0;
+//   fScores[origin] = heuristic(origin, destination);
 
-    if (currentNode == destination)
-    {
-      return reconstructPath(currentNode);
-    }
+//   while (frontier.size() > 0)
+//   {
+//     int lowestFScore = 2147483647;
+//     Node *currentNode;
 
-    for (Node *neighbor : currentNode->neighbors)
-    {
-      int neighborGScore = gScores[currentNode] + getEdgeCost(currentNode, neighbor);
+//     for (Node *node : frontier)
+//     {
+//       if (fScores.find(node) == fScores.end() || fScores[node] < lowestFScore)
+//       {
+//         lowestFScore = fScores[node];
+//         currentNode = node;
+//       }
+//     }
 
-      if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
-      {
-        neighbor->parent = currentNode;
-        gScores[neighbor] = neighborGScore;
-        fScores[neighbor] = neighborGScore + heuristic(neighbor, destination);
+//     frontier.erase(currentNode);
 
-        if (frontier.find(neighbor) == frontier.end())
-        {
-          frontier.insert(neighbor);
-        }
-      }
-    }
-  }
-  throw std::runtime_error("ERROR 002");
-}
+//     if (currentNode == destination)
+//     {
+//       return reconstructPath(currentNode);
+//     }
 
-std::vector<Node *> ThetaStar(Graph graph, Node *origin, Node *destination, int (*h)(Node *, Node *))
-{
-  std::set<Node *> frontier;
-  std::set<Node *> explored;
-  std::map<Node *, int> gScores;
-  std::map<Node *, int> fScores;
-
-  frontier.insert(origin);
-  gScores[origin] = 0;
-  fScores[origin] = heuristic(origin, destination);
-
-  while (frontier.size() > 0)
-  {
-    int lowestFScore = 2147483647;
-    Node *currentNode;
-
-    for (Node *node : frontier)
-    {
-      if (fScores.find(node) == fScores.end() || fScores[node] < lowestFScore)
-      {
-        lowestFScore = fScores[node];
-        currentNode = node;
-      }
-    }
-
-    frontier.erase(currentNode);
-
-    if (currentNode == destination)
-    {
-      return reconstructPath(currentNode);
-    }
-
-    for (Node *neighbor : currentNode->neighbors)
-    {
-      int neighborGScore = gScores[currentNode] + getEdgeCost(currentNode, neighbor);
-      if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
-      {
-        neighbor->parent = currentNode;
-        gScores[neighbor] = neighborGScore;
-        fScores[neighbor] = neighborGScore + heuristic(neighbor, destination);
-        if (frontier.find(neighbor) == frontier.end())
-        {
-          frontier.insert(neighbor);
-        }
-      }
-    }
-  }
-  throw std::runtime_error("ERROR 003");
-}
+//     for (Node *neighbor : currentNode->neighbors)
+//     {
+//       int neighborGScore = gScores[currentNode] + getEdgeCost(currentNode, neighbor);
+//       if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
+//       {
+//         neighbor->parent = currentNode;
+//         gScores[neighbor] = neighborGScore;
+//         fScores[neighbor] = neighborGScore + heuristic(neighbor, destination);
+//         if (frontier.find(neighbor) == frontier.end())
+//         {
+//           frontier.insert(neighbor);
+//         }
+//       }
+//     }
+//   }
+//   throw std::runtime_error("ERROR 003");
+// }
 
 std::tuple<int, int> GPStoLocal(std::tuple<int, int> point)
 {
@@ -215,7 +176,7 @@ int getPositionRelative(Node *a, Node *b)
   }
 }
 
-void forbidTriangle(Graph graph, Node *a, Node *b)
+void forbidTriangle(Graph *graph, Node *a, Node *b)
 {
 
   int bx = b->x;
@@ -231,7 +192,7 @@ void forbidTriangle(Graph graph, Node *a, Node *b)
     {
       for (int xx = xInitial; xx >= x; xx--)
       {
-        graph.getNode(xx, y)->forbid();
+        graph->getNode(xx, y)->forbid();
       }
 
       x--;
@@ -245,7 +206,7 @@ void forbidTriangle(Graph graph, Node *a, Node *b)
     {
       for (int xx = xInitial; xx <= x; xx++)
       {
-        graph.getNode(xx, y)->forbid();
+        graph->getNode(xx, y)->forbid();
       }
 
       x++;
@@ -259,7 +220,7 @@ void forbidTriangle(Graph graph, Node *a, Node *b)
     {
       for (int xx = xInitial; xx >= x; xx--)
       {
-        graph.getNode(xx, y)->forbid();
+        graph->getNode(xx, y)->forbid();
       }
 
       x--;
@@ -273,7 +234,7 @@ void forbidTriangle(Graph graph, Node *a, Node *b)
     {
       for (int xx = xInitial; xx <= x; xx++)
       {
-        graph.getNode(xx, y)->forbid();
+        graph->getNode(xx, y)->forbid();
       }
 
       x++;
@@ -295,14 +256,20 @@ void drawCell(SDL_Renderer *renderer, Node *node, SDL_Color color, int yOffset, 
   SDL_RenderFillRect(renderer, &cell);
 }
 
-int SDL(Graph graph, std::vector<Node *> forbiddenNodes, std::vector<Node *> pathNodes)
+std::vector<Node *> k(Graph *graph)
+{
+  std::cout << "AAAAAAAAAAA" << std::endl;
+  return graph->getRandomPath();
+}
+
+int SDL(Graph *graph, std::vector<Node *> forbiddenNodes, std::vector<Node *> pathNodes)
 {
   std::vector<Node *> selectedNodes;
   bool selectingNodesAllowed = false;
 
   // + 1 so that the last grid lines fit in the screen.
-  int window_width = (graph.xNodes * CELL_SIZE) + 1;
-  int window_height = (graph.yNodes * CELL_SIZE) + 1;
+  int window_width = (graph->xNodes * CELL_SIZE) + 1;
+  int window_height = (graph->yNodes * CELL_SIZE) + 1;
 
   // Place the grid cursor in the middle of the screen.
   SDL_Rect grid_cursor = {
@@ -363,6 +330,13 @@ int SDL(Graph graph, std::vector<Node *> forbiddenNodes, std::vector<Node *> pat
   int xPadding = 100;
   int yPadding = 100;
 
+  int nodesSelected = 0;
+
+  Button button = Button(k,
+                         graph,
+                         SDL_Rect{20, 20, 20, 20},
+                         SDL_Color{255, 255, 0, 255});
+
   while (!quit)
   {
     SDL_Event event;
@@ -391,47 +365,76 @@ int SDL(Graph graph, std::vector<Node *> forbiddenNodes, std::vector<Node *> pat
           break;
         case SDLK_ESCAPE:
           quit = SDL_TRUE;
+          // break;
+          break;
+        case SDLK_SPACE:
+          pathNodes = graph->getRandomPath();
+          break;
         }
         break;
       case SDL_MOUSEBUTTONDOWN:
-      {
-        // if (selectingNodesAllowed)
-        // {
-        //   bool nodeAllowed = true;
-        //   int xx = (event.motion.x / CELL_SIZE) * CELL_SIZE;
-        //   int yy = (event.motion.y / CELL_SIZE) * CELL_SIZE;
+        // std::cout << event.key.keysym.sym;
+        // std::cout << event.button.button;
+        // if (event.key.keysym.sym == SDL_BUTTON_RIGHT)
+        if (event.button.button == SDL_BUTTON_RIGHT)
+        {
+          selectingNodesAllowed = true;
+          nodesSelected = 0;
+          pathNodes.clear();
+          selectedNodes.clear();
+        }
+        // else if (event.key.keysym.sym == SDL_BUTTON_LEFT && selectingNodesAllowed)
+        else if (event.button.button == SDL_BUTTON_LEFT && selectingNodesAllowed)
+        {
+          bool nodeAllowed = true;
+          int x = ((event.motion.x - xPadding) / CELL_SIZE) * CELL_SIZE;
+          int y = ((event.motion.y - yPadding - yOffset) / CELL_SIZE) * CELL_SIZE;
 
-        //   for (Node *forbiddenNode : forbiddenNodes)
-        //   {
-        //     if (forbiddenNode->x * CELL_SIZE == xx && forbiddenNode->y * CELL_SIZE == yy)
-        //     {
-        //       nodeAllowed = false;
-        //     }
-        //   }
-        //   if (nodeAllowed)
-        //   {
-        //     bool isNotDuplicate = true;
-        //     for (SDL_Rect node : selectedNodes)
-        //     {
-        //       if (node.x == xx && node.y == yy)
-        //       {
-        //         isNotDuplicate = false;
-        //       }
-        //     }
-        //     if (isNotDuplicate)
-        //     {
+          for (Node *forbiddenNode : forbiddenNodes)
+          {
+            if (forbiddenNode->x * CELL_SIZE == x && forbiddenNode->y * CELL_SIZE == y)
+            {
+              nodeAllowed = false;
+            }
+          }
+          if (nodeAllowed)
+          {
+            bool isNotDuplicate = true;
+            for (Node *node : selectedNodes)
+            {
+              if (node->x * CELL_SIZE == x && node->y * CELL_SIZE == y)
+              {
+                isNotDuplicate = false;
+              }
+            }
+            if (isNotDuplicate)
+            {
+              nodesSelected++;
 
-        //       selectedNodes.push_back(SDL_Rect{
-        //           .x = (event.motion.x / CELL_SIZE) * CELL_SIZE,
-        //           .y = (event.motion.y / CELL_SIZE) * CELL_SIZE,
-        //           .w = CELL_SIZE,
-        //           .h = CELL_SIZE,
-        //       });
-        //     }
-        //   }
-        // }
-      }
-      break;
+              // selectedNodes.push_back(graph->getNode((x * CELL_SIZE) / CELL_SIZE,
+              //                                        (y * CELL_SIZE) / CELL_SIZE));
+              selectedNodes.push_back(graph->getNode(x / CELL_SIZE, y / CELL_SIZE));
+              if (nodesSelected == 2)
+              {
+                selectingNodesAllowed = false;
+                pathNodes = graph->getPath(selectedNodes[0], selectedNodes[1]);
+              }
+              else if (nodesSelected > 2 || nodesSelected < 0)
+              {
+                throw "Z";
+              }
+
+              // selectedNodes.push_back(SDL_Rect{
+              //     .x = (event.motion.x / CELL_SIZE) * CELL_SIZE,
+              //     .y = (event.motion.y / CELL_SIZE) * CELL_SIZE,
+              //     .w = CELL_SIZE,
+              //     .h = CELL_SIZE,
+              // });
+            }
+          }
+          // button.HandleEvent(&event);
+          break;
+        }
 
         // if (grid_cursor.x == NULL)
         // {
@@ -442,7 +445,7 @@ int SDL(Graph graph, std::vector<Node *> forbiddenNodes, std::vector<Node *> pat
         // grid_cursor.x = (event.motion.x / CELL_SIZE) * CELL_SIZE;
         // grid_cursor.y = (event.motion.y / CELL_SIZE) * CELL_SIZE;
         // SDL_Rect cell = {
-
+        break;
       case SDL_MOUSEMOTION:
         grid_cursor_ghost.x = (event.motion.x / CELL_SIZE) * CELL_SIZE;
         grid_cursor_ghost.y = (event.motion.y / CELL_SIZE) * CELL_SIZE;
@@ -480,6 +483,11 @@ int SDL(Graph graph, std::vector<Node *> forbiddenNodes, std::vector<Node *> pat
       }
     }
 
+    if (button.clicked)
+    {
+      button.clicked = false;
+    }
+
     // Draw grid background.
     SDL_SetRenderDrawColor(renderer, grid_background.r, grid_background.g,
                            grid_background.b, grid_background.a);
@@ -489,13 +497,13 @@ int SDL(Graph graph, std::vector<Node *> forbiddenNodes, std::vector<Node *> pat
     SDL_SetRenderDrawColor(renderer, grid_line_color.r, grid_line_color.g,
                            grid_line_color.b, grid_line_color.a);
 
-    for (int x = 0; x < 1 + graph.xNodes * CELL_SIZE;
+    for (int x = 0; x < 1 + graph->xNodes * CELL_SIZE;
          x += CELL_SIZE)
     {
       SDL_RenderDrawLine(renderer, x + xPadding, 0 + yOffset + yPadding, x + xPadding, window_height + yOffset + yPadding);
     }
 
-    for (int y = 0; y < 1 + graph.yNodes * CELL_SIZE;
+    for (int y = 0; y < 1 + graph->yNodes * CELL_SIZE;
          y += CELL_SIZE)
     {
       SDL_RenderDrawLine(renderer, 0 + xPadding, y + yOffset + yPadding, window_width + xPadding, y + yOffset + yPadding);
@@ -529,6 +537,9 @@ int SDL(Graph graph, std::vector<Node *> forbiddenNodes, std::vector<Node *> pat
       drawCell(renderer, node, pathNodesColor, yOffset, xPadding, yPadding);
     }
 
+    SDL_SetRenderDrawColor(renderer, button.color.r, button.color.g, button.color.b, button.color.a);
+    SDL_RenderFillRect(renderer, &button.rect);
+
     SDL_RenderPresent(renderer);
   }
 
@@ -539,20 +550,20 @@ int SDL(Graph graph, std::vector<Node *> forbiddenNodes, std::vector<Node *> pat
   return EXIT_SUCCESS;
 }
 
-void forbidRectangle(Graph graph, Node *topLeftPoint, Node *topRightPoint, Node *bottomLeftPoint)
+void forbidRectangle(Graph *graph, Node *topLeftPoint, Node *topRightPoint, Node *bottomLeftPoint)
 {
   for (int y = topLeftPoint->y; y <= bottomLeftPoint->y; y++)
   {
     for (int x = topLeftPoint->x; x <= topRightPoint->x; x++)
     {
-      graph.getNode(x, y)->forbid();
+      graph->getNode(x, y)->forbid();
     }
   }
 }
 
 int main(int argv, char **args)
 {
-  Graph graph = Graph(X_NODES, Y_NODES);
+  Graph *graph = new Graph(X_NODES, Y_NODES);
 
   double const ROLLER_SIZE = ZONE_SIZE;
 
@@ -578,39 +589,39 @@ int main(int argv, char **args)
   std::vector<Triangle> forbiddenZonesTriangles;
   std::vector<Rectangle> forbiddenZonesRectangles;
 
-  forbiddenZonesTriangles.push_back(Triangle(graph.getNode(0, 0),
-                                             graph.getNode(0, ROLLER_SIZE),
-                                             graph.getNode(ROLLER_SIZE, 0)));
-  forbiddenZonesTriangles.push_back(Triangle(graph.getNode(FIELD_SIZE - 1, 0),
-                                             graph.getNode(FIELD_SIZE - 1, ROLLER_SIZE),
-                                             graph.getNode(FIELD_SIZE - 1 - ROLLER_SIZE, 0)));
-  forbiddenZonesTriangles.push_back(Triangle(graph.getNode(0, FIELD_SIZE - 1),
-                                             graph.getNode(0, FIELD_SIZE - 1 - ROLLER_SIZE),
-                                             graph.getNode(ROLLER_SIZE, FIELD_SIZE - 1)));
-  forbiddenZonesTriangles.push_back(Triangle(graph.getNode(FIELD_SIZE - 1, FIELD_SIZE - 1),
-                                             graph.getNode(FIELD_SIZE - 1, FIELD_SIZE - 1 - ROLLER_SIZE),
-                                             graph.getNode(FIELD_SIZE - 1 - ROLLER_SIZE, FIELD_SIZE - 1)));
+  forbiddenZonesTriangles.push_back(Triangle(graph->getNode(0, 0),
+                                             graph->getNode(0, ROLLER_SIZE),
+                                             graph->getNode(ROLLER_SIZE, 0)));
+  forbiddenZonesTriangles.push_back(Triangle(graph->getNode(FIELD_SIZE - 1, 0),
+                                             graph->getNode(FIELD_SIZE - 1, ROLLER_SIZE),
+                                             graph->getNode(FIELD_SIZE - 1 - ROLLER_SIZE, 0)));
+  forbiddenZonesTriangles.push_back(Triangle(graph->getNode(0, FIELD_SIZE - 1),
+                                             graph->getNode(0, FIELD_SIZE - 1 - ROLLER_SIZE),
+                                             graph->getNode(ROLLER_SIZE, FIELD_SIZE - 1)));
+  forbiddenZonesTriangles.push_back(Triangle(graph->getNode(FIELD_SIZE - 1, FIELD_SIZE - 1),
+                                             graph->getNode(FIELD_SIZE - 1, FIELD_SIZE - 1 - ROLLER_SIZE),
+                                             graph->getNode(FIELD_SIZE - 1 - ROLLER_SIZE, FIELD_SIZE - 1)));
 
-  forbiddenZonesRectangles.push_back(Rectangle(graph.getNode(GOAL_START_X, GOAL_START_Y),
-                                               graph.getNode(GOAL_START_X + GOAL_SIZE_X, GOAL_START_Y),
-                                               graph.getNode(GOAL_START_X, GOAL_START_Y + GOAL_SIZE_Y),
-                                               graph.getNode(GOAL_START_X + GOAL_SIZE_X, GOAL_START_Y + GOAL_SIZE_Y)));
-  forbiddenZonesRectangles.push_back(Rectangle(graph.getNode(GOAL_START_X, FIELD_SIZE - 1 - GOAL_SIZE_Y),
-                                               graph.getNode(GOAL_START_X + GOAL_SIZE_X, FIELD_SIZE - 1 - GOAL_SIZE_Y),
-                                               graph.getNode(GOAL_START_X, FIELD_SIZE - 1),
-                                               graph.getNode(GOAL_START_X + GOAL_SIZE_X, FIELD_SIZE - 1)));
-  forbiddenZonesRectangles.push_back(Rectangle(graph.getNode(BAR_LEFT_START_X, BAR_LEFT_START_Y),
-                                               graph.getNode(BAR_LEFT_START_X + BAR_LEFT_SIZE_X, BAR_LEFT_START_Y),
-                                               graph.getNode(BAR_LEFT_START_X, BAR_LEFT_START_Y + BAR_LEFT_SIZE_Y),
-                                               graph.getNode(BAR_LEFT_START_X + BAR_LEFT_SIZE_X, BAR_LEFT_START_Y + BAR_LEFT_SIZE_Y)));
-  forbiddenZonesRectangles.push_back(Rectangle(graph.getNode(BAR_RIGHT_START_X, BAR_RIGHT_START_Y),
-                                               graph.getNode(BAR_RIGHT_START_X + BAR_RIGHT_SIZE_X, BAR_RIGHT_START_Y),
-                                               graph.getNode(BAR_RIGHT_START_X, BAR_RIGHT_START_Y + BAR_RIGHT_SIZE_Y),
-                                               graph.getNode(BAR_RIGHT_START_X + BAR_RIGHT_SIZE_X, BAR_RIGHT_START_Y + BAR_RIGHT_SIZE_Y)));
-  forbiddenZonesRectangles.push_back(Rectangle(graph.getNode(BAR_MAIN_START_X, BAR_MAIN_START_Y),
-                                               graph.getNode(BAR_MAIN_START_X + BAR_MAIN_SIZE_X, BAR_MAIN_START_Y),
-                                               graph.getNode(BAR_MAIN_START_X, BAR_MAIN_START_Y + BAR_MAIN_SIZE_Y),
-                                               graph.getNode(BAR_MAIN_START_X + BAR_MAIN_SIZE_X, BAR_MAIN_START_Y + BAR_MAIN_SIZE_Y)));
+  forbiddenZonesRectangles.push_back(Rectangle(graph->getNode(GOAL_START_X, GOAL_START_Y),
+                                               graph->getNode(GOAL_START_X + GOAL_SIZE_X, GOAL_START_Y),
+                                               graph->getNode(GOAL_START_X, GOAL_START_Y + GOAL_SIZE_Y),
+                                               graph->getNode(GOAL_START_X + GOAL_SIZE_X, GOAL_START_Y + GOAL_SIZE_Y)));
+  forbiddenZonesRectangles.push_back(Rectangle(graph->getNode(GOAL_START_X, FIELD_SIZE - 1 - GOAL_SIZE_Y),
+                                               graph->getNode(GOAL_START_X + GOAL_SIZE_X, FIELD_SIZE - 1 - GOAL_SIZE_Y),
+                                               graph->getNode(GOAL_START_X, FIELD_SIZE - 1),
+                                               graph->getNode(GOAL_START_X + GOAL_SIZE_X, FIELD_SIZE - 1)));
+  forbiddenZonesRectangles.push_back(Rectangle(graph->getNode(BAR_LEFT_START_X, BAR_LEFT_START_Y),
+                                               graph->getNode(BAR_LEFT_START_X + BAR_LEFT_SIZE_X, BAR_LEFT_START_Y),
+                                               graph->getNode(BAR_LEFT_START_X, BAR_LEFT_START_Y + BAR_LEFT_SIZE_Y),
+                                               graph->getNode(BAR_LEFT_START_X + BAR_LEFT_SIZE_X, BAR_LEFT_START_Y + BAR_LEFT_SIZE_Y)));
+  forbiddenZonesRectangles.push_back(Rectangle(graph->getNode(BAR_RIGHT_START_X, BAR_RIGHT_START_Y),
+                                               graph->getNode(BAR_RIGHT_START_X + BAR_RIGHT_SIZE_X, BAR_RIGHT_START_Y),
+                                               graph->getNode(BAR_RIGHT_START_X, BAR_RIGHT_START_Y + BAR_RIGHT_SIZE_Y),
+                                               graph->getNode(BAR_RIGHT_START_X + BAR_RIGHT_SIZE_X, BAR_RIGHT_START_Y + BAR_RIGHT_SIZE_Y)));
+  forbiddenZonesRectangles.push_back(Rectangle(graph->getNode(BAR_MAIN_START_X, BAR_MAIN_START_Y),
+                                               graph->getNode(BAR_MAIN_START_X + BAR_MAIN_SIZE_X, BAR_MAIN_START_Y),
+                                               graph->getNode(BAR_MAIN_START_X, BAR_MAIN_START_Y + BAR_MAIN_SIZE_Y),
+                                               graph->getNode(BAR_MAIN_START_X + BAR_MAIN_SIZE_X, BAR_MAIN_START_Y + BAR_MAIN_SIZE_Y)));
 
   for (Triangle triangle : forbiddenZonesTriangles)
   {
@@ -622,26 +633,13 @@ int main(int argv, char **args)
     forbidRectangle(graph, rectangle.topLeftPoint, rectangle.topRightPoint, rectangle.bottomLeftPoint);
   }
 
-  std::random_device rd;
-  std::mt19937 rng(rd());
-  std::uniform_int_distribution<int> randX(0, X_NODES - 1);
-  std::uniform_int_distribution<int> randY(0, Y_NODES - 1);
-
-  int originX;
-  int originY;
-  int destinationX;
-  int destinationY;
-
-  do
+  std::vector<Node *> pathNodes = graph->getRandomPath();
+  for (Node *node : pathNodes)
   {
-    originX = randX(rng);
-    originY = randY(rng);
-    destinationX = randX(rng);
-    destinationY = randY(rng);
-  } while (graph.getNode(originX, originY)->forbidden || graph.getNode(destinationX, destinationY)->forbidden);
-
-  std::vector<Node *> pathNodes = AStar(graph, graph.getNode(originX, originY), graph.getNode(destinationX, destinationY), heuristic);
-  std::vector<Node *> forbiddenNodes = graph.getForbiddenNodes();
+    // node->print();
+    // std::cout << std::endl;
+  }
+  std::vector<Node *> forbiddenNodes = graph->getForbiddenNodes();
 
   SDL(graph, forbiddenNodes, pathNodes);
 }
