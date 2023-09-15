@@ -1,6 +1,9 @@
 // Buffer zone size = half of robot size
 // Lookahead right outside orange zone
 
+// TODO - IMPORTANT - make sure the pathfinding visualization is correct
+// TODO - visualization for LOS / field of vision
+
 #include <map>
 #include <vector>
 #include <cmath>
@@ -885,6 +888,8 @@ int SDL(Graph *graph)
         // else if (event.key.keysym.sym == SDL_BUTTON_LEFT && selectingNodesAllowed)
         else if (event.button.button == SDL_BUTTON_LEFT && selectingNodesAllowed)
         {
+          autoMode = false;
+          snapshotNumber = 0;
           bool nodeAllowed = true;
           int x = ((event.motion.x - xPadding) / CELL_SIZE) * CELL_SIZE;
           int y = ((event.motion.y - yPadding - yOffset) / CELL_SIZE) * CELL_SIZE;
@@ -917,7 +922,6 @@ int SDL(Graph *graph)
               {
                 selectingNodesAllowed = false;
                 pathNodes = graph->getPathSnapshots(selectedNodes[0], selectedNodes[1]);
-                std::cout << "AAAAAAAAAAAAAAA\n";
               }
               else if (nodesSelected > 2 || nodesSelected < 0)
               {
@@ -949,6 +953,9 @@ int SDL(Graph *graph)
       case SDL_MOUSEMOTION:
         grid_cursor_ghost.x = (event.motion.x / CELL_SIZE) * CELL_SIZE;
         grid_cursor_ghost.y = (event.motion.y / CELL_SIZE) * CELL_SIZE;
+
+        // grid_cursor_ghost.x += xPadding;
+        // grid_cursor_ghost.y += yOffset + yPadding;
 
         if (!mouse_active)
         {
@@ -1072,7 +1079,8 @@ int SDL(Graph *graph)
       }
 
       SDL_Color starting = {255, 255, 0, 255};
-      drawCell(renderer, pathNodes.back()->front(), starting, yOffset, xPadding, yPadding);
+      SDL_Color ending = {0, 255, 255, 255};
+      drawCell(renderer, pathNodes.back()->front(), ending, yOffset, xPadding, yPadding);
       drawCell(renderer, pathNodes.back()->back(), starting, yOffset, xPadding, yPadding);
     }
 

@@ -5,22 +5,27 @@
 #include <ostream>
 #include <string>
 
+// int Graph::getEdgeCost(Node *a, Node *b)
+// {
+//   // if nodes are diagonal neighbors
+//   if ((b->x == a->x + 1 && b->y == a->y) || (b->x == a->x - 1 && b->y == a->y) || (b->x == a->x && b->y == a->y + 1) || (b->x == a->x && b->y == a->y - 1))
+//   {
+//     return 10;
+//   }
+//   // if nodes are orthogonal neighbors
+//   else if ((b->x == a->x + 1 && b->y == a->y + 1) || (b->x == a->x + 1 && b->y == a->y - 1) || (b->x == a->x - 1 && b->y == a->y + 1) || (b->x == a->x - 1 && b->y == a->y - 1))
+//   {
+//     return 14;
+//   }
+//   else
+//   {
+//     throw std::runtime_error("ERROR 001");
+//   }
+// }
+
 int Graph::getEdgeCost(Node *a, Node *b)
 {
-  // if nodes are diagonal neighbors
-  if ((b->x == a->x + 1 && b->y == a->y) || (b->x == a->x - 1 && b->y == a->y) || (b->x == a->x && b->y == a->y + 1) || (b->x == a->x && b->y == a->y - 1))
-  {
-    return 10;
-  }
-  // if nodes are orthogonal neighbors
-  else if ((b->x == a->x + 1 && b->y == a->y + 1) || (b->x == a->x + 1 && b->y == a->y - 1) || (b->x == a->x - 1 && b->y == a->y + 1) || (b->x == a->x - 1 && b->y == a->y - 1))
-  {
-    return 14;
-  }
-  else
-  {
-    throw std::runtime_error("ERROR 001");
-  }
+  return 10;
 }
 
 std::vector<Node *> Graph::reconstructPath(Node *currentNode, std::map<Node *, Node *> cameFrom)
@@ -36,12 +41,17 @@ std::vector<Node *> Graph::reconstructPath(Node *currentNode, std::map<Node *, N
   return path;
 }
 
+// int Graph::heuristic(Node *currentNode, Node *destination)
+// {
+//   int dx = abs(currentNode->x - destination->x);
+//   int dy = abs(currentNode->y - destination->y);
+
+//   return 10 * (dx + dy) + (14 - 2 * 10) * std::min(dx, dy);
+// }
+
 int Graph::heuristic(Node *currentNode, Node *destination)
 {
-  int dx = abs(currentNode->x - destination->x);
-  int dy = abs(currentNode->y - destination->y);
-
-  return 10 * (dx + dy) + (14 - 2 * 10) * std::min(dx, dy);
+  return 10 * abs(currentNode->x - destination->x) + 10 * abs(currentNode->y - destination->y);
 }
 
 Graph::Graph(int xNodes, int yNodes)
@@ -325,10 +335,6 @@ std::vector<std::vector<Node *> *> Graph::getRandomPathSnapshots()
 
 std::vector<std::vector<Node *> *> Graph::getPathSnapshots(Node *origin, Node *destination)
 {
-  // this->reset();
-
-  std::remove("snapshots.txt");
-  std::ofstream fileWriteSnapshot("snapshots.txt");
   std::set<Node *> frontier;
   std::map<Node *, Node *> cameFrom;
   std::map<Node *, int> gScores;
@@ -348,7 +354,12 @@ std::vector<std::vector<Node *> *> Graph::getPathSnapshots(Node *origin, Node *d
 
     for (Node *node : frontier)
     {
-      if (fScores.find(node) == fScores.end() || fScores[node] < lowestFScore)
+      // if ((fScores.find(node) == fScores.end() && fScores[node] < lowestFScore) || fScores.find(node) == fScores.end())
+      if (fScores.find(node) == fScores.end())
+      {
+        fScores[node] = 2147483647;
+      }
+      if (fScores[node] < lowestFScore)
       {
         lowestFScore = fScores[node];
         currentNode = node;
@@ -363,22 +374,11 @@ std::vector<std::vector<Node *> *> Graph::getPathSnapshots(Node *origin, Node *d
       temp = cameFrom[temp];
     }
 
-    for (auto node : cameFrom)
-    {
-      fileWriteSnapshot << std::to_string(node.first->x) << " " << std::to_string(node.first->y) << " " << std::to_string(node.second->x) << " " << std::to_string(node.second->y) << " ";
-      //   fileWriteSnapshot << std::to_string(node.first->x) +
-      //                            " " + std::to_string(node.first->y) +
-      //                            " " + std::to_string(node.second->x) +
-      //                            " " + std::to_string(node.second->y) + " ";
-    }
-    fileWriteSnapshot << "X ";
-
     frontier.erase(currentNode);
 
     if (currentNode == destination)
     {
       // return reconstructPath(currentNode, cameFrom);
-      fileWriteSnapshot.close();
       return snapshots;
     }
 
@@ -386,8 +386,16 @@ std::vector<std::vector<Node *> *> Graph::getPathSnapshots(Node *origin, Node *d
     {
       int neighborGScore = gScores[currentNode] + getEdgeCost(currentNode, neighbor);
 
-      if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
+      // TODO - should this be like or like split into two if clauses?
+      if (gScores.find(neighbor) == gScores.end())
       {
+        gScores[neighbor] = neighborGScore;
+        // }
+        // if (neighborGScore < gScores[neighbor])
+        // if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
+        // TODO - why or equals?
+        // if (neighborGScore <= gScores[neighbor])
+        // {
         cameFrom[neighbor] = currentNode;
         gScores[neighbor] = neighborGScore;
         fScores[neighbor] = neighborGScore + this->heuristic(neighbor, destination);
@@ -401,7 +409,3 @@ std::vector<std::vector<Node *> *> Graph::getPathSnapshots(Node *origin, Node *d
   }
   throw std::runtime_error("ERROR 100");
 }
-
-// std::vector<std::vector<Node *> *> Graph::reconstructPath(Node *currentNode, std::map<Node *, Node *> cameFrom)
-// {
-// }
