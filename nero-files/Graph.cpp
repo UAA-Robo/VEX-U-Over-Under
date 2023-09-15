@@ -5,6 +5,40 @@
 #include <ostream>
 #include <string>
 
+bool Graph::LOS(Node *a, Node *b)
+{
+}
+
+// break whenever you hit an obstacle
+std::vector<Node *> Graph::getVisibleNodes(Node *node)
+{
+}
+
+// can store this data on the node itself
+bool Graph::isCornerNode(Node *node)
+{
+  int x = node->x;
+  int y = node->y;
+
+  if (this->nodes[y - 1][x]->forbidden ||
+      this->nodes[y + 1][x]->forbidden ||
+      this->nodes[y][x - 1]->forbidden ||
+      this->nodes[y][x + 1]->forbidden)
+  {
+    return false;
+  };
+
+  if (this->nodes[y][x]->forbidden ||
+      this->nodes[y][x]->forbidden ||
+      this->nodes[y][x]->forbidden ||
+      this->nodes[y][x]->forbidden)
+  {
+    return true;
+  };
+
+  return false;
+}
+
 // int Graph::getEdgeCost(Node *a, Node *b)
 // {
 //   // if nodes are diagonal neighbors
@@ -12,7 +46,7 @@
 //   {
 //     return 10;
 //   }
-//   // if nodes are orthogonal neighbors
+//   // if nodes are cardinal neighbors
 //   else if ((b->x == a->x + 1 && b->y == a->y + 1) || (b->x == a->x + 1 && b->y == a->y - 1) || (b->x == a->x - 1 && b->y == a->y + 1) || (b->x == a->x - 1 && b->y == a->y - 1))
 //   {
 //     return 14;

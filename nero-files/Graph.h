@@ -9,6 +9,7 @@ class Graph
 {
 private:
   Node ***nodes;
+  Node ***VG;
 
   int heuristic(Node *currentNode, Node *destination);
   std::vector<Node *> reconstructPath(Node *currentNode, std::map<Node *, Node *> cameFrom);
@@ -27,4 +28,13 @@ public:
   std::vector<Node *> getRandomPath();
   std::vector<std::vector<Node *> *> getRandomPathSnapshots();
   std::vector<std::vector<Node *> *> getPathSnapshots(Node *origin, Node *destination);
+  std::vector<Node *> getVisibleNodes(Node *node);
+  bool LOS(Node *a, Node *b);
+  bool isCornerNode(Node *node);
 };
+
+// Edge N-Level Sparse Visibility Graph
+// 1. Mark corner nodes as waypoints
+// 2. For each node, get its visible neighbors through LOS scan
+//     * Only if a can see b and b can see a should you add them as neighbors
+// 3. Prune edges
