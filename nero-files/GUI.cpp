@@ -249,11 +249,6 @@ int GUI::run(bool showSnapshots)
                 // selectedNodes.push_back(graph->getNode((x * CELL_SIZE) / CELL_SIZE,
                 //                                        (y * CELL_SIZE) / CELL_SIZE));
                 selectedNodes.push_back(graph->getNode(x / CELL_SIZE, y / CELL_SIZE));
-                selectedNodes.back()->println();
-                // std::cout << event.motion.x << "\n"
-                // << event.motion.y << "\n";
-                // std::cout << x << "\n"
-                //           << y << "\n";
                 if (nodesSelected == 2)
                 {
                   selectingNodesAllowed = false;
