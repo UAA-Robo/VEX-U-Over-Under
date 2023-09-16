@@ -33,7 +33,7 @@ public:
     vex::motor back_right_drivetrain_motor = vex::motor(vex::PORT18, vex::ratio6_1, true);
 
     // Odometry Wheels
-    vex::rotation left_odometry =  vex::rotation(vex::PORT8, true);
+    vex::rotation left_odometry =  vex::rotation(vex::PORT6, true);
     vex::rotation right_odometry =  vex::rotation(vex::PORT7);
     vex::rotation back_odometry =  vex::rotation(vex::PORT8);
 
