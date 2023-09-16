@@ -26,8 +26,7 @@ int GUI::run(bool showSnapshots)
   int windowWidth = (graph->xNodes * CELL_SIZE) + 1;
   int windowHeight = (graph->yNodes * CELL_SIZE) + 1;
 
-  SDL_Rect grid_cursor_ghost = {0, 0, CELL_SIZE,
-                                CELL_SIZE};
+  SDL_Rect grid_cursor_ghost = {0, 0, CELL_SIZE, CELL_SIZE};
 
   // Dark theme.
   // SDL_Color grid_background = {22, 22, 22, 255};
@@ -43,19 +42,16 @@ int GUI::run(bool showSnapshots)
 
   if (SDL_Init(SDL_INIT_VIDEO) < 0)
   {
-    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Initialize SDL: %s",
-                 SDL_GetError());
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Initialize SDL: %s", SDL_GetError());
     return EXIT_FAILURE;
   }
 
   SDL_Window *window;
   SDL_Renderer *renderer;
 
-  if (SDL_CreateWindowAndRenderer(windowWidth, windowHeight, 0, &window,
-                                  &renderer) < 0)
+  if (SDL_CreateWindowAndRenderer(windowWidth, windowHeight, 0, &window, &renderer) < 0)
   {
-    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,
-                 "Create window and renderer: %s", SDL_GetError());
+    SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Create window and renderer: %s", SDL_GetError());
     return EXIT_FAILURE;
   }
 
@@ -232,6 +228,7 @@ int GUI::run(bool showSnapshots)
               if (forbiddenNode->x * CELL_SIZE == x && forbiddenNode->y * CELL_SIZE == y)
               {
                 nodeAllowed = false;
+                break;
               }
             }
             if (nodeAllowed)
@@ -242,6 +239,7 @@ int GUI::run(bool showSnapshots)
                 if (node->x * CELL_SIZE == x && node->y * CELL_SIZE == y)
                 {
                   isNotDuplicate = false;
+                  break;
                 }
               }
               if (isNotDuplicate)
@@ -251,6 +249,11 @@ int GUI::run(bool showSnapshots)
                 // selectedNodes.push_back(graph->getNode((x * CELL_SIZE) / CELL_SIZE,
                 //                                        (y * CELL_SIZE) / CELL_SIZE));
                 selectedNodes.push_back(graph->getNode(x / CELL_SIZE, y / CELL_SIZE));
+                selectedNodes.back()->println();
+                // std::cout << event.motion.x << "\n"
+                // << event.motion.y << "\n";
+                // std::cout << x << "\n"
+                //           << y << "\n";
                 if (nodesSelected == 2)
                 {
                   selectingNodesAllowed = false;
@@ -324,8 +327,20 @@ int GUI::run(bool showSnapshots)
         }
         break;
       case SDL_MOUSEMOTION:
-        grid_cursor_ghost.x = (event.motion.x / CELL_SIZE) * CELL_SIZE;
-        grid_cursor_ghost.y = (event.motion.y / CELL_SIZE) * CELL_SIZE;
+        // grid_cursor_ghost.x = (((event.motion.x) / CELL_SIZE) * CELL_SIZE);
+        // grid_cursor_ghost.y = ((event.motion.y / CELL_SIZE) * CELL_SIZE);
+        if ((event.motion.x >= xPadding && event.motion.x <= xPadding + windowWidth) &&
+            (event.motion.y >= yPadding + yOffset && event.motion.y <= yPadding + yOffset + windowHeight))
+        {
+
+          grid_cursor_ghost.x = (((event.motion.x - xPadding) / CELL_SIZE) * CELL_SIZE) + xPadding;
+          grid_cursor_ghost.y = (((event.motion.y - yPadding - yOffset) / CELL_SIZE) * CELL_SIZE) + yPadding + yOffset;
+        }
+        else
+        {
+          grid_cursor_ghost.x = -1000;
+          grid_cursor_ghost.y = -1000;
+        }
 
         if (!mouse_active)
         {

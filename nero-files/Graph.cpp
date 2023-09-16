@@ -236,18 +236,6 @@ std::vector<std::vector<Node *> *> Graph::getPathSnapshots(Node *origin, Node *d
 
     for (Node *node : frontier)
     {
-      // if ((fScores.find(node) == fScores.end() && fScores[node] < lowestFScore) || fScores.find(node) == fScores.end())
-      /*
-      if (fScores.find(node) == fScores.end())
-      {
-        fScores[node] = 2147483647;
-      }
-      */
-      if (fScores.find(node) == fScores.end())
-      {
-        std::cout << fScores[node] << "\n";
-        std::cout << "AAAAAAAAAAn";
-      }
       if (fScores[node] < lowestFScore)
       {
         lowestFScore = fScores[node];
@@ -275,7 +263,6 @@ std::vector<std::vector<Node *> *> Graph::getPathSnapshots(Node *origin, Node *d
     {
       int neighborGScore = gScores[currentNode] + getEdgeCost(currentNode, neighbor);
 
-      // TODO - should this be like or like split into two if clauses?
       if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
       {
         cameFrom[neighbor] = currentNode;
@@ -287,20 +274,6 @@ std::vector<std::vector<Node *> *> Graph::getPathSnapshots(Node *origin, Node *d
           frontier.insert(neighbor);
         }
       }
-      // if (neighborGScore < gScores[neighbor])
-      // if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
-      // TODO - why or equals?
-      // if (neighborGScore < gScores[neighbor])
-      // {
-      //   cameFrom[neighbor] = currentNode;
-      //   gScores[neighbor] = neighborGScore;
-      //   fScores[neighbor] = neighborGScore + this->heuristic(neighbor, destination);
-
-      //   if (frontier.find(neighbor) == frontier.end())
-      //   {
-      //     frontier.insert(neighbor);
-      //   }
-      // }
     }
   }
   throw std::runtime_error("ERROR 100");
@@ -380,7 +353,8 @@ void Graph::forbidTriangle(Node *a, Node *b)
     {
       for (int xx = xInitial; xx >= x; xx--)
       {
-        this->getNode(xx, y)->forbid();
+        // this->getNode(xx, y)->forbid();
+        this->nodes[y][xx]->forbid();
       }
 
       x--;
@@ -394,7 +368,8 @@ void Graph::forbidTriangle(Node *a, Node *b)
     {
       for (int xx = xInitial; xx <= x; xx++)
       {
-        this->getNode(xx, y)->forbid();
+        // this->getNode(xx, y)->forbid();
+        this->nodes[y][xx]->forbid();
       }
 
       x++;
@@ -408,7 +383,8 @@ void Graph::forbidTriangle(Node *a, Node *b)
     {
       for (int xx = xInitial; xx >= x; xx--)
       {
-        this->getNode(xx, y)->forbid();
+        // this->getNode(xx, y)->forbid();
+        this->nodes[y][xx]->forbid();
       }
 
       x--;
@@ -422,7 +398,8 @@ void Graph::forbidTriangle(Node *a, Node *b)
     {
       for (int xx = xInitial; xx <= x; xx++)
       {
-        this->getNode(xx, y)->forbid();
+        // this->getNode(xx, y)->forbid();
+        this->nodes[y][xx]->forbid();
       }
 
       x++;
@@ -437,7 +414,8 @@ void Graph::forbidRectangle(Node *topLeftPoint, Node *topRightPoint, Node *botto
   {
     for (int x = topLeftPoint->x; x <= topRightPoint->x; x++)
     {
-      this->getNode(x, y)->forbid();
+      // this->getNode(x, y)->forbid();
+      this->nodes[y][x]->forbid();
     }
   }
 }
@@ -450,16 +428,16 @@ void Graph::forbidRectangle(Node *topLeftPoint, Node *topRightPoint, Node *botto
 
 int Graph::getEdgeCost(Node *a, Node *b)
 {
-  return 10;
-  //  if nodes are diagonal neighbors
+  // return 10;
+  // if nodes are cardinal neighbors
   if ((b->x == a->x + 1 && b->y == a->y) || (b->x == a->x - 1 && b->y == a->y) || (b->x == a->x && b->y == a->y + 1) || (b->x == a->x && b->y == a->y - 1))
   {
-    return 14;
+    return 10;
   }
-  // if nodes are cardinal neighbors
+  //  if nodes are diagonal neighbors
   else if ((b->x == a->x + 1 && b->y == a->y + 1) || (b->x == a->x + 1 && b->y == a->y - 1) || (b->x == a->x - 1 && b->y == a->y + 1) || (b->x == a->x - 1 && b->y == a->y - 1))
   {
-    return 10;
+    return 14;
   }
   else
   {
@@ -468,18 +446,39 @@ int Graph::getEdgeCost(Node *a, Node *b)
 }
 
 // Octile distance
+// int Graph::heuristic(Node *currentNode, Node *destination)
+// {
+//   int dx = abs(currentNode->x - destination->x);
+//   int dy = abs(currentNode->y - destination->y);
+
+//   return 10 * (dx + dy) + (14 - 2 * 10) * std::min(dx, dy);
+// }
+
 int Graph::heuristic(Node *currentNode, Node *destination)
 {
   int dx = abs(currentNode->x - destination->x);
   int dy = abs(currentNode->y - destination->y);
 
-  return 10 * (dx + dy) + (14 - 2 * 10) * std::min(dx, dy);
+  if (dx > dy)
+  {
+    return 14 * dy + 10 * (dx - dy);
+  }
+  else
+  {
+    return 14 * dx + 10 * (dy - dx);
+  }
+
+  // return 10 * (dx + dy) + (14 - 2 * 10) * std::min(dx, dy);
 }
 
 // Manhattan distance
 // int Graph::heuristic(Node *currentNode, Node *destination)
 // {
-//   return 10 * abs(currentNode->x - destination->x) + 10 * abs(currentNode->y - destination->y);
+//   int dx = abs(currentNode->x - destination->x);
+//   int dy = abs(currentNode->y - destination->y);
+
+//   return 10 * (dx + dy);
+//   // return 10 * abs(currentNode->x - destination->x) + 10 * abs(currentNode->y - destination->y);
 // }
 
 // Direct distance
@@ -489,6 +488,7 @@ int Graph::heuristic(Node *currentNode, Node *destination)
 //   int y1 = currentNode->y;
 //   int x2 = destination->x;
 //   int y2 = destination->y;
+//   // return std::sqrt(std::pow(x2 - x1, 2) * 10 + std::pow(y2 - y1, 2) * 10);
 //   return std::sqrt(std::pow(x2 - x1, 2) + std::pow(y2 - y1, 2));
 // }
 
