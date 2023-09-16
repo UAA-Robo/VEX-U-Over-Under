@@ -4,6 +4,88 @@
 #include <fstream>
 #include <ostream>
 #include <string>
+#include <stdexcept>
+
+int Graph::getPositionRelative(Node *a, Node *b)
+{
+  int ax = a->x;
+  int ay = a->y;
+  int bx = b->x;
+  int by = b->y;
+
+  // b is top left of a
+  if (bx < ax && by < ay)
+  {
+    return 0;
+  }
+  // b is top right of a
+  else if (bx > ax && by < ay)
+  {
+    return 1;
+  }
+  // b is bottom left of a
+  else if (bx < ax && by > ay)
+  {
+    return 2;
+  }
+  // b is bottom right of a
+  else if (bx > ax && by > ay)
+  {
+    return 3;
+  }
+  else
+  {
+    throw std::runtime_error("ERROR 004");
+  }
+}
+
+bool Graph::shouldKeepNode(Node *a)
+{
+  while (true)
+  {
+  }
+  for (int y = a->y - 1; y >= 0; y--)
+  {
+    if (this->nodes[y][a->x]->forbidden)
+    {
+      break;
+    }
+    if (this->nodes[y][a->x]->waypoint)
+    {
+    }
+  }
+}
+
+void Graph::ENLSVG(int xNodes, int yNodes)
+{
+  this->xNodes = xNodes;
+  this->yNodes = yNodes;
+
+  for (int y = 0; y < yNodes; y++)
+  {
+    for (int x = 0; x < xNodes; x++)
+    {
+      if (this->isCornerNode(this->nodes[y][x]))
+      {
+        this->waypoints.push_back(this->nodes[y][x]);
+      }
+    }
+  }
+
+  // when adding a taut visible waypoint as a neight to node a, also add a as a taut visible waypoint to it?
+  for (Node *node : this->waypoints)
+  {
+    node->tautVisibleWaypoints = this->getTautVisibleWaypoints(node);
+  }
+
+  for (Node *node : this->waypoints)
+  {
+  }
+}
+
+std::set<Node *> Graph::getTautVisibleWaypoints(Node *node)
+{
+}
 
 bool Graph::LOS(Node *a, Node *b)
 {
@@ -20,18 +102,46 @@ bool Graph::isCornerNode(Node *node)
   int x = node->x;
   int y = node->y;
 
-  if (this->nodes[y - 1][x]->forbidden ||
-      this->nodes[y + 1][x]->forbidden ||
-      this->nodes[y][x - 1]->forbidden ||
-      this->nodes[y][x + 1]->forbidden)
+  bool hasTopNeighbor = y - 1 >= 0;
+  bool hasBottomNeighbor = y + 1 <= this->yNodes - 1;
+  bool hasLeftNeighbor = x - 1 >= 0;
+  bool hasRightNeighbor = x + 1 <= this->xNodes - 1;
+
+  bool hasTopLeftNeighbor = hasTopNeighbor && hasLeftNeighbor;
+  bool hasTopRightNeighbor = hasTopNeighbor && hasRightNeighbor;
+  bool hasBottomLeftNeighbor = hasBottomNeighbor && hasLeftNeighbor;
+  bool hasBottomRightNeighbor = hasBottomNeighbor && hasRightNeighbor;
+
+  bool topNeighborForbidden = hasTopNeighbor && this->nodes[y - 1][x]->forbidden;
+  bool rightNeighborForbidden = hasRightNeighbor && this->nodes[y][x + 1]->forbidden;
+  bool bottomNeighborForbidden = hasBottomNeighbor && this->nodes[y + 1][x]->forbidden;
+  bool leftNeighborForbidden = hasLeftNeighbor && this->nodes[y][x - 1]->forbidden;
+
+  bool topLeftNeighborForbidden = hasTopLeftNeighbor && this->nodes[y - 1][x - 1]->forbidden;
+  bool topRightNeighborForbidden = hasTopRightNeighbor && this->nodes[y - 1][x + 1]->forbidden;
+  bool bottomRightNeighborForbidden = hasBottomRightNeighbor && this->nodes[y + 1][x + 1]->forbidden;
+  bool bottomLeftNeighborForbidden = hasBottomLeftNeighbor && this->nodes[y + 1][x - 1]->forbidden;
+
+  if ((topLeftNeighborForbidden && topRightNeighborForbidden) ||
+      (topRightNeighborForbidden && bottomRightNeighborForbidden) ||
+      (bottomRightNeighborForbidden && bottomLeftNeighborForbidden) ||
+      (bottomLeftNeighborForbidden && topLeftNeighborForbidden))
+  {
+    throw std::runtime_error("ERROR 200");
+  }
+
+  if (topNeighborForbidden ||
+      bottomNeighborForbidden ||
+      leftNeighborForbidden ||
+      rightNeighborForbidden)
   {
     return false;
-  };
+  }
 
-  if (this->nodes[y][x]->forbidden ||
-      this->nodes[y][x]->forbidden ||
-      this->nodes[y][x]->forbidden ||
-      this->nodes[y][x]->forbidden)
+  if (topLeftNeighborForbidden ||
+      topRightNeighborForbidden ||
+      bottomRightNeighborForbidden ||
+      bottomLeftNeighborForbidden)
   {
     return true;
   };
@@ -39,27 +149,23 @@ bool Graph::isCornerNode(Node *node)
   return false;
 }
 
-// int Graph::getEdgeCost(Node *a, Node *b)
-// {
-//   // if nodes are diagonal neighbors
-//   if ((b->x == a->x + 1 && b->y == a->y) || (b->x == a->x - 1 && b->y == a->y) || (b->x == a->x && b->y == a->y + 1) || (b->x == a->x && b->y == a->y - 1))
-//   {
-//     return 10;
-//   }
-//   // if nodes are cardinal neighbors
-//   else if ((b->x == a->x + 1 && b->y == a->y + 1) || (b->x == a->x + 1 && b->y == a->y - 1) || (b->x == a->x - 1 && b->y == a->y + 1) || (b->x == a->x - 1 && b->y == a->y - 1))
-//   {
-//     return 14;
-//   }
-//   else
-//   {
-//     throw std::runtime_error("ERROR 001");
-//   }
-// }
-
 int Graph::getEdgeCost(Node *a, Node *b)
 {
-  return 10;
+  // return 10;
+  //  if nodes are diagonal neighbors
+  if ((b->x == a->x + 1 && b->y == a->y) || (b->x == a->x - 1 && b->y == a->y) || (b->x == a->x && b->y == a->y + 1) || (b->x == a->x && b->y == a->y - 1))
+  {
+    return 14;
+  }
+  // if nodes are cardinal neighbors
+  else if ((b->x == a->x + 1 && b->y == a->y + 1) || (b->x == a->x + 1 && b->y == a->y - 1) || (b->x == a->x - 1 && b->y == a->y + 1) || (b->x == a->x - 1 && b->y == a->y - 1))
+  {
+    return 10;
+  }
+  else
+  {
+    throw std::runtime_error("ERROR 001");
+  }
 }
 
 std::vector<Node *> Graph::reconstructPath(Node *currentNode, std::map<Node *, Node *> cameFrom)
@@ -75,18 +181,31 @@ std::vector<Node *> Graph::reconstructPath(Node *currentNode, std::map<Node *, N
   return path;
 }
 
-// int Graph::heuristic(Node *currentNode, Node *destination)
-// {
-//   int dx = abs(currentNode->x - destination->x);
-//   int dy = abs(currentNode->y - destination->y);
-
-//   return 10 * (dx + dy) + (14 - 2 * 10) * std::min(dx, dy);
-// }
-
+// Octile distance
 int Graph::heuristic(Node *currentNode, Node *destination)
 {
-  return 10 * abs(currentNode->x - destination->x) + 10 * abs(currentNode->y - destination->y);
+  int dx = abs(currentNode->x - destination->x);
+  int dy = abs(currentNode->y - destination->y);
+
+  return 10 * (dx + dy) + (14 - 2 * 10) * std::min(dx, dy);
 }
+
+// Manhattan distance
+// int Graph::heuristic(Node *currentNode, Node *destination)
+// {
+//   return 10 * abs(currentNode->x - destination->x) + 10 * abs(currentNode->y - destination->y);
+// }
+
+// Direct distance
+// int Graph::heuristic(Node *currentNode, Node *destination)
+// {
+//   int x1 = currentNode->x;
+//   int y1 = currentNode->y;
+//   int x2 = destination->x;
+//   int y2 = destination->y;
+
+//   return std::sqrt(std::pow(x2 - x1, 2) + std::pow(y2 - y1, 2));
+// }
 
 Graph::Graph(int xNodes, int yNodes)
 {
@@ -389,9 +508,16 @@ std::vector<std::vector<Node *> *> Graph::getPathSnapshots(Node *origin, Node *d
     for (Node *node : frontier)
     {
       // if ((fScores.find(node) == fScores.end() && fScores[node] < lowestFScore) || fScores.find(node) == fScores.end())
+      /*
       if (fScores.find(node) == fScores.end())
       {
         fScores[node] = 2147483647;
+      }
+      */
+      if (fScores.find(node) == fScores.end())
+      {
+        std::cout << fScores[node] << "\n";
+        std::cout << "AAAAAAAAAAn";
       }
       if (fScores[node] < lowestFScore)
       {
@@ -421,15 +547,8 @@ std::vector<std::vector<Node *> *> Graph::getPathSnapshots(Node *origin, Node *d
       int neighborGScore = gScores[currentNode] + getEdgeCost(currentNode, neighbor);
 
       // TODO - should this be like or like split into two if clauses?
-      if (gScores.find(neighbor) == gScores.end())
+      if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
       {
-        gScores[neighbor] = neighborGScore;
-        // }
-        // if (neighborGScore < gScores[neighbor])
-        // if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
-        // TODO - why or equals?
-        // if (neighborGScore <= gScores[neighbor])
-        // {
         cameFrom[neighbor] = currentNode;
         gScores[neighbor] = neighborGScore;
         fScores[neighbor] = neighborGScore + this->heuristic(neighbor, destination);
@@ -439,6 +558,20 @@ std::vector<std::vector<Node *> *> Graph::getPathSnapshots(Node *origin, Node *d
           frontier.insert(neighbor);
         }
       }
+      // if (neighborGScore < gScores[neighbor])
+      // if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
+      // TODO - why or equals?
+      // if (neighborGScore < gScores[neighbor])
+      // {
+      //   cameFrom[neighbor] = currentNode;
+      //   gScores[neighbor] = neighborGScore;
+      //   fScores[neighbor] = neighborGScore + this->heuristic(neighbor, destination);
+
+      //   if (frontier.find(neighbor) == frontier.end())
+      //   {
+      //     frontier.insert(neighbor);
+      //   }
+      // }
     }
   }
   throw std::runtime_error("ERROR 100");

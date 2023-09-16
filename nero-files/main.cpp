@@ -29,6 +29,7 @@
 
 // in inches
 double const FIELD_SIZE = 138.73;
+// double const FIELD_SIZE = 138.73 / 2;
 // double const FIELD_SIZE = 50;
 // length and width of nodes in inches, for real-life movement
 double const NODE_SIZE = 1;

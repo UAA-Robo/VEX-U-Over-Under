@@ -9,6 +9,8 @@ class Graph
 {
 private:
   Node ***nodes;
+  // Node ***waypoints;
+  std::vector<Node *> waypoints;
   Node ***VG;
 
   int heuristic(Node *currentNode, Node *destination);
@@ -30,7 +32,11 @@ public:
   std::vector<std::vector<Node *> *> getPathSnapshots(Node *origin, Node *destination);
   std::vector<Node *> getVisibleNodes(Node *node);
   bool LOS(Node *a, Node *b);
+  bool shouldKeepNode(Node *a);
+  int getPositionRelative(Node *a, Node *b);
   bool isCornerNode(Node *node);
+  void ENLSVG(int xNodes, int yNodes);
+  std::set<Node *> getTautVisibleWaypoints(Node *node);
 };
 
 // Edge N-Level Sparse Visibility Graph
@@ -38,3 +44,7 @@ public:
 // 2. For each node, get its visible neighbors through LOS scan
 //     * Only if a can see b and b can see a should you add them as neighbors
 // 3. Prune edges
+
+// Edge weight?
+// Taut A*?
+// all direction vs taut points line of sight scans
