@@ -6,206 +6,11 @@
 #include <string>
 #include <stdexcept>
 
-int Graph::getPositionRelative(Node *a, Node *b)
-{
-  int ax = a->x;
-  int ay = a->y;
-  int bx = b->x;
-  int by = b->y;
-
-  // b is top left of a
-  if (bx < ax && by < ay)
-  {
-    return 0;
-  }
-  // b is top right of a
-  else if (bx > ax && by < ay)
-  {
-    return 1;
-  }
-  // b is bottom left of a
-  else if (bx < ax && by > ay)
-  {
-    return 2;
-  }
-  // b is bottom right of a
-  else if (bx > ax && by > ay)
-  {
-    return 3;
-  }
-  else
-  {
-    throw std::runtime_error("ERROR 004");
-  }
-}
-
-bool Graph::shouldKeepNode(Node *a)
-{
-  while (true)
-  {
-  }
-  for (int y = a->y - 1; y >= 0; y--)
-  {
-    if (this->nodes[y][a->x]->forbidden)
-    {
-      break;
-    }
-    if (this->nodes[y][a->x]->waypoint)
-    {
-    }
-  }
-}
-
-void Graph::ENLSVG(int xNodes, int yNodes)
-{
-  this->xNodes = xNodes;
-  this->yNodes = yNodes;
-
-  for (int y = 0; y < yNodes; y++)
-  {
-    for (int x = 0; x < xNodes; x++)
-    {
-      if (this->isCornerNode(this->nodes[y][x]))
-      {
-        this->waypoints.push_back(this->nodes[y][x]);
-      }
-    }
-  }
-
-  // when adding a taut visible waypoint as a neight to node a, also add a as a taut visible waypoint to it?
-  for (Node *node : this->waypoints)
-  {
-    node->tautVisibleWaypoints = this->getTautVisibleWaypoints(node);
-  }
-
-  for (Node *node : this->waypoints)
-  {
-  }
-}
-
-std::set<Node *> Graph::getTautVisibleWaypoints(Node *node)
-{
-}
-
-bool Graph::LOS(Node *a, Node *b)
-{
-}
-
-// break whenever you hit an obstacle
-std::vector<Node *> Graph::getVisibleNodes(Node *node)
-{
-}
-
-// can store this data on the node itself
-bool Graph::isCornerNode(Node *node)
-{
-  int x = node->x;
-  int y = node->y;
-
-  bool hasTopNeighbor = y - 1 >= 0;
-  bool hasBottomNeighbor = y + 1 <= this->yNodes - 1;
-  bool hasLeftNeighbor = x - 1 >= 0;
-  bool hasRightNeighbor = x + 1 <= this->xNodes - 1;
-
-  bool hasTopLeftNeighbor = hasTopNeighbor && hasLeftNeighbor;
-  bool hasTopRightNeighbor = hasTopNeighbor && hasRightNeighbor;
-  bool hasBottomLeftNeighbor = hasBottomNeighbor && hasLeftNeighbor;
-  bool hasBottomRightNeighbor = hasBottomNeighbor && hasRightNeighbor;
-
-  bool topNeighborForbidden = hasTopNeighbor && this->nodes[y - 1][x]->forbidden;
-  bool rightNeighborForbidden = hasRightNeighbor && this->nodes[y][x + 1]->forbidden;
-  bool bottomNeighborForbidden = hasBottomNeighbor && this->nodes[y + 1][x]->forbidden;
-  bool leftNeighborForbidden = hasLeftNeighbor && this->nodes[y][x - 1]->forbidden;
-
-  bool topLeftNeighborForbidden = hasTopLeftNeighbor && this->nodes[y - 1][x - 1]->forbidden;
-  bool topRightNeighborForbidden = hasTopRightNeighbor && this->nodes[y - 1][x + 1]->forbidden;
-  bool bottomRightNeighborForbidden = hasBottomRightNeighbor && this->nodes[y + 1][x + 1]->forbidden;
-  bool bottomLeftNeighborForbidden = hasBottomLeftNeighbor && this->nodes[y + 1][x - 1]->forbidden;
-
-  if ((topLeftNeighborForbidden && topRightNeighborForbidden) ||
-      (topRightNeighborForbidden && bottomRightNeighborForbidden) ||
-      (bottomRightNeighborForbidden && bottomLeftNeighborForbidden) ||
-      (bottomLeftNeighborForbidden && topLeftNeighborForbidden))
-  {
-    throw std::runtime_error("ERROR 200");
-  }
-
-  if (topNeighborForbidden ||
-      bottomNeighborForbidden ||
-      leftNeighborForbidden ||
-      rightNeighborForbidden)
-  {
-    return false;
-  }
-
-  if (topLeftNeighborForbidden ||
-      topRightNeighborForbidden ||
-      bottomRightNeighborForbidden ||
-      bottomLeftNeighborForbidden)
-  {
-    return true;
-  };
-
-  return false;
-}
-
-int Graph::getEdgeCost(Node *a, Node *b)
-{
-  // return 10;
-  //  if nodes are diagonal neighbors
-  if ((b->x == a->x + 1 && b->y == a->y) || (b->x == a->x - 1 && b->y == a->y) || (b->x == a->x && b->y == a->y + 1) || (b->x == a->x && b->y == a->y - 1))
-  {
-    return 14;
-  }
-  // if nodes are cardinal neighbors
-  else if ((b->x == a->x + 1 && b->y == a->y + 1) || (b->x == a->x + 1 && b->y == a->y - 1) || (b->x == a->x - 1 && b->y == a->y + 1) || (b->x == a->x - 1 && b->y == a->y - 1))
-  {
-    return 10;
-  }
-  else
-  {
-    throw std::runtime_error("ERROR 001");
-  }
-}
-
-std::vector<Node *> Graph::reconstructPath(Node *currentNode, std::map<Node *, Node *> cameFrom)
-{
-  std::vector<Node *> path;
-
-  while (currentNode != cameFrom[currentNode])
-  {
-    path.push_back(currentNode);
-    currentNode = cameFrom[currentNode];
-  }
-
-  return path;
-}
-
-// Octile distance
-int Graph::heuristic(Node *currentNode, Node *destination)
-{
-  int dx = abs(currentNode->x - destination->x);
-  int dy = abs(currentNode->y - destination->y);
-
-  return 10 * (dx + dy) + (14 - 2 * 10) * std::min(dx, dy);
-}
-
-// Manhattan distance
-// int Graph::heuristic(Node *currentNode, Node *destination)
-// {
-//   return 10 * abs(currentNode->x - destination->x) + 10 * abs(currentNode->y - destination->y);
-// }
-
-// Direct distance
-// int Graph::heuristic(Node *currentNode, Node *destination)
-// {
-//   int x1 = currentNode->x;
-//   int y1 = currentNode->y;
-//   int x2 = destination->x;
-//   int y2 = destination->y;
-
-//   return std::sqrt(std::pow(x2 - x1, 2) + std::pow(y2 - y1, 2));
-// }
+//=============================================================================
+//=============================================================================
+// PUBLIC METHODS
+//=============================================================================
+//=============================================================================
 
 Graph::Graph(int xNodes, int yNodes)
 {
@@ -232,76 +37,46 @@ Graph::Graph(int xNodes, int yNodes)
       // bottom left node
       else if (y == yNodes - 1 && x == 0)
       {
-
         this->nodes[y][x]->addNeighbor(this->nodes[y - 1][x + 1]); // NE
         this->nodes[y][x]->addNeighbor(this->nodes[y - 1][x]);     // N
-
-        // this->nodes[y - 1][x + 1]->addNeighbor(this->nodes[y][x]); // NE
-        // this->nodes[y - 1][x]->addNeighbor(this->nodes[y][x]);     // N
       }
       // bottom right node
       else if (y == yNodes - 1 && x == xNodes - 1)
       {
-
         this->nodes[y][x]->addNeighbor(this->nodes[y - 1][x]);     // N
         this->nodes[y][x]->addNeighbor(this->nodes[y - 1][x - 1]); // NW
         this->nodes[y][x]->addNeighbor(this->nodes[y][x - 1]);     // W
-
-        // this->nodes[y - 1][x]->addNeighbor(this->nodes[y][x]);     // N
-        // this->nodes[y - 1][x - 1]->addNeighbor(this->nodes[y][x]); // NW
-        // this->nodes[y][x - 1]->addNeighbor(this->nodes[y][x]);     // W
       }
       // top right node
       else if (y == 0 && x == xNodes - 1)
       {
-
         this->nodes[y][x]->addNeighbor(this->nodes[y][x - 1]); // W
-
-        // this->nodes[y][x - 1]->addNeighbor(this->nodes[y][x]); // W
       }
       // top row of nodes
       else if (y == 0)
       {
-
         this->nodes[y][x]->addNeighbor(this->nodes[y][x - 1]); // W
-
-        // this->nodes[y][x - 1]->addNeighbor(this->nodes[y][x]); // W
       }
       // bottom row of nodes
       else if (y == yNodes - 1)
       {
-
         this->nodes[y][x]->addNeighbor(this->nodes[y - 1][x + 1]); // NE
         this->nodes[y][x]->addNeighbor(this->nodes[y - 1][x]);     // N
         this->nodes[y][x]->addNeighbor(this->nodes[y - 1][x - 1]); // NW
         this->nodes[y][x]->addNeighbor(this->nodes[y][x - 1]);     // W
-
-        // this->nodes[y - 1][x + 1]->addNeighbor(this->nodes[y][x]); // NE
-        // this->nodes[y - 1][x]->addNeighbor(this->nodes[y][x]);     // N
-        // this->nodes[y - 1][x - 1]->addNeighbor(this->nodes[y][x]); // NW
-        // this->nodes[y][x - 1]->addNeighbor(this->nodes[y][x]);     // W
       }
       // left column of nodes
       else if (x == 0)
       {
-
         this->nodes[y][x]->addNeighbor(this->nodes[y - 1][x + 1]); // NE
         this->nodes[y][x]->addNeighbor(this->nodes[y - 1][x]);     // N
-
-        // this->nodes[y - 1][x + 1]->addNeighbor(this->nodes[y][x]); // NE
-        // this->nodes[y - 1][x]->addNeighbor(this->nodes[y][x]);     // N
       }
       // right column of nodes
       else if (x == xNodes - 1)
       {
-
         this->nodes[y][x]->addNeighbor(this->nodes[y - 1][x]);     // N
         this->nodes[y][x]->addNeighbor(this->nodes[y - 1][x - 1]); // NW
         this->nodes[y][x]->addNeighbor(this->nodes[y][x - 1]);     // W
-
-        // this->nodes[y - 1][x]->addNeighbor(this->nodes[y][x]);     // N
-        // this->nodes[y - 1][x - 1]->addNeighbor(this->nodes[y][x]); // NW
-        // this->nodes[y][x - 1]->addNeighbor(this->nodes[y][x]);     // W
       }
       // center nodes
       else
@@ -310,15 +85,20 @@ Graph::Graph(int xNodes, int yNodes)
         this->nodes[y][x]->addNeighbor(this->nodes[y - 1][x]);     // N
         this->nodes[y][x]->addNeighbor(this->nodes[y - 1][x - 1]); // NW
         this->nodes[y][x]->addNeighbor(this->nodes[y][x - 1]);     // W
-
-        // this->nodes[y - 1][x + 1]->addNeighbor(this->nodes[y][x]); // NE
-        // this->nodes[y - 1][x]->addNeighbor(this->nodes[y][x]);     // N
-        // this->nodes[y - 1][x - 1]->addNeighbor(this->nodes[y][x]); // NW
-        // this->nodes[y][x - 1]->addNeighbor(this->nodes[y][x]);     // W
       }
     };
   };
 };
+
+Graph::~Graph()
+{
+  delete[] this->nodes;
+
+  for (int x = 0; x < yNodes; x++)
+  {
+    delete[] this->nodes[x];
+  }
+}
 
 Node *Graph::getNode(int x, int y)
 {
@@ -349,13 +129,8 @@ std::vector<Node *> Graph::getForbiddenNodes()
   return forbiddenNodes;
 }
 
-// A* algorithm
 std::vector<Node *> Graph::getPath(Node *origin, Node *destination)
 {
-  // this->reset();
-
-  std::remove("snapshots.txt");
-  std::ofstream fileWriteSnapshot("snapshots.txt");
   std::set<Node *> frontier;
   std::map<Node *, Node *> cameFrom;
   std::map<Node *, int> gScores;
@@ -380,22 +155,11 @@ std::vector<Node *> Graph::getPath(Node *origin, Node *destination)
       }
     }
 
-    for (auto node : cameFrom)
-    {
-      fileWriteSnapshot << std::to_string(node.first->x) << " " << std::to_string(node.first->y) << " " << std::to_string(node.second->x) << " " << std::to_string(node.second->y) << " ";
-      //   fileWriteSnapshot << std::to_string(node.first->x) +
-      //                            " " + std::to_string(node.first->y) +
-      //                            " " + std::to_string(node.second->x) +
-      //                            " " + std::to_string(node.second->y) + " ";
-    }
-    fileWriteSnapshot << "X ";
-
     frontier.erase(currentNode);
 
     if (currentNode == destination)
     {
       return reconstructPath(currentNode, cameFrom);
-      fileWriteSnapshot.close();
     }
 
     for (Node *neighbor : currentNode->neighbors)
@@ -417,6 +181,7 @@ std::vector<Node *> Graph::getPath(Node *origin, Node *destination)
   }
   throw std::runtime_error("ERROR 002");
 }
+
 std::vector<Node *> Graph::getRandomPath()
 {
   srand(time(0));
@@ -430,60 +195,16 @@ std::vector<Node *> Graph::getRandomPath()
   int originY;
   int destinationX;
   int destinationY;
-  int c = 0;
+
   do
   {
     originX = randX(rng);
     originY = randY(rng);
     destinationX = randX(rng);
     destinationY = randY(rng);
-    c++;
-  } while (c < 5 || this->nodes[originY][originX]->forbidden || this->nodes[destinationY][destinationX]->forbidden);
+  } while (this->nodes[originY][originX]->forbidden || this->nodes[destinationY][destinationX]->forbidden);
 
-  // this->reset();
-  // std::cout << originX << ", " << originY << "\t" << destinationX << ", " << destinationY << "\n";
   return getPath(this->nodes[originY][originX], this->nodes[destinationY][destinationX]);
-  // return getPath(this->nodes[50][50], this->nodes[30][30]);
-}
-
-void Graph::reset()
-{
-  for (int y = 0; y < this->yNodes; y++)
-  {
-    for (int x = 0; x < this->xNodes; x++)
-    {
-      this->nodes[y][x]->parent = nullptr;
-    }
-  }
-}
-
-std::vector<std::vector<Node *> *> Graph::getRandomPathSnapshots()
-{
-  srand(time(0));
-
-  // std::random_device rd;
-  std::mt19937 rng(rand());
-  std::uniform_int_distribution<int> randX(0, this->xNodes - 1);
-  std::uniform_int_distribution<int> randY(0, this->yNodes - 1);
-
-  int originX;
-  int originY;
-  int destinationX;
-  int destinationY;
-  int c = 0;
-  do
-  {
-    originX = randX(rng);
-    originY = randY(rng);
-    destinationX = randX(rng);
-    destinationY = randY(rng);
-    c++;
-  } while (c < 5 || this->nodes[originY][originX]->forbidden || this->nodes[destinationY][destinationX]->forbidden);
-
-  // this->reset();
-  // std::cout << originX << ", " << originY << "\t" << destinationX << ", " << destinationY << "\n";
-  return getPathSnapshots(this->nodes[originY][originX], this->nodes[destinationY][destinationX]);
-  // return getPath(this->nodes[50][50], this->nodes[30][30]);
 }
 
 std::vector<std::vector<Node *> *> Graph::getPathSnapshots(Node *origin, Node *destination)
@@ -575,4 +296,203 @@ std::vector<std::vector<Node *> *> Graph::getPathSnapshots(Node *origin, Node *d
     }
   }
   throw std::runtime_error("ERROR 100");
+}
+
+std::vector<std::vector<Node *> *> Graph::getRandomPathSnapshots()
+{
+  srand(time(0));
+
+  // std::random_device rd;
+  std::mt19937 rng(rand());
+  std::uniform_int_distribution<int> randX(0, this->xNodes - 1);
+  std::uniform_int_distribution<int> randY(0, this->yNodes - 1);
+
+  int originX;
+  int originY;
+  int destinationX;
+  int destinationY;
+
+  do
+  {
+    originX = randX(rng);
+    originY = randY(rng);
+    destinationX = randX(rng);
+    destinationY = randY(rng);
+  } while (this->nodes[originY][originX]->forbidden || this->nodes[destinationY][destinationX]->forbidden);
+
+  return getPathSnapshots(this->nodes[originY][originX], this->nodes[destinationY][destinationX]);
+}
+
+int Graph::getPositionRelative(Node *a, Node *b)
+{
+  int ax = a->x;
+  int ay = a->y;
+  int bx = b->x;
+  int by = b->y;
+
+  // b is top left of a
+  if (bx < ax && by < ay)
+  {
+    return 0;
+  }
+  // b is top right of a
+  else if (bx > ax && by < ay)
+  {
+    return 1;
+  }
+  // b is bottom left of a
+  else if (bx < ax && by > ay)
+  {
+    return 2;
+  }
+  // b is bottom right of a
+  else if (bx > ax && by > ay)
+  {
+    return 3;
+  }
+  else
+  {
+    throw std::runtime_error("ERROR 004");
+  }
+}
+
+void Graph::forbidTriangle(Node *a, Node *b)
+{
+
+  int bx = b->x;
+  int by = b->y;
+  int x = a->x;
+  int y = a->y;
+  int xInitial = x;
+
+  // b is top left of a
+  if (getPositionRelative(a, b) == 0)
+  {
+    while (x >= bx && y >= by)
+    {
+      for (int xx = xInitial; xx >= x; xx--)
+      {
+        this->getNode(xx, y)->forbid();
+      }
+
+      x--;
+      y--;
+    }
+  }
+  // b is top right of a
+  else if (getPositionRelative(a, b) == 1)
+  {
+    while (x <= bx && y >= by)
+    {
+      for (int xx = xInitial; xx <= x; xx++)
+      {
+        this->getNode(xx, y)->forbid();
+      }
+
+      x++;
+      y--;
+    }
+  }
+  // b is bottom left of a
+  else if (getPositionRelative(a, b) == 2)
+  {
+    while (x >= bx && y <= by)
+    {
+      for (int xx = xInitial; xx >= x; xx--)
+      {
+        this->getNode(xx, y)->forbid();
+      }
+
+      x--;
+      y++;
+    }
+  }
+  // b is bottom right of a
+  else if (getPositionRelative(a, b) == 3)
+  {
+    while (x <= bx && y <= by)
+    {
+      for (int xx = xInitial; xx <= x; xx++)
+      {
+        this->getNode(xx, y)->forbid();
+      }
+
+      x++;
+      y++;
+    }
+  }
+}
+
+void Graph::forbidRectangle(Node *topLeftPoint, Node *topRightPoint, Node *bottomLeftPoint)
+{
+  for (int y = topLeftPoint->y; y <= bottomLeftPoint->y; y++)
+  {
+    for (int x = topLeftPoint->x; x <= topRightPoint->x; x++)
+    {
+      this->getNode(x, y)->forbid();
+    }
+  }
+}
+
+//=============================================================================
+//=============================================================================
+// PRIVATE METHODS
+//=============================================================================
+//=============================================================================
+
+int Graph::getEdgeCost(Node *a, Node *b)
+{
+  return 10;
+  //  if nodes are diagonal neighbors
+  if ((b->x == a->x + 1 && b->y == a->y) || (b->x == a->x - 1 && b->y == a->y) || (b->x == a->x && b->y == a->y + 1) || (b->x == a->x && b->y == a->y - 1))
+  {
+    return 14;
+  }
+  // if nodes are cardinal neighbors
+  else if ((b->x == a->x + 1 && b->y == a->y + 1) || (b->x == a->x + 1 && b->y == a->y - 1) || (b->x == a->x - 1 && b->y == a->y + 1) || (b->x == a->x - 1 && b->y == a->y - 1))
+  {
+    return 10;
+  }
+  else
+  {
+    throw std::runtime_error("ERROR 001");
+  }
+}
+
+// Octile distance
+int Graph::heuristic(Node *currentNode, Node *destination)
+{
+  int dx = abs(currentNode->x - destination->x);
+  int dy = abs(currentNode->y - destination->y);
+
+  return 10 * (dx + dy) + (14 - 2 * 10) * std::min(dx, dy);
+}
+
+// Manhattan distance
+// int Graph::heuristic(Node *currentNode, Node *destination)
+// {
+//   return 10 * abs(currentNode->x - destination->x) + 10 * abs(currentNode->y - destination->y);
+// }
+
+// Direct distance
+// int Graph::heuristic(Node *currentNode, Node *destination)
+// {
+//   int x1 = currentNode->x;
+//   int y1 = currentNode->y;
+//   int x2 = destination->x;
+//   int y2 = destination->y;
+//   return std::sqrt(std::pow(x2 - x1, 2) + std::pow(y2 - y1, 2));
+// }
+
+std::vector<Node *> Graph::reconstructPath(Node *currentNode, std::map<Node *, Node *> cameFrom)
+{
+  std::vector<Node *> path;
+
+  while (currentNode != cameFrom[currentNode])
+  {
+    path.push_back(currentNode);
+    currentNode = cameFrom[currentNode];
+  }
+
+  return path;
 }

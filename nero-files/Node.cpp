@@ -1,34 +1,44 @@
 #include "Node.h"
 #include <iostream>
 
+//=============================================================================
+//=============================================================================
+// PUBLIC METHODS
+//=============================================================================
+//=============================================================================
+
 Node::Node(int x, int y)
 {
   this->x = x;
   this->y = y;
-  this->forbidden = false;
-  this->parent = nullptr;
+  forbidden = false;
 };
 
 void Node::addNeighbor(Node *neighborNode)
 {
 
-  this->neighbors.insert(neighborNode);
+  neighbors.insert(neighborNode);
   neighborNode->neighbors.insert(this);
 };
 
 void Node::forbid()
 {
-  this->forbidden = true;
+  forbidden = true;
 
-  for (Node *neighbor : this->neighbors)
+  for (Node *neighbor : neighbors)
   {
     neighbor->neighbors.erase(this);
   }
 
-  this->neighbors.clear();
+  neighbors.clear();
 }
 
 void Node::print()
 {
-  std::cout << "(" << this->x << ", " << this->y << ")\t";
+  std::cout << "(" << x << ", " << y << ")\t";
+}
+
+void Node::println()
+{
+  std::cout << "(" << x << ", " << y << ")\n";
 }
