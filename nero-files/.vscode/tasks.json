@@ -7,8 +7,10 @@
       "args": [
         "-fdiagnostics-color=always",
         "-g",
-        "${workspaceFolder}/*.cpp",
-        // "test.cpp",
+        // "${workspaceFolder}/*.cpp",
+        "main.cpp",
+        "Node.cpp",
+        "Graph.cpp",
         "-o",
         "${fileDirname}/${fileBasenameNoExtension}"
       ],

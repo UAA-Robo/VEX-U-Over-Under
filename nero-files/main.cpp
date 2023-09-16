@@ -99,5 +99,5 @@ int main(int argv, char **args)
   }
 
   GUI gui = GUI(graph, CELL_SIZE);
-  gui.run(false);
+  gui.run(true);
 }
