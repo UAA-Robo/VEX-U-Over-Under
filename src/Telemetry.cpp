@@ -1,6 +1,8 @@
 
 #include "Telemetry.h"
 
+
+
 Telemetry::Telemetry(Hardware* hardware, RobotConfig* robotConfig)
 {
     hw = hardware;
@@ -18,23 +20,30 @@ int Telemetry::update_position(void* param) {
         float right_odometry_revolutions = tm->hw->right_odometry.angle(vex::rotationUnits::rev);
         float back_odometry_revolutions =  tm->hw->back_odometry.angle(vex::rotationUnits::rev);
 
+        
 
-        float x_displacement = (left_odometry_revolutions * tm->rc->ODOMETRY_CIRCUMFERENCE
-            + right_odometry_revolutions * tm->rc->ODOMETRY_CIRCUMFERENCE) 
-            / (2 * tm->rc->ODOMETRY_LEFT_RIGHT_RADIUS);
+        const float ODOMETRY_WIDTH = 2 * tm->rc->ODOMETRY_LEFT_RIGHT_RADIUS;
 
-        float heading_displacement = (left_odometry_revolutions * tm->rc->ODOMETRY_CIRCUMFERENCE 
-            - right_odometry_revolutions * tm->rc->ODOMETRY_CIRCUMFERENCE) 
-            / (2 * tm->rc->ODOMETRY_LEFT_RIGHT_RADIUS);
+        float left_displacement = left_odometry_revolutions * tm->rc->ODOMETRY_CIRCUMFERENCE;
 
-        float y_displacement = back_odometry_revolutions  * tm->rc->ODOMETRY_CIRCUMFERENCE 
-            + tm->rc->ODOMETRY_BACK_RADIUS * heading_displacement;
+        float right_displacement = right_odometry_revolutions * tm->rc->ODOMETRY_CIRCUMFERENCE;
 
-        tm->x_position += x_displacement * cos(tm->heading) - y_displacement * sin(tm->heading);
-        tm->y_position +=  x_displacement * sin(tm->heading) + y_displacement * cos(tm->heading); 
-        tm->heading += (heading_displacement) * M_PI / 180;  // Radians to degrees
+        float back_displacement = back_odometry_revolutions * tm->rc->ODOMETRY_CIRCUMFERENCE; 
+        
+        float phi = (left_displacement - right_displacement) / ODOMETRY_WIDTH;  
 
+        float center_displacement  = (left_displacement + right_displacement) / 2;
 
+        float horizontal_displacement = back_displacement - phi *  tm->rc->ODOMETRY_BACK_RADIUS; 
+
+        float current_heading = tm->heading * M_PI/180;  
+        float x_displacement = center_displacement * cos(tm->heading) - horizontal_displacement * -sin(heading)  
+
+        //tm->x_position += x_displacement * cos(tm->heading) - y_displacement * sin(tm->heading);
+        //tm->y_position +=  x_displacement * sin(tm->heading) + y_displacement * cos(tm->heading); 
+        //tm->heading += (heading_displacement) * M_PI / 180;  // Radians to degrees
+//
+//
         tm->hw->left_odometry.resetPosition();
         tm->hw->right_odometry.resetPosition();
         tm->hw->back_odometry.resetPosition();
