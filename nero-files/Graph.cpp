@@ -92,12 +92,20 @@ Graph::Graph(int xNodes, int yNodes)
 
 Graph::~Graph()
 {
-  delete[] this->nodes;
+  for (int y = 0; y < yNodes; y++)
+  {
+    for (int x = 0; x < xNodes; x++)
+    {
+      delete this->nodes[y][x];
+    }
+  }
 
   for (int x = 0; x < yNodes; x++)
   {
     delete[] this->nodes[x];
   }
+
+  delete[] this->nodes;
 }
 
 Node *Graph::getNode(int x, int y)

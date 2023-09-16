@@ -154,6 +154,7 @@ int GUI::run(bool showSnapshots)
             for (std::vector<Node *> *vec : pathNodesSnapshots)
             {
               vec->clear();
+              delete vec;
             }
             pathNodesSnapshots.clear();
 
@@ -201,6 +202,7 @@ int GUI::run(bool showSnapshots)
             for (std::vector<Node *> *vec : pathNodesSnapshots)
             {
               vec->clear();
+              delete vec;
             }
             pathNodesSnapshots.clear();
             selectedNodes.clear();
