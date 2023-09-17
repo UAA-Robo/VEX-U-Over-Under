@@ -12,6 +12,7 @@ Node::Node(int x, int y)
   this->x = x;
   this->y = y;
   forbidden = false;
+  waypoint = Graph::NO;
 };
 
 void Node::addNeighbor(Node *neighborNode)

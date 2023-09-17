@@ -27,3 +27,7 @@ public:
 // SPACE - randomly generate two points and generate the path or path history between them, depending on the mode
 // RIGHT CLICK - clear current path and allows user to click to nodes to show the path between
 // LEFT CLICK - selects node to use in pathfinding (max 2 nodes)
+// UP ARROW - (during pathfinding histoy mode) automatically steps through the pathfinding history
+// DOWN ARROW - (during pathfinding histoy mode) stops the auto mode
+// LEFT ARROW - manually go to the previous snapshot
+// RIGHT ARROW - manually got to the next snapshot

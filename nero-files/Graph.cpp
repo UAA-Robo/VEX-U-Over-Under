@@ -240,62 +240,6 @@ std::vector<std::vector<Node *> *> Graph::getPathSnapshots(Node *origin, Node *d
 
     for (Node *node : frontier)
     {
-      // if (node == destination)
-      // {
-      //   currentNode = destination;
-      //   break;
-      // }
-
-      // if (fScores[node] < lowestFScore)
-      // {
-      //   lowestFScore = fScores[node];
-      //   currentNode = node;
-      // }
-      // else if (fScores[node] == lowestFScore && lowestFScore != 2147483647)
-      // {
-      //   if (gScores[node] > highestGScore)
-      //   {
-      //     highestGScore = gScores[node];
-      //     currentNode = node;
-      //   }
-      // }
-
-      // if (fScores[node] < lowestFScore)
-      // {
-      //   lowestFScore = fScores[node];
-      //   currentNode = node;
-      //   // highestGScore = 0;
-      // }
-      // else if (fScores[node] == lowestFScore && this->heuristic(node, destination) < lowestHScore)
-      // {
-      //   lowestHScore = this->heuristic(node, destination);
-      //   currentNode = node;
-      // }
-
-      // else if (fScores[node] == lowestFScore && gScores[node] > highestGScore)
-      // {
-      //   highestGScore = gScores[node];
-      //   currentNode = node;
-      // }
-
-      // PREFER DIAGONAL
-      // <<
-
-      // if (heuristic(node, destination) < lowestHScore)
-      // {
-      //   lowestHScore = heuristic(node, destination);
-      //   currentNode = node;
-      //   lowestGScore = gScores[node];
-      //   // lowestFScore = fScores[node];
-      // }
-      // else if (heuristic(node, destination) == lowestHScore && gScores[node] < lowestGScore)
-      // {
-      //   lowestHScore = heuristic(node, destination);
-      //   currentNode = node;
-      //   lowestGScore = gScores[node];
-      //   // lowestFScore = fScores[node];
-      // }
-
       // if (fScores[node] < lowestFScore)
       // {
       //   lowestFScore = fScores[node];
@@ -398,50 +342,26 @@ std::vector<std::vector<Node *> *> Graph::getRandomPathSnapshots()
   return getPathSnapshots(this->nodes[originY][originX], this->nodes[destinationY][destinationX]);
 }
 
-int Graph::getPositionRelative(Node *a, Node *b)
-{
-  int ax = a->x;
-  int ay = a->y;
-  int bx = b->x;
-  int by = b->y;
-
-  // b is top left of a
-  if (bx < ax && by < ay)
-  {
-    return 0;
-  }
-  // b is top right of a
-  else if (bx > ax && by < ay)
-  {
-    return 1;
-  }
-  // b is bottom left of a
-  else if (bx < ax && by > ay)
-  {
-    return 2;
-  }
-  // b is bottom right of a
-  else if (bx > ax && by > ay)
-  {
-    return 3;
-  }
-  else
-  {
-    throw std::runtime_error("ERROR 004");
-  }
-}
-
 void Graph::forbidTriangle(Node *a, Node *b)
 {
-
   int bx = b->x;
   int by = b->y;
   int x = a->x;
   int y = a->y;
   int xInitial = x;
+  POSITION relativePosition = getPositionRelative(a, b);
 
-  // b is top left of a
-  if (getPositionRelative(a, b) == 0)
+  switch (relativePosition)
+  {
+  case B_TOP_A:
+  case B_RIGHT_A:
+  case B_BOTTOM_A:
+  case B_LEFT_A:
+  {
+    throw std::runtime_error("ERROR 600");
+    break;
+  }
+  case B_TOPLEFT_A:
   {
     while (x >= bx && y >= by)
     {
@@ -454,9 +374,9 @@ void Graph::forbidTriangle(Node *a, Node *b)
       x--;
       y--;
     }
+    break;
   }
-  // b is top right of a
-  else if (getPositionRelative(a, b) == 1)
+  case B_TOPRIGHT_A:
   {
     while (x <= bx && y >= by)
     {
@@ -469,24 +389,9 @@ void Graph::forbidTriangle(Node *a, Node *b)
       x++;
       y--;
     }
+    break;
   }
-  // b is bottom left of a
-  else if (getPositionRelative(a, b) == 2)
-  {
-    while (x >= bx && y <= by)
-    {
-      for (int xx = xInitial; xx >= x; xx--)
-      {
-        // this->getNode(xx, y)->forbid();
-        this->nodes[y][xx]->forbid();
-      }
-
-      x--;
-      y++;
-    }
-  }
-  // b is bottom right of a
-  else if (getPositionRelative(a, b) == 3)
+  case B_BOTTOMRIGHT_A:
   {
     while (x <= bx && y <= by)
     {
@@ -499,6 +404,26 @@ void Graph::forbidTriangle(Node *a, Node *b)
       x++;
       y++;
     }
+    break;
+  }
+  case B_BOTTOMLEFT_A:
+  {
+    while (x >= bx && y <= by)
+    {
+      for (int xx = xInitial; xx >= x; xx--)
+      {
+        // this->getNode(xx, y)->forbid();
+        this->nodes[y][xx]->forbid();
+      }
+
+      x--;
+      y++;
+    }
+    break;
+  }
+  default:
+    throw std::runtime_error("ERROR 500");
+    break;
   }
 }
 
@@ -510,6 +435,279 @@ void Graph::forbidRectangle(Node *topLeftPoint, Node *topRightPoint, Node *botto
     {
       // this->getNode(x, y)->forbid();
       this->nodes[y][x]->forbid();
+    }
+  }
+}
+
+// can store this data on the node itself
+Graph::WAYPOINT Graph::isWaypoint(Node *node)
+{
+  int x = node->x;
+  int y = node->y;
+
+  bool hasTopNeighbor = y - 1 >= 0;
+  bool hasBottomNeighbor = y + 1 <= this->yNodes - 1;
+  bool hasLeftNeighbor = x - 1 >= 0;
+  bool hasRightNeighbor = x + 1 <= this->xNodes - 1;
+
+  bool hasTopLeftNeighbor = hasTopNeighbor && hasLeftNeighbor;
+  bool hasTopRightNeighbor = hasTopNeighbor && hasRightNeighbor;
+  bool hasBottomLeftNeighbor = hasBottomNeighbor && hasLeftNeighbor;
+  bool hasBottomRightNeighbor = hasBottomNeighbor && hasRightNeighbor;
+
+  bool topNeighborForbidden = hasTopNeighbor && this->nodes[y - 1][x]->forbidden;
+  bool rightNeighborForbidden = hasRightNeighbor && this->nodes[y][x + 1]->forbidden;
+  bool bottomNeighborForbidden = hasBottomNeighbor && this->nodes[y + 1][x]->forbidden;
+  bool leftNeighborForbidden = hasLeftNeighbor && this->nodes[y][x - 1]->forbidden;
+
+  bool topLeftNeighborForbidden = hasTopLeftNeighbor && this->nodes[y - 1][x - 1]->forbidden;
+  bool topRightNeighborForbidden = hasTopRightNeighbor && this->nodes[y - 1][x + 1]->forbidden;
+  bool bottomRightNeighborForbidden = hasBottomRightNeighbor && this->nodes[y + 1][x + 1]->forbidden;
+  bool bottomLeftNeighborForbidden = hasBottomLeftNeighbor && this->nodes[y + 1][x - 1]->forbidden;
+
+  if ((topLeftNeighborForbidden && topRightNeighborForbidden) ||
+      (topRightNeighborForbidden && bottomRightNeighborForbidden) ||
+      (bottomRightNeighborForbidden && bottomLeftNeighborForbidden) ||
+      (bottomLeftNeighborForbidden && topLeftNeighborForbidden))
+  {
+    throw std::runtime_error("ERROR 200");
+  }
+
+  if (topNeighborForbidden ||
+      bottomNeighborForbidden ||
+      leftNeighborForbidden ||
+      rightNeighborForbidden)
+  {
+    return NO;
+  }
+  else if (bottomRightNeighborForbidden)
+  {
+    return TOPLEFT;
+  }
+  else if (bottomLeftNeighborForbidden)
+  {
+    return TOPRIGHT;
+  }
+  if (topLeftNeighborForbidden)
+  {
+    return BOTTOMRIGHT;
+  }
+  else if (topRightNeighborForbidden)
+  {
+    return BOTTOMLEFT;
+  }
+
+  throw std::runtime_error("ERROR 300");
+}
+
+std::set<Node *> Graph::findWaypoints(Node *node)
+{
+  for (int y = 0; y < yNodes; y++)
+  {
+    for (int x = 0; x < xNodes; x++)
+    {
+      Node *node = nodes[y][x];
+      WAYPOINT corner = isWaypoint(node);
+      node->waypoint = corner;
+
+      switch (corner)
+      {
+      case NO:
+      {
+        break;
+      }
+      case TOPLEFT:
+      {
+        // break;
+      }
+      case TOPRIGHT:
+      {
+        // break;
+      }
+      case BOTTOMRIGHT:
+      {
+        // break;
+      }
+      case BOTTOMLEFT:
+      {
+        waypoints.insert(node);
+        break;
+      }
+      default:
+      {
+        throw std::runtime_error("ERROR 700");
+        break;
+      }
+      }
+    }
+  }
+}
+
+void Graph::addNeighboringWaypoints(Node *node)
+{
+  switch (node->waypoint)
+  {
+  case TOPLEFT:
+  {
+    // how are you handling LOS: TOPLEFT and TOPRIGHT? Inherently incompatible
+    int x = node->x;
+    int y = node->y;
+    // scan top right quadrant: up one level, right until you hit a block, up one level (until you hit a block), etc.
+    // scan bottom left quadrant: down one level, left until you hit a block, down one level (until you hit a block) etc.
+
+    while (y - 1 >= 0)
+    {
+      y--;
+      while (x + 1 <= xNodes - 1)
+      {
+        x++;
+        if(nodes[y][x]->waypoint != NO && nodes[y][x]->waypoint != BOTTOMLEFT && nodes[y][x]->waypoint != NO) {
+
+        }
+      }
+
+      // top right quadrant
+      // bottom left quadrant
+      // including straight top, right, bottom, left
+      //   * or maybe not: situation: topleft node and topright node nearby each other, should they be connected even if they're not taut neighbors
+    }
+    break;
+  }
+  case TOPRIGHT:
+  {
+    break;
+  }
+  case BOTTOMRIGHT:
+  {
+    break;
+  }
+  case BOTTOMLEFT:
+  {
+    break;
+  }
+  default:
+  {
+    throw std::runtime_error("800");
+    break;
+  }
+  }
+}
+
+// Check for LOS?
+bool Graph::areTautNeighbors(Node *a, Node *b)
+{
+  if (a->waypoint == 0 || b->waypoint == 0)
+  {
+    throw std::runtime_error("ERROR 400");
+  }
+
+  POSITION relativePosition = getPositionRelative(a, b);
+
+  switch (relativePosition)
+  {
+  case /* constant-expression */:
+    /* code */
+    break;
+
+  default:
+    break;
+  }
+
+  if (a->waypoint == 1)
+  {
+    // return true if b is not bottom right or top left of a (straight right, top, bottom, and left are accepted)
+  }
+  else if (a->waypoint == 2)
+  {
+    // return true if b is not bottom left or top right of a (straight right, top, bottom, and left are accepted)
+  }
+  else if (a->waypoint == 3)
+  {
+    // return true if b is not top left or bottom right of a (straight right, top, bottom, and left are accepted)
+  }
+  else if (a->waypoint == 4)
+  {
+    // return true if b is not top right or bottom left of a (straight right, top, bottom, and left are accepted)
+  }
+}
+
+bool Graph::canSeeEachOther(Node *a, Node *b)
+{
+  // get relative position + second algorithm
+
+  // for a:
+  // * top left forbidden
+  //   * for b:
+  // * top right forbidden
+  // * bottom left forbidden
+  // * bottom right forbidden
+}
+
+bool Graph::shouldKeepNode(Node *a)
+{
+  while (true)
+  {
+  }
+  for (int y = a->y - 1; y >= 0; y--)
+  {
+    if (this->nodes[y][a->x]->forbidden)
+    {
+      break;
+    }
+    if (this->nodes[y][a->x]->waypoint)
+    {
+    }
+  }
+}
+
+void Graph::ENLSVG(int xNodes, int yNodes)
+{
+  this->xNodes = xNodes;
+  this->yNodes = yNodes;
+
+  for (int y = 0; y < yNodes; y++)
+  {
+    for (int x = 0; x < xNodes; x++)
+    {
+      if (this->isWaypoint(this->nodes[y][x]))
+      {
+        this->waypoints.push_back(this->nodes[y][x]);
+      }
+    }
+  }
+
+  // when adding a taut visible waypoint as a neight to node a, also add a as a taut visible waypoint to it?
+  for (Node *node : this->waypoints)
+  {
+    node->tautVisibleWaypoints = this->getTautVisibleWaypoints(node);
+  }
+
+  for (Node *node : this->waypoints)
+  {
+  }
+}
+
+bool Graph::LOS(Node *a, Node *b)
+{
+}
+
+// break whenever you hit an obstacle
+std::vector<Node *> Graph::getVisibleNodes(Node *node)
+{
+}
+
+void Graph::findNeighborWaypoints()
+{
+  for (Node *waypoint1 : waypoints)
+  {
+    for (Node *waypoint2 : waypoints)
+    {
+      if (waypoint1 != waypoint2)
+      {
+        if (waypointsHaveVisibility(waypoint1, waypoint2))
+        {
+        }
+      }
     }
   }
 }
@@ -589,4 +787,50 @@ std::vector<Node *> Graph::reconstructPath(Node *currentNode, std::map<Node *, N
   }
 
   return path;
+}
+
+// Returns the position of b relative to a
+Graph::POSITION Graph::getPositionRelative(Node *a, Node *b)
+{
+  int ax = a->x;
+  int ay = a->y;
+  int bx = b->x;
+  int by = b->y;
+
+  if (bx == ax && by < ay)
+  {
+    return B_TOP_A;
+  }
+  else if (bx > ax && by == ay)
+  {
+    return B_RIGHT_A;
+  }
+  else if (bx == ax && by > ay)
+  {
+    return B_BOTTOM_A;
+  }
+  else if (bx < ax && by == ay)
+  {
+    return B_LEFT_A;
+  }
+  else if (bx < ax && by < ay)
+  {
+    return B_TOPLEFT_A;
+  }
+  else if (bx > ax && by < ay)
+  {
+    return B_TOPRIGHT_A;
+  }
+  else if (bx > ax && by > ay)
+  {
+    return B_BOTTOMRIGHT_A;
+  }
+  else if (bx < ax && by > ay)
+  {
+    return B_BOTTOMLEFT_A;
+  }
+  else
+  {
+    throw std::runtime_error("ERROR 004");
+  }
 }
