@@ -30,20 +30,41 @@ int Telemetry::update_position(void* param) {
 
         float back_displacement = back_odometry_revolutions * tm->rc->ODOMETRY_CIRCUMFERENCE; 
         
-        float phi = (left_displacement - right_displacement) / ODOMETRY_WIDTH;  
+        float heading_displacement = (left_displacement - right_displacement) / ODOMETRY_WIDTH;  
 
         float center_displacement  = (left_displacement + right_displacement) / 2;
 
         float horizontal_displacement = back_displacement - phi *  tm->rc->ODOMETRY_BACK_RADIUS; 
 
         float current_heading = tm->heading * M_PI/180;  
-        float x_displacement = center_displacement * cos(tm->heading) - horizontal_displacement * -sin(heading)  
 
-        //tm->x_position += x_displacement * cos(tm->heading) - y_displacement * sin(tm->heading);
-        //tm->y_position +=  x_displacement * sin(tm->heading) + y_displacement * cos(tm->heading); 
-        //tm->heading += (heading_displacement) * M_PI / 180;  // Radians to degrees
-//
-//
+        //Easy Math
+        //float x_displacement = center_displacement * cos(current_heading) - horizontal_displacement * -sin(current_heading);
+        //float y_displacement = center_displacement  * sin(current_heading) + horizontal_displacement * cos(current_heading);
+
+        //Advanced math This assumes constant curviture
+        float x_displacement = (center_displacement *
+            (cos(current_heading) * sin(heading_displacement)
+            + -sin(current_heading) * (1 - cos(heading_displacement)))
+
+            + (horizontal_displacement * 
+            (cos(current_heading) * (cos(heading_displacement) -1)) 
+            + -sin(current_heading) * sin(heading_displacement)) )/ heading_displacement;
+           
+        float y_displacement = (center_displacement *
+            (sin(current_heading) * sin(heading_displacement)
+            + cos(current_heading) * (1 - cos(heading_displacement)))
+
+            + (horizontal_displacement * 
+            (sin(current_heading) * (cos(heading_displacement) -1)) 
+            +cos(current_heading) * sin(heading_displacement)) )/ heading_displacement;
+       
+       
+        tm->x_position += x_displacement;
+        tm->y_position +=  y_displacement;
+        tm->heading += ((heading_displacement)  % 2 * M_PI) / (M_PI/ 180);  // Radians to degrees
+
+
         tm->hw->left_odometry.resetPosition();
         tm->hw->right_odometry.resetPosition();
         tm->hw->back_odometry.resetPosition();
