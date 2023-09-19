@@ -8,12 +8,13 @@ public:
   int x;
   int y;
   bool forbidden;
-  std::set<Node *> neighbors;
   WAYPOINT waypoint;
+  std::set<Node *> neighbors;
   std::set<Node *> waypointNeighbors;
 
   Node(int x, int y);
-  void addNeighbor(Node *node);
+  void addNeighbor(Node *neighborNode);
+  void addWaypointNeighbor(Node *node);
   void forbid();
   void print();
   void println();

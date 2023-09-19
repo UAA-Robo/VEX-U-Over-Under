@@ -1,9 +1,6 @@
 #pragma once
 #include <vector>
 #include <map>
-#include <cstdlib>
-#include <random>
-#include "Enums.h"
 #include "Node.h"
 
 class Graph
@@ -19,13 +16,12 @@ private:
 
   // VG methods
   WAYPOINT isWaypoint(Node *node);
-  bool bIsTaut(Node *a, Node *b);
+  bool isTaut(Node *a, Node *b);
   bool areTautWaypoints(Node *a, Node *b);
   bool hasLOS(Node *a, Node *b);
   void findWaypoints();
   void addNeighboringWaypoints();
-
-  void initVG();
+  std::set<Node *> getWaypoints();
 
 public:
   int xNodes;
@@ -43,16 +39,9 @@ public:
   void forbidRectangle(Node *topLeftPoint, Node *topRightPoint, Node *bottomLeftPoint);
 
   // VG methods
-  std::set<Node *> getWaypoints();
+  void createVG();
+  std::vector<Node *> getVGPath(Node *origin, Node *destination);
+  std::vector<Node *> getVGRandomPath();
+  std::vector<std::vector<Node *> *> getVGPathSnapshots(Node *origin, Node *destination);
+  std::vector<std::vector<Node *> *> getVGRandomPathSnapshots(Node *origin, Node *destination);
 };
-
-// VG
-// * Create grid
-// * Mark forbidden nodes
-// For each node, if it is a corner node, or between two corner forbidden nodes, add it and mark it as a waypoint
-// For each waypoint in the waypoints collection, search its neighboring waypoints while calculating their edge
-
-// SVG
-// For each waypoint in the waypoints collection, make sure it only has taut neighbors
-
-// ENLSVG

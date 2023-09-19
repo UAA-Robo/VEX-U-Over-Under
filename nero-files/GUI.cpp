@@ -1,12 +1,7 @@
 #pragma once
-#include <vector>
-#include <SDL2/SDL.h>
-// #include <SDL.h> // Maybe for other OSes?
+#include <iostream>
 #include <chrono>
 #include "GUI.h"
-#include "Node.h"
-#include "Graph.h"
-#include <iostream>
 
 //=============================================================================
 //=============================================================================
@@ -501,9 +496,6 @@ int GUI::run(bool showSnapshots)
 
 int GUI::runTwo(bool showSnapshots)
 {
-  std::set<Node *> waypoints = graph->getWaypoints();
-
-
   int windowWidth = (graph->xNodes * CELL_SIZE) + 1;
   int windowHeight = (graph->yNodes * CELL_SIZE) + 1;
 
@@ -581,7 +573,7 @@ int GUI::runTwo(bool showSnapshots)
     durationTotal += duration.count();
   }
 
-  std::vector<Node*> pathNodesSecond;
+  std::vector<Node *> pathNodesSecond;
 
   std::vector<Node *> selectedNodes;
   bool selectingNodesAllowed = false;
@@ -954,11 +946,6 @@ int GUI::runTwo(bool showSnapshots)
 
     SDL_Color waypointColor = {255, 0, 255, 255};
     // std::cout << waypoints.size() << "\n";
-
-    for (Node *node : waypoints)
-    {
-      drawCell(renderer, node, waypointColor);
-    }
 
     SDL_RenderPresent(renderer);
   }

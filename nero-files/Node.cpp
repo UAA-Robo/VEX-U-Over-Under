@@ -21,6 +21,12 @@ void Node::addNeighbor(Node *neighborNode)
   neighborNode->neighbors.insert(this);
 };
 
+void Node::addWaypointNeighbor(Node *neighborNode)
+{
+  waypointNeighbors.insert(neighborNode);
+  neighborNode->waypointNeighbors.insert(this);
+}
+
 void Node::forbid()
 {
   forbidden = true;

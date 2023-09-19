@@ -1,19 +1,11 @@
-#include <map>
-#include <vector>
-#include <cmath>
-#include <iostream>
-#include <random>
-#include <chrono>
-#include <fstream>
-#include <stdexcept>
+// TODO - make sure all pathfindings are updated to the latest iteration
 
+#include "Enums.h"
 #include "Node.h"
 #include "Graph.h"
 #include "Triangle.h"
 #include "Rectangle.h"
-#include "Button.h"
 #include "GUI.h"
-#include "Enums.h"
 
 // in inches
 double const FIELD_SIZE = 138.73;

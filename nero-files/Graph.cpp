@@ -1,11 +1,7 @@
 #include <iostream>
 #include <time.h>
-#include <fstream>
-#include <ostream>
-#include <string>
+#include <random>
 #include <stdexcept>
-// #include "Enums.h"
-// #include "Node.h"
 #include "Graph.h"
 
 //=============================================================================
@@ -92,12 +88,6 @@ Graph::Graph(int xNodes, int yNodes)
   };
 };
 
-void Graph::initVG()
-{
-  findWaypoints();
-  addNeighboringWaypoints();
-}
-
 Graph::~Graph()
 {
   for (int y = 0; y < yNodes; y++)
@@ -148,6 +138,7 @@ std::vector<Node *> Graph::getForbiddenNodes()
 std::vector<Node *> Graph::getPath(Node *origin, Node *destination)
 {
   std::set<Node *> frontier;
+  std::set<Node *> closed;
   std::map<Node *, Node *> cameFrom;
   std::map<Node *, int> gScores;
   std::map<Node *, int> fScores;
@@ -160,13 +151,31 @@ std::vector<Node *> Graph::getPath(Node *origin, Node *destination)
   while (frontier.size() > 0)
   {
     int lowestFScore = 2147483647;
+    int lowestHScore = 2147483647;
+    int lowestGScore = 2147483647;
+    int highestGScore = 0;
     Node *currentNode;
 
     for (Node *node : frontier)
     {
-      if (fScores.find(node) == fScores.end() || fScores[node] < lowestFScore)
+      // if (fScores[node] < lowestFScore)
+      // {
+      //   lowestFScore = fScores[node];
+      //   currentNode = node;
+      // }
+      // else if (fScores[node] == lowestFScore && heuristic(node, destination) < heuristic(currentNode, destination))
+      // {
+      //   currentNode = node;
+      // }
+
+      if (heuristic(node, destination) < lowestHScore)
       {
-        lowestFScore = fScores[node];
+        lowestHScore = heuristic(node, destination);
+        currentNode = node;
+      }
+      else if (heuristic(node, destination) == lowestHScore && gScores[node] < lowestGScore)
+      {
+        lowestGScore = gScores[node];
         currentNode = node;
       }
     }
@@ -178,22 +187,44 @@ std::vector<Node *> Graph::getPath(Node *origin, Node *destination)
       return reconstructPath(currentNode, cameFrom);
     }
 
+    // for (Node *neighbor : currentNode->neighbors)
+    // {
+    //   int neighborGScore = gScores[currentNode] + getEdgeCost(currentNode, neighbor);
+
+    //   if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
+    //   {
+    //     cameFrom[neighbor] = currentNode;
+    //     gScores[neighbor] = neighborGScore;
+    //     fScores[neighbor] = neighborGScore + this->heuristic(neighbor, destination);
+
+    //     if (frontier.find(neighbor) == frontier.end())
+    //     {
+    //       frontier.insert(neighbor);
+    //     }
+    //   }
+    // }
     for (Node *neighbor : currentNode->neighbors)
     {
-      int neighborGScore = gScores[currentNode] + getEdgeCost(currentNode, neighbor);
-
-      if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
+      if (closed.find(neighbor) == closed.end())
       {
-        cameFrom[neighbor] = currentNode;
-        gScores[neighbor] = neighborGScore;
-        fScores[neighbor] = neighborGScore + this->heuristic(neighbor, destination);
+        int neighborGScore = gScores[currentNode] + getEdgeCost(currentNode, neighbor);
 
-        if (frontier.find(neighbor) == frontier.end())
+        if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
         {
-          frontier.insert(neighbor);
+          cameFrom[neighbor] = currentNode;
+          gScores[neighbor] = neighborGScore;
+          fScores[neighbor] = neighborGScore + this->heuristic(neighbor, destination);
+
+          if (closed.find(neighbor) == closed.end() && frontier.find(neighbor) == frontier.end())
+          {
+            frontier.insert(neighbor);
+          }
         }
       }
     }
+
+    // Remove this?
+    closed.insert(currentNode);
   }
   throw std::runtime_error("ERROR 002");
 }
@@ -567,7 +598,8 @@ WAYPOINT Graph::isWaypoint(Node *node)
   // throw std::runtime_error("ERROR 300");
 }
 
-bool Graph::bIsTaut(Node *a, Node *b)
+// Checks if b is taut to a
+bool Graph::isTaut(Node *a, Node *b)
 {
   switch (a->waypoint)
   {
@@ -643,9 +675,10 @@ bool Graph::bIsTaut(Node *a, Node *b)
   return false;
 }
 
+// Checks if both a and b are taut waypoints to each other
 bool Graph::areTautWaypoints(Node *a, Node *b)
 {
-  if (bIsTaut(a, b) && bIsTaut(b, a))
+  if (isTaut(a, b) && isTaut(b, a))
   {
     return true;
   }
@@ -731,11 +764,6 @@ void Graph::addNeighboringWaypoints()
       }
     }
   }
-}
-
-std::set<Node *> Graph::getWaypoints()
-{
-  return waypoints;
 }
 
 //=============================================================================
@@ -859,4 +887,256 @@ POSITION Graph::getPositionRelative(Node *a, Node *b)
   {
     throw std::runtime_error("ERROR 004");
   }
+}
+
+void Graph::createVG()
+{
+  findWaypoints();
+  addNeighboringWaypoints();
+}
+
+std::vector<Node *> Graph::getVGPath(Node *origin, Node *destination)
+{
+  std::set<Node *> frontier;
+  std::set<Node *> closed;
+  std::map<Node *, Node *> cameFrom;
+  std::map<Node *, int> gScores;
+  std::map<Node *, int> fScores;
+
+  frontier.insert(origin);
+  cameFrom[origin] = origin;
+  gScores[origin] = 0;
+  fScores[origin] = this->heuristic(origin, destination);
+
+  while (frontier.size() > 0)
+  {
+    int lowestFScore = 2147483647;
+    int lowestHScore = 2147483647;
+    int lowestGScore = 2147483647;
+    int highestGScore = 0;
+    Node *currentNode;
+
+    for (Node *node : frontier)
+    {
+      // if (fScores[node] < lowestFScore)
+      // {
+      //   lowestFScore = fScores[node];
+      //   currentNode = node;
+      // }
+      // else if (fScores[node] == lowestFScore && heuristic(node, destination) < heuristic(currentNode, destination))
+      // {
+      //   currentNode = node;
+      // }
+
+      if (heuristic(node, destination) < lowestHScore)
+      {
+        lowestHScore = heuristic(node, destination);
+        currentNode = node;
+      }
+      else if (heuristic(node, destination) == lowestHScore && gScores[node] < lowestGScore)
+      {
+        lowestGScore = gScores[node];
+        currentNode = node;
+      }
+    }
+
+    frontier.erase(currentNode);
+
+    if (currentNode == destination)
+    {
+      return reconstructPath(currentNode, cameFrom);
+    }
+
+    // for (Node *neighbor : currentNode->neighbors)
+    // {
+    //   int neighborGScore = gScores[currentNode] + getEdgeCost(currentNode, neighbor);
+
+    //   if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
+    //   {
+    //     cameFrom[neighbor] = currentNode;
+    //     gScores[neighbor] = neighborGScore;
+    //     fScores[neighbor] = neighborGScore + this->heuristic(neighbor, destination);
+
+    //     if (frontier.find(neighbor) == frontier.end())
+    //     {
+    //       frontier.insert(neighbor);
+    //     }
+    //   }
+    // }
+    for (Node *neighbor : currentNode->waypointNeighbors)
+    {
+      if (closed.find(neighbor) == closed.end())
+      {
+        int neighborGScore = gScores[currentNode] + getEdgeCost(currentNode, neighbor);
+
+        if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
+        {
+          cameFrom[neighbor] = currentNode;
+          gScores[neighbor] = neighborGScore;
+          fScores[neighbor] = neighborGScore + this->heuristic(neighbor, destination);
+
+          if (closed.find(neighbor) == closed.end() && frontier.find(neighbor) == frontier.end())
+          {
+            frontier.insert(neighbor);
+          }
+        }
+      }
+    }
+
+    // Remove this?
+    closed.insert(currentNode);
+  }
+  throw std::runtime_error("ERROR 002");
+}
+
+std::vector<std::vector<Node *> *> Graph::getVGPathSnapshots(Node *origin, Node *destination)
+{
+  std::set<Node *> frontier;
+  std::set<Node *> closed;
+  std::map<Node *, Node *> cameFrom;
+  std::map<Node *, int> gScores;
+  std::map<Node *, int> fScores;
+  std::vector<std::vector<Node *> *> snapshots;
+
+  frontier.insert(origin);
+  cameFrom[origin] = origin;
+  gScores[origin] = 0;
+  fScores[origin] = this->heuristic(origin, destination);
+
+  while (frontier.size() > 0)
+  {
+    snapshots.push_back(new std::vector<Node *>);
+    int lowestFScore = 2147483647;
+    int lowestHScore = 2147483647;
+    int lowestGScore = 2147483647;
+    int highestGScore = 0;
+    Node *currentNode;
+
+    for (Node *node : frontier)
+    {
+      // if (fScores[node] < lowestFScore)
+      // {
+      //   lowestFScore = fScores[node];
+      //   currentNode = node;
+      // }
+      // else if (fScores[node] == lowestFScore && heuristic(node, destination) < heuristic(currentNode, destination))
+      // {
+      //   currentNode = node;
+      // }
+
+      if (heuristic(node, destination) < lowestHScore)
+      {
+        lowestHScore = heuristic(node, destination);
+        currentNode = node;
+      }
+      else if (heuristic(node, destination) == lowestHScore && gScores[node] < lowestGScore)
+      {
+        lowestGScore = gScores[node];
+        currentNode = node;
+      }
+    }
+
+    // std::cout << "\n\nSNAPSHOT #" << snapshots.size() << "\n";
+    // for (int y = 0; y < yNodes; y++)
+    // {
+    //   for (int x = 0; x < xNodes; x++)
+    //   {
+    //     Node *node = nodes[y][x];
+    //     std::cout << "(" << node->x << ", " << node->y << ") "
+    //               << "F-" << fScores[node] << " H-" << this->heuristic(node, destination) << "   ";
+    //   }
+
+    //   std::cout << "\n";
+    // }
+
+    Node *temp = currentNode;
+    snapshots.back()->push_back(temp);
+    while (temp != cameFrom[temp])
+    {
+      snapshots.back()->push_back(cameFrom[temp]);
+      temp = cameFrom[temp];
+    }
+
+    frontier.erase(currentNode);
+
+    if (currentNode == destination)
+    {
+      // return reconstructPath(currentNode, cameFrom);
+      return snapshots;
+    }
+
+    for (Node *neighbor : currentNode->neighbors)
+    {
+      if (closed.find(neighbor) == closed.end())
+      {
+        int neighborGScore = gScores[currentNode] + getEdgeCost(currentNode, neighbor);
+
+        if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
+        {
+          cameFrom[neighbor] = currentNode;
+          gScores[neighbor] = neighborGScore;
+          fScores[neighbor] = neighborGScore + this->heuristic(neighbor, destination);
+
+          if (closed.find(neighbor) == closed.end() && frontier.find(neighbor) == frontier.end())
+          {
+            frontier.insert(neighbor);
+          }
+        }
+      }
+    }
+
+    // Remove this?
+    closed.insert(currentNode);
+  }
+  throw std::runtime_error("ERROR 100");
+}
+
+std::vector<Node *> Graph::getVGRandomPath()
+{
+  srand(time(0));
+
+  // std::random_device rd;
+  std::mt19937 rng(rand());
+  std::uniform_int_distribution<int> randX(0, this->xNodes - 1);
+  std::uniform_int_distribution<int> randY(0, this->yNodes - 1);
+
+  int originX;
+  int originY;
+  int destinationX;
+  int destinationY;
+
+  do
+  {
+    originX = randX(rng);
+    originY = randY(rng);
+    destinationX = randX(rng);
+    destinationY = randY(rng);
+  } while (this->nodes[originY][originX]->forbidden || this->nodes[destinationY][destinationX]->forbidden);
+
+  return getVGPath(this->nodes[originY][originX], this->nodes[destinationY][destinationX]);
+}
+
+std::vector<std::vector<Node *> *> Graph::getVGRandomPathSnapshots(Node *origin, Node *destination)
+{
+  srand(time(0));
+
+  // std::random_device rd;
+  std::mt19937 rng(rand());
+  std::uniform_int_distribution<int> randX(0, this->xNodes - 1);
+  std::uniform_int_distribution<int> randY(0, this->yNodes - 1);
+
+  int originX;
+  int originY;
+  int destinationX;
+  int destinationY;
+
+  do
+  {
+    originX = randX(rng);
+    originY = randY(rng);
+    destinationX = randX(rng);
+    destinationY = randY(rng);
+  } while (this->nodes[originY][originX]->forbidden || this->nodes[destinationY][destinationX]->forbidden);
+
+  return getVGPathSnapshots(this->nodes[originY][originX], this->nodes[destinationY][destinationX]);
 }
