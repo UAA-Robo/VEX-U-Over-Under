@@ -13,6 +13,7 @@
 #include "Rectangle.h"
 #include "Button.h"
 #include "GUI.h"
+#include "Enums.h"
 
 // in inches
 double const FIELD_SIZE = 138.73;
@@ -29,10 +30,8 @@ int const Y_NODES = FIELD_SIZE / NODE_SIZE;
 // int const X_NODES = 10;
 // int const Y_NODES = 10;
 
-int main(int argv, char **args)
+void addForbiddenNodes(Graph *graph)
 {
-  Graph *graph = new Graph(X_NODES, Y_NODES);
-
   double const ROLLER_SIZE = ZONE_SIZE;
 
   double const GOAL_START_X = 2 * ZONE_SIZE;
@@ -100,7 +99,18 @@ int main(int argv, char **args)
   {
     graph->forbidRectangle(rectangle.topLeftPoint, rectangle.topRightPoint, rectangle.bottomLeftPoint);
   }
+}
 
-  GUI gui = GUI(graph, CELL_SIZE);
-  gui.run(true);
+int main(int argv, char **args)
+{
+  Graph *graph = new Graph(X_NODES, Y_NODES);
+  Graph *graph2 = new Graph(X_NODES, Y_NODES);
+
+  addForbiddenNodes(graph);
+  addForbiddenNodes(graph2);
+
+  // graph2->initVG();
+
+  GUI gui = GUI(graph, graph2, CELL_SIZE);
+  gui.run(false);
 }

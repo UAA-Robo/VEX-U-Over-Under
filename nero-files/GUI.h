@@ -6,6 +6,8 @@ class GUI
 {
 private:
   Graph *graph;
+  Graph *graph2;
+
   std::vector<Node *> forbiddenNodes;
   int CELL_SIZE;
   int yOffset;
@@ -15,10 +17,13 @@ private:
   // SDL_Window *window;
 
   void drawCell(SDL_Renderer *renderer, Node *node, SDL_Color color);
+  void drawCellSecond(SDL_Renderer *renderer, Node *node, SDL_Color color, int xDifference);
 
 public:
   GUI(Graph *graph, int CELL_SIZE);
+  GUI(Graph *graph, Graph *graph2, int CELL_SIZE);
   int run(bool showSnapshots);
+  int runTwo(bool showSnapshots);
 };
 
 // GUI CONTROLS

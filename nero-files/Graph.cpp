@@ -1,10 +1,12 @@
-#include "Graph.h"
 #include <iostream>
 #include <time.h>
 #include <fstream>
 #include <ostream>
 #include <string>
 #include <stdexcept>
+// #include "Enums.h"
+// #include "Node.h"
+#include "Graph.h"
 
 //=============================================================================
 //=============================================================================
@@ -89,6 +91,12 @@ Graph::Graph(int xNodes, int yNodes)
     };
   };
 };
+
+void Graph::initVG()
+{
+  findWaypoints();
+  addNeighboringWaypoints();
+}
 
 Graph::~Graph()
 {
@@ -440,7 +448,12 @@ void Graph::forbidRectangle(Node *topLeftPoint, Node *topRightPoint, Node *botto
 }
 
 // can store this data on the node itself
-Graph::WAYPOINT Graph::isWaypoint(Node *node)
+// is a waypoint if:
+// * is not forbidden
+// * top, left, bottom, right are not forbidden
+// * topleft topright, topright bottomright, bottomright bottomleft, bottomleft topleft are not forbidden
+// * topleft, topright, bottomright, or bottomleft is forbidden
+WAYPOINT Graph::isWaypoint(Node *node)
 {
   int x = node->x;
   int y = node->y;
@@ -455,6 +468,11 @@ Graph::WAYPOINT Graph::isWaypoint(Node *node)
   bool hasBottomLeftNeighbor = hasBottomNeighbor && hasLeftNeighbor;
   bool hasBottomRightNeighbor = hasBottomNeighbor && hasRightNeighbor;
 
+  // bool topNeighborForbidden = hasTopNeighbor && this->nodes[y - 1][x];
+  // bool rightNeighborForbidden = hasTopNeighbor && this->nodes[y][x + 1];
+  // bool bottomNeighborForbidden = hasTopNeighbor && this->nodes[y + 1][x];
+  // bool leftNeighborForbidden = hasTopNeighbor && this->nodes[y][x - 1];
+
   bool topNeighborForbidden = hasTopNeighbor && this->nodes[y - 1][x]->forbidden;
   bool rightNeighborForbidden = hasRightNeighbor && this->nodes[y][x + 1]->forbidden;
   bool bottomNeighborForbidden = hasBottomNeighbor && this->nodes[y + 1][x]->forbidden;
@@ -465,12 +483,59 @@ Graph::WAYPOINT Graph::isWaypoint(Node *node)
   bool bottomRightNeighborForbidden = hasBottomRightNeighbor && this->nodes[y + 1][x + 1]->forbidden;
   bool bottomLeftNeighborForbidden = hasBottomLeftNeighbor && this->nodes[y + 1][x - 1]->forbidden;
 
+  if ((!node->forbidden) &&
+      (!topNeighborForbidden && !rightNeighborForbidden && !bottomNeighborForbidden && !leftNeighborForbidden) &&
+      ((!(topLeftNeighborForbidden && topRightNeighborForbidden) && !(topRightNeighborForbidden && bottomRightNeighborForbidden) && !(bottomRightNeighborForbidden && bottomLeftNeighborForbidden) && !(bottomLeftNeighborForbidden && topLeftNeighborForbidden))))
+  {
+    if (topLeftNeighborForbidden)
+    {
+      return BOTTOMRIGHT;
+    }
+    else if (topRightNeighborForbidden)
+    {
+      return BOTTOMLEFT;
+    }
+    else if (bottomRightNeighborForbidden)
+    {
+      return TOPLEFT;
+    }
+    else if (bottomLeftNeighborForbidden)
+    {
+      return TOPRIGHT;
+    }
+  }
+  else
+  {
+    return NO;
+    std::cout << topNeighborForbidden << std::endl;
+    std::cout << rightNeighborForbidden << std::endl;
+    std::cout << bottomNeighborForbidden << std::endl;
+    std::cout << leftNeighborForbidden << std::endl;
+
+    std::cout << topLeftNeighborForbidden << std::endl;
+    std::cout << topRightNeighborForbidden << std::endl;
+    std::cout << bottomRightNeighborForbidden << std::endl;
+    std::cout << bottomLeftNeighborForbidden << std::endl;
+
+    node->println();
+
+    throw std::runtime_error("ERROR 110");
+  }
+
   if ((topLeftNeighborForbidden && topRightNeighborForbidden) ||
       (topRightNeighborForbidden && bottomRightNeighborForbidden) ||
       (bottomRightNeighborForbidden && bottomLeftNeighborForbidden) ||
       (bottomLeftNeighborForbidden && topLeftNeighborForbidden))
   {
-    throw std::runtime_error("ERROR 200");
+    if (!topNeighborForbidden && !rightNeighborForbidden && !bottomNeighborForbidden && !leftNeighborForbidden)
+    {
+      std::cout << topLeftNeighborForbidden << std::endl;
+      std::cout << topRightNeighborForbidden << std::endl;
+      std::cout << bottomRightNeighborForbidden << std::endl;
+      std::cout << bottomLeftNeighborForbidden << std::endl;
+      node->println();
+      throw std::runtime_error("ERROR 200");
+    }
   }
 
   if (topNeighborForbidden ||
@@ -497,16 +562,132 @@ Graph::WAYPOINT Graph::isWaypoint(Node *node)
     return BOTTOMLEFT;
   }
 
-  throw std::runtime_error("ERROR 300");
+  return NO;
+  // node->println();
+  // throw std::runtime_error("ERROR 300");
 }
 
-std::set<Node *> Graph::findWaypoints(Node *node)
+bool Graph::bIsTaut(Node *a, Node *b)
+{
+  switch (a->waypoint)
+  {
+  case TOPLEFT:
+  {
+    switch (getPositionRelative(a, b))
+    {
+    case B_TOP_A:
+    case B_RIGHT_A:
+    case B_BOTTOM_A:
+    case B_LEFT_A:
+    case B_TOPRIGHT_A:
+    case B_BOTTOMLEFT_A:
+    {
+      return true;
+      break;
+    }
+    }
+  }
+  case TOPRIGHT:
+  {
+    switch (getPositionRelative(a, b))
+    {
+    case B_TOP_A:
+    case B_RIGHT_A:
+    case B_BOTTOM_A:
+    case B_LEFT_A:
+    case B_TOPLEFT_A:
+    case B_BOTTOMRIGHT_A:
+    {
+      return true;
+      break;
+    }
+    }
+    break;
+  }
+  case BOTTOMRIGHT:
+  {
+    switch (getPositionRelative(a, b))
+    {
+    case B_TOP_A:
+    case B_RIGHT_A:
+    case B_BOTTOM_A:
+    case B_LEFT_A:
+    case B_TOPRIGHT_A:
+    case B_BOTTOMLEFT_A:
+    {
+      return true;
+      break;
+    }
+    }
+    break;
+  }
+  case BOTTOMLEFT:
+  {
+    switch (getPositionRelative(a, b))
+    {
+    case B_TOP_A:
+    case B_RIGHT_A:
+    case B_BOTTOM_A:
+    case B_LEFT_A:
+    case B_TOPLEFT_A:
+    case B_BOTTOMRIGHT_A:
+    {
+      return true;
+      break;
+    }
+    }
+    break;
+  }
+  }
+
+  return false;
+}
+
+bool Graph::areTautWaypoints(Node *a, Node *b)
+{
+  if (bIsTaut(a, b) && bIsTaut(b, a))
+  {
+    return true;
+  }
+  return false;
+}
+
+bool Graph::hasLOS(Node *a, Node *b)
+{
+  int x = a->x;
+  int y = a->y;
+
+  double xSlope = ((b->x - a->x) / (b->y - a->y)) / 10;
+  double ySlope = ((b->y - a->y) / (b->x - a->x)) / 10;
+
+  while ((y + ySlope >= 0 && y + ySlope <= yNodes - 1) && (x + xSlope >= 0 && x + xSlope <= xNodes - 1))
+  {
+    y += ySlope;
+    x += xSlope;
+
+    if (nodes[y][x]->forbidden)
+    {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+// Before doing a line of check, make sure they are taut waypoints
+void Graph::findWaypoints()
 {
   for (int y = 0; y < yNodes; y++)
   {
     for (int x = 0; x < xNodes; x++)
     {
       Node *node = nodes[y][x];
+
+      if (node->forbidden)
+      {
+        continue;
+      }
+
       WAYPOINT corner = isWaypoint(node);
       node->waypoint = corner;
 
@@ -517,17 +698,8 @@ std::set<Node *> Graph::findWaypoints(Node *node)
         break;
       }
       case TOPLEFT:
-      {
-        // break;
-      }
       case TOPRIGHT:
-      {
-        // break;
-      }
       case BOTTOMRIGHT:
-      {
-        // break;
-      }
       case BOTTOMLEFT:
       {
         waypoints.insert(node);
@@ -543,173 +715,27 @@ std::set<Node *> Graph::findWaypoints(Node *node)
   }
 }
 
-void Graph::addNeighboringWaypoints(Node *node)
+void Graph::addNeighboringWaypoints()
 {
-  switch (node->waypoint)
+  for (Node *nodeA : waypoints)
   {
-  case TOPLEFT:
-  {
-    // how are you handling LOS: TOPLEFT and TOPRIGHT? Inherently incompatible
-    int x = node->x;
-    int y = node->y;
-    // scan top right quadrant: up one level, right until you hit a block, up one level (until you hit a block), etc.
-    // scan bottom left quadrant: down one level, left until you hit a block, down one level (until you hit a block) etc.
-
-    while (y - 1 >= 0)
+    for (Node *nodeB : waypoints)
     {
-      y--;
-      while (x + 1 <= xNodes - 1)
+      if (nodeA != nodeB)
       {
-        x++;
-        if(nodes[y][x]->waypoint != NO && nodes[y][x]->waypoint != BOTTOMLEFT && nodes[y][x]->waypoint != NO) {
-
-        }
-      }
-
-      // top right quadrant
-      // bottom left quadrant
-      // including straight top, right, bottom, left
-      //   * or maybe not: situation: topleft node and topright node nearby each other, should they be connected even if they're not taut neighbors
-    }
-    break;
-  }
-  case TOPRIGHT:
-  {
-    break;
-  }
-  case BOTTOMRIGHT:
-  {
-    break;
-  }
-  case BOTTOMLEFT:
-  {
-    break;
-  }
-  default:
-  {
-    throw std::runtime_error("800");
-    break;
-  }
-  }
-}
-
-// Check for LOS?
-bool Graph::areTautNeighbors(Node *a, Node *b)
-{
-  if (a->waypoint == 0 || b->waypoint == 0)
-  {
-    throw std::runtime_error("ERROR 400");
-  }
-
-  POSITION relativePosition = getPositionRelative(a, b);
-
-  switch (relativePosition)
-  {
-  case /* constant-expression */:
-    /* code */
-    break;
-
-  default:
-    break;
-  }
-
-  if (a->waypoint == 1)
-  {
-    // return true if b is not bottom right or top left of a (straight right, top, bottom, and left are accepted)
-  }
-  else if (a->waypoint == 2)
-  {
-    // return true if b is not bottom left or top right of a (straight right, top, bottom, and left are accepted)
-  }
-  else if (a->waypoint == 3)
-  {
-    // return true if b is not top left or bottom right of a (straight right, top, bottom, and left are accepted)
-  }
-  else if (a->waypoint == 4)
-  {
-    // return true if b is not top right or bottom left of a (straight right, top, bottom, and left are accepted)
-  }
-}
-
-bool Graph::canSeeEachOther(Node *a, Node *b)
-{
-  // get relative position + second algorithm
-
-  // for a:
-  // * top left forbidden
-  //   * for b:
-  // * top right forbidden
-  // * bottom left forbidden
-  // * bottom right forbidden
-}
-
-bool Graph::shouldKeepNode(Node *a)
-{
-  while (true)
-  {
-  }
-  for (int y = a->y - 1; y >= 0; y--)
-  {
-    if (this->nodes[y][a->x]->forbidden)
-    {
-      break;
-    }
-    if (this->nodes[y][a->x]->waypoint)
-    {
-    }
-  }
-}
-
-void Graph::ENLSVG(int xNodes, int yNodes)
-{
-  this->xNodes = xNodes;
-  this->yNodes = yNodes;
-
-  for (int y = 0; y < yNodes; y++)
-  {
-    for (int x = 0; x < xNodes; x++)
-    {
-      if (this->isWaypoint(this->nodes[y][x]))
-      {
-        this->waypoints.push_back(this->nodes[y][x]);
-      }
-    }
-  }
-
-  // when adding a taut visible waypoint as a neight to node a, also add a as a taut visible waypoint to it?
-  for (Node *node : this->waypoints)
-  {
-    node->tautVisibleWaypoints = this->getTautVisibleWaypoints(node);
-  }
-
-  for (Node *node : this->waypoints)
-  {
-  }
-}
-
-bool Graph::LOS(Node *a, Node *b)
-{
-}
-
-// break whenever you hit an obstacle
-std::vector<Node *> Graph::getVisibleNodes(Node *node)
-{
-}
-
-void Graph::findNeighborWaypoints()
-{
-  for (Node *waypoint1 : waypoints)
-  {
-    for (Node *waypoint2 : waypoints)
-    {
-      if (waypoint1 != waypoint2)
-      {
-        if (waypointsHaveVisibility(waypoint1, waypoint2))
+        if (areTautWaypoints(nodeA, nodeB))
         {
+          nodeA->waypointNeighbors.insert(nodeB);
+          nodeB->waypointNeighbors.insert(nodeA);
         }
       }
     }
   }
+}
+
+std::set<Node *> Graph::getWaypoints()
+{
+  return waypoints;
 }
 
 //=============================================================================
@@ -790,7 +816,7 @@ std::vector<Node *> Graph::reconstructPath(Node *currentNode, std::map<Node *, N
 }
 
 // Returns the position of b relative to a
-Graph::POSITION Graph::getPositionRelative(Node *a, Node *b)
+POSITION Graph::getPositionRelative(Node *a, Node *b)
 {
   int ax = a->x;
   int ay = a->y;

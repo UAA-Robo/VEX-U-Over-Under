@@ -3,32 +3,11 @@
 #include <map>
 #include <cstdlib>
 #include <random>
+#include "Enums.h"
 #include "Node.h"
 
 class Graph
 {
-public:
-  enum POSITION
-  {
-    B_TOP_A,
-    B_RIGHT_A,
-    B_BOTTOM_A,
-    B_LEFT_A,
-    B_TOPLEFT_A,
-    B_TOPRIGHT_A,
-    B_BOTTOMRIGHT_A,
-    B_BOTTOMLEFT_A
-  };
-
-  enum WAYPOINT
-  {
-    NO,
-    TOPLEFT,
-    TOPRIGHT,
-    BOTTOMRIGHT,
-    BOTTOMLEFT
-  };
-
 private:
   Node ***nodes;
   std::set<Node *> waypoints;
@@ -38,14 +17,15 @@ private:
   std::vector<Node *> reconstructPath(Node *currentNode, std::map<Node *, Node *> cameFrom);
   POSITION getPositionRelative(Node *a, Node *b);
 
+  // VG methods
   WAYPOINT isWaypoint(Node *node);
-  std::set<Node *> findWaypoints(Node *node);
-  void Graph::addNeighboringWaypoints(Node *node);
-  
-  bool areTautNeighbors(Node *a, Node *b);
+  bool bIsTaut(Node *a, Node *b);
+  bool areTautWaypoints(Node *a, Node *b);
+  bool hasLOS(Node *a, Node *b);
+  void findWaypoints();
+  void addNeighboringWaypoints();
 
-  bool canSeeEachOther(Node *a, Node *b);
-  void findNeighborWaypoints();
+  void initVG();
 
 public:
   int xNodes;
@@ -61,6 +41,9 @@ public:
   std::vector<std::vector<Node *> *> getRandomPathSnapshots();
   void forbidTriangle(Node *a, Node *b);
   void forbidRectangle(Node *topLeftPoint, Node *topRightPoint, Node *bottomLeftPoint);
+
+  // VG methods
+  std::set<Node *> getWaypoints();
 };
 
 // VG

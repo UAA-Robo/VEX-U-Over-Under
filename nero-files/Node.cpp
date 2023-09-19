@@ -1,5 +1,5 @@
-#include "Node.h"
 #include <iostream>
+#include "Node.h"
 
 //=============================================================================
 //=============================================================================
@@ -12,12 +12,11 @@ Node::Node(int x, int y)
   this->x = x;
   this->y = y;
   forbidden = false;
-  waypoint = Graph::NO;
+  waypoint = NO;
 };
 
 void Node::addNeighbor(Node *neighborNode)
 {
-
   neighbors.insert(neighborNode);
   neighborNode->neighbors.insert(this);
 };
