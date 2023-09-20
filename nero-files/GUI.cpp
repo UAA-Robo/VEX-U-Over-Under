@@ -9,52 +9,74 @@
 //=============================================================================
 //=============================================================================
 
-GUI::GUI(Graph *graph, int cellSize, bool showSnapshots)
+GUI::GUI(Graph *graph, int cellSize)
 {
-  this->graph = graph;
-  this->graph2 = nullptr;
-  this->cellSize = cellSize;
-  this->showSnapshots = showSnapshots;
-  init();
-  run();
-};
-
-GUI::GUI(Graph *graph, Graph *graph2, int cellSize, bool showSnapshots)
-{
-  this->graph = graph;
-  this->graph2 = graph2;
-  this->cellSize = cellSize;
-  this->showSnapshots = showSnapshots;
-  init();
+  init(graph, nullptr, cellSize);
   run();
 }
 
-void GUI::init()
+GUI::GUI(Graph *graph, Graph *graph2, int cellSize)
 {
-  this->xNodes = graph->xNodes;
-  this->yNodes = graph->yNodes;
-  this->forbiddenNodes = graph->getForbiddenNodes();
+  init(graph, graph2, cellSize);
+  run();
+}
 
-  gridWidth = (graph->xNodes * cellSize) + 1;
-  gridHeight = (graph->yNodes * cellSize) + 1;
-  SDL_Rect grid_cursor_ghost = {0, 0, cellSize, cellSize};
+void GUI::init(Graph *graph, Graph *graph2, int cellSize)
+{
+  graph = graph;
+  graph2 = graph2;
+  xNodes = graph->xNodes;
+  yNodes = graph->yNodes;
+  cellSize = cellSize;
+  gridWidth = (xNodes * cellSize) + 1;
+  gridHeight = (yNodes * cellSize) + 1;
+  xPadding = 100;
+  yPadding = 100;
+  yOffset = 0;
+  scrollSensitivity = 100;
+  pathsFound = 0;
+  durationTotal = 0;
+  snapshotNumber = 0;
+  nodesSelected = 0;
+  showSnapshots = true;
+  selectingNodesAllowed = false;
+  autoMode = false;
 
-  // Dark theme.
-  //  grid_background = {22, 22, 22, 255};
-  //  grid_line_color = {44, 44, 44, 255};
-  //  grid_cursor_ghost_color = {44, 44, 44, 255};
-  //  grid_cursor_color = {255, 255, 255, 255};
+  forbiddenNodes = graph->getForbiddenNodes();
 
-  // Light Theme.
-  grid_background = {233, 233, 233, 255};
-  grid_line_color = {200, 200, 200, 255};
-  grid_cursor_ghost_color = {200, 200, 200, 255};
-  grid_cursor_color = {160, 160, 160, 255};
+  {
+    SDL_Window *window;
+    SDL_Renderer *renderer;
+    this->renderer = renderer;
+    this->window = window;
+  }
 
+  gridCursor = {0, 0, cellSize, cellSize};
+  quit = SDL_FALSE;
+  mouse_active = SDL_FALSE;
+  mouse_hover = SDL_FALSE;
+  gridBackgroundColor = {233, 233, 233, 255};
+  gridLineColor = {200, 200, 200, 255};
+  gridCursorColor = {200, 200, 200, 255};
+  // gridCursorColor = {200, 200, 200, 255};
+  // gridCursorColor = {160, 160, 160, 255};
+  forbiddenNodesColor = {255, 0, 0, 255};
   pathNodesColor = {0, 255, 0, 255};
   pathNodesPastColor = {0, 0, 255, 255};
   starting = {255, 255, 0, 255};
   ending = {0, 255, 255, 255};
+
+  // // Dark theme.
+  // //  gridBackgroundColor = {22, 22, 22, 255};
+  // //  gridLineColor = {44, 44, 44, 255};
+  // //  gridCursorColor = {44, 44, 44, 255};
+  // //  gridCursorColor = {255, 255, 255, 255};
+
+  // // Light Theme.
+  // gridBackgroundColor = {233, 233, 233, 255};
+  // gridLineColor = {200, 200, 200, 255};
+  // gridCursorColor = {200, 200, 200, 255};
+  // // gridCursorColor = {160, 160, 160, 255};
 
   if (SDL_Init(SDL_INIT_VIDEO) < 0)
   {
@@ -62,47 +84,23 @@ void GUI::init()
     // return EXIT_FAILURE;
   }
 
-  {
-
-    SDL_Window *window;
-    SDL_Renderer *renderer;
-    this->renderer = renderer;
-    this->window = window;
-  }
-
   if (SDL_CreateWindowAndRenderer(gridWidth, gridHeight, 0, &window, &renderer) < 0)
   {
     SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Create window and renderer: %s", SDL_GetError());
     // return EXIT_FAILURE;
   }
-  SDL_SetWindowFullscreen(this->window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-  SDL_SetWindowTitle(this->window, "Pathfinding");
 
-  quit = SDL_FALSE;
-  mouse_active = SDL_FALSE;
-  mouse_hover = SDL_FALSE;
-
-  pathsFound = 0;
-  durationTotal = 0;
-
-  this->selectingNodesAllowed = false;
-  forbiddenNodesColor = {255, 0, 0, 255};
-
-  yOffset = 0;
-  xPadding = 100;
-  yPadding = 100;
-  scrollSensitivity = 100;
-
-  nodesSelected = 0;
-
-  snapshotNumber = 0;
-  autoMode = false;
-  run();
+  SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+  SDL_SetWindowTitle(window, "Pathfinding");
 }
 
 void GUI::getPath(Node *a, Node *b)
 {
+  pathNodes.clear();
+
+  autoMode = false;
   selectingNodesAllowed = false;
+
   auto start = std::chrono::high_resolution_clock::now();
   pathNodes = graph->getPath(selectedNodes[0], selectedNodes[1]);
   auto stop = std::chrono::high_resolution_clock::now();
@@ -115,20 +113,33 @@ void GUI::getPath(Node *a, Node *b)
 
 void GUI::getPathSnapshots(Node *a, Node *b)
 {
+  for (std::vector<Node *> *vec : pathNodesSnapshots)
+  {
+    delete vec;
+  }
+  pathNodesSnapshots.clear();
+
+  snapshotNumber = 0;
+  autoMode = false;
   selectingNodesAllowed = false;
 
-  auto start = std::chrono::high_resolution_clock::now();
+  // auto start = std::chrono::high_resolution_clock::now();
   pathNodesSnapshots = graph->getPathSnapshots(selectedNodes[0], selectedNodes[1]);
-  auto stop = std::chrono::high_resolution_clock::now();
+  // auto stop = std::chrono::high_resolution_clock::now();
 
-  auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-  std::cout << duration.count() << std::endl;
-  pathsFound++;
-  durationTotal += duration.count();
+  // auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+  // std::cout << duration.count() << std::endl;
+  // pathsFound++;
+  // durationTotal += duration.count();
 }
 
 void GUI::getRandomPath()
 {
+  pathNodes.clear();
+
+  autoMode = false;
+  selectingNodesAllowed = false;
+
   auto start = std::chrono::high_resolution_clock::now();
   pathNodes = graph->getRandomPath();
   auto stop = std::chrono::high_resolution_clock::now();
@@ -141,14 +152,47 @@ void GUI::getRandomPath()
 
 void GUI::getRandomPathSnapshots()
 {
-  auto start = std::chrono::high_resolution_clock::now();
-  pathNodesSnapshots = graph->getRandomPathSnapshots();
-  auto stop = std::chrono::high_resolution_clock::now();
+  for (std::vector<Node *> *vec : pathNodesSnapshots)
+  {
+    delete vec;
+  }
+  pathNodesSnapshots.clear();
 
-  auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-  std::cout << duration.count() << std::endl;
-  pathsFound++;
-  durationTotal += duration.count();
+  snapshotNumber = 0;
+  autoMode = false;
+  selectingNodesAllowed = false;
+
+  // auto start = std::chrono::high_resolution_clock::now();
+  pathNodesSnapshots = graph->getRandomPathSnapshots();
+  // auto stop = std::chrono::high_resolution_clock::now();
+
+  // auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+  // std::cout << duration.count() << std::endl;
+  // pathsFound++;
+  // durationTotal += duration.count();
+  std::cout << "QQQQQQQQQQ\n";
+}
+
+void GUI::switchModes()
+{
+  if (showSnapshots)
+  {
+    for (std::vector<Node *> *vec : pathNodesSnapshots)
+    {
+      delete vec;
+    }
+    pathNodesSnapshots.clear();
+    snapshotNumber = 0;
+    autoMode = false;
+    selectingNodesAllowed = false;
+  }
+  else
+  {
+    pathNodes.clear();
+    autoMode = false;
+    selectingNodesAllowed = false;
+  }
+  showSnapshots = !showSnapshots;
 }
 
 void GUI::eventLoop()
@@ -173,11 +217,17 @@ void GUI::eventLoop()
           break;
         case SDLK_a:
         case SDLK_LEFT:
-          snapshotNumber--;
+          if (snapshotNumber - 1 > 0)
+          {
+            snapshotNumber--;
+          }
           break;
         case SDLK_d:
         case SDLK_RIGHT:
-          snapshotNumber++;
+          if (snapshotNumber + 1 < pathNodesSnapshots.size())
+          {
+            snapshotNumber++;
+          }
           break;
         case SDLK_ESCAPE:
           quit = SDL_TRUE;
@@ -186,42 +236,44 @@ void GUI::eventLoop()
           // RANDOMIZE PATH SNAPSHOTS OR PATH
           if (showSnapshots)
           {
-            for (std::vector<Node *> *vec : pathNodesSnapshots)
-            {
-              vec->clear();
-              delete vec;
-            }
-            pathNodesSnapshots.clear();
+            getRandomPathSnapshots();
+            // for (std::vector<Node *> *vec : pathNodesSnapshots)
+            // {
+            //   vec->clear();
+            //   delete vec;
+            // }
+            // pathNodesSnapshots.clear();
 
-            snapshotNumber = 0;
-            autoMode = false;
+            // snapshotNumber = 0;
+            // autoMode = false;
 
-            auto start = std::chrono::high_resolution_clock::now();
-            pathNodesSnapshots = graph->getRandomPathSnapshots();
-            auto stop = std::chrono::high_resolution_clock::now();
+            // auto start = std::chrono::high_resolution_clock::now();
+            // pathNodesSnapshots = graph->getRandomPathSnapshots();
+            // auto stop = std::chrono::high_resolution_clock::now();
 
-            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-            std::cout << duration.count() << std::endl;
-            pathsFound++;
-            durationTotal += duration.count();
+            // auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+            // std::cout << duration.count() << std::endl;
+            // pathsFound++;
+            // durationTotal += duration.count();
           }
           else
           {
-            pathNodes.clear();
+            getRandomPath();
+            // pathNodes.clear();
 
-            auto start = std::chrono::high_resolution_clock::now();
-            pathNodes = graph->getRandomPath();
-            auto stop = std::chrono::high_resolution_clock::now();
+            // auto start = std::chrono::high_resolution_clock::now();
+            // pathNodes = graph->getRandomPath();
+            // auto stop = std::chrono::high_resolution_clock::now();
 
-            auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-            std::cout << duration.count() << std::endl;
-            pathsFound++;
-            durationTotal += duration.count();
-            autoMode = false;
+            // auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+            // std::cout << duration.count() << std::endl;
+            // pathsFound++;
+            // durationTotal += duration.count();
+            // autoMode = false;
           }
           break;
         case SDLK_TAB:
-          showSnapshots = !showSnapshots;
+          switchModes();
           break;
         }
         break;
@@ -361,19 +413,19 @@ void GUI::eventLoop()
         }
         break;
       case SDL_MOUSEMOTION:
-        grid_cursor_ghost.x = (((event.motion.x) / cellSize) * cellSize);
-        grid_cursor_ghost.y = ((event.motion.y / cellSize) * cellSize);
+        gridCursor.x = (((event.motion.x) / cellSize) * cellSize);
+        gridCursor.y = ((event.motion.y / cellSize) * cellSize);
         if ((event.motion.x >= xPadding && event.motion.x <= xPadding + gridWidth) &&
             (event.motion.y >= yPadding + yOffset && event.motion.y <= yPadding + yOffset + gridHeight))
         {
 
-          grid_cursor_ghost.x = (((event.motion.x - xPadding) / cellSize) * cellSize) + xPadding;
-          grid_cursor_ghost.y = (((event.motion.y - yPadding - yOffset) / cellSize) * cellSize) + yPadding + yOffset;
+          gridCursor.x = (((event.motion.x - xPadding) / cellSize) * cellSize) + xPadding;
+          gridCursor.y = (((event.motion.y - yPadding - yOffset) / cellSize) * cellSize) + yPadding + yOffset;
         }
         else
         {
-          grid_cursor_ghost.x = -1000;
-          grid_cursor_ghost.y = -1000;
+          gridCursor.x = -1000;
+          gridCursor.y = -1000;
         }
 
         if (!mouse_active)
@@ -415,13 +467,13 @@ void GUI::eventLoop()
     }
 
     // Draw grid background.
-    SDL_SetRenderDrawColor(renderer, grid_background.r, grid_background.g,
-                           grid_background.b, grid_background.a);
+    SDL_SetRenderDrawColor(renderer, gridBackgroundColor.r, gridBackgroundColor.g,
+                           gridBackgroundColor.b, gridBackgroundColor.a);
     SDL_RenderClear(renderer);
 
     // Draw grid lines.
-    SDL_SetRenderDrawColor(renderer, grid_line_color.r, grid_line_color.g,
-                           grid_line_color.b, grid_line_color.a);
+    SDL_SetRenderDrawColor(renderer, gridLineColor.r, gridLineColor.g,
+                           gridLineColor.b, gridLineColor.a);
 
     for (int x = 0; x < 1 + graph->xNodes * cellSize;
          x += cellSize)
@@ -438,11 +490,11 @@ void GUI::eventLoop()
     // Draw grid ghost cursor.
     if (mouse_active && mouse_hover)
     {
-      SDL_SetRenderDrawColor(renderer, grid_cursor_ghost_color.r,
-                             grid_cursor_ghost_color.g,
-                             grid_cursor_ghost_color.b,
-                             grid_cursor_ghost_color.a);
-      SDL_RenderFillRect(renderer, &grid_cursor_ghost);
+      SDL_SetRenderDrawColor(renderer, gridCursorColor.r,
+                             gridCursorColor.g,
+                             gridCursorColor.b,
+                             gridCursorColor.a);
+      SDL_RenderFillRect(renderer, &gridCursor);
     }
 
     for (Node *node : forbiddenNodes)
@@ -509,8 +561,6 @@ void GUI::eventLoop()
       drawCell(renderer, pathNodes.back(), starting);
     }
 
-    // SDL_Color waypointColor = {255, 0, 255, 255};
-
     SDL_RenderPresent(renderer);
   }
 }
@@ -536,9 +586,14 @@ int GUI::run()
   // };
   // Mode mode = Snapshots;
 
+  // std::vector<Node *> pathNodes;
+  // std::vector<std::vector<Node *> *> pathNodesSnapshots;
+
   if (showSnapshots)
   {
+    std::cout << "QQQQQQQQQQ\n";
     getRandomPathSnapshots();
+    std::cout << "AAAAAAA\n";
   }
 
   if (!showSnapshots)

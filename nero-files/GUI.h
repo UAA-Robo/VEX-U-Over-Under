@@ -9,44 +9,44 @@ private:
   Graph *graph2;
   int xNodes;
   int yNodes;
+  int cellSize;
   int gridWidth;
   int gridHeight;
-  bool showSnapshots;
-  std::vector<Node *> forbiddenNodes;
-  int cellSize;
-  int yOffset;
   int xPadding;
   int yPadding;
+  int yOffset;
   int scrollSensitivity;
-  int nodesSelected;
+  int pathsFound;
+  int durationTotal;
   int snapshotNumber;
+  int nodesSelected;
+  bool showSnapshots;
+  bool selectingNodesAllowed;
   bool autoMode;
-  SDL_Renderer *renderer;
+
+  std::vector<Node *> forbiddenNodes;
+  std::vector<Node *> selectedNodes;
+  std::vector<Node *> pathNodes;
+  std::vector<std::vector<Node *> *> pathNodesSnapshots;
+
   SDL_Window *window;
-  SDL_Rect grid_cursor_ghost;
-  SDL_Color grid_background;
-  SDL_Color grid_line_color;
-  SDL_Color grid_cursor_ghost_color;
-  SDL_Color grid_cursor_color;
+  SDL_Renderer *renderer;
+  SDL_Rect gridCursor;
   SDL_bool quit;
   SDL_bool mouse_active;
   SDL_bool mouse_hover;
-  int pathsFound;
-  int durationTotal;
-  std::vector<Node *> pathNodes;
-  std::vector<std::vector<Node *> *> pathNodesSnapshots;
-  std::vector<Node *> selectedNodes;
-  bool selectingNodesAllowed;
+  SDL_Color gridBackgroundColor;
+  SDL_Color gridLineColor;
+  SDL_Color gridCursorColor;
   SDL_Color forbiddenNodesColor;
   SDL_Color pathNodesColor;
   SDL_Color pathNodesPastColor;
   SDL_Color starting;
   SDL_Color ending;
-  
 
   void drawCell(SDL_Renderer *renderer, Node *node, SDL_Color color);
   void drawCellSecond(SDL_Renderer *renderer, Node *node, SDL_Color color, int xDifference);
-  void init();
+  void init(Graph *graph, Graph *graph2, int cellSize);
 
   void getPath(Node *a, Node *b);
   void getRandomPath();
@@ -59,12 +59,12 @@ private:
   void getVGRandomPathSnapshots();
 
   void eventLoop();
+  void switchModes();
 
 public:
-  GUI(Graph *graph, int cellSize, bool showSnapshots);
-  GUI(Graph *graph, Graph *graph2, int cellSize, bool showSnapshots);
+  GUI(Graph *graph, int cellSize);
+  GUI(Graph *graph, Graph *graph2, int cellSize);
   int run();
-  // int run(SDL_Window *window, SDL_Renderer *renderer);
 
   // int runTwo(bool showSnapshots);
 };

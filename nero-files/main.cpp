@@ -103,9 +103,9 @@ int main(int argv, char **args)
   addForbiddenNodes(graph);
   addForbiddenNodes(graph2);
 
+  // graph->getRandomPathSnapshots();
+
   // graph2->initVG();
 
-  // GUI gui = GUI(graph, graph2, CELL_SIZE, true);
-  GUI gui = GUI(graph, CELL_SIZE, true);
-  // gui.run();
+  GUI gui = GUI(graph, CELL_SIZE);
 }
