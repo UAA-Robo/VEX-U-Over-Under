@@ -7,23 +7,66 @@ class GUI
 private:
   Graph *graph;
   Graph *graph2;
-
+  int xNodes;
+  int yNodes;
+  int gridWidth;
+  int gridHeight;
+  bool showSnapshots;
   std::vector<Node *> forbiddenNodes;
-  int CELL_SIZE;
+  int cellSize;
   int yOffset;
   int xPadding;
   int yPadding;
-  // SDL_Renderer *renderer;
-  // SDL_Window *window;
+  int scrollSensitivity;
+  int nodesSelected;
+  int snapshotNumber;
+  bool autoMode;
+  SDL_Renderer *renderer;
+  SDL_Window *window;
+  SDL_Rect grid_cursor_ghost;
+  SDL_Color grid_background;
+  SDL_Color grid_line_color;
+  SDL_Color grid_cursor_ghost_color;
+  SDL_Color grid_cursor_color;
+  SDL_bool quit;
+  SDL_bool mouse_active;
+  SDL_bool mouse_hover;
+  int pathsFound;
+  int durationTotal;
+  std::vector<Node *> pathNodes;
+  std::vector<std::vector<Node *> *> pathNodesSnapshots;
+  std::vector<Node *> selectedNodes;
+  bool selectingNodesAllowed;
+  SDL_Color forbiddenNodesColor;
+  SDL_Color pathNodesColor;
+  SDL_Color pathNodesPastColor;
+  SDL_Color starting;
+  SDL_Color ending;
+  
 
   void drawCell(SDL_Renderer *renderer, Node *node, SDL_Color color);
   void drawCellSecond(SDL_Renderer *renderer, Node *node, SDL_Color color, int xDifference);
+  void init();
+
+  void getPath(Node *a, Node *b);
+  void getRandomPath();
+  void getPathSnapshots(Node *a, Node *b);
+  void getRandomPathSnapshots();
+
+  void getVGPath(Node *a, Node *b);
+  void getVGRandomPath();
+  void getVGPathSnapshots(Node *a, Node *b);
+  void getVGRandomPathSnapshots();
+
+  void eventLoop();
 
 public:
-  GUI(Graph *graph, int CELL_SIZE);
-  GUI(Graph *graph, Graph *graph2, int CELL_SIZE);
-  int run(bool showSnapshots);
-  int runTwo(bool showSnapshots);
+  GUI(Graph *graph, int cellSize, bool showSnapshots);
+  GUI(Graph *graph, Graph *graph2, int cellSize, bool showSnapshots);
+  int run();
+  // int run(SDL_Window *window, SDL_Renderer *renderer);
+
+  // int runTwo(bool showSnapshots);
 };
 
 // GUI CONTROLS

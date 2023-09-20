@@ -1,4 +1,6 @@
 // TODO - make sure all pathfindings are updated to the latest iteration
+// TODO - update naming convention and style guide
+// TODO - visualize the slope to make sure it's correct (positive, negative, both slopes)
 
 #include "Enums.h"
 #include "Node.h"
@@ -103,6 +105,7 @@ int main(int argv, char **args)
 
   // graph2->initVG();
 
-  GUI gui = GUI(graph, graph2, CELL_SIZE);
-  gui.run(false);
+  // GUI gui = GUI(graph, graph2, CELL_SIZE, true);
+  GUI gui = GUI(graph, CELL_SIZE, true);
+  // gui.run();
 }
