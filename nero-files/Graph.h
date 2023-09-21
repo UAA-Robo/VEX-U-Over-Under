@@ -18,14 +18,14 @@ private:
   WAYPOINT isWaypoint(Node *node);
   bool isTaut(Node *a, Node *b);
   bool areTautWaypoints(Node *a, Node *b);
-  bool hasLOS(Node *a, Node *b);
   void findWaypoints();
   void addNeighboringWaypoints();
-  std::set<Node *> getWaypoints();
 
 public:
   int xNodes;
   int yNodes;
+  bool hasLOS(Node *a, Node *b);
+  std::set<Node *> getWaypoints();
 
   Graph(int xNodes, int yNodes);
   ~Graph();
@@ -43,5 +43,8 @@ public:
   std::vector<Node *> getVGPath(Node *origin, Node *destination);
   std::vector<Node *> getVGRandomPath();
   std::vector<std::vector<Node *> *> getVGPathSnapshots(Node *origin, Node *destination);
-  std::vector<std::vector<Node *> *> getVGRandomPathSnapshots(Node *origin, Node *destination);
+  std::vector<std::vector<Node *> *> getVGRandomPathSnapshots();
+
+  void removeWaypoint(Node *node);
+  void insertWaypoint(Node *node);
 };

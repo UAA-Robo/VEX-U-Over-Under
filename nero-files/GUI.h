@@ -1,4 +1,5 @@
 #include <vector>
+#include <set>
 #include "Graph.h"
 #include <SDL2/SDL.h>
 
@@ -25,6 +26,8 @@ private:
   bool autoMode;
 
   std::vector<Node *> forbiddenNodes;
+  // std::vector<Node *> waypoints;
+  std::set<Node *> waypoints;
   std::vector<Node *> selectedNodes;
   std::vector<Node *> pathNodes;
   std::vector<std::vector<Node *> *> pathNodesSnapshots;
@@ -71,6 +74,7 @@ private:
   void drawSnapshots();
   void drawPath();
   void drawBackground();
+  void drawWaypoints();
 
 public:
   GUI(Graph *graph, int cellSize);

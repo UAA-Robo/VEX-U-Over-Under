@@ -3,6 +3,7 @@
 #include <random>
 #include <stdexcept>
 #include "Graph.h"
+#include <cmath>
 
 //=============================================================================
 //=============================================================================
@@ -691,12 +692,133 @@ bool Graph::areTautWaypoints(Node *a, Node *b)
 
 bool Graph::hasLOS(Node *a, Node *b)
 {
+
+  if (a == b)
+  {
+    return true;
+  }
+
   int x = a->x;
   int y = a->y;
+  double dx = b->x - a->x;
+  double dy = b->y - a->y;
+  double xSlope;
+  double ySlope;
 
-  double xSlope = ((b->x - a->x) / (b->y - a->y)) / 10;
-  double ySlope = ((b->y - a->y) / (b->x - a->x)) / 10;
+  if (dy == 0)
+  {
+    xSlope = dx;
+  }
+  else
+  {
+    xSlope = dx / dy;
+  }
 
+  if (dx == 0)
+  {
+    ySlope = dy;
+  }
+  else
+  {
+    ySlope = dy / dx;
+  }
+
+  // double xSlope = abs(double((double(b->x - a->x) / double(b->y - a->y)) / 10.0));
+  // double xSlope = abs(double(double(b->x - a->x) / double(b->y - a->y)) / 10.0);
+  // double ySlope = abs(double((double(b->y - a->y) / double(b->x - a->x)) / 10.0));
+  // double xSlope = (b->x - a->x) / (b->y - a->y);
+  // double ySlope = (b->y - a->y) / (b->x - a->x);
+
+  // std::cout << a->x << ", " << a->y << "\n";
+  // std::cout << b->x << ", " << b->y << "\n";
+  // std::cout << double(b->x - a->x) << ", " << double(b->y - a->y) << "\n";
+  // std::cout << double(b->x - a->x) / double(b->y - a->y) << "\n";
+  // std::cout << abs(double(double(b->x - a->x) / double(b->y - a->y)) / 10.0) << "\n";
+
+  if (xSlope < 0)
+  {
+    xSlope *= (-1.0);
+  }
+  if (ySlope < 0)
+  {
+    ySlope *= (-1.0);
+  }
+
+  switch (getPositionRelative(a, b))
+  {
+  case B_TOPLEFT_A:
+  {
+    xSlope *= (-1.0);
+    ySlope *= (-1.0);
+    while (y + ySlope >= b->y && x + xSlope >= b->x)
+    {
+      y += ySlope;
+      x += xSlope;
+
+      if (nodes[y][x]->forbidden)
+      {
+        return false;
+      }
+    }
+    break;
+  }
+  case B_TOPRIGHT_A:
+  case B_TOP_A:
+  {
+    ySlope *= (-1);
+    while (y + ySlope >= b->y && x + xSlope <= b->x)
+    {
+      y += ySlope;
+      x += xSlope;
+
+      if (nodes[y][x]->forbidden)
+      {
+        return false;
+      }
+    }
+    break;
+  }
+  case B_BOTTOMRIGHT_A:
+  case B_BOTTOM_A:
+  case B_RIGHT_A:
+  {
+    while (y + ySlope <= b->y && x + xSlope <= b->x)
+    {
+      y += ySlope;
+      x += xSlope;
+
+      if (nodes[y][x]->forbidden)
+      {
+        return false;
+      }
+    }
+    break;
+  }
+  case B_BOTTOMLEFT_A:
+  case B_LEFT_A:
+  {
+    xSlope *= (-1);
+    while (y + ySlope <= b->y && x + xSlope >= b->x)
+    {
+      y += ySlope;
+      x += xSlope;
+
+      if (nodes[y][x]->forbidden)
+      {
+        return false;
+      }
+    }
+    break;
+  }
+  default:
+    std::cout << getPositionRelative(a, b);
+    throw std::runtime_error("9000");
+    break;
+  }
+
+  return true;
+
+  // while ((y + ySlope >= 0 && y + ySlope <= yNodes - 1) && (x + xSlope >= 0 && x + xSlope <= xNodes - 1))
   while ((y + ySlope >= 0 && y + ySlope <= yNodes - 1) && (x + xSlope >= 0 && x + xSlope <= xNodes - 1))
   {
     y += ySlope;
@@ -796,22 +918,22 @@ int Graph::getEdgeCost(Node *a, Node *b)
 }
 
 // Octile distance
-int Graph::heuristic(Node *currentNode, Node *destination)
-{
-  int dx = abs(currentNode->x - destination->x);
-  int dy = abs(currentNode->y - destination->y);
+// int Graph::heuristic(Node *currentNode, Node *destination)
+// {
+//   int dx = abs(currentNode->x - destination->x);
+//   int dy = abs(currentNode->y - destination->y);
 
-  if (dx > dy)
-  {
-    return 14 * dy + 10 * (dx - dy);
-  }
-  else
-  {
-    return 14 * dx + 10 * (dy - dx);
-  }
+//   if (dx > dy)
+//   {
+//     return 14 * dy + 10 * (dx - dy);
+//   }
+//   else
+//   {
+//     return 14 * dx + 10 * (dy - dx);
+//   }
 
-  // return 10 * (dx + dy) + (14 - 2 * 10) * std::min(dx, dy);
-}
+//   // return 10 * (dx + dy) + (14 - 2 * 10) * std::min(dx, dy);
+// }
 
 // Manhattan distance
 // int Graph::heuristic(Node *currentNode, Node *destination)
@@ -824,15 +946,15 @@ int Graph::heuristic(Node *currentNode, Node *destination)
 // }
 
 // Direct distance
-// int Graph::heuristic(Node *currentNode, Node *destination)
-// {
-//   int x1 = currentNode->x;
-//   int y1 = currentNode->y;
-//   int x2 = destination->x;
-//   int y2 = destination->y;
-//   // return std::sqrt(std::pow(x2 - x1, 2) * 10 + std::pow(y2 - y1, 2) * 10);
-//   return std::sqrt(std::pow(x2 - x1, 2) + std::pow(y2 - y1, 2));
-// }
+int Graph::heuristic(Node *currentNode, Node *destination)
+{
+  int x1 = currentNode->x;
+  int y1 = currentNode->y;
+  int x2 = destination->x;
+  int y2 = destination->y;
+  // return std::sqrt(std::pow(x2 - x1, 2) * 10 + std::pow(y2 - y1, 2) * 10);
+  return std::sqrt(std::pow(x2 - x1, 2) + std::pow(y2 - y1, 2));
+}
 
 std::vector<Node *> Graph::reconstructPath(Node *currentNode, std::map<Node *, Node *> cameFrom)
 {
@@ -889,6 +1011,8 @@ POSITION Graph::getPositionRelative(Node *a, Node *b)
   }
   else
   {
+    a->println();
+    b->println();
     throw std::runtime_error("ERROR 004");
   }
 }
@@ -897,6 +1021,34 @@ void Graph::createVG()
 {
   findWaypoints();
   addNeighboringWaypoints();
+}
+
+void Graph::insertWaypoint(Node *node)
+{
+
+  for (Node *waypoint : waypoints)
+  {
+    // std::cout << node->forbidden << "\n";
+    // std::cout << waypoint->forbidden << "\n";
+    bool cond = hasLOS(node, waypoint);
+
+    if (cond)
+    {
+      node->addWaypointNeighbor(waypoint);
+    }
+  }
+
+  waypoints.insert(node);
+}
+
+void Graph::removeWaypoint(Node *node)
+{
+  for (Node *waypointNeighbor : node->waypointNeighbors)
+  {
+    waypointNeighbor->waypointNeighbors.erase(node);
+    node->waypointNeighbors.erase(waypointNeighbor);
+  }
+  waypoints.erase(node);
 }
 
 std::vector<Node *> Graph::getVGPath(Node *origin, Node *destination)
@@ -911,6 +1063,9 @@ std::vector<Node *> Graph::getVGPath(Node *origin, Node *destination)
   cameFrom[origin] = origin;
   gScores[origin] = 0;
   fScores[origin] = this->heuristic(origin, destination);
+
+  insertWaypoint(origin);
+  insertWaypoint(destination);
 
   while (frontier.size() > 0)
   {
@@ -971,7 +1126,8 @@ std::vector<Node *> Graph::getVGPath(Node *origin, Node *destination)
     {
       if (closed.find(neighbor) == closed.end())
       {
-        int neighborGScore = gScores[currentNode] + getEdgeCost(currentNode, neighbor);
+        // int neighborGScore = gScores[currentNode] + getEdgeCost(currentNode, neighbor);
+        int neighborGScore = gScores[currentNode] + this->heuristic(currentNode, neighbor);
 
         if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
         {
@@ -1006,6 +1162,9 @@ std::vector<std::vector<Node *> *> Graph::getVGPathSnapshots(Node *origin, Node 
   cameFrom[origin] = origin;
   gScores[origin] = 0;
   fScores[origin] = this->heuristic(origin, destination);
+
+  insertWaypoint(origin);
+  insertWaypoint(destination);
 
   while (frontier.size() > 0)
   {
@@ -1066,14 +1225,17 @@ std::vector<std::vector<Node *> *> Graph::getVGPathSnapshots(Node *origin, Node 
     if (currentNode == destination)
     {
       // return reconstructPath(currentNode, cameFrom);
+      removeWaypoint(origin);
+      removeWaypoint(destination);
       return snapshots;
     }
 
-    for (Node *neighbor : currentNode->neighbors)
+    for (Node *neighbor : currentNode->waypointNeighbors)
     {
       if (closed.find(neighbor) == closed.end())
       {
-        int neighborGScore = gScores[currentNode] + getEdgeCost(currentNode, neighbor);
+        // int neighborGScore = gScores[currentNode] + getEdgeCost(currentNode, neighbor);
+        int neighborGScore = gScores[currentNode] + this->heuristic(currentNode, neighbor);
 
         if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
         {
@@ -1115,12 +1277,17 @@ std::vector<Node *> Graph::getVGRandomPath()
     originY = randY(rng);
     destinationX = randX(rng);
     destinationY = randY(rng);
-  } while (this->nodes[originY][originX]->forbidden || this->nodes[destinationY][destinationX]->forbidden);
+  } while (this->nodes[originY][originX]->forbidden || this->nodes[destinationY][destinationX]->forbidden || (originX == destinationX && originY == destinationY));
+
+  if (originX == destinationX && originY == destinationY)
+  {
+    throw std::runtime_error("ERROR SAME ORIGIN AND DESTINATION");
+  }
 
   return getVGPath(this->nodes[originY][originX], this->nodes[destinationY][destinationX]);
 }
 
-std::vector<std::vector<Node *> *> Graph::getVGRandomPathSnapshots(Node *origin, Node *destination)
+std::vector<std::vector<Node *> *> Graph::getVGRandomPathSnapshots()
 {
   srand(time(0));
 
@@ -1140,7 +1307,26 @@ std::vector<std::vector<Node *> *> Graph::getVGRandomPathSnapshots(Node *origin,
     originY = randY(rng);
     destinationX = randX(rng);
     destinationY = randY(rng);
-  } while (this->nodes[originY][originX]->forbidden || this->nodes[destinationY][destinationX]->forbidden);
+  } while (this->nodes[originY][originX]->forbidden || this->nodes[destinationY][destinationX]->forbidden || (originX == destinationX && originY == destinationY));
+
+  if (originX == destinationX && originY == destinationY)
+  {
+    throw std::runtime_error("ERROR SAME ORIGIN AND DESTINATION");
+  }
+
+  // this->nodes[originY][originX]->println();
+  // this->nodes[destinationY][destinationX]->println();
 
   return getVGPathSnapshots(this->nodes[originY][originX], this->nodes[destinationY][destinationX]);
+}
+
+std::set<Node *> Graph::getWaypoints()
+{
+
+  // std::set<Node *>
+  // for(Node* waypoint: waypoints) {
+
+  // }
+
+  return waypoints;
 }
