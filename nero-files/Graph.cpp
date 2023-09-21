@@ -365,33 +365,23 @@ std::vector<std::vector<Node *> *> Graph::getRandomPathSnapshots()
   std::uniform_int_distribution<int> randX(0, this->xNodes - 1);
   std::uniform_int_distribution<int> randY(0, this->yNodes - 1);
 
-  std::cout << "LLLLLLLL\n";
   int originX;
   int originY;
   int destinationX;
   int destinationY;
-  std::cout << "LLLLLLLL\n";
 
   do
   {
-    std::cout << "SSSSSSSSSSSS\n";
     originX = randX(rng);
-    std::cout << "SSSSSSSSSSSS\n";
     originY = randY(rng);
-    std::cout << "SSSSSSSSSSSS\n";
     destinationX = randX(rng);
-    std::cout << "SSSSSSSSSSSS\n";
     destinationY = randY(rng);
-    std::cout << "SSSSSSSSSSSS\n";
-
-    std::cout << originX << ", " << originY << "\t" << destinationX << ", " << destinationY << "\n";
 
     // nodes[originY][originX]->println();
     // nodes[destinationY][destinationX]->println();
 
   } while (this->nodes[originY][originX]->forbidden || this->nodes[destinationY][destinationX]->forbidden);
 
-  std::cout << "EEEEEEEEEEEE\n";
   return getPathSnapshots(this->nodes[originY][originX], this->nodes[destinationY][destinationX]);
 }
 

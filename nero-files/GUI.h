@@ -60,6 +60,17 @@ private:
 
   void eventLoop();
   void switchModes();
+  void generatePath();
+  void resetGrid();
+  void selectNodes(SDL_Event &event);
+  void moveCursor(SDL_Event &event);
+  void scroll(SDL_Event &event);
+  void drawGrid();
+  void drawCursor();
+  void drawForbiddenNodes();
+  void drawSnapshots();
+  void drawPath();
+  void drawBackground();
 
 public:
   GUI(Graph *graph, int cellSize);
