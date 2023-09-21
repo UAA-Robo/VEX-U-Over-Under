@@ -23,11 +23,11 @@ GUI::GUI(Graph *graph, Graph *graph2, int cellSize)
 
 void GUI::init(Graph *graph, Graph *graph2, int cellSize)
 {
-  graph = graph;
-  graph2 = graph2;
+  this->graph = graph;
+  this->graph2 = graph2;
   xNodes = graph->xNodes;
   yNodes = graph->yNodes;
-  cellSize = cellSize;
+  this->cellSize = cellSize;
   gridWidth = (xNodes * cellSize) + 1;
   gridHeight = (yNodes * cellSize) + 1;
   xPadding = 100;
@@ -163,6 +163,7 @@ void GUI::getRandomPathSnapshots()
   selectingNodesAllowed = false;
 
   // auto start = std::chrono::high_resolution_clock::now();
+  std::cout << graph << std::endl;
   pathNodesSnapshots = graph->getRandomPathSnapshots();
   // auto stop = std::chrono::high_resolution_clock::now();
 
@@ -170,7 +171,6 @@ void GUI::getRandomPathSnapshots()
   // std::cout << duration.count() << std::endl;
   // pathsFound++;
   // durationTotal += duration.count();
-  std::cout << "QQQQQQQQQQ\n";
 }
 
 void GUI::switchModes()
