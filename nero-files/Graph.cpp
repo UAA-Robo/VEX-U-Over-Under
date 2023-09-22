@@ -12,10 +12,11 @@
 //=============================================================================
 //=============================================================================
 
-Graph::Graph(int xNodes, int yNodes)
+Graph::Graph(int xNodes, int yNodes, double cellSize)
 {
   this->xNodes = xNodes;
   this->yNodes = yNodes;
+  this->cellSize = cellSize;
 
   nodes = new Node **[yNodes];
 
@@ -299,6 +300,8 @@ std::vector<Node *> Graph::reconstructPath(Node *currentNode, std::map<Node *, N
     path.push_back(currentNode);
     currentNode = cameFrom[currentNode];
   }
+
+  path.push_back(currentNode);
 
   return path;
 }

@@ -10,7 +10,7 @@ public:
     // int xNodes;
     // int yNodes;
 
-    GraphNormal(int xNodes, int yNodes);
+    GraphNormal(int xNodes, int yNodes, double cellSize);
     // GraphNormal(int xNodes, int yNodes) : Graph(xNodes, yNodes){};
 
     std::vector<Node *> getPath(Node *origin, Node *destination);

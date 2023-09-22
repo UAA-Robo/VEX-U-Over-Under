@@ -45,6 +45,7 @@ void GUI::init(Graph *graph, Graph *graph2, int cellSize)
 
   forbiddenNodes = graph->getForbiddenNodes();
   // waypoints = graph->getWaypoints();
+  waypoints = graph->waypoints;
 
   {
     SDL_Window *window;
@@ -66,7 +67,7 @@ void GUI::init(Graph *graph, Graph *graph2, int cellSize)
   pathNodesColor = {0, 255, 0, 255};
   pathNodesPastColor = {0, 0, 255, 255};
   starting = {255, 255, 0, 255};
-  ending = {0, 255, 255, 255};
+  ending = {0, 0, 0, 255};
   VGPathColor = {0, 255, 0, 255};
   VGPathOldColor = {0, 0, 255, 255};
 
@@ -96,23 +97,40 @@ void GUI::init(Graph *graph, Graph *graph2, int cellSize)
 
   SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
   SDL_SetWindowTitle(window, "Pathfinding");
+
+  LOS = false;
+  a = nullptr;
+  b = nullptr;
 }
 
 void GUI::drawVG()
 {
   SDL_SetRenderDrawColor(renderer, VGPathColor.r, VGPathColor.g, VGPathColor.b, VGPathColor.a);
-  for (int i = 0; i < VGPathNodes.size() - 1; i++)
+  // std::cout << "DDDDDDDDDDDDDDD\n";
+  // std::cout << "DDDDDDDDDDDDDDD\n";
+  // for (int i = 0; i < VGPathNodes.size() - 1; i++)
+  // {
+  //   int x1 = (VGPathNodes[i]->x * cellSize) + xPadding + (cellSize / 2);
+  //   int y1 = (VGPathNodes[i]->y * cellSize) + yOffset + yPadding + (cellSize / 2);
+  //   int x2 = (VGPathNodes[i + 1]->x * cellSize) + xPadding + (cellSize / 2);
+  //   int y2 = (VGPathNodes[i + 1]->y * cellSize) + yOffset + yPadding + (cellSize / 2);
+
+  //   SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
+  // }
+  for (int i = 0; i < pathNodes.size() - 1; i++)
   {
-    int x1 = (VGPathNodes[i]->x * cellSize) + xPadding + (cellSize / 2);
-    int y1 = (VGPathNodes[i]->y * cellSize) + yOffset + yPadding + (cellSize / 2);
-    int x2 = (VGPathNodes[i + 1]->x * cellSize) + xPadding + (cellSize / 2);
-    int y2 = (VGPathNodes[i + 1]->y * cellSize) + yOffset + yPadding + (cellSize / 2);
+    int x1 = (pathNodes[i]->x * cellSize) + xPadding + (cellSize / 2);
+    int y1 = (pathNodes[i]->y * cellSize) + yOffset + yPadding + (cellSize / 2);
+    int x2 = (pathNodes[i + 1]->x * cellSize) + xPadding + (cellSize / 2);
+    int y2 = (pathNodes[i + 1]->y * cellSize) + yOffset + yPadding + (cellSize / 2);
 
     SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
   }
+  // std::cout << "DDDDDDDDDDDDDDD\n";
 
   drawCell(renderer, pathNodes.front(), ending);
   drawCell(renderer, pathNodes.back(), starting);
+  // std::cout << "DDDDDDDDDDDDDDD\n";
 }
 
 void GUI::drawVGSnapshots()
@@ -195,8 +213,7 @@ void GUI::getPath(Node *a, Node *b)
   auto stop = std::chrono::high_resolution_clock::now();
 
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-  std::cout << "A\n";
-  std::cout << duration.count() << std::endl;
+  std::cout << "Time: " << duration.count() << std::endl;
   pathsFound++;
   durationTotal += duration.count();
 }
@@ -231,7 +248,7 @@ void GUI::getRandomPath()
 
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
   // std::cout << "B\n";
-  std::cout << duration.count() << std::endl;
+  std::cout << "Time: " << duration.count() << std::endl;
   pathsFound++;
   durationTotal += duration.count();
 }
@@ -253,6 +270,7 @@ void GUI::getRandomPathSnapshots()
   // std::cout << pathNodesSnapshots.size() << std::endl;
 }
 
+// TODO - refactor out shared lines
 void GUI::selectNodes(SDL_Event &event)
 {
   if (showSnapshots)
@@ -300,8 +318,8 @@ void GUI::selectNodes(SDL_Event &event)
 
           auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
           // std::cout << duration.count() << std::endl;
-          pathsFound++;
-          durationTotal += duration.count();
+          // pathsFound++;
+          // durationTotal += duration.count();
         }
         else if (nodesSelected > 2 || nodesSelected < 0)
         {
@@ -346,11 +364,15 @@ void GUI::selectNodes(SDL_Event &event)
           auto start = std::chrono::high_resolution_clock::now();
           // pathNodes = graph->getVGPath(selectedNodes[0], selectedNodes[1]);
           pathNodes = graph->getPath(selectedNodes[0], selectedNodes[1]);
+          // LOS = graph->hasLOS(selectedNodes[0], selectedNodes[1]);
+          // drawLOS(selectedNodes[0], selectedNodes[1]);
+          // a = selectedNodes[0];
+          // b = selectedNodes[1];
+
           auto stop = std::chrono::high_resolution_clock::now();
 
           auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-          std::cout << "C\n";
-          std::cout << duration.count() << std::endl;
+          std::cout << "Time: " << duration.count() << std::endl;
           pathsFound++;
           durationTotal += duration.count();
         }
@@ -362,6 +384,30 @@ void GUI::selectNodes(SDL_Event &event)
     }
     // break;
   }
+}
+
+void GUI::drawLOS(Node *a, Node *b)
+{
+  // std::cout << "Z\n";
+
+  SDL_Color fal = {255, 0, 0, 255};
+  SDL_Color tru = {0, 255, 0, 255};
+  // a->println();
+  // b->println();
+  if (LOS)
+  {
+    // std::cout << "T\n";
+    drawCell(renderer, a, tru);
+    drawCell(renderer, b, tru);
+  }
+  else
+  {
+    // std::cout << "F\n";
+    drawCell(renderer, a, fal);
+    drawCell(renderer, b, fal);
+  }
+
+  std::cout << "Z\n";
 }
 
 void GUI::drawBackground()
@@ -555,6 +601,10 @@ void GUI::resetGrid()
     selectedNodes.clear();
     autoMode = false;
   }
+
+  a = nullptr;
+  b = nullptr;
+  LOS = false;
 }
 
 void GUI::generatePath()
@@ -602,6 +652,7 @@ void GUI::switchModes()
 
 void GUI::eventLoop()
 {
+  // std::cout << "EEEEEEEEEEEEEEEEE\n";
   while (!quit)
   {
     SDL_Event event;
@@ -676,6 +727,7 @@ void GUI::eventLoop()
         break;
       }
     }
+    // std::cout << "EEEEEEEEEEEEEEEEE\n";
 
     if (autoMode)
     {
@@ -686,11 +738,20 @@ void GUI::eventLoop()
     drawGrid();
     drawForbiddenNodes();
     drawWaypoints();
-    drawSnapshots();
-    drawPath();
-    // drawVG();
+    // drawSnapshots();
+    // drawPath();
+    // std::cout << "EEEEEEEEEEEEEEEEE\n";
+    drawVG();
+    // std::cout << "EEEEEEEEEEEEEEEEE\n";
     // drawVGSnapshots();
+    // std::cout << "EEEEEEEEEEEEEEEEE\n";
     drawCursor();
+    if (a != nullptr && b != nullptr)
+    {
+      drawLOS(a, b);
+    }
+
+    // std::cout << waypoints.size() << std::endl;
 
     SDL_RenderPresent(renderer);
   }
@@ -706,6 +767,8 @@ int GUI::run()
   {
     getRandomPath();
   }
+
+  // std::cout << pathNodes.size() << std::endl;
 
   eventLoop();
 

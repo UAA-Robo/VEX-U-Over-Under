@@ -13,7 +13,7 @@ public:
   Graph *graph;
   WAYPOINT waypoint;
   std::set<Node *> neighbors;
-  std::set<Node *> waypointNeighbors;
+  std::set<Node *> waypointNeighbors ;
 
   Node(int x, int y, Graph *graph);
   void addNeighbor(Node *neighborNode);

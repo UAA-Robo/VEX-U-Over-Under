@@ -26,7 +26,6 @@ private:
   bool autoMode;
 
   std::vector<Node *> forbiddenNodes;
-  // std::vector<Node *> waypoints;
   std::set<Node *> waypoints;
   std::vector<Node *> selectedNodes;
   std::vector<Node *> pathNodes;
@@ -83,6 +82,12 @@ private:
   void drawLine(SDL_Renderer *renderer, Node *a, Node *b, SDL_Color color);
   void drawVG();
   void drawVGSnapshots();
+
+  bool LOS;
+  void drawLOS(Node *a, Node *b);
+
+  Node* a;
+  Node* b;
 
 public:
   GUI(Graph *graph, int cellSize);

@@ -21,8 +21,12 @@ protected:
 public:
   int xNodes;
   int yNodes;
+  double cellSize;
+  std::set<Node *> waypoints;
+  virtual bool hasLOS(Node *a, Node *b){};
+  virtual void createVG(){};
 
-  Graph(int xNodes, int yNodes);
+  Graph(int xNodes, int yNodes, double cellSize);
   ~Graph();
   Node *getNode(int x, int y);
   void addForbiddenNode(Node *node);

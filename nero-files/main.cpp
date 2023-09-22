@@ -9,12 +9,13 @@
 #include "Rectangle.h"
 #include "GUI.h"
 #include "GraphNormal.h"
-// #include "GraphVG.h"
+#include "GraphVG.h"
 #include <iostream>
 
 // in inches
 double const FIELD_SIZE = 138.73;
 // length and width of nodes in inches, for real-life movement
+// TODO - IMPORTANT - LOS algorithm assumes this is always 1, multiply this by cell size and take half that to get to center of node
 double const NODE_SIZE = 1;
 // length and width of nodes in pixels, for visualization
 int const CELL_SIZE = 6;
@@ -112,9 +113,12 @@ int main(int argv, char **args)
   // graph->getVGPathSnapshots(graph->getNode(21, 95), graph->getNode(21, 4));
   // GUI gui = GUI(graph, CELL_SIZE);
   // std::cout << "AAAAAAAAAAAAA\n";
-  Graph *graph = new GraphNormal(X_NODES, Y_NODES);
+  // Graph *graph = new GraphNormal(X_NODES, Y_NODES);
+  Graph *graph = new GraphVG(X_NODES, Y_NODES, CELL_SIZE);
   addForbiddenNodes(graph);
   // std::cout << graph->getRandomPath().size();
+  addForbiddenNodes(graph);
+  graph->createVG();
   GUI gui = GUI(graph, CELL_SIZE);
   // std::cout << "AAAAAAAAAAAAA\n";
 }

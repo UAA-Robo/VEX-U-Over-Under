@@ -7,7 +7,7 @@
 #include "Graph.h"
 #include "GraphNormal.h"
 
-GraphNormal::GraphNormal(int xNodes, int yNodes) : Graph::Graph(xNodes, yNodes)
+GraphNormal::GraphNormal(int xNodes, int yNodes, double cellSize) : Graph::Graph(xNodes, yNodes, cellSize)
 {
 }
 
