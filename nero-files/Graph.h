@@ -1,3 +1,8 @@
+// Remove redundant this->
+// Standarize between node, currentNode, a, b
+// do constructors and deconstructors need to be virtual?
+// pass heavy stuff around with pointers or by reference
+
 #pragma once
 #include <vector>
 #include <map>
@@ -5,46 +10,34 @@
 
 class Graph
 {
-private:
+protected:
   Node ***nodes;
-  std::set<Node *> waypoints;
+  std::vector<Node *> forbiddenNodes;
 
-  int getEdgeCost(Node *a, Node *b);
-  int heuristic(Node *currentNode, Node *destination);
-  std::vector<Node *> reconstructPath(Node *currentNode, std::map<Node *, Node *> cameFrom);
   POSITION getPositionRelative(Node *a, Node *b);
-
-  // VG methods
-  WAYPOINT isWaypoint(Node *node);
-  bool isTaut(Node *a, Node *b);
-  bool areTautWaypoints(Node *a, Node *b);
-  void findWaypoints();
-  void addNeighboringWaypoints();
+  int getEdgeCost(Node *a, Node *b);
+  std::vector<Node *> reconstructPath(Node *currentNode, std::map<Node *, Node *> cameFrom);
 
 public:
   int xNodes;
   int yNodes;
-  bool hasLOS(Node *a, Node *b);
-  std::set<Node *> getWaypoints();
 
   Graph(int xNodes, int yNodes);
   ~Graph();
   Node *getNode(int x, int y);
+  void addForbiddenNode(Node *node);
   std::vector<Node *> getForbiddenNodes();
-  std::vector<Node *> getPath(Node *origin, Node *destination);
-  std::vector<Node *> getRandomPath();
-  std::vector<std::vector<Node *> *> getPathSnapshots(Node *origin, Node *destination);
-  std::vector<std::vector<Node *> *> getRandomPathSnapshots();
-  void forbidTriangle(Node *a, Node *b);
-  void forbidRectangle(Node *topLeftPoint, Node *topRightPoint, Node *bottomLeftPoint);
-
-  // VG methods
-  void createVG();
-  std::vector<Node *> getVGPath(Node *origin, Node *destination);
-  std::vector<Node *> getVGRandomPath();
-  std::vector<std::vector<Node *> *> getVGPathSnapshots(Node *origin, Node *destination);
-  std::vector<std::vector<Node *> *> getVGRandomPathSnapshots();
-
-  void removeWaypoint(Node *node);
-  void insertWaypoint(Node *node);
+  virtual std::vector<Node *> getPath(Node *origin, Node *destination);
+  virtual std::vector<Node *> getRandomPath();
+  virtual std::vector<std::vector<Node *> *> getPathSnapshots(Node *origin, Node *destination);
+  virtual std::vector<std::vector<Node *> *> getRandomPathSnapshots();
+  virtual void forbidTriangle(Node *a, Node *b);
+  virtual void forbidRectangle(Node *topLeftPoint, Node *topRightPoint, Node *bottomLeftPoint);
 };
+
+// shared = not virtual, in parent class, protected
+
+// different = virtual, in parent class, for same call methods, etc.
+//(to non graph classes users, for public API use)
+
+// different = no virtual, own class

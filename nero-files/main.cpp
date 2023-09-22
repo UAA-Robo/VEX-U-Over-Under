@@ -8,6 +8,8 @@
 #include "Triangle.h"
 #include "Rectangle.h"
 #include "GUI.h"
+#include "GraphNormal.h"
+// #include "GraphVG.h"
 #include <iostream>
 
 // in inches
@@ -98,15 +100,21 @@ void addForbiddenNodes(Graph *graph)
 
 int main(int argv, char **args)
 {
-  Graph *graph = new Graph(X_NODES, Y_NODES);
-  addForbiddenNodes(graph);
-  graph->createVG();
-  if (!graph->getNode(45, 45)->forbidden && !graph->getNode(45, 45)->forbidden)
-  {
-    // graph->getVGPathSnapshots(graph->getNode(45, 45), graph->getNode(45, 45));
-  }
+  // Graph *graph = new Graph(X_NODES, Y_NODES);
+  // addForbiddenNodes(graph);
+  // graph->createVG();
+  // if (!graph->getNode(45, 45)->forbidden && !graph->getNode(45, 45)->forbidden)
+  // {
+  // graph->getVGPathSnapshots(graph->getNode(45, 45), graph->getNode(45, 45));
+  // }
   // graph->hasLOS(graph->getNode(14, 112), graph->getNode(14, 11));
   // graph->getVGRandomPathSnapshots();
   // graph->getVGPathSnapshots(graph->getNode(21, 95), graph->getNode(21, 4));
+  // GUI gui = GUI(graph, CELL_SIZE);
+  // std::cout << "AAAAAAAAAAAAA\n";
+  Graph *graph = new GraphNormal(X_NODES, Y_NODES);
+  addForbiddenNodes(graph);
+  // std::cout << graph->getRandomPath().size();
   GUI gui = GUI(graph, CELL_SIZE);
+  // std::cout << "AAAAAAAAAAAAA\n";
 }

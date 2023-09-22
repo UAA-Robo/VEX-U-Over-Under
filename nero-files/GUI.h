@@ -31,6 +31,8 @@ private:
   std::vector<Node *> selectedNodes;
   std::vector<Node *> pathNodes;
   std::vector<std::vector<Node *> *> pathNodesSnapshots;
+  std::vector<Node *> VGPathNodes;
+  std::vector<std::vector<Node *> *> VGPathNodesSnapshots;
 
   SDL_Window *window;
   SDL_Renderer *renderer;
@@ -46,6 +48,8 @@ private:
   SDL_Color pathNodesPastColor;
   SDL_Color starting;
   SDL_Color ending;
+  SDL_Color VGPathColor;
+  SDL_Color VGPathOldColor;
 
   void drawCell(SDL_Renderer *renderer, Node *node, SDL_Color color);
   void drawCellSecond(SDL_Renderer *renderer, Node *node, SDL_Color color, int xDifference);
@@ -75,6 +79,10 @@ private:
   void drawPath();
   void drawBackground();
   void drawWaypoints();
+
+  void drawLine(SDL_Renderer *renderer, Node *a, Node *b, SDL_Color color);
+  void drawVG();
+  void drawVGSnapshots();
 
 public:
   GUI(Graph *graph, int cellSize);

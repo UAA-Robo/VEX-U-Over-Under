@@ -44,7 +44,7 @@ void GUI::init(Graph *graph, Graph *graph2, int cellSize)
   autoMode = false;
 
   forbiddenNodes = graph->getForbiddenNodes();
-  waypoints = graph->getWaypoints();
+  // waypoints = graph->getWaypoints();
 
   {
     SDL_Window *window;
@@ -67,6 +67,8 @@ void GUI::init(Graph *graph, Graph *graph2, int cellSize)
   pathNodesPastColor = {0, 0, 255, 255};
   starting = {255, 255, 0, 255};
   ending = {0, 255, 255, 255};
+  VGPathColor = {0, 255, 0, 255};
+  VGPathOldColor = {0, 0, 255, 255};
 
   // // Dark theme.
   // //  gridBackgroundColor = {22, 22, 22, 255};
@@ -96,6 +98,90 @@ void GUI::init(Graph *graph, Graph *graph2, int cellSize)
   SDL_SetWindowTitle(window, "Pathfinding");
 }
 
+void GUI::drawVG()
+{
+  SDL_SetRenderDrawColor(renderer, VGPathColor.r, VGPathColor.g, VGPathColor.b, VGPathColor.a);
+  for (int i = 0; i < VGPathNodes.size() - 1; i++)
+  {
+    int x1 = (VGPathNodes[i]->x * cellSize) + xPadding + (cellSize / 2);
+    int y1 = (VGPathNodes[i]->y * cellSize) + yOffset + yPadding + (cellSize / 2);
+    int x2 = (VGPathNodes[i + 1]->x * cellSize) + xPadding + (cellSize / 2);
+    int y2 = (VGPathNodes[i + 1]->y * cellSize) + yOffset + yPadding + (cellSize / 2);
+
+    SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
+  }
+
+  drawCell(renderer, pathNodes.front(), ending);
+  drawCell(renderer, pathNodes.back(), starting);
+}
+
+void GUI::drawVGSnapshots()
+{
+
+  if (showSnapshots)
+  {
+    if (VGPathNodesSnapshots.size() == 0 && snapshotNumber != 0)
+    {
+      snapshotNumber = 0;
+    }
+    if (snapshotNumber >= VGPathNodesSnapshots.size())
+    {
+      snapshotNumber = VGPathNodesSnapshots.size() - 1;
+    }
+    // TODO - start, left, shows full path: feature or bug?
+    // only of you can go past end snapshot into first snapshot
+    else if (snapshotNumber < 0)
+    {
+      snapshotNumber = 0;
+    }
+    if (VGPathNodesSnapshots.size() > 0)
+    {
+      for (int s = 0; s <= snapshotNumber; s++)
+      {
+        for (int n = 0; n < VGPathNodesSnapshots.at(s)->size() - 1; n++)
+        {
+          int x1 = (VGPathNodesSnapshots.at(s)->at(n)->x * cellSize) + xPadding + (cellSize / 2);
+          int y1 = (VGPathNodesSnapshots.at(s)->at(n)->y * cellSize) + yOffset + yPadding + (cellSize / 2);
+          int x2 = (VGPathNodesSnapshots.at(s)->at(n + 1)->x * cellSize) + xPadding + (cellSize / 2);
+          int y2 = (VGPathNodesSnapshots.at(s)->at(n + 1)->y * cellSize) + yOffset + yPadding + (cellSize / 2);
+
+          SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
+
+          // drawCell(renderer, VGPathNodesSnapshots.at(s)->at(n), pathNodesPastColor);
+
+          // if (s == snapshotNumber)
+          // {
+          // drawCell(renderer, VGPathNodesSnapshots.at(s)->at(n), pathNodesColor);
+          // }
+          // else
+          // {
+          // drawCell(renderer, VGPathNodesSnapshots.at(s)->at(n), pathNodesPastColor);
+          // }
+        }
+      }
+
+      // SDL_Color starting = {255, 255, 0, 255};
+      // SDL_Color ending = {0, 255, 255, 255};
+      drawCell(renderer, VGPathNodesSnapshots.back()->front(), ending);
+      drawCell(renderer, VGPathNodesSnapshots.back()->back(), starting);
+    }
+  }
+
+  SDL_SetRenderDrawColor(renderer, VGPathColor.r, VGPathColor.g, VGPathColor.b, VGPathColor.a);
+  for (int i = 0; i < VGPathNodes.size() - 1; i++)
+  {
+    int x1 = (VGPathNodes[i]->x * cellSize) + xPadding + (cellSize / 2);
+    int y1 = (VGPathNodes[i]->y * cellSize) + yOffset + yPadding + (cellSize / 2);
+    int x2 = (VGPathNodes[i + 1]->x * cellSize) + xPadding + (cellSize / 2);
+    int y2 = (VGPathNodes[i + 1]->y * cellSize) + yOffset + yPadding + (cellSize / 2);
+
+    SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
+  }
+
+  drawCell(renderer, pathNodes.front(), ending);
+  drawCell(renderer, pathNodes.back(), starting);
+}
+
 void GUI::getPath(Node *a, Node *b)
 {
   pathNodes.clear();
@@ -104,10 +190,12 @@ void GUI::getPath(Node *a, Node *b)
   selectingNodesAllowed = false;
 
   auto start = std::chrono::high_resolution_clock::now();
-  pathNodes = graph->getVGPath(selectedNodes[0], selectedNodes[1]);
+  // pathNodes = graph->getVGPath(selectedNodes[0], selectedNodes[1]);
+  pathNodes = graph->getPath(selectedNodes[0], selectedNodes[1]);
   auto stop = std::chrono::high_resolution_clock::now();
 
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+  std::cout << "A\n";
   std::cout << duration.count() << std::endl;
   pathsFound++;
   durationTotal += duration.count();
@@ -125,7 +213,8 @@ void GUI::getPathSnapshots(Node *a, Node *b)
   autoMode = false;
   selectingNodesAllowed = false;
 
-  pathNodesSnapshots = graph->getVGPathSnapshots(selectedNodes[0], selectedNodes[1]);
+  // pathNodesSnapshots = graph->getVGPathSnapshots(selectedNodes[0], selectedNodes[1]);
+  pathNodesSnapshots = graph->getPathSnapshots(selectedNodes[0], selectedNodes[1]);
 }
 
 void GUI::getRandomPath()
@@ -136,10 +225,12 @@ void GUI::getRandomPath()
   selectingNodesAllowed = false;
 
   auto start = std::chrono::high_resolution_clock::now();
-  pathNodes = graph->getVGRandomPath();
+  // pathNodes = graph->getVGRandomPath();
+  pathNodes = graph->getRandomPath();
   auto stop = std::chrono::high_resolution_clock::now();
 
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+  // std::cout << "B\n";
   std::cout << duration.count() << std::endl;
   pathsFound++;
   durationTotal += duration.count();
@@ -157,7 +248,8 @@ void GUI::getRandomPathSnapshots()
   autoMode = false;
   selectingNodesAllowed = false;
 
-  pathNodesSnapshots = graph->getVGRandomPathSnapshots();
+  // pathNodesSnapshots = graph->getVGRandomPathSnapshots();
+  pathNodesSnapshots = graph->getRandomPathSnapshots();
   // std::cout << pathNodesSnapshots.size() << std::endl;
 }
 
@@ -202,7 +294,8 @@ void GUI::selectNodes(SDL_Event &event)
           selectingNodesAllowed = false;
 
           auto start = std::chrono::high_resolution_clock::now();
-          pathNodesSnapshots = graph->getVGPathSnapshots(selectedNodes[0], selectedNodes[1]);
+          // pathNodesSnapshots = graph->getVGPathSnapshots(selectedNodes[0], selectedNodes[1]);
+          pathNodesSnapshots = graph->getPathSnapshots(selectedNodes[0], selectedNodes[1]);
           auto stop = std::chrono::high_resolution_clock::now();
 
           auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
@@ -251,10 +344,12 @@ void GUI::selectNodes(SDL_Event &event)
         {
           selectingNodesAllowed = false;
           auto start = std::chrono::high_resolution_clock::now();
-          pathNodes = graph->getVGPath(selectedNodes[0], selectedNodes[1]);
+          // pathNodes = graph->getVGPath(selectedNodes[0], selectedNodes[1]);
+          pathNodes = graph->getPath(selectedNodes[0], selectedNodes[1]);
           auto stop = std::chrono::high_resolution_clock::now();
 
           auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+          std::cout << "C\n";
           std::cout << duration.count() << std::endl;
           pathsFound++;
           durationTotal += duration.count();
@@ -464,6 +559,15 @@ void GUI::resetGrid()
 
 void GUI::generatePath()
 {
+  // if (showSnapshots)
+  // {
+  //   getRandomPathSnapshots();
+  // }
+  // else
+  // {
+  //   getRandomPath();
+  // }
+
   if (showSnapshots)
   {
     getRandomPathSnapshots();
@@ -529,7 +633,7 @@ void GUI::eventLoop()
           if (snapshotNumber + 1 < pathNodesSnapshots.size())
           {
             std::cout << "INCREMENT\n";
-            std::cout << pathNodesSnapshots.size();
+            // std::cout << pathNodesSnapshots.size();
             snapshotNumber++;
           }
           break;
@@ -584,6 +688,8 @@ void GUI::eventLoop()
     drawWaypoints();
     drawSnapshots();
     drawPath();
+    // drawVG();
+    // drawVGSnapshots();
     drawCursor();
 
     SDL_RenderPresent(renderer);

@@ -1,4 +1,7 @@
 #include <iostream>
+#include <set>
+#include "Enums.h"
+#include "Graph.h"
 #include "Node.h"
 
 //=============================================================================
@@ -7,10 +10,11 @@
 //=============================================================================
 //=============================================================================
 
-Node::Node(int x, int y)
+Node::Node(int x, int y, Graph *graph)
 {
   this->x = x;
   this->y = y;
+  this->graph = graph;
   forbidden = false;
   waypoint = NO;
 };
@@ -36,6 +40,7 @@ void Node::forbid()
     neighbor->neighbors.erase(this);
   }
 
+  graph->addForbiddenNode(this);
   neighbors.clear();
 }
 
