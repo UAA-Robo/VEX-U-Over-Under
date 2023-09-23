@@ -31,6 +31,7 @@ void GraphVG::createVG()
 {
     findWaypoints();
     addNeighboringWaypoints();
+    clearHits();
     // std::cout << waypoints.size() << "\n";
     // std::cout << waypoints.size() << "\n";
     // std::cout << waypoints.size() << "\n";

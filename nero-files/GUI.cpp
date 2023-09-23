@@ -837,7 +837,7 @@ void GUI::eventLoop()
     // drawSnapshots();
     // drawPath();
     // std::cout << "EEEEEEEEEEEEEEEEE\n";
-    drawVG();
+    // drawVG();
     // std::cout << "EEEEEEEEEEEEEEEEE\n";
     // drawVGSnapshots();
     // std::cout << "EEEEEEEEEEEEEEEEE\n";
@@ -870,14 +870,14 @@ int GUI::run()
 {
 std:
   std::cout << "AAAAAAAAAAAAAAAA\n";
-  if (showSnapshots)
-  {
-    getRandomPathSnapshots();
-  }
-  else
-  {
-    getRandomPath();
-  }
+  // if (showSnapshots)
+  // {
+  //   getRandomPathSnapshots();
+  // }
+  // else
+  // {
+  //   getRandomPath();
+  // }
   std::cout << "AAAAAAAAAAAAAAAA\n";
 
   // std::cout << pathNodes.size() << std::endl;
