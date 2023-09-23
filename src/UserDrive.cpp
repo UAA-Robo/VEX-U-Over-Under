@@ -46,7 +46,7 @@ void UserDrive::drive()
     hw->controller.Screen.setCursor(1,1);
     hw->controller.Screen.print("(%.1lf, %.1lf)", tm->x_position, tm->y_position);
     hw->controller.Screen.setCursor(2,1);
-    hw->controller.Screen.print("%.1lf deg", tm->heading);
+    hw->controller.Screen.print("%.1lf deg", tm->heading * 180/M_PI);
 
 
     get_inputs();

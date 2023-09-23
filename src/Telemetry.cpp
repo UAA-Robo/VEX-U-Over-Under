@@ -16,9 +16,9 @@ int Telemetry::update_position(void* param) {
     // Updates continuously
     while(true) {
 
-        float left_odometry_revolutions = tm->hw->left_odometry.angle(vex::rotationUnits::rev);
-        float right_odometry_revolutions = tm->hw->right_odometry.angle(vex::rotationUnits::rev);
-        float back_odometry_revolutions =  tm->hw->back_odometry.angle(vex::rotationUnits::rev);
+        float left_odometry_revolutions = tm->hw->left_odometry.position(vex::rotationUnits::rev);
+        float right_odometry_revolutions = tm->hw->right_odometry.position(vex::rotationUnits::rev);
+        float back_odometry_revolutions =  tm->hw->back_odometry.position(vex::rotationUnits::rev);
 
         
 
@@ -39,31 +39,34 @@ int Telemetry::update_position(void* param) {
         float current_heading = tm->heading;  
 
         //Easy Math
-        //float x_displacement = center_displacement * cos(current_heading) - horizontal_displacement * -sin(current_heading);
-        //float y_displacement = center_displacement  * sin(current_heading) + horizontal_displacement * cos(current_heading);
+        float x_displacement = center_displacement * cos(current_heading) - horizontal_displacement * -sin(current_heading);
+        float y_displacement = center_displacement  * sin(current_heading) + horizontal_displacement * cos(current_heading);
 
         //Advanced math This assumes constant curviture
-        float x_displacement = (center_displacement *
-            (cos(current_heading) * sin(heading_displacement)
-            + -sin(current_heading) * (1 - cos(heading_displacement)))
-
-            + (horizontal_displacement * 
-            (cos(current_heading) * (cos(heading_displacement) -1)) 
-            + -sin(current_heading) * sin(heading_displacement)) )/ heading_displacement;
-           
-        float y_displacement = (center_displacement *
-            (sin(current_heading) * sin(heading_displacement)
-            + cos(current_heading) * (1 - cos(heading_displacement)))
-
-            + (horizontal_displacement * 
-            (sin(current_heading) * (cos(heading_displacement) -1)) 
-            +cos(current_heading) * sin(heading_displacement)) )/ heading_displacement;
+        //float x_displacement = (center_displacement *
+        //    (cos(current_heading) * sin(heading_displacement)
+        //    + -sin(current_heading) * (1 - cos(heading_displacement)))
+//
+        //    + (horizontal_displacement * 
+        //    (cos(current_heading) * (cos(heading_displacement) -1)) 
+        //    + -sin(current_heading) * sin(heading_displacement)) );
+        //    /// heading_displacement;
+        //   
+        //float y_displacement = (center_displacement *
+        //    (sin(current_heading) * sin(heading_displacement)
+        //    + cos(current_heading) * (1 - cos(heading_displacement)))
+//
+        //    + (horizontal_displacement * 
+        //    (sin(current_heading) * (cos(heading_displacement) -1)) 
+        //    +cos(current_heading) * sin(heading_displacement)) );
+        //    /// heading_displacement;
        
        
         tm->x_position += x_displacement;
         tm->y_position +=  y_displacement;
         
-        tm->heading += std::fmod((heading_displacement),  (2 * M_PI));  // Radians to degrees
+        tm->heading += heading_displacement;
+        tm->heading = std::fmod(tm->heading, 2 * M_PI);
 
 
         tm->hw->left_odometry.resetPosition();
@@ -71,8 +74,8 @@ int Telemetry::update_position(void* param) {
         tm->hw->back_odometry.resetPosition();
 
         // Print to command line
-        std::cout << tm->x_position << "," << tm->y_position << "," << tm->heading << std::endl;
+        std::cout << tm->x_position << "," << tm->y_position << "," << tm->heading  * (180 / M_PI)<< std::endl;
 
-        vex::wait(5, vex::timeUnits::msec);
+        vex::wait(50, vex::timeUnits::msec);
     }
 }
