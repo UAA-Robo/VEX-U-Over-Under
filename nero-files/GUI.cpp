@@ -333,8 +333,29 @@ void GUI::selectNodes(SDL_Event &event)
   {
     autoMode = false;
     bool nodeAllowed = true;
-    int x = ((event.motion.x - xPadding) / cellSize) * cellSize;
-    int y = ((event.motion.y - yPadding - yOffset) / cellSize) * cellSize;
+    // int x = ((event.motion.x - xPadding) / cellSize) * cellSize;
+    // int y = ((event.motion.y - yPadding - yOffset) / cellSize) * cellSize;
+
+    int x = (double(event.motion.x - xPadding) / cellSize) * cellSize;
+    int y = (double(event.motion.y - yPadding - yOffset) / cellSize) * cellSize;
+
+    // std::cout << "\n\n\n\n"
+    //           << event.motion.x << "\n"
+    //           << (event.motion.x - xPadding) << "\n"
+    //           << ((event.motion.x - xPadding) / cellSize) << "\n"
+    //           << (((event.motion.x - xPadding) / cellSize) * cellSize) << "\n\n\n\n";
+
+    // std::cout << "\n\n\n\n"
+    //           << event.motion.x << "\n"
+    //           << (event.motion.x - xPadding) << "\n"
+    //           << (double(event.motion.x - xPadding) / cellSize) << "\n"
+    //           << ((double(event.motion.x - xPadding) / cellSize) * cellSize) << "\n\n\n\n";
+
+    // std::cout << "\n\n\n\n"
+    //           << double(event.motion.x) << "\n"
+    //           << double(double(event.motion.x - xPadding)) << "\n"
+    //           << double(double(double(event.motion.x - xPadding) / double(cellSize))) << "\n"
+    //           << double(double(double(double(event.motion.x - xPadding) / double(cellSize)) * double(cellSize))) << "\n\n\n\n";
 
     for (Node *forbiddenNode : forbiddenNodes)
     {
@@ -348,26 +369,42 @@ void GUI::selectNodes(SDL_Event &event)
       bool isNotDuplicate = true;
       for (Node *node : selectedNodes)
       {
-        if (node->x * cellSize == x && node->y * cellSize == y)
+
+        // std::cout << "FFFFFFFFFFFFFFFFFFFF\n";
+        // std::cout << node->x * cellSize << ", " << x << "\n";
+        // std::cout << node->y * cellSize << ", " << y << "\n";
+        // if (node->x * cellSize == x && node->y * cellSize == y)
+        // if (node->x * cellSize >= x && node->x * cellSize <= x + cellSize && node->y * cellSize >= y && node->y * cellSize <= y + cellSize)
+        // if (node->x * cellSize <= x && node->x * cellSize > x + cellSize && node->y * cellSize < y && node->y * cellSize > y + cellSize)
+        if (clickedInsideCell(node, event.motion.x, event.motion.y))
         {
+          // std::cout << "DUPLICATE DUPLICATE DUPLICATE\n";
           isNotDuplicate = false;
+          // break;
         }
       }
       if (isNotDuplicate)
       {
         nodesSelected++;
 
+        // std::cout << "XXXXXXXXXXXXXXXXX\n";
+        // std::cout << x / cellSize << ", " << y / cellSize << "\n";
+
         selectedNodes.push_back(graph->getNode(x / cellSize, y / cellSize));
         if (nodesSelected == 2)
         {
+          // std::cout << "ZZZZZZZZZZZZZZZZZ\n";
           selectingNodesAllowed = false;
           auto start = std::chrono::high_resolution_clock::now();
           // pathNodes = graph->getVGPath(selectedNodes[0], selectedNodes[1]);
-          pathNodes = graph->getPath(selectedNodes[0], selectedNodes[1]);
-          // LOS = graph->hasLOS(selectedNodes[0], selectedNodes[1]);
-          // drawLOS(selectedNodes[0], selectedNodes[1]);
-          // a = selectedNodes[0];
-          // b = selectedNodes[1];
+          // pathNodes = graph->getPath(selectedNodes[0], selectedNodes[1]);
+          LOS = graph->hasLOS(selectedNodes[0], selectedNodes[1]);
+          drawLOS(selectedNodes[0], selectedNodes[1]);
+          a = selectedNodes[0];
+          b = selectedNodes[1];
+
+          a->println();
+          b->println();
 
           auto stop = std::chrono::high_resolution_clock::now();
 
@@ -384,6 +421,30 @@ void GUI::selectNodes(SDL_Event &event)
     }
     // break;
   }
+}
+
+bool GUI::clickedInsideCell(Node *node, int eventX, int eventY)
+{
+  double nodeStartX = (node->x * cellSize) + xPadding;
+  double nodeStartY = (node->y * cellSize) + yOffset + yPadding;
+  double nodeEndtX = ((node->x * cellSize) + xPadding) + cellSize;
+  double nodeEndtY = ((node->y * cellSize) + yOffset + yPadding) + cellSize;
+
+  // std::cout << "\n\n\n\n\n\n\n";
+  // std::cout << eventX << ", " << eventY << "\n";
+  // std::cout << node->x << ", " << node->y << "\n";
+  // std::cout << nodeStartX << ", " << nodeStartY << "\n";
+  // std::cout << nodeEndtX << ", " << nodeEndtY << "\n";
+  // std::cout << "\n\n\n\n\n\n\n";
+  // std::cout << eventX << ", " << eventY << "\n";
+
+  if (eventX >= nodeStartX && eventX <= nodeEndtX && eventY >= nodeStartY && eventY <= nodeEndtY)
+  {
+    // std::cout << "IS CLICKED INSIDE\n\n";
+    return true;
+  }
+
+  return false;
 }
 
 void GUI::drawLOS(Node *a, Node *b)
@@ -407,7 +468,7 @@ void GUI::drawLOS(Node *a, Node *b)
     drawCell(renderer, b, fal);
   }
 
-  std::cout << "Z\n";
+  // std::cout << "Z\n";
 }
 
 void GUI::drawBackground()
@@ -557,8 +618,8 @@ void GUI::scroll(SDL_Event &event)
 void GUI::moveCursor(SDL_Event &event)
 {
 
-  gridCursor.x = (((event.motion.x) / cellSize) * cellSize);
-  gridCursor.y = ((event.motion.y / cellSize) * cellSize);
+  gridCursor.x = ((double(event.motion.x) / cellSize) * cellSize);
+  gridCursor.y = ((double(event.motion.y) / cellSize) * cellSize);
   if ((event.motion.x >= xPadding && event.motion.x <= xPadding + gridWidth) &&
       (event.motion.y >= yPadding + yOffset && event.motion.y <= yPadding + yOffset + gridHeight))
   {
@@ -741,7 +802,7 @@ void GUI::eventLoop()
     // drawSnapshots();
     // drawPath();
     // std::cout << "EEEEEEEEEEEEEEEEE\n";
-    drawVG();
+    // drawVG();
     // std::cout << "EEEEEEEEEEEEEEEEE\n";
     // drawVGSnapshots();
     // std::cout << "EEEEEEEEEEEEEEEEE\n";
@@ -759,14 +820,14 @@ void GUI::eventLoop()
 
 int GUI::run()
 {
-  if (showSnapshots)
-  {
-    getRandomPathSnapshots();
-  }
-  else
-  {
-    getRandomPath();
-  }
+  // if (showSnapshots)
+  // {
+  //   getRandomPathSnapshots();
+  // }
+  // else
+  // {
+  //   getRandomPath();
+  // }
 
   // std::cout << pathNodes.size() << std::endl;
 

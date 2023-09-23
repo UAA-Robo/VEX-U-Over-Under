@@ -642,6 +642,12 @@ bool GraphVG::hasLOS(Node *a, Node *b)
         ySlope *= (-1.0);
     }
 
+    // std::cout << getPositionRelative(a, b) << std::endl;
+
+    // std::cout << x << ", " << y << "\n";
+    // std::cout << b->x << ", " << b->y << "\n";
+    // std::cout << xSlope << ", " << ySlope << "\n";
+
     switch (getPositionRelative(a, b))
     {
     case B_TOPLEFT_A:
@@ -776,11 +782,11 @@ void GraphVG::findWaypoints()
             }
         }
     }
-    std::cout << waypoints.size() << "\n";
-    std::cout << waypoints.size() << "\n";
-    std::cout << waypoints.size() << "\n";
-    std::cout << waypoints.size() << "\n";
-    std::cout << waypoints.size() << "\n";
+    // std::cout << waypoints.size() << "\n";
+    // std::cout << waypoints.size() << "\n";
+    // std::cout << waypoints.size() << "\n";
+    // std::cout << waypoints.size() << "\n";
+    // std::cout << waypoints.size() << "\n";
 }
 
 void GraphVG::addNeighboringWaypoints()

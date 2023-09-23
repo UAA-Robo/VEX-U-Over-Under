@@ -86,8 +86,9 @@ private:
   bool LOS;
   void drawLOS(Node *a, Node *b);
 
-  Node* a;
-  Node* b;
+  Node *a;
+  Node *b;
+  bool clickedInsideCell(Node *node, int eventX, int eventY);
 
 public:
   GUI(Graph *graph, int cellSize);
