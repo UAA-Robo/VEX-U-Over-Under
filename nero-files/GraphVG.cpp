@@ -16,6 +16,17 @@ GraphVG::GraphVG(int xNodes, int yNodes, double cellSize) : Graph::Graph(xNodes,
     // std::cout << waypoints.size() << "\n";
 }
 
+void GraphVG::clearHits()
+{
+    for (int y = 0; y < yNodes; y++)
+    {
+        for (int x = 0; x < xNodes; x++)
+        {
+            nodes[y][x]->hit = false;
+        }
+    }
+}
+
 void GraphVG::createVG()
 {
     findWaypoints();
@@ -51,13 +62,25 @@ void GraphVG::insertWaypoint(Node *node)
     waypoints.insert(node);
 }
 
+// TODO - IMPORTANT - editing list/set as you're iterating over it, look for it elsewhere
 void GraphVG::removeWaypoint(Node *node)
 {
+    std::set<Node *> toBeRemoved;
+    int x = node->waypointNeighbors.size();
+
     for (Node *waypointNeighbor : node->waypointNeighbors)
+    {
+        toBeRemoved.insert(waypointNeighbor);
+        // waypointNeighbor->waypointNeighbors.erase(node);
+        // node->waypointNeighbors.erase(waypointNeighbor);
+    }
+
+    for (Node *waypointNeighbor : toBeRemoved)
     {
         waypointNeighbor->waypointNeighbors.erase(node);
         node->waypointNeighbors.erase(waypointNeighbor);
     }
+
     waypoints.erase(node);
 }
 
@@ -659,6 +682,7 @@ bool GraphVG::hasLOS(Node *a, Node *b)
     {
     case B_TOPLEFT_A:
     {
+        std::cout << "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ\n\n\n\n";
         xSlope *= (-1.0);
         ySlope *= (-1.0);
         while (y + ySlope >= b->y && x + xSlope >= b->x)
@@ -668,7 +692,6 @@ bool GraphVG::hasLOS(Node *a, Node *b)
 
             if (nodes[int(y)][int(x)]->forbidden)
             {
-                std::cout << "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ\n\n\\n\n";
                 nodes[int(y)][int(x)]->hit = true;
                 return false;
             }
@@ -678,6 +701,7 @@ bool GraphVG::hasLOS(Node *a, Node *b)
     case B_TOPRIGHT_A:
     case B_TOP_A:
     {
+        std::cout << "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW\n\n\n\n";
         ySlope *= (-1);
         while (y + ySlope >= b->y && x + xSlope <= b->x)
         {
@@ -686,7 +710,6 @@ bool GraphVG::hasLOS(Node *a, Node *b)
 
             if (nodes[int(y)][int(x)]->forbidden)
             {
-                std::cout << "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW\n\n\\n\n";
                 nodes[int(y)][int(x)]->hit = true;
                 return false;
             }
@@ -698,6 +721,7 @@ bool GraphVG::hasLOS(Node *a, Node *b)
     case B_RIGHT_A:
         // FIX: same y, different x, xSlope = dx / (10 * dx), dx = number of nodes (+1 for inclusive?)
         {
+            std::cout << "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\n\n\n\n";
             while (y + ySlope <= b->y && x + xSlope <= b->x)
             {
                 y += ySlope;
@@ -708,8 +732,8 @@ bool GraphVG::hasLOS(Node *a, Node *b)
 
                 if (nodes[int(y)][int(x)]->forbidden)
                 {
-                    std::cout << "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\n\n\\n\n";
                     nodes[int(y)][int(x)]->hit = true;
+                    std::cout << "E - Success\n\n\n\n";
                     return false;
                 }
             }
@@ -718,6 +742,7 @@ bool GraphVG::hasLOS(Node *a, Node *b)
     case B_BOTTOMLEFT_A:
     case B_LEFT_A:
     {
+        std::cout << "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR\n\n\n\n";
         xSlope *= (-1);
         while (y + ySlope <= b->y && x + xSlope >= b->x)
         {
@@ -726,7 +751,6 @@ bool GraphVG::hasLOS(Node *a, Node *b)
 
             if (nodes[int(y)][int(x)]->forbidden)
             {
-                std::cout << "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR\n\n\\n\n";
                 nodes[int(y)][int(x)]->hit = true;
                 return false;
             }

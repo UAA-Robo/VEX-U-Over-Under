@@ -25,4 +25,5 @@ public:
     std::vector<Node *> getRandomPath();
     std::vector<std::vector<Node *> *> getPathSnapshots(Node *origin, Node *destination);
     std::vector<std::vector<Node *> *> getRandomPathSnapshots();
+    void clearHits();
 };

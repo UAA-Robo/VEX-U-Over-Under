@@ -868,6 +868,8 @@ void GUI::eventLoop()
 
 int GUI::run()
 {
+std:
+  std::cout << "AAAAAAAAAAAAAAAA\n";
   if (showSnapshots)
   {
     getRandomPathSnapshots();
@@ -876,14 +878,17 @@ int GUI::run()
   {
     getRandomPath();
   }
+  std::cout << "AAAAAAAAAAAAAAAA\n";
 
   // std::cout << pathNodes.size() << std::endl;
 
   eventLoop();
+  std::cout << "AAAAAAAAAAAAAAAA\n";
 
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   SDL_Quit();
+  std::cout << "AAAAAAAAAAAAAAAA\n";
 
   return EXIT_SUCCESS;
 }

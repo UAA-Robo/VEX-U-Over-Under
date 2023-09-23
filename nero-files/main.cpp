@@ -122,6 +122,7 @@ int main(int argv, char **args)
   // std::cout << graph->getRandomPath().size();
   addForbiddenNodes(graph);
   graph->createVG();
+  // graph->getRandomPath();
   GUI gui = GUI(graph, CELL_SIZE);
   // std::cout << "AAAAAAAAAAAAA\n";
 }
