@@ -12,6 +12,40 @@
 //=============================================================================
 //=============================================================================
 
+Node *Graph::getHit()
+{
+  for (int y = 0; y < yNodes; y++)
+  {
+    for (int x = 0; x < xNodes; x++)
+    {
+      if (nodes[y][x]->hit)
+      {
+        return nodes[y][x];
+      }
+    }
+  }
+
+  std::cout << "NULLPTR\n";
+  std::cout << "NULLPTR\n";
+  std::cout << "NULLPTR\n";
+  std::cout << "NULLPTR\n";
+  std::cout << "NULLPTR\n";
+  std::cout << "NULLPTR\n";
+  std::cout << "NULLPTR\n";
+  std::cout << "NULLPTR\n";
+  std::cout << "NULLPTR\n";
+  std::cout << "NULLPTR\n";
+  std::cout << "NULLPTR\n";
+  std::cout << "NULLPTR\n";
+  std::cout << "NULLPTR\n";
+  std::cout << "NULLPTR\n";
+  std::cout << "NULLPTR\n";
+  std::cout << "NULLPTR\n";
+  std::cout << "NULLPTR\n";
+  std::cout << "NULLPTR\n";
+  return nullptr;
+}
+
 Graph::Graph(int xNodes, int yNodes, double cellSize)
 {
   this->xNodes = xNodes;

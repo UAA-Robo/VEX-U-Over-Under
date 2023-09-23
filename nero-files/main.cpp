@@ -1,6 +1,9 @@
 // TODO - make sure all pathfindings are updated to the latest iteration
 // TODO - update naming convention and style guide
 // TODO - visualize the slope to make sure it's correct (positive, negative, both slopes)
+// TODO - IMPORTANT - remove hard coded values to remove assumptions
+// TODO - store edge costs to save computation time?
+// TODO - occasional crashing on initial bootup (VG, non-snapshot)
 
 #include "Enums.h"
 #include "Node.h"

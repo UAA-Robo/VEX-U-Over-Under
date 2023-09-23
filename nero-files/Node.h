@@ -10,6 +10,7 @@ public:
   int x;
   int y;
   bool forbidden;
+  bool hit;
   Graph *graph;
   WAYPOINT waypoint;
   std::set<Node *> neighbors;

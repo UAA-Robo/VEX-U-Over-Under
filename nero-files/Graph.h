@@ -37,6 +37,7 @@ public:
   virtual std::vector<std::vector<Node *> *> getRandomPathSnapshots();
   virtual void forbidTriangle(Node *a, Node *b);
   virtual void forbidRectangle(Node *topLeftPoint, Node *topRightPoint, Node *bottomLeftPoint);
+  Node* getHit();
 };
 
 // shared = not virtual, in parent class, protected

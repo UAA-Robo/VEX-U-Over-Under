@@ -101,6 +101,7 @@ void GUI::init(Graph *graph, Graph *graph2, int cellSize)
   LOS = false;
   a = nullptr;
   b = nullptr;
+  hitNode = nullptr;
 }
 
 void GUI::drawVG()
@@ -405,6 +406,28 @@ void GUI::selectNodes(SDL_Event &event)
 
           a->println();
           b->println();
+          hitNode = graph->getHit();
+          if (hitNode == nullptr)
+          {
+            std::cout << "NULLPTR\n";
+            std::cout << "NULLPTR\n";
+            std::cout << "NULLPTR\n";
+            std::cout << "NULLPTR\n";
+            std::cout << "NULLPTR\n";
+            std::cout << "NULLPTR\n";
+            std::cout << "NULLPTR\n";
+            std::cout << "NULLPTR\n";
+            std::cout << "NULLPTR\n";
+            std::cout << "NULLPTR\n";
+            std::cout << "NULLPTR\n";
+            std::cout << "NULLPTR\n";
+            std::cout << "NULLPTR\n";
+            std::cout << "NULLPTR\n";
+            std::cout << "NULLPTR\n";
+            std::cout << "NULLPTR\n";
+            std::cout << "NULLPTR\n";
+            std::cout << "NULLPTR\n";
+          }
 
           auto stop = std::chrono::high_resolution_clock::now();
 
@@ -467,6 +490,13 @@ void GUI::drawLOS(Node *a, Node *b)
     drawCell(renderer, a, fal);
     drawCell(renderer, b, fal);
   }
+
+  int x1 = (a->x * cellSize) + xPadding + (cellSize / 2);
+  int y1 = (a->y * cellSize) + yOffset + yPadding + (cellSize / 2);
+  int x2 = (b->x * cellSize) + xPadding + (cellSize / 2);
+  int y2 = (b->y * cellSize) + yOffset + yPadding + (cellSize / 2);
+
+  SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
 
   // std::cout << "Z\n";
 }
@@ -666,6 +696,11 @@ void GUI::resetGrid()
   a = nullptr;
   b = nullptr;
   LOS = false;
+  if (hitNode != nullptr)
+  {
+    hitNode->hit = false;
+  }
+  // hitNode = nullptr;
 }
 
 void GUI::generatePath()
@@ -802,14 +837,27 @@ void GUI::eventLoop()
     // drawSnapshots();
     // drawPath();
     // std::cout << "EEEEEEEEEEEEEEEEE\n";
-    // drawVG();
+    drawVG();
     // std::cout << "EEEEEEEEEEEEEEEEE\n";
     // drawVGSnapshots();
     // std::cout << "EEEEEEEEEEEEEEEEE\n";
     drawCursor();
+
     if (a != nullptr && b != nullptr)
     {
       drawLOS(a, b);
+    }
+
+    if (hitNode != nullptr)
+    {
+      if (hitNode->hit)
+      {
+        drawCell(renderer, hitNode, {0, 0, 0, 255});
+      }
+      // else
+      // {
+      //   drawCell(renderer, hitNode, forbiddenNodesColor);
+      // }
     }
 
     // std::cout << waypoints.size() << std::endl;
@@ -820,14 +868,14 @@ void GUI::eventLoop()
 
 int GUI::run()
 {
-  // if (showSnapshots)
-  // {
-  //   getRandomPathSnapshots();
-  // }
-  // else
-  // {
-  //   getRandomPath();
-  // }
+  if (showSnapshots)
+  {
+    getRandomPathSnapshots();
+  }
+  else
+  {
+    getRandomPath();
+  }
 
   // std::cout << pathNodes.size() << std::endl;
 
@@ -871,3 +919,5 @@ void GUI::drawCellSecond(SDL_Renderer *renderer, Node *node, SDL_Color color, in
   SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
   SDL_RenderFillRect(renderer, &cell);
 }
+
+// Propogate those fixes to other parts of the code

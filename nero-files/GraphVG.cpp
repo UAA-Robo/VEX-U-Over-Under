@@ -584,6 +584,7 @@ bool GraphVG::areTautWaypoints(Node *a, Node *b)
 }
 
 // TODO - IMPORTANT - make this function check from center of a to center of b
+// TODO - top, right, bottom, left trivial, no slope need, go one node at a time
 bool GraphVG::hasLOS(Node *a, Node *b)
 {
     // a->println();
@@ -594,30 +595,35 @@ bool GraphVG::hasLOS(Node *a, Node *b)
         return true;
     }
 
-    double x = a->x + (cellSize / 2);
-    double y = a->y + (cellSize / 2);
-    double dx = (b->x + (cellSize / 2)) - a->x;
-    double dy = (b->y + (cellSize / 2)) - a->y;
+    double x = a->x + (1 / 2);
+    double y = a->y + (1 / 2);
+    // double dx = (b->x + (cellSize / 2)) - a->x;
+    // double dy = (b->y + (cellSize / 2)) - a->y;
+    double dx = ((b->x - a->x) + (1 / 2));
+    double dy = ((b->y - a->y) + (1 / 2));
     double xSlope;
     double ySlope;
 
     if (dy == 0)
     {
-        xSlope = dx / (10 * dx);
+        xSlope = dx / (100 * dx);
     }
     else
     {
-        xSlope = (dx / dy) / 10;
+        xSlope = (dx / dy) / 100;
     }
 
     if (dx == 0)
     {
-        ySlope = dy / (10 * dy);
+        ySlope = dy / (100 * dy);
     }
     else
     {
-        ySlope = (dy / dx) / 10;
+        ySlope = (dy / dx) / 100;
     }
+
+    ySlope = dy / 140;
+    xSlope = dx / 140;
 
     // std::cout << xSlope << ", " << ySlope << "\n";
 
@@ -644,9 +650,10 @@ bool GraphVG::hasLOS(Node *a, Node *b)
 
     // std::cout << getPositionRelative(a, b) << std::endl;
 
-    // std::cout << x << ", " << y << "\n";
-    // std::cout << b->x << ", " << b->y << "\n";
-    // std::cout << xSlope << ", " << ySlope << "\n";
+    std::cout << x << ", " << y << "\n";
+    std::cout << b->x << ", " << b->y << "\n";
+    std::cout << xSlope << ", " << ySlope << "\n";
+    std::cout << dx << ", " << dy << "\n";
 
     switch (getPositionRelative(a, b))
     {
@@ -661,6 +668,8 @@ bool GraphVG::hasLOS(Node *a, Node *b)
 
             if (nodes[int(y)][int(x)]->forbidden)
             {
+                std::cout << "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ\n\n\\n\n";
+                nodes[int(y)][int(x)]->hit = true;
                 return false;
             }
         }
@@ -677,6 +686,8 @@ bool GraphVG::hasLOS(Node *a, Node *b)
 
             if (nodes[int(y)][int(x)]->forbidden)
             {
+                std::cout << "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW\n\n\\n\n";
+                nodes[int(y)][int(x)]->hit = true;
                 return false;
             }
         }
@@ -697,6 +708,8 @@ bool GraphVG::hasLOS(Node *a, Node *b)
 
                 if (nodes[int(y)][int(x)]->forbidden)
                 {
+                    std::cout << "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\n\n\\n\n";
+                    nodes[int(y)][int(x)]->hit = true;
                     return false;
                 }
             }
@@ -713,6 +726,8 @@ bool GraphVG::hasLOS(Node *a, Node *b)
 
             if (nodes[int(y)][int(x)]->forbidden)
             {
+                std::cout << "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR\n\n\\n\n";
+                nodes[int(y)][int(x)]->hit = true;
                 return false;
             }
         }
@@ -797,7 +812,7 @@ void GraphVG::addNeighboringWaypoints()
         {
             if (nodeA != nodeB)
             {
-                if (areTautWaypoints(nodeA, nodeB))
+                if (areTautWaypoints(nodeA, nodeB) && hasLOS(nodeA, nodeB))
                 {
                     nodeA->waypointNeighbors.insert(nodeB);
                     nodeB->waypointNeighbors.insert(nodeA);

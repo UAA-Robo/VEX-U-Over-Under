@@ -15,6 +15,7 @@ Node::Node(int x, int y, Graph *graph)
   this->x = x;
   this->y = y;
   this->graph = graph;
+  this->hit = false;
   forbidden = false;
   waypoint = NO;
 };

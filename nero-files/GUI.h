@@ -89,6 +89,7 @@ private:
   Node *a;
   Node *b;
   bool clickedInsideCell(Node *node, int eventX, int eventY);
+  Node *hitNode;
 
 public:
   GUI(Graph *graph, int cellSize);
