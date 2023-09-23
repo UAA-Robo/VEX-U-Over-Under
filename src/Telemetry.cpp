@@ -34,9 +34,9 @@ int Telemetry::update_position(void* param) {
 
         float center_displacement  = (left_displacement + right_displacement) / 2;
 
-        float horizontal_displacement = back_displacement - phi *  tm->rc->ODOMETRY_BACK_RADIUS; 
+        float horizontal_displacement = back_displacement - heading_displacement *  tm->rc->ODOMETRY_BACK_RADIUS; 
 
-        float current_heading = tm->heading * M_PI/180;  
+        float current_heading = tm->heading;  
 
         //Easy Math
         //float x_displacement = center_displacement * cos(current_heading) - horizontal_displacement * -sin(current_heading);
@@ -62,7 +62,8 @@ int Telemetry::update_position(void* param) {
        
         tm->x_position += x_displacement;
         tm->y_position +=  y_displacement;
-        tm->heading += ((heading_displacement)  % 2 * M_PI) / (M_PI/ 180);  // Radians to degrees
+        
+        tm->heading += std::fmod((heading_displacement),  (2 * M_PI));  // Radians to degrees
 
 
         tm->hw->left_odometry.resetPosition();

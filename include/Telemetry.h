@@ -13,7 +13,6 @@ public:
     float x_position = 0;
     float y_position = 0;
     
-    // In Degrees
     float heading = 0;
 private:
     Hardware* hw;
