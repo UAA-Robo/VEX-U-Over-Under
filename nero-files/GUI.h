@@ -7,7 +7,7 @@ class GUI
 {
 private:
   Graph *graph;
-  Graph *graph2;
+
   int xNodes;
   int yNodes;
   int cellSize;
@@ -15,12 +15,13 @@ private:
   int gridHeight;
   int xPadding;
   int yPadding;
-  int yOffset;
   int scrollSensitivity;
+  int yOffset;
   int pathsFound;
   int durationTotal;
   int snapshotNumber;
   int nodesSelected;
+
   bool showSnapshots;
   bool selectingNodesAllowed;
   bool autoMode;
@@ -47,8 +48,6 @@ private:
   SDL_Color pathNodesPastColor;
   SDL_Color starting;
   SDL_Color ending;
-  SDL_Color VGPathColor;
-  SDL_Color VGPathOldColor;
 
   void drawCell(SDL_Renderer *renderer, Node *node, SDL_Color color);
   void drawCellSecond(SDL_Renderer *renderer, Node *node, SDL_Color color, int xDifference);
@@ -82,21 +81,15 @@ private:
   void drawLine(SDL_Renderer *renderer, Node *a, Node *b, SDL_Color color);
   void drawVG();
   void drawVGSnapshots();
-
-  bool LOS;
   void drawLOS(Node *a, Node *b);
-
-  Node *a;
-  Node *b;
   bool clickedInsideCell(Node *node, int eventX, int eventY);
-  Node *hitNode;
+  void drawNormalSnapshots();
+  void drawNormalPath();
+  void drawVGPath();
 
 public:
   GUI(Graph *graph, int cellSize);
-  GUI(Graph *graph, Graph *graph2, int cellSize);
   int run();
-
-  // int runTwo(bool showSnapshots);
 };
 
 // GUI CONTROLS

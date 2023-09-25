@@ -104,9 +104,8 @@ void addForbiddenNodes(Graph *graph)
 
 int main(int argv, char **args)
 {
-  Graph *graph = new GraphVG(X_NODES, Y_NODES, CELL_SIZE);
+  Graph *graph = new GraphNormal(X_NODES, Y_NODES, CELL_SIZE);
   addForbiddenNodes(graph);
-  addForbiddenNodes(graph);
-  graph->createVG();
+  // graph->createVG();
   GUI gui = GUI(graph, CELL_SIZE);
 }

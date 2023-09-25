@@ -12,6 +12,7 @@
 
 GraphVG::GraphVG(int xNodes, int yNodes, double cellSize) : Graph::Graph(xNodes, yNodes, cellSize)
 {
+    type = VG;
 }
 
 void GraphVG::clearHits()
@@ -242,7 +243,6 @@ std::vector<std::vector<Node *> *> GraphVG::getPathSnapshots(Node *origin, Node 
             }
         }
 
-
         Node *temp = currentNode;
         snapshots.back()->push_back(temp);
         while (temp != cameFrom[temp])
@@ -345,13 +345,11 @@ std::vector<std::vector<Node *> *> GraphVG::getRandomPathSnapshots()
         throw std::runtime_error("ERROR SAME ORIGIN AND DESTINATION");
     }
 
-
     return getPathSnapshots(nodes[originY][originX], nodes[destinationY][destinationX]);
 }
 
 std::set<Node *> GraphVG::getWaypoints()
 {
-
 
     return waypoints;
 }
@@ -584,7 +582,6 @@ bool GraphVG::hasLOS(Node *a, Node *b)
     ySlope = dy / 140;
     xSlope = dx / 140;
 
-
     if (xSlope < 0)
     {
         xSlope *= (-1.0);
@@ -593,7 +590,6 @@ bool GraphVG::hasLOS(Node *a, Node *b)
     {
         ySlope *= (-1.0);
     }
-
 
     switch (getPositionRelative(a, b))
     {

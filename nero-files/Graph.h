@@ -19,6 +19,7 @@ protected:
   std::vector<Node *> reconstructPath(Node *currentNode, std::map<Node *, Node *> cameFrom);
 
 public:
+  GRAPH_TYPE type;
   int xNodes;
   int yNodes;
   double cellSize;

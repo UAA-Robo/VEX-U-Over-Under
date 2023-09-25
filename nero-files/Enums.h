@@ -20,3 +20,9 @@ enum WAYPOINT
   BOTTOMRIGHT,
   BOTTOMLEFT
 };
+
+enum GRAPH_TYPE
+{
+  NORMAL,
+  VG
+};

@@ -9,6 +9,7 @@
 
 GraphNormal::GraphNormal(int xNodes, int yNodes, double cellSize) : Graph::Graph(xNodes, yNodes, cellSize)
 {
+    type = NORMAL;
 }
 
 std::vector<Node *> GraphNormal::getPath(Node *origin, Node *destination)
