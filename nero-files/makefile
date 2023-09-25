@@ -1,5 +1,5 @@
 #OBJS specifies which files to compile as part of the project
-OBJS = main.cpp Node.cpp Graph.cpp GraphVG.cpp GUI.cpp 
+OBJS = main.cpp Node.cpp Graph.cpp GraphNormal.cpp GraphVG.cpp GUI.cpp 
 
 #OBJ_NAME specifies the name of our exectuable
 OBJ_NAME = run

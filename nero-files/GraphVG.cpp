@@ -12,8 +12,6 @@
 
 GraphVG::GraphVG(int xNodes, int yNodes, double cellSize) : Graph::Graph(xNodes, yNodes, cellSize)
 {
-    // createVG();
-    // std::cout << waypoints.size() << "\n";
 }
 
 void GraphVG::clearHits()
@@ -32,17 +30,6 @@ void GraphVG::createVG()
     findWaypoints();
     addNeighboringWaypoints();
     clearHits();
-    // std::cout << waypoints.size() << "\n";
-    // std::cout << waypoints.size() << "\n";
-    // std::cout << waypoints.size() << "\n";
-    // std::cout << waypoints.size() << "\n";
-    // std::cout << waypoints.size() << "\n";
-    // std::cout << waypoints.size() << "\n";
-    // std::cout << waypoints.size() << "\n";
-    // std::cout << waypoints.size() << "\n";
-    // std::cout << waypoints.size() << "\n";
-    // std::cout << waypoints.size() << "\n";
-    // std::cout << waypoints.size() << "\n";
 }
 
 void GraphVG::insertWaypoint(Node *node)
@@ -50,8 +37,6 @@ void GraphVG::insertWaypoint(Node *node)
 
     for (Node *waypoint : waypoints)
     {
-        // std::cout << node->forbidden << "\n";
-        // std::cout << waypoint->forbidden << "\n";
         bool cond = hasLOS(node, waypoint);
 
         if (cond)
@@ -112,10 +97,6 @@ std::vector<Node *> GraphVG::getPath(Node *origin, Node *destination)
     insertWaypoint(origin);
     insertWaypoint(destination);
 
-    // std::cout << "AAAAAAAAAAAAAAA\n";
-    // std::cout << ;
-    // origin->println();
-    // destination->println();
     while (frontier.size() > 0)
     {
         int lowestFScore = 2147483647;
@@ -158,8 +139,6 @@ std::vector<Node *> GraphVG::getPath(Node *origin, Node *destination)
             }
         }
 
-        // std::cout << currentNode->waypointNeighbors.size();
-        // currentNode->println();
         frontier.erase(currentNode);
 
         if (currentNode == destination)
@@ -263,18 +242,6 @@ std::vector<std::vector<Node *> *> GraphVG::getPathSnapshots(Node *origin, Node 
             }
         }
 
-        // std::cout << "\n\nSNAPSHOT #" << snapshots.size() << "\n";
-        // for (int y = 0; y < yNodes; y++)
-        // {
-        //   for (int x = 0; x < xNodes; x++)
-        //   {
-        //     Node *node = nodes[y][x];
-        //     std::cout << "(" << node->x << ", " << node->y << ") "
-        //               << "F-" << fScores[node] << " H-" << getEdgeCost(node, destination) << "   ";
-        //   }
-
-        //   std::cout << "\n";
-        // }
 
         Node *temp = currentNode;
         snapshots.back()->push_back(temp);
@@ -378,8 +345,6 @@ std::vector<std::vector<Node *> *> GraphVG::getRandomPathSnapshots()
         throw std::runtime_error("ERROR SAME ORIGIN AND DESTINATION");
     }
 
-    // nodes[originY][originX]->println();
-    // nodes[destinationY][destinationX]->println();
 
     return getPathSnapshots(nodes[originY][originX], nodes[destinationY][destinationX]);
 }
@@ -387,10 +352,6 @@ std::vector<std::vector<Node *> *> GraphVG::getRandomPathSnapshots()
 std::set<Node *> GraphVG::getWaypoints()
 {
 
-    // std::set<Node *>
-    // for(Node* waypoint: waypoints) {
-
-    // }
 
     return waypoints;
 }
@@ -435,7 +396,6 @@ WAYPOINT GraphVG::isWaypoint(Node *node)
         (!topNeighborForbidden && !rightNeighborForbidden && !bottomNeighborForbidden && !leftNeighborForbidden) &&
         ((!(topLeftNeighborForbidden && topRightNeighborForbidden) && !(topRightNeighborForbidden && bottomRightNeighborForbidden) && !(bottomRightNeighborForbidden && bottomLeftNeighborForbidden) && !(bottomLeftNeighborForbidden && topLeftNeighborForbidden))))
     {
-        // std::cout << "YYYYYYYYYYYYYYYYYYY\n";
         if (topLeftNeighborForbidden)
         {
             return BOTTOMRIGHT;
@@ -455,25 +415,9 @@ WAYPOINT GraphVG::isWaypoint(Node *node)
     }
     else
     {
-        // std::cout << "NNNNNNNNNNNNNNNNNNNNNNNNN\n";
         return NO;
-        std::cout << topNeighborForbidden << std::endl;
-        std::cout << rightNeighborForbidden << std::endl;
-        std::cout << bottomNeighborForbidden << std::endl;
-        std::cout << leftNeighborForbidden << std::endl;
-
-        std::cout << topLeftNeighborForbidden << std::endl;
-        std::cout << topRightNeighborForbidden << std::endl;
-        std::cout << bottomRightNeighborForbidden << std::endl;
-        std::cout << bottomLeftNeighborForbidden << std::endl;
-
-        // node->println();
-
         throw std::runtime_error("ERROR 110");
     }
-
-    // throw std::runtime_error("ERROR 111");
-    // std::cout << "KKKKKKKKKKKKKKK\n";
 
     if ((topLeftNeighborForbidden && topRightNeighborForbidden) ||
         (topRightNeighborForbidden && bottomRightNeighborForbidden) ||
@@ -482,11 +426,6 @@ WAYPOINT GraphVG::isWaypoint(Node *node)
     {
         if (!topNeighborForbidden && !rightNeighborForbidden && !bottomNeighborForbidden && !leftNeighborForbidden)
         {
-            std::cout << topLeftNeighborForbidden << std::endl;
-            std::cout << topRightNeighborForbidden << std::endl;
-            std::cout << bottomRightNeighborForbidden << std::endl;
-            std::cout << bottomLeftNeighborForbidden << std::endl;
-            // node->println();
             throw std::runtime_error("ERROR 200");
         }
     }
@@ -516,8 +455,6 @@ WAYPOINT GraphVG::isWaypoint(Node *node)
     }
 
     return NO;
-    // node->println();
-    // throw std::runtime_error("ERROR 300");
 }
 
 // Checks if b is taut to a
@@ -611,8 +548,6 @@ bool GraphVG::areTautWaypoints(Node *a, Node *b)
 // TODO - top, right, bottom, left trivial, no slope need, go one node at a time
 bool GraphVG::hasLOS(Node *a, Node *b)
 {
-    // a->println();
-    // b->println();
 
     if (a == b)
     {
@@ -649,19 +584,6 @@ bool GraphVG::hasLOS(Node *a, Node *b)
     ySlope = dy / 140;
     xSlope = dx / 140;
 
-    // std::cout << xSlope << ", " << ySlope << "\n";
-
-    // double xSlope = abs(double((double(b->x - a->x) / double(b->y - a->y)) / 10.0));
-    // double xSlope = abs(double(double(b->x - a->x) / double(b->y - a->y)) / 10.0);
-    // double ySlope = abs(double((double(b->y - a->y) / double(b->x - a->x)) / 10.0));
-    // double xSlope = (b->x - a->x) / (b->y - a->y);
-    // double ySlope = (b->y - a->y) / (b->x - a->x);
-
-    // std::cout << a->x << ", " << a->y << "\n";
-    // std::cout << b->x << ", " << b->y << "\n";
-    // std::cout << double(b->x - a->x) << ", " << double(b->y - a->y) << "\n";
-    // std::cout << double(b->x - a->x) / double(b->y - a->y) << "\n";
-    // std::cout << abs(double(double(b->x - a->x) / double(b->y - a->y)) / 10.0) << "\n";
 
     if (xSlope < 0)
     {
@@ -672,18 +594,11 @@ bool GraphVG::hasLOS(Node *a, Node *b)
         ySlope *= (-1.0);
     }
 
-    // std::cout << getPositionRelative(a, b) << std::endl;
-
-    std::cout << x << ", " << y << "\n";
-    std::cout << b->x << ", " << b->y << "\n";
-    std::cout << xSlope << ", " << ySlope << "\n";
-    std::cout << dx << ", " << dy << "\n";
 
     switch (getPositionRelative(a, b))
     {
     case B_TOPLEFT_A:
     {
-        std::cout << "QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ\n\n\n\n";
         xSlope *= (-1.0);
         ySlope *= (-1.0);
         while (y + ySlope >= b->y && x + xSlope >= b->x)
@@ -702,7 +617,6 @@ bool GraphVG::hasLOS(Node *a, Node *b)
     case B_TOPRIGHT_A:
     case B_TOP_A:
     {
-        std::cout << "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW\n\n\n\n";
         ySlope *= (-1);
         while (y + ySlope >= b->y && x + xSlope <= b->x)
         {
@@ -722,19 +636,14 @@ bool GraphVG::hasLOS(Node *a, Node *b)
     case B_RIGHT_A:
         // FIX: same y, different x, xSlope = dx / (10 * dx), dx = number of nodes (+1 for inclusive?)
         {
-            std::cout << "EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE\n\n\n\n";
             while (y + ySlope <= b->y && x + xSlope <= b->x)
             {
                 y += ySlope;
                 x += xSlope;
-                // a->println();
-                // b->println();
-                // std::cout << x << ", " << y << "\n";
 
                 if (nodes[int(y)][int(x)]->forbidden)
                 {
                     nodes[int(y)][int(x)]->hit = true;
-                    std::cout << "E - Success\n\n\n\n";
                     return false;
                 }
             }
@@ -743,7 +652,6 @@ bool GraphVG::hasLOS(Node *a, Node *b)
     case B_BOTTOMLEFT_A:
     case B_LEFT_A:
     {
-        std::cout << "RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR\n\n\n\n";
         xSlope *= (-1);
         while (y + ySlope <= b->y && x + xSlope >= b->x)
         {
@@ -759,7 +667,6 @@ bool GraphVG::hasLOS(Node *a, Node *b)
         break;
     }
     default:
-        std::cout << getPositionRelative(a, b);
         throw std::runtime_error("9000");
         break;
     }
@@ -784,7 +691,6 @@ bool GraphVG::hasLOS(Node *a, Node *b)
 // Before doing a line of check, make sure they are taut waypoints
 void GraphVG::findWaypoints()
 {
-    // std::cout << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n";
     for (int y = 0; y < yNodes; y++)
     {
         for (int x = 0; x < xNodes; x++)
@@ -810,7 +716,6 @@ void GraphVG::findWaypoints()
             case BOTTOMRIGHT:
             case BOTTOMLEFT:
             {
-                // std::cout << "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n";
                 waypoints.insert(node);
                 break;
             }
@@ -822,11 +727,6 @@ void GraphVG::findWaypoints()
             }
         }
     }
-    // std::cout << waypoints.size() << "\n";
-    // std::cout << waypoints.size() << "\n";
-    // std::cout << waypoints.size() << "\n";
-    // std::cout << waypoints.size() << "\n";
-    // std::cout << waypoints.size() << "\n";
 }
 
 void GraphVG::addNeighboringWaypoints()

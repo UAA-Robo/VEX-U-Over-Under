@@ -177,19 +177,6 @@ std::vector<std::vector<Node *> *> GraphNormal::getPathSnapshots(Node *origin, N
             }
         }
 
-        // std::cout << "\n\nSNAPSHOT #" << snapshots.size() << "\n";
-        // for (int y = 0; y < yNodes; y++)
-        // {
-        //   for (int x = 0; x < xNodes; x++)
-        //   {
-        //     Node *node = nodes[y][x];
-        //     std::cout << "(" << node->x << ", " << node->y << ") "
-        //               << "F-" << fScores[node] << " H-" << getHCost(node, destination) << "   ";
-        //   }
-
-        //   std::cout << "\n";
-        // }
-
         Node *temp = currentNode;
         snapshots.back()->push_back(temp);
         while (temp != cameFrom[temp])
@@ -253,8 +240,6 @@ std::vector<std::vector<Node *> *> GraphNormal::getRandomPathSnapshots()
         destinationX = randX(rng);
         destinationY = randY(rng);
 
-        // nodes[originY][originX]->println();
-        // nodes[destinationY][destinationX]->println();
 
     } while (nodes[originY][originX]->forbidden || nodes[destinationY][destinationX]->forbidden);
 

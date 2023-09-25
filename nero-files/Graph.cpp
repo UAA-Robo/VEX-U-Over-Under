@@ -25,24 +25,6 @@ Node *Graph::getHit()
     }
   }
 
-  std::cout << "NULLPTR\n";
-  std::cout << "NULLPTR\n";
-  std::cout << "NULLPTR\n";
-  std::cout << "NULLPTR\n";
-  std::cout << "NULLPTR\n";
-  std::cout << "NULLPTR\n";
-  std::cout << "NULLPTR\n";
-  std::cout << "NULLPTR\n";
-  std::cout << "NULLPTR\n";
-  std::cout << "NULLPTR\n";
-  std::cout << "NULLPTR\n";
-  std::cout << "NULLPTR\n";
-  std::cout << "NULLPTR\n";
-  std::cout << "NULLPTR\n";
-  std::cout << "NULLPTR\n";
-  std::cout << "NULLPTR\n";
-  std::cout << "NULLPTR\n";
-  std::cout << "NULLPTR\n";
   return nullptr;
 }
 
@@ -277,19 +259,15 @@ void Graph::forbidRectangle(Node *topLeftPoint, Node *topRightPoint, Node *botto
 
 std::vector<Node *> Graph::getPath(Node *origin, Node *destination)
 {
-  std::cout << "GRAPH FUNCTION CALLED\n";
 }
 std::vector<Node *> Graph::getRandomPath()
 {
-  std::cout << "GRAPH FUNCTION CALLED\n";
 }
 std::vector<std::vector<Node *> *> Graph::getPathSnapshots(Node *origin, Node *destination)
 {
-  std::cout << "GRAPH FUNCTION CALLED\n";
 }
 std::vector<std::vector<Node *> *> Graph::getRandomPathSnapshots()
 {
-  std::cout << "GRAPH FUNCTION CALLED\n";
 }
 
 //=============================================================================
@@ -382,8 +360,6 @@ POSITION Graph::getPositionRelative(Node *a, Node *b)
   }
   else
   {
-    a->println();
-    b->println();
     throw std::runtime_error("ERROR 004");
   }
 }
