@@ -15,6 +15,8 @@ int Telemetry::update_position(void* param) {
         float right_total = tm->hw->right_odometry.position(vex::rotationUnits::rev);
         float back_total =  tm->hw->back_odometry.position(vex::rotationUnits::rev);
 
+    
+
 
     // Updates continuously
     while(true) {
@@ -55,4 +57,58 @@ int Telemetry::update_position(void* param) {
 
         vex::wait(500, vex::timeUnits::msec);
     }
+}
+
+double Telemetry ::getDistanceBtwnPoints(std::pair<double, double> initPos, std::pair<double, double> finalPos)
+{
+    double distanceToFinalPosition = sqrt(pow((finalPos.first - initPos.first), 2) + pow((finalPos.second - initPos.second), 2));
+    return distanceToFinalPosition;
+}
+
+double Telemetry ::getHeadingBtwnPoints(std::pair<double, double> initPos, std::pair<double, double> finalPos)
+{
+    double angleToFinalPosition = (atan2((finalPos.second - initPos.second), (finalPos.first - initPos.first)) * (180 / (M_PI)));
+    return angleToFinalPosition;
+}
+
+std::pair<double, double> Telemetry::getCurrPosition()
+{
+    return this->currentPosition;
+}
+
+void Telemetry::setCurrPosition(std::pair<double, double> currPos)
+{
+    this->currentPosition = currPos;
+}
+
+double Telemetry::getCurrHeading()
+{
+    return this->currHeading;
+}
+
+void Telemetry::setCurrHeading(double currHeading)
+{
+    this->currHeading = currHeading;
+}
+
+void Telemetry::headingErrorCorrection(double errorBounds)
+{
+    const int numChecks = 3;
+    double gpsEstimate = getGPSHeading();
+    int x = 0;
+    while (fabs(gpsEstimate - currHeading) > errorBounds && x < numChecks)
+    {
+        gpsEstimate = getGPSHeading();
+        ++x;
+    }
+
+    if (x == numChecks)
+    {
+        hw->controller.Screen.setCursor(3, 1);
+        hw->controller.Screen.print("Used Encoder Heading");
+        return;
+    }
+    hw->controller.Screen.setCursor(3, 1);
+    hw->controller.Screen.print("Used GPS Heading");
+    this->currHeading = gpsEstimate;
 }
