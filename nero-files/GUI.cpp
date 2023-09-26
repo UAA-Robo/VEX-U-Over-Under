@@ -3,12 +3,6 @@
 #include <chrono>
 #include "GUI.h"
 
-//=============================================================================
-//=============================================================================
-// PUBLIC METHODS
-//=============================================================================
-//=============================================================================
-
 GUI::GUI(Graph *graph, int cellSize)
 {
   this->graph = graph;
@@ -27,7 +21,7 @@ GUI::GUI(Graph *graph, int cellSize)
   snapshotNumber = 0;
   nodesSelected = 0;
 
-  showSnapshots = false;
+  mode = SIMPLE;
   selectingNodesAllowed = false;
   autoMode = false;
 
@@ -37,8 +31,8 @@ GUI::GUI(Graph *graph, int cellSize)
   {
     SDL_Window *window;
     SDL_Renderer *renderer;
-    this->renderer = renderer;
     this->window = window;
+    this->renderer = renderer;
   }
 
   gridCursor = {0, 0, cellSize, cellSize};
@@ -72,541 +66,33 @@ GUI::GUI(Graph *graph, int cellSize)
   run();
 }
 
-void GUI::drawNormalPath()
+int GUI::run()
 {
-  // if (showSnapshots == false && pathNodes.size() > 0)
-  // {
-  for (Node *node : pathNodes)
+  switch (mode)
   {
-    drawCell(renderer, node, pathNodesColor);
-  }
-
-  drawCell(renderer, pathNodes.front(), ending);
-  drawCell(renderer, pathNodes.back(), starting);
-  // }
-}
-
-void GUI::drawNormalSnapshots()
-{
-  // if (showSnapshots)
-  // {
-  if (pathNodesSnapshots.size() == 0 && snapshotNumber != 0)
-  {
-    snapshotNumber = 0;
-  }
-  if (snapshotNumber >= pathNodesSnapshots.size())
-  {
-    snapshotNumber = pathNodesSnapshots.size() - 1;
-  }
-  else if (snapshotNumber < 0)
-  {
-    snapshotNumber = 0;
-  }
-  if (pathNodesSnapshots.size() > 0)
-  {
-    for (int s = 0; s <= snapshotNumber; s++)
-    {
-      for (int n = 0; n < pathNodesSnapshots.at(s)->size(); n++)
-      {
-
-        if (s == snapshotNumber)
-        {
-          drawCell(renderer, pathNodesSnapshots.at(s)->at(n), pathNodesColor);
-        }
-        else
-        {
-          drawCell(renderer, pathNodesSnapshots.at(s)->at(n), pathNodesPastColor);
-        }
-      }
-    }
-
-    drawCell(renderer, pathNodesSnapshots.back()->front(), ending);
-    drawCell(renderer, pathNodesSnapshots.back()->back(), starting);
-  }
-  // }
-}
-
-void GUI::drawVGPath()
-{
-  SDL_SetRenderDrawColor(renderer, pathNodesColor.r, pathNodesColor.g, pathNodesColor.b, pathNodesColor.a);
-  for (int i = 0; i < pathNodes.size() - 1; i++)
-  {
-    int x1 = (pathNodes[i]->x * cellSize) + xPadding + (cellSize / 2);
-    int y1 = (pathNodes[i]->y * cellSize) + yOffset + yPadding + (cellSize / 2);
-    int x2 = (pathNodes[i + 1]->x * cellSize) + xPadding + (cellSize / 2);
-    int y2 = (pathNodes[i + 1]->y * cellSize) + yOffset + yPadding + (cellSize / 2);
-
-    SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
-  }
-
-  drawCell(renderer, pathNodes.front(), ending);
-  drawCell(renderer, pathNodes.back(), starting);
-}
-
-void GUI::drawVGSnapshots()
-{
-
-  if (showSnapshots)
-  {
-    if (VGPathNodesSnapshots.size() == 0 && snapshotNumber != 0)
-    {
-      snapshotNumber = 0;
-    }
-    if (snapshotNumber >= VGPathNodesSnapshots.size())
-    {
-      snapshotNumber = VGPathNodesSnapshots.size() - 1;
-    }
-    // TODO - start, left, shows full path: feature or bug?
-    // only of you can go past end snapshot into first snapshot
-    else if (snapshotNumber < 0)
-    {
-      snapshotNumber = 0;
-    }
-    if (VGPathNodesSnapshots.size() > 0)
-    {
-      for (int s = 0; s <= snapshotNumber; s++)
-      {
-        for (int n = 0; n < VGPathNodesSnapshots.at(s)->size() - 1; n++)
-        {
-          int x1 = (VGPathNodesSnapshots.at(s)->at(n)->x * cellSize) + xPadding + (cellSize / 2);
-          int y1 = (VGPathNodesSnapshots.at(s)->at(n)->y * cellSize) + yOffset + yPadding + (cellSize / 2);
-          int x2 = (VGPathNodesSnapshots.at(s)->at(n + 1)->x * cellSize) + xPadding + (cellSize / 2);
-          int y2 = (VGPathNodesSnapshots.at(s)->at(n + 1)->y * cellSize) + yOffset + yPadding + (cellSize / 2);
-
-          SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
-
-          // drawCell(renderer, VGPathNodesSnapshots.at(s)->at(n), pathNodesPastColor);
-
-          // if (s == snapshotNumber)
-          // {
-          // drawCell(renderer, VGPathNodesSnapshots.at(s)->at(n), pathNodesColor);
-          // }
-          // else
-          // {
-          // drawCell(renderer, VGPathNodesSnapshots.at(s)->at(n), pathNodesPastColor);
-          // }
-        }
-      }
-
-      // SDL_Color starting = {255, 255, 0, 255};
-      // SDL_Color ending = {0, 255, 255, 255};
-      drawCell(renderer, VGPathNodesSnapshots.back()->front(), ending);
-      drawCell(renderer, VGPathNodesSnapshots.back()->back(), starting);
-    }
-  }
-
-  SDL_SetRenderDrawColor(renderer, pathNodesColor.r, pathNodesColor.g, pathNodesColor.b, pathNodesColor.a);
-  for (int i = 0; i < VGPathNodes.size() - 1; i++)
-  {
-    int x1 = (VGPathNodes[i]->x * cellSize) + xPadding + (cellSize / 2);
-    int y1 = (VGPathNodes[i]->y * cellSize) + yOffset + yPadding + (cellSize / 2);
-    int x2 = (VGPathNodes[i + 1]->x * cellSize) + xPadding + (cellSize / 2);
-    int y2 = (VGPathNodes[i + 1]->y * cellSize) + yOffset + yPadding + (cellSize / 2);
-
-    SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
-  }
-
-  drawCell(renderer, pathNodes.front(), ending);
-  drawCell(renderer, pathNodes.back(), starting);
-}
-
-void GUI::getPath(Node *a, Node *b)
-{
-  pathNodes.clear();
-
-  autoMode = false;
-  selectingNodesAllowed = false;
-
-  auto start = std::chrono::high_resolution_clock::now();
-  // pathNodes = graph->getVGPath(selectedNodes[0], selectedNodes[1]);
-  pathNodes = graph->getPath(selectedNodes[0], selectedNodes[1]);
-  auto stop = std::chrono::high_resolution_clock::now();
-
-  auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-  std::cout << "Time: " << duration.count() << std::endl;
-  pathsFound++;
-  durationTotal += duration.count();
-}
-
-void GUI::getPathSnapshots(Node *a, Node *b)
-{
-  for (std::vector<Node *> *vec : pathNodesSnapshots)
-  {
-    delete vec;
-  }
-  pathNodesSnapshots.clear();
-
-  snapshotNumber = 0;
-  autoMode = false;
-  selectingNodesAllowed = false;
-
-  // pathNodesSnapshots = graph->getVGPathSnapshots(selectedNodes[0], selectedNodes[1]);
-  pathNodesSnapshots = graph->getPathSnapshots(selectedNodes[0], selectedNodes[1]);
-}
-
-void GUI::getRandomPath()
-{
-  pathNodes.clear();
-
-  autoMode = false;
-  selectingNodesAllowed = false;
-
-  auto start = std::chrono::high_resolution_clock::now();
-  // pathNodes = graph->getVGRandomPath();
-  pathNodes = graph->getRandomPath();
-  auto stop = std::chrono::high_resolution_clock::now();
-
-  auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-  std::cout << "Time: " << duration.count() << std::endl;
-  pathsFound++;
-  durationTotal += duration.count();
-}
-
-void GUI::getRandomPathSnapshots()
-{
-  for (std::vector<Node *> *vec : pathNodesSnapshots)
-  {
-    delete vec;
-  }
-  pathNodesSnapshots.clear();
-
-  snapshotNumber = 0;
-  autoMode = false;
-  selectingNodesAllowed = false;
-
-  // pathNodesSnapshots = graph->getVGRandomPathSnapshots();
-  pathNodesSnapshots = graph->getRandomPathSnapshots();
-}
-
-// TODO - refactor out shared lines
-void GUI::selectNodes(SDL_Event &event)
-{
-  if (showSnapshots)
-  {
-    autoMode = false;
-    snapshotNumber = 0;
-    bool nodeAllowed = true;
-    int x = ((event.motion.x - xPadding) / cellSize) * cellSize;
-    int y = ((event.motion.y - yPadding - yOffset) / cellSize) * cellSize;
-
-    for (Node *forbiddenNode : forbiddenNodes)
-    {
-      if (forbiddenNode->x * cellSize == x && forbiddenNode->y * cellSize == y)
-      {
-        nodeAllowed = false;
-        break;
-      }
-    }
-    if (nodeAllowed)
-    {
-      bool isNotDuplicate = true;
-      for (Node *node : selectedNodes)
-      {
-        if (node->x * cellSize == x && node->y * cellSize == y)
-        {
-          isNotDuplicate = false;
-          break;
-        }
-      }
-      if (isNotDuplicate)
-      {
-        nodesSelected++;
-
-        // selectedNodes.push_back(graph->getNode((x * cellSize) / cellSize,
-        //                                        (y * cellSize) / cellSize));
-        selectedNodes.push_back(graph->getNode(x / cellSize, y / cellSize));
-        if (nodesSelected == 2)
-        {
-          selectingNodesAllowed = false;
-
-          auto start = std::chrono::high_resolution_clock::now();
-          // pathNodesSnapshots = graph->getVGPathSnapshots(selectedNodes[0], selectedNodes[1]);
-          pathNodesSnapshots = graph->getPathSnapshots(selectedNodes[0], selectedNodes[1]);
-          auto stop = std::chrono::high_resolution_clock::now();
-
-          auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-          // pathsFound++;
-          // durationTotal += duration.count();
-        }
-        else if (nodesSelected > 2 || nodesSelected < 0)
-        {
-          throw "Z";
-        }
-      }
-    }
-    // break;
-  }
-  else
-  {
-    autoMode = false;
-    bool nodeAllowed = true;
-    // int x = ((event.motion.x - xPadding) / cellSize) * cellSize;
-    // int y = ((event.motion.y - yPadding - yOffset) / cellSize) * cellSize;
-
-    int x = (double(event.motion.x - xPadding) / cellSize) * cellSize;
-    int y = (double(event.motion.y - yPadding - yOffset) / cellSize) * cellSize;
-
-    for (Node *forbiddenNode : forbiddenNodes)
-    {
-      if (forbiddenNode->x * cellSize == x && forbiddenNode->y * cellSize == y)
-      {
-        nodeAllowed = false;
-      }
-    }
-    if (nodeAllowed)
-    {
-      bool isNotDuplicate = true;
-      for (Node *node : selectedNodes)
-      {
-
-        // if (node->x * cellSize == x && node->y * cellSize == y)
-        // if (node->x * cellSize >= x && node->x * cellSize <= x + cellSize && node->y * cellSize >= y && node->y * cellSize <= y + cellSize)
-        // if (node->x * cellSize <= x && node->x * cellSize > x + cellSize && node->y * cellSize < y && node->y * cellSize > y + cellSize)
-        if (clickedInsideCell(node, event.motion.x, event.motion.y))
-        {
-          isNotDuplicate = false;
-          // break;
-        }
-      }
-      if (isNotDuplicate)
-      {
-        nodesSelected++;
-
-        selectedNodes.push_back(graph->getNode(x / cellSize, y / cellSize));
-        if (nodesSelected == 2)
-        {
-          selectingNodesAllowed = false;
-          auto start = std::chrono::high_resolution_clock::now();
-          // pathNodes = graph->getVGPath(selectedNodes[0], selectedNodes[1]);
-          pathNodes = graph->getPath(selectedNodes[0], selectedNodes[1]);
-
-          auto stop = std::chrono::high_resolution_clock::now();
-
-          auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-          pathsFound++;
-          durationTotal += duration.count();
-        }
-        else if (nodesSelected > 2 || nodesSelected < 0)
-        {
-          throw "Z";
-        }
-      }
-    }
-    // break;
-  }
-}
-
-bool GUI::clickedInsideCell(Node *node, int eventX, int eventY)
-{
-  double nodeStartX = (node->x * cellSize) + xPadding;
-  double nodeStartY = (node->y * cellSize) + yOffset + yPadding;
-  double nodeEndtX = ((node->x * cellSize) + xPadding) + cellSize;
-  double nodeEndtY = ((node->y * cellSize) + yOffset + yPadding) + cellSize;
-
-  if (eventX >= nodeStartX && eventX <= nodeEndtX && eventY >= nodeStartY && eventY <= nodeEndtY)
-  {
-    return true;
-  }
-
-  return false;
-}
-
-void GUI::drawBackground()
-{
-  // Draw grid background.
-  SDL_SetRenderDrawColor(renderer, gridBackgroundColor.r, gridBackgroundColor.g,
-                         gridBackgroundColor.b, gridBackgroundColor.a);
-  SDL_RenderClear(renderer);
-}
-
-void GUI::drawWaypoints()
-{
-  SDL_Color waypointsColor = {0, 0, 0, 255};
-  // SDL_SetRenderDrawColor(waypointsColor.r, waypointsColor.g, waypointsColor.b, waypointsColor.a);
-  for (Node *waypoint : waypoints)
-  {
-    drawCell(renderer, waypoint, waypointsColor);
-  }
-}
-
-void GUI::drawPath()
-{
-  switch (graph->type)
-  {
-  case NORMAL:
-    drawNormalPath();
-    break;
-  case VG:
-    drawVGPath();
-    break;
-  }
-}
-
-void GUI::drawSnapshots()
-{
-  switch (graph->type)
-  {
-  case NORMAL:
-    drawNormalSnapshots();
-    break;
-  case VG:
-    drawVGSnapshots();
-    break;
-  }
-}
-
-void GUI::drawForbiddenNodes()
-{
-
-  for (Node *node : forbiddenNodes)
-  {
-    drawCell(renderer, node, forbiddenNodesColor);
-  }
-}
-
-void GUI::drawCursor()
-{
-  // Draw grid ghost cursor.
-  if (mouse_active && mouse_hover)
-  {
-    SDL_SetRenderDrawColor(renderer, gridCursorColor.r,
-                           gridCursorColor.g,
-                           gridCursorColor.b,
-                           gridCursorColor.a);
-    SDL_RenderFillRect(renderer, &gridCursor);
-  }
-}
-
-void GUI::drawGrid()
-{
-
-  // Draw grid lines.
-  SDL_SetRenderDrawColor(renderer, gridLineColor.r, gridLineColor.g,
-                         gridLineColor.b, gridLineColor.a);
-
-  for (int x = 0; x < 1 + graph->xNodes * cellSize;
-       x += cellSize)
-  {
-    SDL_RenderDrawLine(renderer, x + xPadding, 0 + yOffset + yPadding, x + xPadding, gridHeight + yOffset + yPadding);
-  }
-
-  for (int y = 0; y < 1 + graph->yNodes * cellSize;
-       y += cellSize)
-  {
-    SDL_RenderDrawLine(renderer, 0 + xPadding, y + yOffset + yPadding, gridWidth + xPadding, y + yOffset + yPadding);
-  }
-}
-
-void GUI::scroll(SDL_Event &event)
-{
-
-  if (event.wheel.y > 0)
-  {
-    yOffset = yOffset + (event.wheel.y * scrollSensitivity);
-  }
-  // scroll down
-  else if (event.wheel.y < 0)
-  {
-    yOffset = yOffset + (event.wheel.y * scrollSensitivity);
-  }
-  else
-  {
-    // yOffset = 0;
-  }
-}
-
-void GUI::moveCursor(SDL_Event &event)
-{
-
-  gridCursor.x = ((double(event.motion.x) / cellSize) * cellSize);
-  gridCursor.y = ((double(event.motion.y) / cellSize) * cellSize);
-  if ((event.motion.x >= xPadding && event.motion.x <= xPadding + gridWidth) &&
-      (event.motion.y >= yPadding + yOffset && event.motion.y <= yPadding + yOffset + gridHeight))
-  {
-
-    gridCursor.x = (((event.motion.x - xPadding) / cellSize) * cellSize) + xPadding;
-    gridCursor.y = (((event.motion.y - yPadding - yOffset) / cellSize) * cellSize) + yPadding + yOffset;
-  }
-  else
-  {
-    gridCursor.x = -1000;
-    gridCursor.y = -1000;
-  }
-
-  if (!mouse_active)
-  {
-    mouse_active = SDL_TRUE;
-  }
-}
-void GUI::resetGrid()
-{
-  if (showSnapshots)
-  {
-    snapshotNumber = 0;
-    selectingNodesAllowed = true;
-    nodesSelected = 0;
-    for (std::vector<Node *> *vec : pathNodesSnapshots)
-    {
-      vec->clear();
-      delete vec;
-    }
-    pathNodesSnapshots.clear();
-    selectedNodes.clear();
-    autoMode = false;
-  }
-  else
-  {
-    selectingNodesAllowed = true;
-    nodesSelected = 0;
-    pathNodes.clear();
-    selectedNodes.clear();
-    autoMode = false;
-  }
-
-  // hitNode = nullptr;
-}
-
-void GUI::generatePath()
-{
-  // if (showSnapshots)
-  // {
-  //   getRandomPathSnapshots();
-  // }
-  // else
-  // {
-  //   getRandomPath();
-  // }
-
-  if (showSnapshots)
-  {
-    getRandomPathSnapshots();
-  }
-  else
+  case SIMPLE:
   {
     getRandomPath();
+    break;
   }
-}
+  case SNAPSHOTS:
+  {
+    getRandomPathSnapshots();
+    break;
+  }
+  case LOS:
+  {
+    break;
+  }
+  }
 
-void GUI::switchModes()
-{
-  if (showSnapshots)
-  {
-    for (std::vector<Node *> *vec : pathNodesSnapshots)
-    {
-      delete vec;
-    }
-    pathNodesSnapshots.clear();
-    snapshotNumber = 0;
-    autoMode = false;
-    selectingNodesAllowed = false;
-  }
-  else
-  {
-    pathNodes.clear();
-    autoMode = false;
-    selectingNodesAllowed = false;
-  }
-  showSnapshots = !showSnapshots;
+  eventLoop();
+
+  SDL_DestroyRenderer(renderer);
+  SDL_DestroyWindow(window);
+  SDL_Quit();
+
+  return EXIT_SUCCESS;
 }
 
 void GUI::eventLoop()
@@ -631,7 +117,7 @@ void GUI::eventLoop()
           break;
         case SDLK_a:
         case SDLK_LEFT:
-          if (snapshotNumber - 1 > 0)
+          if (snapshotNumber - 1 >= 0)
           {
             snapshotNumber--;
           }
@@ -653,7 +139,11 @@ void GUI::eventLoop()
           switchModes();
           break;
         }
+      case SDLK_m:
+      {
         break;
+      }
+      break;
       case SDL_MOUSEBUTTONDOWN:
         if (event.button.button == SDL_BUTTON_RIGHT)
         {
@@ -683,7 +173,7 @@ void GUI::eventLoop()
       }
     }
 
-    if (autoMode)
+    if (autoMode && snapshotNumber + 1 < pathNodesSnapshots.size())
     {
       snapshotNumber++;
     }
@@ -691,12 +181,16 @@ void GUI::eventLoop()
     drawBackground();
     drawGrid();
     drawForbiddenNodes();
-    drawWaypoints();
-    // drawSnapshots();
-    drawPath();
-    // drawVGPath();
-    // drawVGSnapshots();
+    drawMain();
     drawCursor();
+
+    // drawing mode -> graph mode
+
+    // draw normal path
+    // draw normal snapshots
+    // draw VG path
+    // draw VG snapshots
+    // draw LOS
 
     // if (a != nullptr && b != nullptr)
     // {
@@ -719,24 +213,658 @@ void GUI::eventLoop()
   }
 }
 
-int GUI::run()
+void GUI::clearData()
 {
-  if (showSnapshots)
+  autoMode = false;
+  selectingNodesAllowed = false;
+
+  switch (mode)
+  {
+  case SIMPLE:
+  {
+    pathNodes.clear();
+    break;
+  }
+  case SNAPSHOTS:
+  {
+    for (std::vector<Node *> *vec : pathNodesSnapshots)
+    {
+      delete vec;
+    }
+    pathNodesSnapshots.clear();
+    snapshotNumber = 0;
+    break;
+  }
+  case LOS:
+  {
+    break;
+  }
+  }
+}
+
+void GUI::getPath(Node *a, Node *b)
+{
+  clearData();
+  auto start = std::chrono::high_resolution_clock::now();
+  // pathNodes = graph->getVGPath(selectedNodes[0], selectedNodes[1]);
+  pathNodes = graph->getPath(selectedNodes[0], selectedNodes[1]);
+  auto stop = std::chrono::high_resolution_clock::now();
+
+  auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+  pathsFound++;
+  durationTotal += duration.count();
+  std::cout << "Time for path " << pathsFound << ": " << duration.count() << std::endl;
+}
+
+void GUI::getRandomPath()
+{
+  clearData();
+
+  auto start = std::chrono::high_resolution_clock::now();
+  pathNodes = graph->getRandomPath();
+  auto stop = std::chrono::high_resolution_clock::now();
+
+  auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+  pathsFound++;
+  durationTotal += duration.count();
+  std::cout << "Time for path " << pathsFound << ": " << duration.count() << std::endl;
+}
+
+void GUI::getPathSnapshots(Node *a, Node *b)
+{
+  clearData();
+  pathNodesSnapshots = graph->getPathSnapshots(selectedNodes[0], selectedNodes[1]);
+}
+
+void GUI::getRandomPathSnapshots()
+{
+  clearData();
+  pathNodesSnapshots = graph->getRandomPathSnapshots();
+}
+
+void GUI::generatePath()
+{
+  switch (mode)
+  {
+  case SIMPLE:
+  {
+    getRandomPath();
+    break;
+  }
+  case SNAPSHOTS:
   {
     getRandomPathSnapshots();
+    break;
+  }
+  default:
+  {
+    throw std::runtime_error("2000");
+  }
+  }
+}
+
+void GUI::switchModes()
+{
+  switch (mode)
+  {
+  case SIMPLE:
+  {
+    clearData();
+    mode = SNAPSHOTS;
+    break;
+  }
+  case SNAPSHOTS:
+  {
+    clearData();
+    // mode = SIMPLE;
+    mode = LOS;
+    break;
+  }
+  case LOS:
+  {
+    mode = SIMPLE;
+    break;
+  }
+  }
+}
+
+void GUI::resetGrid()
+{
+  clearData();
+  selectingNodesAllowed = true;
+  nodesSelected = 0;
+  selectedNodes.clear();
+  // switch (mode)
+  // {
+  // case SIMPLE:
+  // {
+  //   clearData();
+  //   break;
+  // }
+  // case SNAPSHOTS:
+  // {
+  //   clearData();
+  //   break;
+  // }
+  // default:
+  // {
+  //   throw std::runtime_error("ERROR 11000");
+  // }
+  // }
+}
+
+// TODO - refactor out shared lines
+// selectedNodes and nodesSelected? really?
+void GUI::selectNodes(SDL_Event &event)
+{
+  autoMode = false;
+  bool nodeAllowed = true;
+  int x = (double(event.motion.x - xPadding) / cellSize) * cellSize;
+  int y = (double(event.motion.y - yPadding - yOffset) / cellSize) * cellSize;
+
+  for (Node *forbiddenNode : forbiddenNodes)
+  {
+    if (forbiddenNode->x * cellSize == x && forbiddenNode->y * cellSize == y)
+    {
+      nodeAllowed = false;
+    }
+  }
+  if (nodeAllowed)
+  {
+    bool isNotDuplicate = true;
+    for (Node *node : selectedNodes)
+    {
+      if (clickedInsideCell(node, event.motion.x, event.motion.y))
+      {
+        isNotDuplicate = false;
+      }
+    }
+    if (isNotDuplicate)
+    {
+      nodesSelected++;
+      selectedNodes.push_back(graph->getNode(x / cellSize, y / cellSize));
+    }
+  }
+
+  switch (mode)
+  {
+  case SIMPLE:
+  {
+    if (nodesSelected == 2)
+    {
+      selectingNodesAllowed = false;
+      auto start = std::chrono::high_resolution_clock::now();
+      pathNodes = graph->getPath(selectedNodes[0], selectedNodes[1]);
+      auto stop = std::chrono::high_resolution_clock::now();
+
+      auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+      pathsFound++;
+      durationTotal += duration.count();
+      std::cout << "Time for path " << pathsFound << ": " << duration.count() << std::endl;
+    }
+    break;
+  }
+  case SNAPSHOTS:
+  {
+    if (nodesSelected == 2)
+    {
+      selectingNodesAllowed = false;
+      snapshotNumber = 0;
+      pathNodesSnapshots = graph->getPathSnapshots(selectedNodes[0], selectedNodes[1]);
+    }
+    break;
+  }
+  default:
+  {
+    throw std::runtime_error("ERROR 12000");
+  }
+  }
+}
+
+// TODO - refactor out shared lines
+// void GUI::selectNodes(SDL_Event &event)
+// {
+//   switch (mode)
+//   {
+//   case SIMPLE:
+//   {
+//     autoMode = false;
+//     bool nodeAllowed = true;
+//     // int x = ((event.motion.x - xPadding) / cellSize) * cellSize;
+//     // int y = ((event.motion.y - yPadding - yOffset) / cellSize) * cellSize;
+
+//     int x = (double(event.motion.x - xPadding) / cellSize) * cellSize;
+//     int y = (double(event.motion.y - yPadding - yOffset) / cellSize) * cellSize;
+
+//     for (Node *forbiddenNode : forbiddenNodes)
+//     {
+//       if (forbiddenNode->x * cellSize == x && forbiddenNode->y * cellSize == y)
+//       {
+//         nodeAllowed = false;
+//       }
+//     }
+//     if (nodeAllowed)
+//     {
+//       bool isNotDuplicate = true;
+//       for (Node *node : selectedNodes)
+//       {
+
+//         // if (node->x * cellSize == x && node->y * cellSize == y)
+//         // if (node->x * cellSize >= x && node->x * cellSize <= x + cellSize && node->y * cellSize >= y && node->y * cellSize <= y + cellSize)
+//         // if (node->x * cellSize <= x && node->x * cellSize > x + cellSize && node->y * cellSize < y && node->y * cellSize > y + cellSize)
+//         if (clickedInsideCell(node, event.motion.x, event.motion.y))
+//         {
+//           isNotDuplicate = false;
+//           // break;
+//         }
+//       }
+//       if (isNotDuplicate)
+//       {
+//         nodesSelected++;
+
+//         selectedNodes.push_back(graph->getNode(x / cellSize, y / cellSize));
+//         if (nodesSelected == 2)
+//         {
+//           selectingNodesAllowed = false;
+//           auto start = std::chrono::high_resolution_clock::now();
+//           // pathNodes = graph->getVGPath(selectedNodes[0], selectedNodes[1]);
+//           pathNodes = graph->getPath(selectedNodes[0], selectedNodes[1]);
+
+//           auto stop = std::chrono::high_resolution_clock::now();
+
+//           auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+//           pathsFound++;
+//           durationTotal += duration.count();
+//         }
+//         else if (nodesSelected > 2 || nodesSelected < 0)
+//         {
+//           throw "Z";
+//         }
+//       }
+//     }
+//     // break;
+//     break;
+//   }
+//   case SNAPSHOTS:
+//   {
+//     autoMode = false;
+//     snapshotNumber = 0;
+//     bool nodeAllowed = true;
+//     int x = ((event.motion.x - xPadding) / cellSize) * cellSize;
+//     int y = ((event.motion.y - yPadding - yOffset) / cellSize) * cellSize;
+
+//     for (Node *forbiddenNode : forbiddenNodes)
+//     {
+//       if (forbiddenNode->x * cellSize == x && forbiddenNode->y * cellSize == y)
+//       {
+//         nodeAllowed = false;
+//         break;
+//       }
+//     }
+//     if (nodeAllowed)
+//     {
+//       bool isNotDuplicate = true;
+//       for (Node *node : selectedNodes)
+//       {
+//         if (node->x * cellSize == x && node->y * cellSize == y)
+//         {
+//           isNotDuplicate = false;
+//           break;
+//         }
+//       }
+//       if (isNotDuplicate)
+//       {
+//         nodesSelected++;
+
+//         // selectedNodes.push_back(graph->getNode((x * cellSize) / cellSize,
+//         //                                        (y * cellSize) / cellSize));
+//         selectedNodes.push_back(graph->getNode(x / cellSize, y / cellSize));
+//         if (nodesSelected == 2)
+//         {
+//           selectingNodesAllowed = false;
+
+//           auto start = std::chrono::high_resolution_clock::now();
+//           // pathNodesSnapshots = graph->getVGPathSnapshots(selectedNodes[0], selectedNodes[1]);
+//           pathNodesSnapshots = graph->getPathSnapshots(selectedNodes[0], selectedNodes[1]);
+//           auto stop = std::chrono::high_resolution_clock::now();
+
+//           auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+//           // pathsFound++;
+//           // durationTotal += duration.count();
+//         }
+//         else if (nodesSelected > 2 || nodesSelected < 0)
+//         {
+//           throw "Z";
+//         }
+//       }
+//     }
+//     // break;
+//     break;
+//   }
+//   default:
+//   {
+//     throw std::runtime_error("ERROR 12000");
+//   }
+//   }
+// }
+
+void GUI::moveCursor(SDL_Event &event)
+{
+
+  gridCursor.x = ((double(event.motion.x) / cellSize) * cellSize);
+  gridCursor.y = ((double(event.motion.y) / cellSize) * cellSize);
+  if ((event.motion.x >= xPadding && event.motion.x <= xPadding + gridWidth) &&
+      (event.motion.y >= yPadding + yOffset && event.motion.y <= yPadding + yOffset + gridHeight))
+  {
+
+    gridCursor.x = (((event.motion.x - xPadding) / cellSize) * cellSize) + xPadding;
+    gridCursor.y = (((event.motion.y - yPadding - yOffset) / cellSize) * cellSize) + yPadding + yOffset;
   }
   else
   {
-    getRandomPath();
+    gridCursor.x = -1000;
+    gridCursor.y = -1000;
   }
 
-  eventLoop();
+  if (!mouse_active)
+  {
+    mouse_active = SDL_TRUE;
+  }
+}
 
-  SDL_DestroyRenderer(renderer);
-  SDL_DestroyWindow(window);
-  SDL_Quit();
+void GUI::scroll(SDL_Event &event)
+{
 
-  return EXIT_SUCCESS;
+  if (event.wheel.y > 0)
+  {
+    yOffset = yOffset + (event.wheel.y * scrollSensitivity);
+  }
+  // scroll down
+  else if (event.wheel.y < 0)
+  {
+    yOffset = yOffset + (event.wheel.y * scrollSensitivity);
+  }
+  else
+  {
+    // yOffset = 0;
+  }
+}
+
+void GUI::drawBackground()
+{
+  // Draw grid background.
+  SDL_SetRenderDrawColor(renderer, gridBackgroundColor.r, gridBackgroundColor.g,
+                         gridBackgroundColor.b, gridBackgroundColor.a);
+  SDL_RenderClear(renderer);
+}
+
+void GUI::drawGrid()
+{
+
+  // Draw grid lines.
+  SDL_SetRenderDrawColor(renderer, gridLineColor.r, gridLineColor.g,
+                         gridLineColor.b, gridLineColor.a);
+
+  for (int x = 0; x < 1 + graph->xNodes * cellSize;
+       x += cellSize)
+  {
+    SDL_RenderDrawLine(renderer, x + xPadding, 0 + yOffset + yPadding, x + xPadding, gridHeight + yOffset + yPadding);
+  }
+
+  for (int y = 0; y < 1 + graph->yNodes * cellSize;
+       y += cellSize)
+  {
+    SDL_RenderDrawLine(renderer, 0 + xPadding, y + yOffset + yPadding, gridWidth + xPadding, y + yOffset + yPadding);
+  }
+}
+
+void GUI::drawForbiddenNodes()
+{
+
+  for (Node *node : forbiddenNodes)
+  {
+    drawCell(renderer, node, forbiddenNodesColor);
+  }
+}
+
+void GUI::drawMain()
+{
+  switch (mode)
+  {
+  case SIMPLE:
+  {
+    drawPath();
+    break;
+  }
+  case SNAPSHOTS:
+  {
+    drawSnapshots();
+    break;
+  }
+  case LOS:
+  {
+    drawLOS();
+    break;
+  }
+  }
+}
+
+void GUI::drawPath()
+{
+  switch (graph->type)
+  {
+  case NORMAL:
+    drawNormalPath();
+    break;
+  case VG:
+    drawVGPath();
+    break;
+  }
+}
+
+void GUI::drawNormalPath()
+{
+  switch (mode)
+  {
+  case SIMPLE:
+  {
+    drawVectorNodes(pathNodes, pathNodesColor, starting, ending);
+    break;
+  }
+  default:
+  {
+    throw std::runtime_error("ERROR 8000");
+  }
+  }
+}
+
+void GUI::drawVGPath()
+{
+  drawLinesBetweenNodes(pathNodes, pathNodesColor);
+  drawVectorNodes(pathNodes, pathNodesColor, starting, ending);
+}
+
+void GUI::drawSnapshots()
+{
+  switch (graph->type)
+  {
+  case NORMAL:
+    drawNormalSnapshots();
+    break;
+  case VG:
+    drawVGSnapshots();
+    break;
+  }
+}
+
+void GUI::drawNormalSnapshots()
+{
+  // TODO - handle snapshotnumber and its errors, after generating snapshot path should not have to move forward to show initial state
+  for (int s = 0; s <= snapshotNumber; s++)
+  {
+    if (s == snapshotNumber)
+    {
+      drawVectorNodes((*pathNodesSnapshots[s]), pathNodesColor, starting, ending);
+    }
+    else
+    {
+      drawVectorNodes((*pathNodesSnapshots[s]), pathNodesPastColor, starting, ending);
+    }
+  }
+}
+
+void GUI::drawVGSnapshots()
+{
+  if (pathNodesSnapshots.size() == 0)
+  {
+    return;
+  }
+
+  for (int s = 0; s <= snapshotNumber; s++)
+  {
+    if (s == snapshotNumber)
+    {
+      drawLinesBetweenNodes((*pathNodesSnapshots[s]), pathNodesColor);
+      drawVectorNodes((*pathNodesSnapshots[s]), pathNodesColor, pathNodesColor, pathNodesColor);
+    }
+    else
+    {
+      drawLinesBetweenNodes((*pathNodesSnapshots[s]), pathNodesPastColor);
+      drawVectorNodes((*pathNodesSnapshots[s]), pathNodesPastColor, pathNodesPastColor, pathNodesPastColor);
+    }
+  }
+
+  // for (int s = 0; s <= snapshotNumber; s++)
+  // {
+  //   if (s == snapshotNumber)
+  //   {
+  //     SDL_SetRenderDrawColor(renderer, pathNodesColor.r, pathNodesColor.g, pathNodesColor.b, pathNodesColor.a);
+  //   }
+  //   else
+  //   {
+  //     SDL_SetRenderDrawColor(renderer, pathNodesPastColor.r, pathNodesPastColor.g, pathNodesPastColor.b, pathNodesPastColor.a);
+  //   }
+
+  //   for (int n = 0; n < pathNodesSnapshots.at(s)->size() - 1; n++)
+  //   {
+  //     int x1 = (pathNodesSnapshots.at(s)->at(n)->x * cellSize) + xPadding + (cellSize / 2);
+  //     int y1 = (pathNodesSnapshots.at(s)->at(n)->y * cellSize) + yOffset + yPadding + (cellSize / 2);
+  //     int x2 = (pathNodesSnapshots.at(s)->at(n + 1)->x * cellSize) + xPadding + (cellSize / 2);
+  //     int y2 = (pathNodesSnapshots.at(s)->at(n + 1)->y * cellSize) + yOffset + yPadding + (cellSize / 2);
+
+  //     SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
+  //   }
+  // }
+
+  // // SDL_Color starting = {255, 255, 0, 255};
+  // // SDL_Color ending = {0, 255, 255, 255};
+  // drawCell(renderer, pathNodesSnapshots.back()->front(), ending);
+  // drawCell(renderer, pathNodesSnapshots.back()->back(), starting);
+
+  // // SDL_SetRenderDrawColor(renderer, pathNodesColor.r, pathNodesColor.g, pathNodesColor.b, pathNodesColor.a);
+  // // for (int i = 0; i < pathNodes.size() - 1; i++)
+  // // {
+  // //   int x1 = (pathNodes[i]->x * cellSize) + xPadding + (cellSize / 2);
+  // //   int y1 = (pathNodes[i]->y * cellSize) + yOffset + yPadding + (cellSize / 2);
+  // //   int x2 = (pathNodes[i + 1]->x * cellSize) + xPadding + (cellSize / 2);
+  // //   int y2 = (pathNodes[i + 1]->y * cellSize) + yOffset + yPadding + (cellSize / 2);
+
+  // //   SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
+  // // }
+
+  drawCell(renderer, pathNodesSnapshots.back()->front(), ending);
+  drawCell(renderer, pathNodesSnapshots.back()->back(), starting);
+}
+
+void GUI::drawLOS()
+{
+}
+
+void GUI::drawCursor()
+{
+  // Draw grid ghost cursor.
+  if (mouse_active && mouse_hover)
+  {
+    SDL_SetRenderDrawColor(renderer, gridCursorColor.r,
+                           gridCursorColor.g,
+                           gridCursorColor.b,
+                           gridCursorColor.a);
+    SDL_RenderFillRect(renderer, &gridCursor);
+  }
+}
+
+void GUI::drawVectorNodes(std::vector<Node *> nodes, SDL_Color pathColor, SDL_Color startingNodeColor, SDL_Color endingNodeColor)
+{
+  for (int i = 0; i < nodes.size(); i++)
+  {
+    if (i == 0)
+    {
+      drawCell(renderer, nodes[i], startingNodeColor);
+    }
+    else if (i == nodes.size() - 1)
+    {
+      drawCell(renderer, nodes[i], endingNodeColor);
+    }
+    else
+    {
+      drawCell(renderer, nodes[i], pathColor);
+    }
+  }
+}
+
+void GUI::drawLine(SDL_Renderer *renderer, Node *a, Node *b, SDL_Color color)
+{
+  int x1 = (a->x * cellSize) + xPadding + (cellSize / 2);
+  int y1 = (a->y * cellSize) + yOffset + yPadding + (cellSize / 2);
+  int x2 = (b->x * cellSize) + xPadding + (cellSize / 2);
+  int y2 = (b->y * cellSize) + yOffset + yPadding + (cellSize / 2);
+
+  SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+  SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
+}
+
+void GUI::drawLine(SDL_Renderer *renderer, Node *a, Node *b)
+{
+
+  int x1 = (a->x * cellSize) + xPadding + (cellSize / 2);
+  int y1 = (a->y * cellSize) + yOffset + yPadding + (cellSize / 2);
+  int x2 = (b->x * cellSize) + xPadding + (cellSize / 2);
+  int y2 = (b->y * cellSize) + yOffset + yPadding + (cellSize / 2);
+
+  SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
+}
+
+void GUI::drawLinesBetweenNodes(std::vector<Node *> nodes, SDL_Color pathColor)
+{
+  for (int i = 1; i < nodes.size(); i++)
+  {
+    drawLine(renderer, nodes[i - 1], nodes[i], pathColor);
+  }
+}
+
+bool GUI::clickedInsideCell(Node *node, int eventX, int eventY)
+{
+  double nodeStartX = (node->x * cellSize) + xPadding;
+  double nodeStartY = (node->y * cellSize) + yOffset + yPadding;
+  double nodeEndtX = ((node->x * cellSize) + xPadding) + cellSize;
+  double nodeEndtY = ((node->y * cellSize) + yOffset + yPadding) + cellSize;
+
+  if (eventX >= nodeStartX && eventX <= nodeEndtX && eventY >= nodeStartY && eventY <= nodeEndtY)
+  {
+    return true;
+  }
+
+  return false;
+}
+
+void GUI::drawWaypoints()
+{
+  SDL_Color waypointsColor = {0, 0, 0, 255};
+  // SDL_SetRenderDrawColor(waypointsColor.r, waypointsColor.g, waypointsColor.b, waypointsColor.a);
+  for (Node *waypoint : waypoints)
+  {
+    drawCell(renderer, waypoint, waypointsColor);
+  }
 }
 
 //=============================================================================
@@ -755,6 +883,18 @@ void GUI::drawCell(SDL_Renderer *renderer, Node *node, SDL_Color color)
   };
 
   SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+  SDL_RenderFillRect(renderer, &cell);
+}
+
+void GUI::drawCell(SDL_Renderer *renderer, Node *node)
+{
+  SDL_Rect cell{
+      .x = (node->x * cellSize) + xPadding,
+      .y = (node->y * cellSize) + yOffset + yPadding,
+      .w = cellSize,
+      .h = cellSize,
+  };
+
   SDL_RenderFillRect(renderer, &cell);
 }
 

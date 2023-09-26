@@ -6,6 +6,12 @@
 class GUI
 {
 private:
+  // GLOBAL STATE
+  SDL_Window *window;
+  SDL_Renderer *renderer;
+  SDL_Color starting;
+  SDL_Color ending;
+
   Graph *graph;
 
   int xNodes;
@@ -22,7 +28,8 @@ private:
   int snapshotNumber;
   int nodesSelected;
 
-  bool showSnapshots;
+  // bool showSnapshots;
+  GUI_MODE mode;
   bool selectingNodesAllowed;
   bool autoMode;
 
@@ -31,11 +38,9 @@ private:
   std::vector<Node *> selectedNodes;
   std::vector<Node *> pathNodes;
   std::vector<std::vector<Node *> *> pathNodesSnapshots;
-  std::vector<Node *> VGPathNodes;
-  std::vector<std::vector<Node *> *> VGPathNodesSnapshots;
+  // std::vector<Node *> VGPathNodes;
+  // std::vector<std::vector<Node *> *> VGPathNodesSnapshots;
 
-  SDL_Window *window;
-  SDL_Renderer *renderer;
   SDL_Rect gridCursor;
   SDL_bool quit;
   SDL_bool mouse_active;
@@ -46,8 +51,7 @@ private:
   SDL_Color forbiddenNodesColor;
   SDL_Color pathNodesColor;
   SDL_Color pathNodesPastColor;
-  SDL_Color starting;
-  SDL_Color ending;
+  SDL_Color VGPastPathsColors;
 
   void drawCell(SDL_Renderer *renderer, Node *node, SDL_Color color);
   void drawCellSecond(SDL_Renderer *renderer, Node *node, SDL_Color color, int xDifference);
@@ -86,6 +90,22 @@ private:
   void drawNormalSnapshots();
   void drawNormalPath();
   void drawVGPath();
+  void drawLinesBetweenNodes(std::vector<Node *> nodes, SDL_Color pathColor);
+  void drawCell(SDL_Renderer *renderer, Node *node);
+  void drawLine(SDL_Renderer *renderer, Node *a, Node *b);
+  void drawMain();
+
+  void drawLOS();
+  void clearData();
+
+  /////////////////////////////////////////////////////////////////////////////
+  // CALCULATIONS
+  /////////////////////////////////////////////////////////////////////////////
+
+  /////////////////////////////////////////////////////////////////////////////
+  // ACTIONS
+  /////////////////////////////////////////////////////////////////////////////
+  void drawVectorNodes(std::vector<Node *> nodes, SDL_Color pathColor, SDL_Color startingNodeColor, SDL_Color endingNodeColor);
 
 public:
   GUI(Graph *graph, int cellSize);

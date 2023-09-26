@@ -1,9 +1,25 @@
+// No premature optimizations
+
 // TODO - make sure all pathfindings are updated to the latest iteration
 // TODO - update naming convention and style guide
 // TODO - visualize the slope to make sure it's correct (positive, negative, both slopes)
 // TODO - IMPORTANT - remove hard coded values to remove assumptions
 // TODO - store edge costs to save computation time?
 // TODO - occasional crashing on initial bootup (VG, non-snapshot)
+
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+// Think in terms of:
+// * Data
+// * Calculations
+// * Actions
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
+// TODO - IMPORTANT - factor out shared code in conditional code blocks
+// TODO - benchmark creation and pathfinding of grid for both grid types
 
 #include "Enums.h"
 #include "Node.h"
@@ -104,8 +120,9 @@ void addForbiddenNodes(Graph *graph)
 
 int main(int argv, char **args)
 {
-  Graph *graph = new GraphNormal(X_NODES, Y_NODES, CELL_SIZE);
+  // Graph *graph = new GraphNormal(X_NODES, Y_NODES, CELL_SIZE);
+  Graph *graph = new GraphVG(X_NODES, Y_NODES, CELL_SIZE);
   addForbiddenNodes(graph);
-  // graph->createVG();
+  graph->createVG();
   GUI gui = GUI(graph, CELL_SIZE);
 }

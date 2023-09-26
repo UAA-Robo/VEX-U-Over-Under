@@ -26,3 +26,10 @@ enum GRAPH_TYPE
   NORMAL,
   VG
 };
+
+enum GUI_MODE
+{
+  SIMPLE,
+  SNAPSHOTS,
+  LOS
+};
