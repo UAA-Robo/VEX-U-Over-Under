@@ -31,8 +31,17 @@ public:
     float y_position = 0;
     float heading = 0;
 
+    /// @brief      Gets the current position of the robot
+    /// @return     Returns the currentPosition
+    std::pair<double, double> getCurrPosition();
 
-    void headingErrorCorrection(double errorBounds);
+    void setCurrHeading(double currPos);
+    void headingErrorCorrection(double errorBounds = 5);
+    double getCurrHeading();
+
+    /// @brief      Checks the current position and compares it with the gps position. If it is within a certain constraint the gps is used
+    //              Not 100% accureate at the moment
+    void positionErrorCorrection(double errorBounds = 5);
 
 private:
     Hardware *hw;

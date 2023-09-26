@@ -14,9 +14,9 @@ void AutoDrive::rotateToRelativeAngle(double angle) // Based on ENCODERS,
 
     std::pair<double, double> vel = calculateDriveTrainVel({0, rc->autoRotateVelPercent});
 
-    hw->leftWheels.spinFor(revolutionsLeftWheels, vex::rotationUnits::rev, vel.first, vex::velocityUnits::pct, false);
-    hw->rightWheels.spinFor(revolutionsRightWheels, vex::rotationUnits::rev, vel.second, vex::velocityUnits::pct);
-    while (fabs(hw->leftWheels.velocity(vex::velocityUnits::pct)) > 0 || fabs(hw->rightWheels.velocity(vex::velocityUnits::pct)) > 0)
+    hw->left_drivetrain_motors.spinFor(revolutionsLeftWheels, vex::rotationUnits::rev, vel.first, vex::velocityUnits::pct, false);
+    hw->right_drivetrain_motors.spinFor(revolutionsRightWheels, vex::rotationUnits::rev, vel.second, vex::velocityUnits::pct);
+    while (fabs(hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0 || fabs(hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0)
         ; // Blocks other tasks from starting
 }
 
@@ -60,28 +60,28 @@ void AutoDrive::rotateToPosition(std::pair<double, double> finalPosition, bool I
     rotateToHeading(heading);
 }
 
-void AutoDrive::rotateToPosition(GameElement *gameElement)
-{
-    // if (IS_USING_GPS_POSITION) tm->setCurrPosition(tm->getGPSPosition());
-    double heading = tm->getHeadingBtwnPoints(tm->getCurrPosition(), gameElement->GetPositionWithMinOffset());
+// void AutoDrive::rotateToPosition(GameElement *gameElement)
+// {
+//     // if (IS_USING_GPS_POSITION) tm->setCurrPosition(tm->getGPSPosition());
+//     double heading = tm->getHeadingBtwnPoints(tm->getCurrPosition(), gameElement->GetPositionWithMinOffset());
 
-    if (gameElement->GetAlignment())
-        heading -= 180;
-    rotateToHeading(heading);
-}
+//     if (gameElement->GetAlignment())
+//         heading -= 180;
+//     rotateToHeading(heading);
+// }
 
-void AutoDrive::rotateAndDriveToPosition(GameElement *element)
-{
-    // if (IS_USING_GPS_POSITION) tm->setCurrPosition(tm->getGPSPosition());
+// void AutoDrive::rotateAndDriveToPosition(GameElement *element)
+// {
+//     // if (IS_USING_GPS_POSITION) tm->setCurrPosition(tm->getGPSPosition());
 
-    std::pair<double, double> position = element->GetPositionWithMinOffset();
+//     std::pair<double, double> position = element->GetPositionWithMinOffset();
 
-    rotateToPosition(element);
-    double distanceToPosition = tm->getDistanceBtwnPoints(tm->getCurrPosition(), position); // inches
-    if (element->GetAlignment())
-        distanceToPosition = -distanceToPosition;
-    moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, distanceToPosition);
-}
+//     rotateToPosition(element);
+//     double distanceToPosition = tm->getDistanceBtwnPoints(tm->getCurrPosition(), position); // inches
+//     if (element->GetAlignment())
+//         distanceToPosition = -distanceToPosition;
+//     moveDriveTrainDistance({rc->autoDriveVelPercent, 0}, distanceToPosition);
+// }
 
 void AutoDrive::rotateAndDriveToPosition(std::pair<double, double> position, bool ISBACKTOPOSITION)
 {
