@@ -45,9 +45,40 @@ protected:
     ///                           {verticalVelocityPercent, horizontalVelocityPercent}
     void move_drivetrain_distance(std::pair<double, double> velocity_percent, double distance);
 
+    /// @brief       Moves the drivetrain based on the horizontal percentage and vertical percentage passed in. Calls calculateDriveTrainVel
+    ///             to convert those percentages to actual velocites in RPM.
+    /// @param velPercent   Pair of doubles {verticalVelocityPercent, horizontalVelocityPercent} from -100 to 100
+    ///                     that represent the percentage that the drivetrain should move forward/backward and left/right.
+    ///                     For example of verticalVelocityPercent = 50  and horizontalVelocityPercent = 0, the bot
+    ///                     will move forward at 50% velocity. Likewise if verticalVelocityPercent = 0  and
+    ///                     horizontalVelocityPercent = 50, the drivetrain will rotate to the right at 50% velocity.
+    ///                     Any combiniatiion of non-zero verticalVelocityPercents and horizontalVelocityPercents
+    ///                     will cause the drivetrain to move in a arc.
     void moveDriveTrain(std::pair<double, double> velPercent);
 
+    /// @brief      Moves the drivetrain a cetain distance based on the horizontal percentage and vertical percentage passed in. Calls calculateDriveTrainVel
+    ///             to convert those percentages to actual velocites in RPM.
+    /// @param velPercent   Pair of doubles {verticalVelocityPercent, horizontalVelocityPercent} from -100 to 100
+    ///                     that represent the percentage that the drivetrain should move forward/backward and left/right.
+    ///                     For example of verticalVelocityPercent = 50  and horizontalVelocityPercent = 0, the bot
+    ///                     will move forward at 50% velocity. Likewise if verticalVelocityPercent = 0  and
+    ///                     horizontalVelocityPercent = 50, the drivetrain will rotate to the right at 50% velocity.
+    ///                     Any combiniatiion of non-zero verticalVelocityPercents and horizontalVelocityPercents
+    ///                     will cause the drivetrain to move in a arc.
+    /// @param distance     Distance in inches to move.
     void moveDriveTrainDistance(std::pair<double, double> velPercent, double distance);
 
+    /// @brief      Calculates the velocity in RPMs that the left and right drivetrain wheels should recieve based on
+    ///             the horizontal percentage and vertical percentage passed in. Automatically scales the velocities
+    ///             for the drivetrain gear inserts.
+    /// @param velPercent   Pair of doubles {verticalVelocityPercent, horizontalVelocityPercent} from -100 to 100
+    ///                     that represent the percentage that the drivetrain should move forward/backward and left/right.
+    ///                     For example of verticalVelocityPercent = 50  and horizontalVelocityPercent = 0, the bot
+    ///                     will move forward at 50% velocity. Likewise if verticalVelocityPercent = 0  and
+    ///                     horizontalVelocityPercent = 50, the drivetrain will rotate to the right at 50% velocity.
+    ///                     Any combiniatiion of non-zero verticalVelocityPercents and horizontalVelocityPercents
+    ///                     will cause the drivetrain to move in a arc.
+    /// @return     Returns a pair of doubles {leftWheelsVelocity, rightWheelsVelocity} that represent the actual velocities in RPM
+    ///             (scaled to the gear-ratio) that the wheels on each drivetrain side need to be set to in order move as expected.
     std::pair<double, double> calculateDriveTrainVel(std::pair<double, double> velPercent); //{verticalVelPercent, horizontalVelPercent}
 };
