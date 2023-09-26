@@ -10,9 +10,10 @@ public:
 
     static int update_position(void* param);
 
+    //In inches
     float x_position = 0;
     float y_position = 0;
-    
+    //in radians
     float heading = 0;
 private:
     Hardware* hw;

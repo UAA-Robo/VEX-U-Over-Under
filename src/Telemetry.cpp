@@ -43,6 +43,7 @@ int Telemetry::update_position(void* param) {
         float y_displacement = center_displacement  * sin(current_heading) + horizontal_displacement * cos(current_heading);
 
         //Advanced math This assumes constant curviture
+        //DOES NOT WORK
         //float x_displacement = (center_displacement *
         //    (cos(current_heading) * sin(heading_displacement)
         //    + -sin(current_heading) * (1 - cos(heading_displacement)))
