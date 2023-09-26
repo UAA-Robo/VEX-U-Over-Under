@@ -34,9 +34,11 @@ int Telemetry::update_position(void* param) {
 
         float center_displacement  = (left_displacement + right_displacement) / 2;
 
+
+        // can use either sin or angle, sin uses straight line, angle uses arc
         float horizontal_displacement = back_displacement - heading_displacement *  tm->rc->ODOMETRY_BACK_RADIUS; 
 
-        float current_heading = tm->heading;  
+        float current_heading = tm->heading + heading_displacement;  
 
         //Easy Math
         float x_displacement = center_displacement * cos(current_heading) - horizontal_displacement * -sin(current_heading);
@@ -51,7 +53,7 @@ int Telemetry::update_position(void* param) {
         //    + (horizontal_displacement * 
         //    (cos(current_heading) * (cos(heading_displacement) -1)) 
         //    + -sin(current_heading) * sin(heading_displacement)) );
-        //    /// heading_displacement;
+        //    / sin(heading_displacement);
         //   
         //float y_displacement = (center_displacement *
         //    (sin(current_heading) * sin(heading_displacement)
@@ -60,7 +62,7 @@ int Telemetry::update_position(void* param) {
         //    + (horizontal_displacement * 
         //    (sin(current_heading) * (cos(heading_displacement) -1)) 
         //    +cos(current_heading) * sin(heading_displacement)) );
-        //    /// heading_displacement;
+        //    / sin(heading_displacement);
        
        
         tm->x_position += x_displacement;
