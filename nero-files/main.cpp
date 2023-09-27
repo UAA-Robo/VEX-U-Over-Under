@@ -6,6 +6,9 @@
 // TODO - IMPORTANT - remove hard coded values to remove assumptions
 // TODO - store edge costs to save computation time?
 // TODO - occasional crashing on initial bootup (VG, non-snapshot)
+// TODO - declare algorithms in one location and import them elsewhere, so you don't have to debug and update fixes from one version to others
+// TODO - pass data structures around using pointers
+// TODO - user smart pointers
 
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////

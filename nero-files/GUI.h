@@ -1,117 +1,3 @@
-#include <vector>
-#include <set>
-#include "Graph.h"
-#include <SDL2/SDL.h>
-
-class GUI
-{
-private:
-  // GLOBAL STATE
-  SDL_Window *window;
-  SDL_Renderer *renderer;
-  SDL_Color starting;
-  SDL_Color ending;
-
-  Graph *graph;
-
-  int xNodes;
-  int yNodes;
-  int cellSize;
-  int gridWidth;
-  int gridHeight;
-  int xPadding;
-  int yPadding;
-  int scrollSensitivity;
-  int yOffset;
-  int pathsFound;
-  int durationTotal;
-  int snapshotNumber;
-  int nodesSelected;
-
-  // bool showSnapshots;
-  GUI_MODE mode;
-  bool selectingNodesAllowed;
-  bool autoMode;
-
-  std::vector<Node *> forbiddenNodes;
-  std::set<Node *> waypoints;
-  std::vector<Node *> selectedNodes;
-  std::vector<Node *> pathNodes;
-  std::vector<std::vector<Node *> *> pathNodesSnapshots;
-  // std::vector<Node *> VGPathNodes;
-  // std::vector<std::vector<Node *> *> VGPathNodesSnapshots;
-
-  SDL_Rect gridCursor;
-  SDL_bool quit;
-  SDL_bool mouse_active;
-  SDL_bool mouse_hover;
-  SDL_Color gridBackgroundColor;
-  SDL_Color gridLineColor;
-  SDL_Color gridCursorColor;
-  SDL_Color forbiddenNodesColor;
-  SDL_Color pathNodesColor;
-  SDL_Color pathNodesPastColor;
-  SDL_Color VGPastPathsColors;
-
-  void drawCell(SDL_Renderer *renderer, Node *node, SDL_Color color);
-  void drawCellSecond(SDL_Renderer *renderer, Node *node, SDL_Color color, int xDifference);
-  void init(Graph *graph, Graph *graph2, int cellSize);
-
-  void getPath(Node *a, Node *b);
-  void getRandomPath();
-  void getPathSnapshots(Node *a, Node *b);
-  void getRandomPathSnapshots();
-
-  void getVGPath(Node *a, Node *b);
-  void getVGRandomPath();
-  void getVGPathSnapshots(Node *a, Node *b);
-  void getVGRandomPathSnapshots();
-
-  void eventLoop();
-  void switchModes();
-  void generatePath();
-  void resetGrid();
-  void selectNodes(SDL_Event &event);
-  void moveCursor(SDL_Event &event);
-  void scroll(SDL_Event &event);
-  void drawGrid();
-  void drawCursor();
-  void drawForbiddenNodes();
-  void drawSnapshots();
-  void drawPath();
-  void drawBackground();
-  void drawWaypoints();
-
-  void drawLine(SDL_Renderer *renderer, Node *a, Node *b, SDL_Color color);
-  void drawVG();
-  void drawVGSnapshots();
-  void drawLOS(Node *a, Node *b);
-  bool clickedInsideCell(Node *node, int eventX, int eventY);
-  void drawNormalSnapshots();
-  void drawNormalPath();
-  void drawVGPath();
-  void drawLinesBetweenNodes(std::vector<Node *> nodes, SDL_Color pathColor);
-  void drawCell(SDL_Renderer *renderer, Node *node);
-  void drawLine(SDL_Renderer *renderer, Node *a, Node *b);
-  void drawMain();
-
-  void drawLOS();
-  void clearData();
-
-  /////////////////////////////////////////////////////////////////////////////
-  // CALCULATIONS
-  /////////////////////////////////////////////////////////////////////////////
-
-  /////////////////////////////////////////////////////////////////////////////
-  // ACTIONS
-  /////////////////////////////////////////////////////////////////////////////
-  void drawVectorNodes(std::vector<Node *> nodes, SDL_Color pathColor, SDL_Color startingNodeColor, SDL_Color endingNodeColor);
-
-public:
-  GUI(Graph *graph, int cellSize);
-  int run();
-};
-
 // GUI CONTROLS
 //
 // TAB - switch between show pathfinding history mode (default) and simple show path mode
@@ -122,3 +8,88 @@ public:
 // DOWN ARROW - (during pathfinding histoy mode) stops the auto mode
 // LEFT ARROW - manually go to the previous snapshot
 // RIGHT ARROW - manually got to the next snapshot
+
+#include <vector>
+#include <set>
+#include "Graph.h"
+#include <SDL2/SDL.h>
+
+class GUI
+{
+private:
+  SDL_Window *window;
+  SDL_Renderer *renderer;
+  Graph *const GRAPH;
+  const int VISUAL_NODE_SIZE;
+  const int X_NODES_COUNT;
+  const int Y_NODES_COUNT;
+  const int GRID_WIDTH;
+  const int GRID_HEIGHT;
+  const int X_PADDING;
+  const int Y_PADDING;
+  const int SCROLL_SPEED;
+  int y_offset;
+  int selected_nodes_count;
+  int snapshot_number;
+  int paths_found_count;
+  int total_computation_duration;
+  GUI_MODE mode;
+  bool is_selecting_nodes_allowed;
+  bool is_auto_mode;
+  SDL_bool quit;
+  SDL_bool mouse_active;
+  SDL_bool mouse_hover;
+  std::vector<Node *> forbidden_nodes;
+  std::set<Node *> waypoints;
+  std::vector<Node *> selected_nodes;
+  std::vector<Node *> path_nodes;
+  std::vector<std::vector<Node *> *> path_nodes_snapshots;
+  SDL_Rect cursor;
+  const SDL_Color BACKGROUND_COLOR;
+  const SDL_Color LINE_COLOR;
+  const SDL_Color CURSOR_COLOR;
+  const SDL_Color FORBIDDEN_NODE_COLOR;
+  const SDL_Color PATH_NODE_COLOR;
+  const SDL_Color PAST_PATH_NODE_COLOR;
+  const SDL_Color ORIGIN_NODE_COLOR;
+  const SDL_Color DESTINATION_NODE_COLOR;
+
+  int run();
+  void event_loop();
+  void clear_data();
+  void get_path(Node *a, Node *b);
+  void get_random_path();
+  void get_path_snapshots(Node *a, Node *b);
+  void get_random_path_snapshots();
+  void generate_path();
+  void change_modes();
+  void reset_grid();
+  void select_node(SDL_Event &event);
+  void move_cursor(SDL_Event &event);
+  void scroll(SDL_Event &event);
+  void draw_background();
+  void draw_grid();
+  void draw_forbidden_nodes();
+  void draw_main();
+  void draw_path();
+  void draw_normal_path();
+  void draw_vg_path();
+  void draw_snapshots();
+  void draw_normal_snapshots();
+  void draw_vg_snapshots();
+  void draw_LOS();
+  void draw_LOS(Node *a, Node *b);
+  void draw_cursor();
+  void draw_vector_nodes(std::vector<Node *> nodes, SDL_Color pathColor, SDL_Color startingNodeColor, SDL_Color endingNodeColor);
+  void draw_line(SDL_Renderer *renderer, Node *a, Node *b, SDL_Color color);
+  void draw_line(SDL_Renderer *renderer, Node *a, Node *b);
+  void draw_lines_between_nodes(std::vector<Node *> nodes, SDL_Color pathColor);
+  bool is_inside_node(Node *node, int eventX, int eventY);
+  void draw_waypoints();
+  void draw_cell(SDL_Renderer *renderer, Node *node, SDL_Color color);
+  void draw_cell(SDL_Renderer *renderer, Node *node);
+  void draw_cellSecond(SDL_Renderer *renderer, Node *node, SDL_Color color, int xDifference);
+
+public:
+  GUI(Graph *graph, int visual_node_size);
+};
