@@ -17,12 +17,12 @@ private:
 
 public:
     std::set<Node *> waypoints;
-    GraphVG(int xNodes, int yNodes, double cellSize);
-    bool hasLOS(Node *a, Node *b);
-    void createVG();
+    GraphVG(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE);
+    bool check_LOS(Node *a, Node *b);
+    void create_VG();
 
-    std::vector<Node *> getPath(Node *origin, Node *destination);
-    std::vector<Node *> getRandomPath();
-    std::vector<std::vector<Node *> *> getPathSnapshots(Node *origin, Node *destination);
-    std::vector<std::vector<Node *> *> getRandomPathSnapshots();
+    std::vector<Node *> get_path(Node *origin, Node *destination);
+    std::vector<Node *> get_random_path();
+    std::vector<std::vector<Node *> *> get_path_snapshots(Node *origin, Node *destination);
+    std::vector<std::vector<Node *> *> get_random_path_snapshots();
 };

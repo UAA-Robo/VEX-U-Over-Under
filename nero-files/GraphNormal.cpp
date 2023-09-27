@@ -7,12 +7,12 @@
 #include "Graph.h"
 #include "GraphNormal.h"
 
-GraphNormal::GraphNormal(int xNodes, int yNodes, double cellSize) : Graph::Graph(xNodes, yNodes, cellSize)
+GraphNormal::GraphNormal(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE) : Graph::Graph(X_NODES_COUNT, Y_NODES_COUNT, NODE_SIZE)
 {
     type = GraphType::NORMAL;
 }
 
-std::vector<Node *> GraphNormal::getPath(Node *origin, Node *destination)
+std::vector<Node *> GraphNormal::get_path(Node *origin, Node *destination)
 {
     std::set<Node *> frontier;
     std::set<Node *> closed;
@@ -61,12 +61,12 @@ std::vector<Node *> GraphNormal::getPath(Node *origin, Node *destination)
 
         if (currentNode == destination)
         {
-            return reconstructPath(currentNode, cameFrom);
+            return reconstruct_path(currentNode, cameFrom);
         }
 
         // for (Node *neighbor : currentNode->neighbors)
         // {
-        //   int neighborGScore = gScores[currentNode] + getEdgeCost(currentNode, neighbor);
+        //   int neighborGScore = gScores[currentNode] + get_edge_cost(currentNode, neighbor);
 
         //   if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
         //   {
@@ -84,7 +84,7 @@ std::vector<Node *> GraphNormal::getPath(Node *origin, Node *destination)
         {
             if (closed.find(neighbor) == closed.end())
             {
-                int neighborGScore = gScores[currentNode] + getEdgeCost(currentNode, neighbor);
+                int neighborGScore = gScores[currentNode] + get_edge_cost(currentNode, neighbor);
 
                 if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
                 {
@@ -106,14 +106,14 @@ std::vector<Node *> GraphNormal::getPath(Node *origin, Node *destination)
     throw std::runtime_error("ERROR 002");
 }
 
-std::vector<Node *> GraphNormal::getRandomPath()
+std::vector<Node *> GraphNormal::get_random_path()
 {
     srand(time(0));
 
     // std::random_device rd;
     std::mt19937 rng(rand());
-    std::uniform_int_distribution<int> randX(0, xNodes - 1);
-    std::uniform_int_distribution<int> randY(0, yNodes - 1);
+    std::uniform_int_distribution<int> randX(0, X_NODES_COUNT - 1);
+    std::uniform_int_distribution<int> randY(0, Y_NODES_COUNT - 1);
 
     int originX;
     int originY;
@@ -128,10 +128,10 @@ std::vector<Node *> GraphNormal::getRandomPath()
         destinationY = randY(rng);
     } while (nodes[originY][originX]->get_is_forbidden() || nodes[destinationY][destinationX]->get_is_forbidden());
 
-    return getPath(nodes[originY][originX], nodes[destinationY][destinationX]);
+    return get_path(nodes[originY][originX], nodes[destinationY][destinationX]);
 }
 
-std::vector<std::vector<Node *> *> GraphNormal::getPathSnapshots(Node *origin, Node *destination)
+std::vector<std::vector<Node *> *> GraphNormal::get_path_snapshots(Node *origin, Node *destination)
 {
     std::set<Node *> frontier;
     std::set<Node *> closed;
@@ -190,7 +190,7 @@ std::vector<std::vector<Node *> *> GraphNormal::getPathSnapshots(Node *origin, N
 
         if (currentNode == destination)
         {
-            // return reconstructPath(currentNode, cameFrom);
+            // return reconstruct_path(currentNode, cameFrom);
             return snapshots;
         }
 
@@ -198,7 +198,7 @@ std::vector<std::vector<Node *> *> GraphNormal::getPathSnapshots(Node *origin, N
         {
             if (closed.find(neighbor) == closed.end())
             {
-                int neighborGScore = gScores[currentNode] + getEdgeCost(currentNode, neighbor);
+                int neighborGScore = gScores[currentNode] + get_edge_cost(currentNode, neighbor);
 
                 if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
                 {
@@ -220,14 +220,14 @@ std::vector<std::vector<Node *> *> GraphNormal::getPathSnapshots(Node *origin, N
     throw std::runtime_error("ERROR 100");
 }
 
-std::vector<std::vector<Node *> *> GraphNormal::getRandomPathSnapshots()
+std::vector<std::vector<Node *> *> GraphNormal::get_random_path_snapshots()
 {
     srand(time(0));
 
     // std::random_device rd;
     std::mt19937 rng(rand());
-    std::uniform_int_distribution<int> randX(0, this->xNodes - 1);
-    std::uniform_int_distribution<int> randY(0, this->yNodes - 1);
+    std::uniform_int_distribution<int> randX(0, this->X_NODES_COUNT - 1);
+    std::uniform_int_distribution<int> randY(0, this->Y_NODES_COUNT - 1);
 
     int originX;
     int originY;
@@ -243,7 +243,7 @@ std::vector<std::vector<Node *> *> GraphNormal::getRandomPathSnapshots()
 
     } while (nodes[originY][originX]->get_is_forbidden() || nodes[destinationY][destinationX]->get_is_forbidden());
 
-    return getPathSnapshots(nodes[originY][originX], nodes[destinationY][destinationX]);
+    return get_path_snapshots(nodes[originY][originX], nodes[destinationY][destinationX]);
 }
 
 // Octile distance

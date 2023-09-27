@@ -12,38 +12,38 @@ class Graph
 {
 public:
   GraphType type;
-  int xNodes;
-  int yNodes;
-  double cellSize;
+  int X_NODES_COUNT;
+  int Y_NODES_COUNT;
+  double NODE_SIZE;
   std::set<Node *> waypoints;
-  virtual bool hasLOS(Node *a, Node *b){};
-  virtual void createVG(){};
+  virtual bool check_LOS(Node *a, Node *b){};
+  virtual void create_VG(){};
 
-  Graph(int xNodes, int yNodes, double cellSize);
+  Graph(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE);
   ~Graph();
-  Node *getNode(int x, int y);
-  void addForbiddenNode(Node *node);
-  std::vector<Node *> getForbiddenNodes();
-  virtual std::vector<Node *> getPath(Node *origin, Node *destination);
-  virtual std::vector<Node *> getRandomPath();
-  virtual std::vector<std::vector<Node *> *> getPathSnapshots(Node *origin, Node *destination);
-  virtual std::vector<std::vector<Node *> *> getRandomPathSnapshots();
-  virtual void forbidTriangle(Node *a, Node *b);
-  virtual void forbidRectangle(Node *topLeftPoint, Node *topRightPoint, Node *bottomLeftPoint);
+  Node *get_node(int x, int y);
+  void add_forbidden_node(Node *node);
+  std::vector<Node *> get_forbidden_nodes();
+  virtual std::vector<Node *> get_path(Node *origin, Node *destination);
+  virtual std::vector<Node *> get_random_path();
+  virtual std::vector<std::vector<Node *> *> get_path_snapshots(Node *origin, Node *destination);
+  virtual std::vector<std::vector<Node *> *> get_random_path_snapshots();
+  virtual void forbid_triangle(Node *a, Node *b);
+  virtual void forbid_rectangle(Node *topLeftPoint, Node *topRightPoint, Node *bottomLeftPoint);
   Node *getHit();
 
   void add_edge(Node *a, Node *b);
   void remove_edge(Node *a, Node *b);
 
-  void addForbiddenNodes(Graph *graph);
+  void add_forbidden_zones(Graph *graph);
 
 protected:
   Node ***nodes;
-  std::vector<Node *> forbiddenNodes;
+  std::vector<Node *> forbidden_nodes;
 
-  Position getPositionRelative(Node *a, Node *b);
-  int getEdgeCost(Node *a, Node *b);
-  std::vector<Node *> reconstructPath(Node *currentNode, std::map<Node *, Node *> cameFrom);
+  Position get_relative_position(Node *a, Node *b);
+  int get_edge_cost(Node *a, Node *b);
+  std::vector<Node *> reconstruct_path(Node *currentNode, std::map<Node *, Node *> cameFrom);
 
 private:
 };

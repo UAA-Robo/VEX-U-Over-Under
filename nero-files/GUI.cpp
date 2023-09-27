@@ -5,8 +5,8 @@
 
 GUI::GUI(Graph *graph, int visual_node_size) : GRAPH(graph),
                                                VISUAL_NODE_SIZE(visual_node_size),
-                                               X_NODES_COUNT_COUNT(GRAPH->xNodes),
-                                               Y_NODES_COUNT_COUNT(GRAPH->yNodes),
+                                               X_NODES_COUNT_COUNT(GRAPH->X_NODES_COUNT),
+                                               Y_NODES_COUNT_COUNT(GRAPH->Y_NODES_COUNT),
                                                GRID_WIDTH((X_NODES_COUNT_COUNT * VISUAL_NODE_SIZE) + 1),
                                                GRID_HEIGHT((Y_NODES_COUNT_COUNT * VISUAL_NODE_SIZE) + 1),
                                                X_PADDING(100),
@@ -34,7 +34,7 @@ GUI::GUI(Graph *graph, int visual_node_size) : GRAPH(graph),
   mouse_active = SDL_FALSE;
   mouse_hover = SDL_FALSE;
 
-  forbidden_nodes = GRAPH->getForbiddenNodes();
+  forbidden_nodes = GRAPH->get_forbidden_nodes();
   waypoints = GRAPH->waypoints;
 
   cursor = {0, 0, VISUAL_NODE_SIZE, VISUAL_NODE_SIZE};
@@ -237,7 +237,7 @@ void GUI::get_path(Node *a, Node *b)
 {
   clear_data();
   auto start = std::chrono::high_resolution_clock::now();
-  path_nodes = GRAPH->getPath(selected_nodes[0], selected_nodes[1]);
+  path_nodes = GRAPH->get_path(selected_nodes[0], selected_nodes[1]);
   auto stop = std::chrono::high_resolution_clock::now();
 
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
@@ -251,7 +251,7 @@ void GUI::get_random_path()
   clear_data();
 
   auto start = std::chrono::high_resolution_clock::now();
-  path_nodes = GRAPH->getRandomPath();
+  path_nodes = GRAPH->get_random_path();
   auto stop = std::chrono::high_resolution_clock::now();
 
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
@@ -263,13 +263,13 @@ void GUI::get_random_path()
 void GUI::get_path_snapshots(Node *a, Node *b)
 {
   clear_data();
-  path_nodes_snapshots = GRAPH->getPathSnapshots(selected_nodes[0], selected_nodes[1]);
+  path_nodes_snapshots = GRAPH->get_path_snapshots(selected_nodes[0], selected_nodes[1]);
 }
 
 void GUI::get_random_path_snapshots()
 {
   clear_data();
-  path_nodes_snapshots = GRAPH->getRandomPathSnapshots();
+  path_nodes_snapshots = GRAPH->get_random_path_snapshots();
 }
 
 void GUI::generate_path()
@@ -372,7 +372,7 @@ void GUI::select_node(SDL_Event &event)
     if (isNotDuplicate)
     {
       selected_nodes_count++;
-      selected_nodes.push_back(GRAPH->getNode(x / VISUAL_NODE_SIZE, y / VISUAL_NODE_SIZE));
+      selected_nodes.push_back(GRAPH->get_node(x / VISUAL_NODE_SIZE, y / VISUAL_NODE_SIZE));
     }
   }
 
@@ -384,7 +384,7 @@ void GUI::select_node(SDL_Event &event)
     {
       is_selecting_nodes_allowed = false;
       auto start = std::chrono::high_resolution_clock::now();
-      path_nodes = GRAPH->getPath(selected_nodes[0], selected_nodes[1]);
+      path_nodes = GRAPH->get_path(selected_nodes[0], selected_nodes[1]);
       auto stop = std::chrono::high_resolution_clock::now();
 
       auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
@@ -400,7 +400,7 @@ void GUI::select_node(SDL_Event &event)
     {
       is_selecting_nodes_allowed = false;
       snapshot_number = 0;
-      path_nodes_snapshots = GRAPH->getPathSnapshots(selected_nodes[0], selected_nodes[1]);
+      path_nodes_snapshots = GRAPH->get_path_snapshots(selected_nodes[0], selected_nodes[1]);
     }
     break;
   }
@@ -452,7 +452,7 @@ void GUI::select_node(SDL_Event &event)
 //       {
 //         selected_nodes_count++;
 
-//         selected_nodes.push_back(GRAPH->getNode(x / VISUAL_NODE_SIZE, y / VISUAL_NODE_SIZE));
+//         selected_nodes.push_back(GRAPH->get_node(x / VISUAL_NODE_SIZE, y / VISUAL_NODE_SIZE));
 //         if (selected_nodes_count == 2)
 //         {
 //           is_selecting_nodes_allowed = false;
@@ -506,9 +506,9 @@ void GUI::select_node(SDL_Event &event)
 //       {
 //         selected_nodes_count++;
 
-//         // selected_nodes.push_back(GRAPH->getNode((x * VISUAL_NODE_SIZE) / VISUAL_NODE_SIZE,
+//         // selected_nodes.push_back(GRAPH->get_node((x * VISUAL_NODE_SIZE) / VISUAL_NODE_SIZE,
 //         //                                        (y * VISUAL_NODE_SIZE) / VISUAL_NODE_SIZE));
-//         selected_nodes.push_back(GRAPH->getNode(x / VISUAL_NODE_SIZE, y / VISUAL_NODE_SIZE));
+//         selected_nodes.push_back(GRAPH->get_node(x / VISUAL_NODE_SIZE, y / VISUAL_NODE_SIZE));
 //         if (selected_nodes_count == 2)
 //         {
 //           is_selecting_nodes_allowed = false;
@@ -595,13 +595,13 @@ void GUI::draw_grid()
   SDL_SetRenderDrawColor(renderer, LINE_COLOR.r, LINE_COLOR.g,
                          LINE_COLOR.b, LINE_COLOR.a);
 
-  for (int x = 0; x < 1 + GRAPH->xNodes * VISUAL_NODE_SIZE;
+  for (int x = 0; x < 1 + GRAPH->X_NODES_COUNT * VISUAL_NODE_SIZE;
        x += VISUAL_NODE_SIZE)
   {
     SDL_RenderDrawLine(renderer, x + X_PADDING, 0 + y_offset + Y_PADDING, x + X_PADDING, GRID_HEIGHT + y_offset + Y_PADDING);
   }
 
-  for (int y = 0; y < 1 + GRAPH->yNodes * VISUAL_NODE_SIZE;
+  for (int y = 0; y < 1 + GRAPH->Y_NODES_COUNT * VISUAL_NODE_SIZE;
        y += VISUAL_NODE_SIZE)
   {
     SDL_RenderDrawLine(renderer, 0 + X_PADDING, y + y_offset + Y_PADDING, GRID_WIDTH + X_PADDING, y + y_offset + Y_PADDING);

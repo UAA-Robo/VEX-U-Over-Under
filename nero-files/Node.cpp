@@ -53,7 +53,7 @@ void Node::forbid()
     neighbor->waypoint_neighbors->erase(this);
   }
 
-  graph->addForbiddenNode(this);
+  graph->add_forbidden_node(this);
   neighbors->clear();
 }
 

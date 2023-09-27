@@ -10,13 +10,13 @@
 #include "Graph.h"
 #include "Enums.h"
 
-GraphVG::GraphVG(int xNodes, int yNodes, double cellSize) : Graph::Graph(xNodes, yNodes, cellSize)
+GraphVG::GraphVG(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE) : Graph::Graph(X_NODES_COUNT, Y_NODES_COUNT, NODE_SIZE)
 {
     type = GraphType::VG;
-    createVG();
+    create_VG();
 }
 
-void GraphVG::createVG()
+void GraphVG::create_VG()
 {
     findWaypoints();
     addNeighboringWaypoints();
@@ -26,7 +26,7 @@ void GraphVG::insertWaypoint(Node *node)
 {
     for (Node *waypoint : waypoints)
     {
-        bool cond = hasLOS(node, waypoint);
+        bool cond = check_LOS(node, waypoint);
 
         if (cond)
         {
@@ -78,7 +78,7 @@ int GraphVG::getHCost(Node *currentNode, Node *destination)
     return std::sqrt(std::pow(x2 - x1, 2) + std::pow(y2 - y1, 2));
 }
 
-std::vector<Node *> GraphVG::getPath(Node *origin, Node *destination)
+std::vector<Node *> GraphVG::get_path(Node *origin, Node *destination)
 {
     std::set<Node *> frontier;
     std::set<Node *> closed;
@@ -144,18 +144,18 @@ std::vector<Node *> GraphVG::getPath(Node *origin, Node *destination)
 
             removeWaypoint(origin);
             removeWaypoint(destination);
-            return reconstructPath(currentNode, cameFrom);
+            return reconstruct_path(currentNode, cameFrom);
         }
 
         // for (Node *neighbor : currentNode->neighbors)
         // {
-        //   int neighborGScore = gScores[currentNode] + getEdgeCost(currentNode, neighbor);
+        //   int neighborGScore = gScores[currentNode] + get_edge_cost(currentNode, neighbor);
 
         //   if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
         //   {
         //     cameFrom[neighbor] = currentNode;
         //     gScores[neighbor] = neighborGScore;
-        //     fScores[neighbor] = neighborGScore + getEdgeCost(neighbor, destination);
+        //     fScores[neighbor] = neighborGScore + get_edge_cost(neighbor, destination);
 
         //     if (frontier.find(neighbor) == frontier.end())
         //     {
@@ -167,14 +167,14 @@ std::vector<Node *> GraphVG::getPath(Node *origin, Node *destination)
         {
             if (closed.find(neighbor) == closed.end())
             {
-                // int neighborGScore = gScores[currentNode] + getEdgeCost(currentNode, neighbor);
-                int neighborGScore = gScores[currentNode] + getEdgeCost(currentNode, neighbor);
+                // int neighborGScore = gScores[currentNode] + get_edge_cost(currentNode, neighbor);
+                int neighborGScore = gScores[currentNode] + get_edge_cost(currentNode, neighbor);
 
                 if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
                 {
                     cameFrom[neighbor] = currentNode;
                     gScores[neighbor] = neighborGScore;
-                    fScores[neighbor] = neighborGScore + getEdgeCost(neighbor, destination);
+                    fScores[neighbor] = neighborGScore + get_edge_cost(neighbor, destination);
 
                     if (closed.find(neighbor) == closed.end() && frontier.find(neighbor) == frontier.end())
                     {
@@ -190,7 +190,7 @@ std::vector<Node *> GraphVG::getPath(Node *origin, Node *destination)
     throw std::runtime_error("ERROR 002");
 }
 
-std::vector<std::vector<Node *> *> GraphVG::getPathSnapshots(Node *origin, Node *destination)
+std::vector<std::vector<Node *> *> GraphVG::get_path_snapshots(Node *origin, Node *destination)
 {
     std::set<Node *> frontier;
     std::set<Node *> closed;
@@ -202,7 +202,7 @@ std::vector<std::vector<Node *> *> GraphVG::getPathSnapshots(Node *origin, Node 
     frontier.insert(origin);
     cameFrom[origin] = origin;
     gScores[origin] = 0;
-    fScores[origin] = getEdgeCost(origin, destination);
+    fScores[origin] = get_edge_cost(origin, destination);
 
     insertWaypoint(origin);
     insertWaypoint(destination);
@@ -252,7 +252,7 @@ std::vector<std::vector<Node *> *> GraphVG::getPathSnapshots(Node *origin, Node 
 
         if (currentNode == destination)
         {
-            // return reconstructPath(currentNode, cameFrom);
+            // return reconstruct_path(currentNode, cameFrom);
             removeWaypoint(origin);
             removeWaypoint(destination);
             return snapshots;
@@ -262,14 +262,14 @@ std::vector<std::vector<Node *> *> GraphVG::getPathSnapshots(Node *origin, Node 
         {
             if (closed.find(neighbor) == closed.end())
             {
-                // int neighborGScore = gScores[currentNode] + getEdgeCost(currentNode, neighbor);
-                int neighborGScore = gScores[currentNode] + getEdgeCost(currentNode, neighbor);
+                // int neighborGScore = gScores[currentNode] + get_edge_cost(currentNode, neighbor);
+                int neighborGScore = gScores[currentNode] + get_edge_cost(currentNode, neighbor);
 
                 if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
                 {
                     cameFrom[neighbor] = currentNode;
                     gScores[neighbor] = neighborGScore;
-                    fScores[neighbor] = neighborGScore + getEdgeCost(neighbor, destination);
+                    fScores[neighbor] = neighborGScore + get_edge_cost(neighbor, destination);
 
                     if (closed.find(neighbor) == closed.end() && frontier.find(neighbor) == frontier.end())
                     {
@@ -285,14 +285,14 @@ std::vector<std::vector<Node *> *> GraphVG::getPathSnapshots(Node *origin, Node 
     throw std::runtime_error("ERROR 100");
 }
 
-std::vector<Node *> GraphVG::getRandomPath()
+std::vector<Node *> GraphVG::get_random_path()
 {
     srand(time(0));
 
     // std::random_device rd;
     std::mt19937 rng(rand());
-    std::uniform_int_distribution<int> randX(0, xNodes - 1);
-    std::uniform_int_distribution<int> randY(0, yNodes - 1);
+    std::uniform_int_distribution<int> randX(0, X_NODES_COUNT - 1);
+    std::uniform_int_distribution<int> randY(0, Y_NODES_COUNT - 1);
 
     int originX;
     int originY;
@@ -312,17 +312,17 @@ std::vector<Node *> GraphVG::getRandomPath()
         throw std::runtime_error("ERROR SAME ORIGIN AND DESTINATION");
     }
 
-    return getPath(nodes[originY][originX], nodes[destinationY][destinationX]);
+    return get_path(nodes[originY][originX], nodes[destinationY][destinationX]);
 }
 
-std::vector<std::vector<Node *> *> GraphVG::getRandomPathSnapshots()
+std::vector<std::vector<Node *> *> GraphVG::get_random_path_snapshots()
 {
     srand(time(0));
 
     // std::random_device rd;
     std::mt19937 rng(rand());
-    std::uniform_int_distribution<int> randX(0, xNodes - 1);
-    std::uniform_int_distribution<int> randY(0, yNodes - 1);
+    std::uniform_int_distribution<int> randX(0, X_NODES_COUNT - 1);
+    std::uniform_int_distribution<int> randY(0, Y_NODES_COUNT - 1);
 
     int originX;
     int originY;
@@ -342,7 +342,7 @@ std::vector<std::vector<Node *> *> GraphVG::getRandomPathSnapshots()
         throw std::runtime_error("ERROR SAME ORIGIN AND DESTINATION");
     }
 
-    return getPathSnapshots(nodes[originY][originX], nodes[destinationY][destinationX]);
+    return get_path_snapshots(nodes[originY][originX], nodes[destinationY][destinationX]);
 }
 
 std::set<Node *> GraphVG::getWaypoints()
@@ -364,9 +364,9 @@ Waypoint GraphVG::isWaypoint(Node *node)
     int y = node->y;
 
     bool hasTopNeighbor = y - 1 >= 0;
-    bool hasBottomNeighbor = y + 1 <= yNodes - 1;
+    bool hasBottomNeighbor = y + 1 <= Y_NODES_COUNT - 1;
     bool hasLeftNeighbor = x - 1 >= 0;
-    bool hasRightNeighbor = x + 1 <= xNodes - 1;
+    bool hasRightNeighbor = x + 1 <= X_NODES_COUNT - 1;
 
     bool hasTopLeftNeighbor = hasTopNeighbor && hasLeftNeighbor;
     bool hasTopRightNeighbor = hasTopNeighbor && hasRightNeighbor;
@@ -459,7 +459,7 @@ bool GraphVG::isTaut(Node *a, Node *b)
     {
     case Waypoint::TOP_LEFT:
     {
-        switch (getPositionRelative(a, b))
+        switch (get_relative_position(a, b))
         {
         case Position::TOP:
         case Position::RIGHT:
@@ -475,7 +475,7 @@ bool GraphVG::isTaut(Node *a, Node *b)
     }
     case Waypoint::TOP_RIGHT:
     {
-        switch (getPositionRelative(a, b))
+        switch (get_relative_position(a, b))
         {
         case Position::TOP:
         case Position::RIGHT:
@@ -492,7 +492,7 @@ bool GraphVG::isTaut(Node *a, Node *b)
     }
     case Waypoint::BOTTOM_RIGHT:
     {
-        switch (getPositionRelative(a, b))
+        switch (get_relative_position(a, b))
         {
         case Position::TOP:
         case Position::RIGHT:
@@ -509,7 +509,7 @@ bool GraphVG::isTaut(Node *a, Node *b)
     }
     case Waypoint::BOTTOM_LEFT:
     {
-        switch (getPositionRelative(a, b))
+        switch (get_relative_position(a, b))
         {
         case Position::TOP:
         case Position::RIGHT:
@@ -541,7 +541,7 @@ bool GraphVG::areTautWaypoints(Node *a, Node *b)
 
 // TODO - IMPORTANT - make this function check from center of a to center of b
 // TODO - top, right, bottom, left trivial, no slope need, go one node at a time
-bool GraphVG::hasLOS(Node *a, Node *b)
+bool GraphVG::check_LOS(Node *a, Node *b)
 {
 
     if (a == b)
@@ -551,8 +551,8 @@ bool GraphVG::hasLOS(Node *a, Node *b)
 
     double x = a->x + (1 / 2);
     double y = a->y + (1 / 2);
-    // double dx = (b->x + (cellSize / 2)) - a->x;
-    // double dy = (b->y + (cellSize / 2)) - a->y;
+    // double dx = (b->x + (NODE_SIZE / 2)) - a->x;
+    // double dy = (b->y + (NODE_SIZE / 2)) - a->y;
     double dx = ((b->x - a->x) + (1 / 2));
     double dy = ((b->y - a->y) + (1 / 2));
     double xSlope;
@@ -588,7 +588,7 @@ bool GraphVG::hasLOS(Node *a, Node *b)
         ySlope *= (-1.0);
     }
 
-    switch (getPositionRelative(a, b))
+    switch (get_relative_position(a, b))
     {
     case Position::TOP_LEFT:
     {
@@ -666,8 +666,8 @@ bool GraphVG::hasLOS(Node *a, Node *b)
 
     return true;
 
-    // while ((y + ySlope >= 0 && y + ySlope <= yNodes - 1) && (x + xSlope >= 0 && x + xSlope <= xNodes - 1))
-    while ((y + ySlope >= 0 && y + ySlope <= yNodes - 1) && (x + xSlope >= 0 && x + xSlope <= xNodes - 1))
+    // while ((y + ySlope >= 0 && y + ySlope <= Y_NODES_COUNT - 1) && (x + xSlope >= 0 && x + xSlope <= X_NODES_COUNT - 1))
+    while ((y + ySlope >= 0 && y + ySlope <= Y_NODES_COUNT - 1) && (x + xSlope >= 0 && x + xSlope <= X_NODES_COUNT - 1))
     {
         y += ySlope;
         x += xSlope;
@@ -684,9 +684,9 @@ bool GraphVG::hasLOS(Node *a, Node *b)
 // Before doing a line of check, make sure they are taut waypoints
 void GraphVG::findWaypoints()
 {
-    for (int y = 0; y < yNodes; y++)
+    for (int y = 0; y < Y_NODES_COUNT; y++)
     {
-        for (int x = 0; x < xNodes; x++)
+        for (int x = 0; x < X_NODES_COUNT; x++)
         {
             Node *node = nodes[y][x];
 
@@ -730,7 +730,7 @@ void GraphVG::addNeighboringWaypoints()
         {
             if (nodeA != nodeB)
             {
-                if (areTautWaypoints(nodeA, nodeB) && hasLOS(nodeA, nodeB))
+                if (areTautWaypoints(nodeA, nodeB) && check_LOS(nodeA, nodeB))
                 {
                     nodeA->add_waypoint_neighbor(nodeB);
                     nodeB->add_waypoint_neighbor(nodeA);
