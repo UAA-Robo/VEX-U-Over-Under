@@ -3,46 +3,78 @@
 #include "Enums.h"
 #include "Graph.h"
 #include "Node.h"
+#include <algorithm>
 
-//=============================================================================
-//=============================================================================
-// PUBLIC METHODS
-//=============================================================================
-//=============================================================================
-
-Node::Node(int x, int y, Graph *graph)
+Node::Node(const int x, const int y, Graph *const graph) : x(x),
+                                                           y(y),
+                                                           graph(graph),
+                                                           neighbors(new std::set<Node *>),
+                                                           waypoint_neighbors(new std::set<Node *>)
 {
-  this->x = x;
-  this->y = y;
-  this->graph = graph;
-  this->hit = false;
-  forbidden = false;
-  waypoint = NO;
+  is_forbidden = false;
+  waypoint = Waypoint::NONE;
 };
 
-void Node::addNeighbor(Node *neighborNode)
+bool Node::get_is_forbidden()
 {
-  neighbors.insert(neighborNode);
-  neighborNode->neighbors.insert(this);
-};
+  return is_forbidden;
+}
 
-void Node::addWaypointNeighbor(Node *neighborNode)
+Waypoint Node::set_waypoint(Waypoint waypoint_value)
 {
-  waypointNeighbors.insert(neighborNode);
-  neighborNode->waypointNeighbors.insert(this);
+  waypoint = waypoint_value;
+}
+
+Waypoint Node::get_waypoint()
+{
+  return waypoint;
+}
+
+std::set<Node *> *Node::get_neighbors()
+{
+  return neighbors;
+}
+
+std::set<Node *> *Node::get_waypoint_neighbors()
+{
+  return waypoint_neighbors;
 }
 
 void Node::forbid()
 {
-  forbidden = true;
+  is_forbidden = true;
 
-  for (Node *neighbor : neighbors)
+  for (Node *neighbor : (*neighbors))
   {
-    neighbor->neighbors.erase(this);
+    neighbor->neighbors->erase(this);
+  }
+  for (Node *neighbor : (*waypoint_neighbors))
+  {
+    neighbor->waypoint_neighbors->erase(this);
   }
 
   graph->addForbiddenNode(this);
-  neighbors.clear();
+  neighbors->clear();
+}
+
+void Node::add_neighbor(Node *neighbor_node)
+{
+  neighbors->insert(neighbor_node);
+}
+
+void Node::remove_neighbor(Node *neighbor_node)
+{
+  neighbors->erase(neighbor_node);
+}
+
+void Node::add_waypoint_neighbor(Node *neighbor_node)
+{
+  waypoint_neighbors->insert(neighbor_node);
+}
+
+void Node::remove_waypoint_neighbor(Node *neighbor_node)
+{
+  waypoint_neighbors->erase(neighbor_node);
 }
 
 void Node::print()

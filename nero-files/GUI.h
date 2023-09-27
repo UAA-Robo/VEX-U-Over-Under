@@ -21,8 +21,8 @@ private:
   SDL_Renderer *renderer;
   Graph *const GRAPH;
   const int VISUAL_NODE_SIZE;
-  const int X_NODES_COUNT;
-  const int Y_NODES_COUNT;
+  const int X_NODES_COUNT_COUNT;
+  const int Y_NODES_COUNT_COUNT;
   const int GRID_WIDTH;
   const int GRID_HEIGHT;
   const int X_PADDING;
@@ -33,7 +33,7 @@ private:
   int snapshot_number;
   int paths_found_count;
   int total_computation_duration;
-  GUI_MODE mode;
+  GUIMode mode;
   bool is_selecting_nodes_allowed;
   bool is_auto_mode;
   SDL_bool quit;

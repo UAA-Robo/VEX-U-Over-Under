@@ -4,7 +4,7 @@
 class GraphVG : public Graph
 {
 private:
-    WAYPOINT isWaypoint(Node *node);
+    Waypoint isWaypoint(Node *node);
     bool isTaut(Node *a, Node *b);
     bool areTautWaypoints(Node *a, Node *b);
     void findWaypoints();
@@ -25,5 +25,4 @@ public:
     std::vector<Node *> getRandomPath();
     std::vector<std::vector<Node *> *> getPathSnapshots(Node *origin, Node *destination);
     std::vector<std::vector<Node *> *> getRandomPathSnapshots();
-    void clearHits();
 };

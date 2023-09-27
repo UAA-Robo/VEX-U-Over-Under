@@ -9,7 +9,7 @@
 
 GraphNormal::GraphNormal(int xNodes, int yNodes, double cellSize) : Graph::Graph(xNodes, yNodes, cellSize)
 {
-    type = NORMAL;
+    type = GraphType::NORMAL;
 }
 
 std::vector<Node *> GraphNormal::getPath(Node *origin, Node *destination)
@@ -80,7 +80,7 @@ std::vector<Node *> GraphNormal::getPath(Node *origin, Node *destination)
         //     }
         //   }
         // }
-        for (Node *neighbor : currentNode->neighbors)
+        for (Node *neighbor : (*currentNode->get_neighbors()))
         {
             if (closed.find(neighbor) == closed.end())
             {
@@ -126,7 +126,7 @@ std::vector<Node *> GraphNormal::getRandomPath()
         originY = randY(rng);
         destinationX = randX(rng);
         destinationY = randY(rng);
-    } while (nodes[originY][originX]->forbidden || nodes[destinationY][destinationX]->forbidden);
+    } while (nodes[originY][originX]->get_is_forbidden() || nodes[destinationY][destinationX]->get_is_forbidden());
 
     return getPath(nodes[originY][originX], nodes[destinationY][destinationX]);
 }
@@ -194,7 +194,7 @@ std::vector<std::vector<Node *> *> GraphNormal::getPathSnapshots(Node *origin, N
             return snapshots;
         }
 
-        for (Node *neighbor : currentNode->neighbors)
+        for (Node *neighbor : (*currentNode->get_neighbors()))
         {
             if (closed.find(neighbor) == closed.end())
             {
@@ -241,8 +241,7 @@ std::vector<std::vector<Node *> *> GraphNormal::getRandomPathSnapshots()
         destinationX = randX(rng);
         destinationY = randY(rng);
 
-
-    } while (nodes[originY][originX]->forbidden || nodes[destinationY][destinationX]->forbidden);
+    } while (nodes[originY][originX]->get_is_forbidden() || nodes[destinationY][destinationX]->get_is_forbidden());
 
     return getPathSnapshots(nodes[originY][originX], nodes[destinationY][destinationX]);
 }

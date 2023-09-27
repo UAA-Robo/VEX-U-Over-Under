@@ -5,28 +5,9 @@
 #include <cmath>
 #include "Node.h"
 #include "Graph.h"
-
-//=============================================================================
-//=============================================================================
-// PUBLIC METHODS
-//=============================================================================
-//=============================================================================
-
-Node *Graph::getHit()
-{
-  for (int y = 0; y < yNodes; y++)
-  {
-    for (int x = 0; x < xNodes; x++)
-    {
-      if (nodes[y][x]->hit)
-      {
-        return nodes[y][x];
-      }
-    }
-  }
-
-  return nullptr;
-}
+#include "Constants.h"
+#include "Triangle.h"
+#include "Rectangle.h"
 
 Graph::Graph(int xNodes, int yNodes, double cellSize)
 {
@@ -54,57 +35,87 @@ Graph::Graph(int xNodes, int yNodes, double cellSize)
       // bottom left node
       else if (y == yNodes - 1 && x == 0)
       {
-        nodes[y][x]->addNeighbor(nodes[y - 1][x + 1]); // NE
-        nodes[y][x]->addNeighbor(nodes[y - 1][x]);     // N
+        add_edge(nodes[y][x], nodes[y - 1][x + 1]);
+        add_edge(nodes[y][x], nodes[y - 1][x]);
+
+        // nodes[y][x]->add_neighbor(nodes[y - 1][x + 1]); // NE
+        // nodes[y][x]->add_neighbor(nodes[y - 1][x]);     // N
       }
       // bottom right node
       else if (y == yNodes - 1 && x == xNodes - 1)
       {
-        nodes[y][x]->addNeighbor(nodes[y - 1][x]);     // N
-        nodes[y][x]->addNeighbor(nodes[y - 1][x - 1]); // NW
-        nodes[y][x]->addNeighbor(nodes[y][x - 1]);     // W
+        add_edge(nodes[y][x], nodes[y - 1][x]);
+        add_edge(nodes[y][x], nodes[y - 1][x - 1]);
+        add_edge(nodes[y][x], nodes[y][x - 1]);
+
+        // nodes[y][x]->add_neighbor(nodes[y - 1][x]);     // N
+        // nodes[y][x]->add_neighbor(nodes[y - 1][x - 1]); // NW
+        // nodes[y][x]->add_neighbor(nodes[y][x - 1]);     // W
       }
       // top right node
       else if (y == 0 && x == xNodes - 1)
       {
-        nodes[y][x]->addNeighbor(nodes[y][x - 1]); // W
+        add_edge(nodes[y][x], nodes[y][x - 1]);
+
+        // nodes[y][x]->add_neighbor(nodes[y][x - 1]); // W
       }
       // top row of nodes
       else if (y == 0)
       {
-        nodes[y][x]->addNeighbor(nodes[y][x - 1]); // W
+        add_edge(nodes[y][x], nodes[y][x - 1]);
+
+        // nodes[y][x]->add_neighbor(nodes[y][x - 1]); // W
       }
       // bottom row of nodes
       else if (y == yNodes - 1)
       {
-        nodes[y][x]->addNeighbor(nodes[y - 1][x + 1]); // NE
-        nodes[y][x]->addNeighbor(nodes[y - 1][x]);     // N
-        nodes[y][x]->addNeighbor(nodes[y - 1][x - 1]); // NW
-        nodes[y][x]->addNeighbor(nodes[y][x - 1]);     // W
+        add_edge(nodes[y][x], nodes[y - 1][x + 1]);
+        add_edge(nodes[y][x], nodes[y - 1][x]);
+        add_edge(nodes[y][x], nodes[y - 1][x - 1]);
+        add_edge(nodes[y][x], nodes[y][x - 1]);
+
+        // nodes[y][x]->add_neighbor(nodes[y - 1][x + 1]); // NE
+        // nodes[y][x]->add_neighbor(nodes[y - 1][x]);     // N
+        // nodes[y][x]->add_neighbor(nodes[y - 1][x - 1]); // NW
+        // nodes[y][x]->add_neighbor(nodes[y][x - 1]);     // W
       }
       // left column of nodes
       else if (x == 0)
       {
-        nodes[y][x]->addNeighbor(nodes[y - 1][x + 1]); // NE
-        nodes[y][x]->addNeighbor(nodes[y - 1][x]);     // N
+        add_edge(nodes[y][x], nodes[y - 1][x + 1]);
+        add_edge(nodes[y][x], nodes[y - 1][x]);
+
+        // nodes[y][x]->add_neighbor(nodes[y - 1][x + 1]); // NE
+        // nodes[y][x]->add_neighbor(nodes[y - 1][x]);     // N
       }
       // right column of nodes
       else if (x == xNodes - 1)
       {
-        nodes[y][x]->addNeighbor(nodes[y - 1][x]);     // N
-        nodes[y][x]->addNeighbor(nodes[y - 1][x - 1]); // NW
-        nodes[y][x]->addNeighbor(nodes[y][x - 1]);     // W
+        add_edge(nodes[y][x], nodes[y - 1][x]);
+        add_edge(nodes[y][x], nodes[y - 1][x - 1]);
+        add_edge(nodes[y][x], nodes[y][x - 1]);
+
+        // nodes[y][x]->add_neighbor(nodes[y - 1][x]);     // N
+        // nodes[y][x]->add_neighbor(nodes[y - 1][x - 1]); // NW
+        // nodes[y][x]->add_neighbor(nodes[y][x - 1]);     // W
       }
       // center nodes
       else
       {
-        nodes[y][x]->addNeighbor(nodes[y - 1][x + 1]); // NE
-        nodes[y][x]->addNeighbor(nodes[y - 1][x]);     // N
-        nodes[y][x]->addNeighbor(nodes[y - 1][x - 1]); // NW
-        nodes[y][x]->addNeighbor(nodes[y][x - 1]);     // W
+        add_edge(nodes[y][x], nodes[y - 1][x + 1]);
+        add_edge(nodes[y][x], nodes[y - 1][x]);
+        add_edge(nodes[y][x], nodes[y - 1][x - 1]);
+        add_edge(nodes[y][x], nodes[y][x - 1]);
+
+        // nodes[y][x]->add_neighbor(nodes[y - 1][x + 1]); // NE
+        // nodes[y][x]->add_neighbor(nodes[y - 1][x]);     // N
+        // nodes[y][x]->add_neighbor(nodes[y - 1][x - 1]); // NW
+        // nodes[y][x]->add_neighbor(nodes[y][x - 1]);     // W
       }
     };
   };
+
+  addForbiddenNodes(this);
 };
 
 Graph::~Graph()
@@ -167,19 +178,19 @@ void Graph::forbidTriangle(Node *a, Node *b)
   int x = a->x;
   int y = a->y;
   int xInitial = x;
-  POSITION relativePosition = getPositionRelative(a, b);
+  Position relativePosition = getPositionRelative(a, b);
 
   switch (relativePosition)
   {
-  case B_TOP_A:
-  case B_RIGHT_A:
-  case B_BOTTOM_A:
-  case B_LEFT_A:
+  case Position::TOP:
+  case Position::RIGHT:
+  case Position::BOTTOM:
+  case Position::LEFT:
   {
     throw std::runtime_error("ERROR 600");
     break;
   }
-  case B_TOPLEFT_A:
+  case Position::TOP_LEFT:
   {
     while (x >= bx && y >= by)
     {
@@ -194,7 +205,7 @@ void Graph::forbidTriangle(Node *a, Node *b)
     }
     break;
   }
-  case B_TOPRIGHT_A:
+  case Position::TOP_RIGHT:
   {
     while (x <= bx && y >= by)
     {
@@ -209,7 +220,7 @@ void Graph::forbidTriangle(Node *a, Node *b)
     }
     break;
   }
-  case B_BOTTOMRIGHT_A:
+  case Position::BOTTOM_RIGHT:
   {
     while (x <= bx && y <= by)
     {
@@ -224,7 +235,7 @@ void Graph::forbidTriangle(Node *a, Node *b)
     }
     break;
   }
-  case B_BOTTOMLEFT_A:
+  case Position::BOTTOM_LEFT:
   {
     while (x >= bx && y <= by)
     {
@@ -270,12 +281,6 @@ std::vector<std::vector<Node *> *> Graph::getRandomPathSnapshots()
 {
 }
 
-//=============================================================================
-//=============================================================================
-// PRIVATE METHODS
-//=============================================================================
-//=============================================================================
-
 int Graph::getEdgeCost(Node *a, Node *b)
 {
   // return 10;
@@ -319,7 +324,7 @@ std::vector<Node *> Graph::reconstructPath(Node *currentNode, std::map<Node *, N
 }
 
 // Returns the position of b relative to a
-POSITION Graph::getPositionRelative(Node *a, Node *b)
+Position Graph::getPositionRelative(Node *a, Node *b)
 {
   int ax = a->x;
   int ay = a->y;
@@ -328,38 +333,121 @@ POSITION Graph::getPositionRelative(Node *a, Node *b)
 
   if (bx == ax && by < ay)
   {
-    return B_TOP_A;
+    return Position::TOP;
   }
   else if (bx > ax && by == ay)
   {
-    return B_RIGHT_A;
+    return Position::RIGHT;
   }
   else if (bx == ax && by > ay)
   {
-    return B_BOTTOM_A;
+    return Position::BOTTOM;
   }
   else if (bx < ax && by == ay)
   {
-    return B_LEFT_A;
+    return Position::LEFT;
   }
   else if (bx < ax && by < ay)
   {
-    return B_TOPLEFT_A;
+    return Position::TOP_LEFT;
   }
   else if (bx > ax && by < ay)
   {
-    return B_TOPRIGHT_A;
+    return Position::TOP_RIGHT;
   }
   else if (bx > ax && by > ay)
   {
-    return B_BOTTOMRIGHT_A;
+    return Position::BOTTOM_RIGHT;
   }
   else if (bx < ax && by > ay)
   {
-    return B_BOTTOMLEFT_A;
+    return Position::BOTTOM_LEFT;
   }
   else
   {
     throw std::runtime_error("ERROR 004");
+  }
+}
+
+void Graph::add_edge(Node *a, Node *b)
+{
+  a->add_neighbor(b);
+  b->add_neighbor(a);
+}
+
+void Graph::remove_edge(Node *a, Node *b)
+{
+  a->remove_neighbor(b);
+  b->remove_neighbor(a);
+}
+
+void Graph::addForbiddenNodes(Graph *graph)
+{
+  double const ROLLER_SIZE = ZONE_SIZE;
+
+  double const GOAL_START_X = 2 * ZONE_SIZE;
+  double const GOAL_START_Y = 0;
+  double const GOAL_SIZE_X = 2 * ZONE_SIZE;
+  double const GOAL_SIZE_Y = ZONE_SIZE;
+
+  double const BAR_LEFT_START_X = ZONE_SIZE;
+  double const BAR_LEFT_START_Y = 2 * ZONE_SIZE;
+  double const BAR_LEFT_SIZE_X = 2.375;
+  double const BAR_LEFT_SIZE_Y = 2 * ZONE_SIZE;
+  double const BAR_RIGHT_START_X = 5 * ZONE_SIZE;
+  double const BAR_RIGHT_START_Y = 2 * ZONE_SIZE;
+  double const BAR_RIGHT_SIZE_X = 2.375;
+  double const BAR_RIGHT_SIZE_Y = 2 * ZONE_SIZE;
+
+  double const BAR_MAIN_START_X = ZONE_SIZE;
+  double const BAR_MAIN_START_Y = 3 * ZONE_SIZE;
+  double const BAR_MAIN_SIZE_X = 4 * ZONE_SIZE;
+  double const BAR_MAIN_SIZE_Y = 2.375;
+
+  std::vector<Triangle> forbiddenZonesTriangles;
+  std::vector<Rectangle> forbiddenZonesRectangles;
+
+  forbiddenZonesTriangles.push_back(Triangle(graph->getNode(0, 0),
+                                             graph->getNode(0, ROLLER_SIZE),
+                                             graph->getNode(ROLLER_SIZE, 0)));
+  forbiddenZonesTriangles.push_back(Triangle(graph->getNode(FIELD_SIZE - 1, 0),
+                                             graph->getNode(FIELD_SIZE - 1, ROLLER_SIZE),
+                                             graph->getNode(FIELD_SIZE - 1 - ROLLER_SIZE, 0)));
+  forbiddenZonesTriangles.push_back(Triangle(graph->getNode(0, FIELD_SIZE - 1),
+                                             graph->getNode(0, FIELD_SIZE - 1 - ROLLER_SIZE),
+                                             graph->getNode(ROLLER_SIZE, FIELD_SIZE - 1)));
+  forbiddenZonesTriangles.push_back(Triangle(graph->getNode(FIELD_SIZE - 1, FIELD_SIZE - 1),
+                                             graph->getNode(FIELD_SIZE - 1, FIELD_SIZE - 1 - ROLLER_SIZE),
+                                             graph->getNode(FIELD_SIZE - 1 - ROLLER_SIZE, FIELD_SIZE - 1)));
+
+  forbiddenZonesRectangles.push_back(Rectangle(graph->getNode(GOAL_START_X, GOAL_START_Y),
+                                               graph->getNode(GOAL_START_X + GOAL_SIZE_X, GOAL_START_Y),
+                                               graph->getNode(GOAL_START_X, GOAL_START_Y + GOAL_SIZE_Y),
+                                               graph->getNode(GOAL_START_X + GOAL_SIZE_X, GOAL_START_Y + GOAL_SIZE_Y)));
+  forbiddenZonesRectangles.push_back(Rectangle(graph->getNode(GOAL_START_X, FIELD_SIZE - 1 - GOAL_SIZE_Y),
+                                               graph->getNode(GOAL_START_X + GOAL_SIZE_X, FIELD_SIZE - 1 - GOAL_SIZE_Y),
+                                               graph->getNode(GOAL_START_X, FIELD_SIZE - 1),
+                                               graph->getNode(GOAL_START_X + GOAL_SIZE_X, FIELD_SIZE - 1)));
+  forbiddenZonesRectangles.push_back(Rectangle(graph->getNode(BAR_LEFT_START_X, BAR_LEFT_START_Y),
+                                               graph->getNode(BAR_LEFT_START_X + BAR_LEFT_SIZE_X, BAR_LEFT_START_Y),
+                                               graph->getNode(BAR_LEFT_START_X, BAR_LEFT_START_Y + BAR_LEFT_SIZE_Y),
+                                               graph->getNode(BAR_LEFT_START_X + BAR_LEFT_SIZE_X, BAR_LEFT_START_Y + BAR_LEFT_SIZE_Y)));
+  forbiddenZonesRectangles.push_back(Rectangle(graph->getNode(BAR_RIGHT_START_X, BAR_RIGHT_START_Y),
+                                               graph->getNode(BAR_RIGHT_START_X + BAR_RIGHT_SIZE_X, BAR_RIGHT_START_Y),
+                                               graph->getNode(BAR_RIGHT_START_X, BAR_RIGHT_START_Y + BAR_RIGHT_SIZE_Y),
+                                               graph->getNode(BAR_RIGHT_START_X + BAR_RIGHT_SIZE_X, BAR_RIGHT_START_Y + BAR_RIGHT_SIZE_Y)));
+  forbiddenZonesRectangles.push_back(Rectangle(graph->getNode(BAR_MAIN_START_X, BAR_MAIN_START_Y),
+                                               graph->getNode(BAR_MAIN_START_X + BAR_MAIN_SIZE_X, BAR_MAIN_START_Y),
+                                               graph->getNode(BAR_MAIN_START_X, BAR_MAIN_START_Y + BAR_MAIN_SIZE_Y),
+                                               graph->getNode(BAR_MAIN_START_X + BAR_MAIN_SIZE_X, BAR_MAIN_START_Y + BAR_MAIN_SIZE_Y)));
+
+  for (Triangle triangle : forbiddenZonesTriangles)
+  {
+    graph->forbidTriangle(triangle.sidePointA, triangle.sidePointB);
+  }
+
+  for (Rectangle rectangle : forbiddenZonesRectangles)
+  {
+    graph->forbidRectangle(rectangle.topLeftPoint, rectangle.topRightPoint, rectangle.bottomLeftPoint);
   }
 }

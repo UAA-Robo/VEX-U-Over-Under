@@ -5,10 +5,10 @@
 
 GUI::GUI(Graph *graph, int visual_node_size) : GRAPH(graph),
                                                VISUAL_NODE_SIZE(visual_node_size),
-                                               X_NODES_COUNT(GRAPH->xNodes),
-                                               Y_NODES_COUNT(GRAPH->yNodes),
-                                               GRID_WIDTH((X_NODES_COUNT * VISUAL_NODE_SIZE) + 1),
-                                               GRID_HEIGHT((Y_NODES_COUNT * VISUAL_NODE_SIZE) + 1),
+                                               X_NODES_COUNT_COUNT(GRAPH->xNodes),
+                                               Y_NODES_COUNT_COUNT(GRAPH->yNodes),
+                                               GRID_WIDTH((X_NODES_COUNT_COUNT * VISUAL_NODE_SIZE) + 1),
+                                               GRID_HEIGHT((Y_NODES_COUNT_COUNT * VISUAL_NODE_SIZE) + 1),
                                                X_PADDING(100),
                                                Y_PADDING(100),
                                                SCROLL_SPEED(100),
@@ -27,7 +27,7 @@ GUI::GUI(Graph *graph, int visual_node_size) : GRAPH(graph),
   paths_found_count = 0;
   total_computation_duration = 0;
 
-  mode = SIMPLE;
+  mode = GUIMode::SIMPLE;
   is_selecting_nodes_allowed = false;
   is_auto_mode = false;
   quit = SDL_FALSE;
@@ -61,17 +61,17 @@ int GUI::run()
 {
   switch (mode)
   {
-  case SIMPLE:
+  case GUIMode::SIMPLE:
   {
     get_random_path();
     break;
   }
-  case SNAPSHOTS:
+  case GUIMode::SNAPSHOTS:
   {
     get_random_path_snapshots();
     break;
   }
-  case LOS:
+  case GUIMode::LOS:
   {
     break;
   }
@@ -179,9 +179,9 @@ void GUI::event_loop()
 
     // draw normal path
     // draw normal snapshots
-    // draw VG path
-    // draw VG snapshots
-    // draw LOS
+    // draw GraphType::VG path
+    // draw GraphType::VG snapshots
+    // draw GUIMode::LOS
 
     // if (a != nullptr && b != nullptr)
     // {
@@ -211,12 +211,12 @@ void GUI::clear_data()
 
   switch (mode)
   {
-  case SIMPLE:
+  case GUIMode::SIMPLE:
   {
     path_nodes.clear();
     break;
   }
-  case SNAPSHOTS:
+  case GUIMode::SNAPSHOTS:
   {
     for (std::vector<Node *> *vec : path_nodes_snapshots)
     {
@@ -226,7 +226,7 @@ void GUI::clear_data()
     snapshot_number = 0;
     break;
   }
-  case LOS:
+  case GUIMode::LOS:
   {
     break;
   }
@@ -276,12 +276,12 @@ void GUI::generate_path()
 {
   switch (mode)
   {
-  case SIMPLE:
+  case GUIMode::SIMPLE:
   {
     get_random_path();
     break;
   }
-  case SNAPSHOTS:
+  case GUIMode::SNAPSHOTS:
   {
     get_random_path_snapshots();
     break;
@@ -297,22 +297,22 @@ void GUI::change_modes()
 {
   switch (mode)
   {
-  case SIMPLE:
+  case GUIMode::SIMPLE:
   {
     clear_data();
-    mode = SNAPSHOTS;
+    mode = GUIMode::SNAPSHOTS;
     break;
   }
-  case SNAPSHOTS:
+  case GUIMode::SNAPSHOTS:
   {
     clear_data();
-    // mode = SIMPLE;
-    mode = LOS;
+    // mode = GUIMode::SIMPLE;
+    mode = GUIMode::LOS;
     break;
   }
-  case LOS:
+  case GUIMode::LOS:
   {
-    mode = SIMPLE;
+    mode = GUIMode::SIMPLE;
     break;
   }
   }
@@ -326,12 +326,12 @@ void GUI::reset_grid()
   selected_nodes.clear();
   // switch (mode)
   // {
-  // case SIMPLE:
+  // case GUIMode::SIMPLE:
   // {
   //   clear_data();
   //   break;
   // }
-  // case SNAPSHOTS:
+  // case GUIMode::SNAPSHOTS:
   // {
   //   clear_data();
   //   break;
@@ -378,7 +378,7 @@ void GUI::select_node(SDL_Event &event)
 
   switch (mode)
   {
-  case SIMPLE:
+  case GUIMode::SIMPLE:
   {
     if (selected_nodes_count == 2)
     {
@@ -394,7 +394,7 @@ void GUI::select_node(SDL_Event &event)
     }
     break;
   }
-  case SNAPSHOTS:
+  case GUIMode::SNAPSHOTS:
   {
     if (selected_nodes_count == 2)
     {
@@ -416,7 +416,7 @@ void GUI::select_node(SDL_Event &event)
 // {
 //   switch (mode)
 //   {
-//   case SIMPLE:
+//   case GUIMode::SIMPLE:
 //   {
 //     is_auto_mode = false;
 //     bool nodeAllowed = true;
@@ -475,7 +475,7 @@ void GUI::select_node(SDL_Event &event)
 //     // break;
 //     break;
 //   }
-//   case SNAPSHOTS:
+//   case GUIMode::SNAPSHOTS:
 //   {
 //     is_auto_mode = false;
 //     snapshot_number = 0;
@@ -621,17 +621,17 @@ void GUI::draw_main()
 {
   switch (mode)
   {
-  case SIMPLE:
+  case GUIMode::SIMPLE:
   {
     draw_path();
     break;
   }
-  case SNAPSHOTS:
+  case GUIMode::SNAPSHOTS:
   {
     draw_snapshots();
     break;
   }
-  case LOS:
+  case GUIMode::LOS:
   {
     draw_LOS();
     break;
@@ -643,10 +643,10 @@ void GUI::draw_path()
 {
   switch (GRAPH->type)
   {
-  case NORMAL:
+  case GraphType::NORMAL:
     draw_normal_path();
     break;
-  case VG:
+  case GraphType::VG:
     draw_vg_path();
     break;
   }
@@ -656,7 +656,7 @@ void GUI::draw_normal_path()
 {
   switch (mode)
   {
-  case SIMPLE:
+  case GUIMode::SIMPLE:
   {
     draw_vector_nodes(path_nodes, PATH_NODE_COLOR, ORIGIN_NODE_COLOR, DESTINATION_NODE_COLOR);
     break;
@@ -678,10 +678,10 @@ void GUI::draw_snapshots()
 {
   switch (GRAPH->type)
   {
-  case NORMAL:
+  case GraphType::NORMAL:
     draw_normal_snapshots();
     break;
-  case VG:
+  case GraphType::VG:
     draw_vg_snapshots();
     break;
   }
@@ -856,12 +856,6 @@ void GUI::draw_waypoints()
     draw_cell(renderer, waypoint, waypointsColor);
   }
 }
-
-//=============================================================================
-//=============================================================================
-// PRIVATE METHODS
-//=============================================================================
-//=============================================================================
 
 void GUI::draw_cell(SDL_Renderer *renderer, Node *node, SDL_Color color)
 {

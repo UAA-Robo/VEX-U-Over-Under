@@ -1,33 +1,33 @@
 #pragma once
 
-enum POSITION
+enum class Position
 {
-  B_TOP_A,
-  B_RIGHT_A,
-  B_BOTTOM_A,
-  B_LEFT_A,
-  B_TOPLEFT_A,
-  B_TOPRIGHT_A,
-  B_BOTTOMRIGHT_A,
-  B_BOTTOMLEFT_A
+  TOP,
+  RIGHT,
+  BOTTOM,
+  LEFT,
+  TOP_LEFT,
+  TOP_RIGHT,
+  BOTTOM_RIGHT,
+  BOTTOM_LEFT
 };
 
-enum WAYPOINT
+enum class Waypoint
 {
-  NO,
-  TOPLEFT,
-  TOPRIGHT,
-  BOTTOMRIGHT,
-  BOTTOMLEFT
+  NONE,
+  TOP_LEFT,
+  TOP_RIGHT,
+  BOTTOM_RIGHT,
+  BOTTOM_LEFT
 };
 
-enum GRAPH_TYPE
+enum class GraphType
 {
   NORMAL,
   VG
 };
 
-enum GUI_MODE
+enum class GUIMode
 {
   SIMPLE,
   SNAPSHOTS,

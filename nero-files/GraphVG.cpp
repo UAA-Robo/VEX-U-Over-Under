@@ -12,37 +12,26 @@
 
 GraphVG::GraphVG(int xNodes, int yNodes, double cellSize) : Graph::Graph(xNodes, yNodes, cellSize)
 {
-    type = VG;
-}
-
-void GraphVG::clearHits()
-{
-    for (int y = 0; y < yNodes; y++)
-    {
-        for (int x = 0; x < xNodes; x++)
-        {
-            nodes[y][x]->hit = false;
-        }
-    }
+    type = GraphType::VG;
+    createVG();
 }
 
 void GraphVG::createVG()
 {
     findWaypoints();
     addNeighboringWaypoints();
-    clearHits();
 }
 
 void GraphVG::insertWaypoint(Node *node)
 {
-
     for (Node *waypoint : waypoints)
     {
         bool cond = hasLOS(node, waypoint);
 
         if (cond)
         {
-            node->addWaypointNeighbor(waypoint);
+            node->add_waypoint_neighbor(waypoint);
+            waypoint->add_waypoint_neighbor(node);
         }
     }
 
@@ -52,21 +41,28 @@ void GraphVG::insertWaypoint(Node *node)
 // TODO - IMPORTANT - editing list/set as you're iterating over it, look for it elsewhere
 void GraphVG::removeWaypoint(Node *node)
 {
-    std::set<Node *> toBeRemoved;
-    int x = node->waypointNeighbors.size();
 
-    for (Node *waypointNeighbor : node->waypointNeighbors)
+    for (Node *waypoint_neighbor : (*node->get_waypoint_neighbors()))
     {
-        toBeRemoved.insert(waypointNeighbor);
-        // waypointNeighbor->waypointNeighbors.erase(node);
-        // node->waypointNeighbors.erase(waypointNeighbor);
+        node->remove_waypoint_neighbor(waypoint_neighbor);
+        waypoint_neighbor->remove_waypoint_neighbor(node);
     }
 
-    for (Node *waypointNeighbor : toBeRemoved)
-    {
-        waypointNeighbor->waypointNeighbors.erase(node);
-        node->waypointNeighbors.erase(waypointNeighbor);
-    }
+    // std::set<Node *> toBeRemoved;
+    // int x = node->get_waypoint_neighbors()->size();
+
+    // for (Node *waypointNeighbor : (*node->get_waypoint_neighbors()))
+    // {
+    //     toBeRemoved.insert(waypointNeighbor);
+    //     // waypointNeighbor->get_waypoint_neighbors().erase(node);
+    //     // node->get_waypoint_neighbors()->erase(waypointNeighbor);
+    // }
+
+    // for (Node *waypointNeighbor : toBeRemoved)
+    // {
+    //     waypointNeighbor->get_waypoint_neighbors().erase(node);
+    //     node->get_waypoint_neighbors()->erase(waypointNeighbor);
+    // }
 
     waypoints.erase(node);
 }
@@ -100,6 +96,7 @@ std::vector<Node *> GraphVG::getPath(Node *origin, Node *destination)
 
     while (frontier.size() > 0)
     {
+
         int lowestFScore = 2147483647;
         int lowestHScore = 2147483647;
         int lowestGScore = 2147483647;
@@ -166,7 +163,7 @@ std::vector<Node *> GraphVG::getPath(Node *origin, Node *destination)
         //     }
         //   }
         // }
-        for (Node *neighbor : currentNode->waypointNeighbors)
+        for (Node *neighbor : (*currentNode->get_waypoint_neighbors()))
         {
             if (closed.find(neighbor) == closed.end())
             {
@@ -261,7 +258,7 @@ std::vector<std::vector<Node *> *> GraphVG::getPathSnapshots(Node *origin, Node 
             return snapshots;
         }
 
-        for (Node *neighbor : currentNode->waypointNeighbors)
+        for (Node *neighbor : (*currentNode->get_waypoint_neighbors()))
         {
             if (closed.find(neighbor) == closed.end())
             {
@@ -308,7 +305,7 @@ std::vector<Node *> GraphVG::getRandomPath()
         originY = randY(rng);
         destinationX = randX(rng);
         destinationY = randY(rng);
-    } while (nodes[originY][originX]->forbidden || nodes[destinationY][destinationX]->forbidden || (originX == destinationX && originY == destinationY));
+    } while (nodes[originY][originX]->get_is_forbidden() || nodes[destinationY][destinationX]->get_is_forbidden() || (originX == destinationX && originY == destinationY));
 
     if (originX == destinationX && originY == destinationY)
     {
@@ -338,7 +335,7 @@ std::vector<std::vector<Node *> *> GraphVG::getRandomPathSnapshots()
         originY = randY(rng);
         destinationX = randX(rng);
         destinationY = randY(rng);
-    } while (nodes[originY][originX]->forbidden || nodes[destinationY][destinationX]->forbidden || (originX == destinationX && originY == destinationY));
+    } while (nodes[originY][originX]->get_is_forbidden() || nodes[destinationY][destinationX]->get_is_forbidden() || (originX == destinationX && originY == destinationY));
 
     if (originX == destinationX && originY == destinationY)
     {
@@ -361,7 +358,7 @@ std::set<Node *> GraphVG::getWaypoints()
 // * topleft topright, topright bottomright, bottomright bottomleft, bottomleft topleft are not forbidden
 // * topleft, topright, bottomright, or bottomleft is forbidden
 // FIX THIS, idk how
-WAYPOINT GraphVG::isWaypoint(Node *node)
+Waypoint GraphVG::isWaypoint(Node *node)
 {
     int x = node->x;
     int y = node->y;
@@ -376,44 +373,44 @@ WAYPOINT GraphVG::isWaypoint(Node *node)
     bool hasBottomRightNeighbor = hasBottomNeighbor && hasRightNeighbor;
     bool hasBottomLeftNeighbor = hasBottomNeighbor && hasLeftNeighbor;
 
-    bool topNeighborForbidden = hasTopNeighbor && nodes[y - 1][x]->forbidden;
-    bool rightNeighborForbidden = hasRightNeighbor && nodes[y][x + 1]->forbidden;
-    bool bottomNeighborForbidden = hasBottomNeighbor && nodes[y + 1][x]->forbidden;
-    bool leftNeighborForbidden = hasLeftNeighbor && nodes[y][x - 1]->forbidden;
+    bool topNeighborForbidden = hasTopNeighbor && nodes[y - 1][x]->get_is_forbidden();
+    bool rightNeighborForbidden = hasRightNeighbor && nodes[y][x + 1]->get_is_forbidden();
+    bool bottomNeighborForbidden = hasBottomNeighbor && nodes[y + 1][x]->get_is_forbidden();
+    bool leftNeighborForbidden = hasLeftNeighbor && nodes[y][x - 1]->get_is_forbidden();
 
-    bool topLeftNeighborForbidden = hasTopLeftNeighbor && nodes[y - 1][x - 1]->forbidden;
-    bool topRightNeighborForbidden = hasTopRightNeighbor && nodes[y - 1][x + 1]->forbidden;
-    bool bottomRightNeighborForbidden = hasBottomRightNeighbor && nodes[y + 1][x + 1]->forbidden;
-    bool bottomLeftNeighborForbidden = hasBottomLeftNeighbor && nodes[y + 1][x - 1]->forbidden;
+    bool topLeftNeighborForbidden = hasTopLeftNeighbor && nodes[y - 1][x - 1]->get_is_forbidden();
+    bool topRightNeighborForbidden = hasTopRightNeighbor && nodes[y - 1][x + 1]->get_is_forbidden();
+    bool bottomRightNeighborForbidden = hasBottomRightNeighbor && nodes[y + 1][x + 1]->get_is_forbidden();
+    bool bottomLeftNeighborForbidden = hasBottomLeftNeighbor && nodes[y + 1][x - 1]->get_is_forbidden();
 
-    // if ((!node->forbidden) &&
+    // if ((!node->get_is_forbidden()) &&
     //     (!topNeighborForbidden && !rightNeighborForbidden && !bottomNeighborForbidden && !leftNeighborForbidden) &&
     //     ((!(topLeftNeighborForbidden && topRightNeighborForbidden) && !(topRightNeighborForbidden && bottomRightNeighborForbidden) && !(bottomRightNeighborForbidden && bottomLeftNeighborForbidden) && !(bottomLeftNeighborForbidden && topLeftNeighborForbidden))))
     // {
-    if ((!node->forbidden) &&
+    if ((!node->get_is_forbidden()) &&
         (!topNeighborForbidden && !rightNeighborForbidden && !bottomNeighborForbidden && !leftNeighborForbidden) &&
         ((!(topLeftNeighborForbidden && topRightNeighborForbidden) && !(topRightNeighborForbidden && bottomRightNeighborForbidden) && !(bottomRightNeighborForbidden && bottomLeftNeighborForbidden) && !(bottomLeftNeighborForbidden && topLeftNeighborForbidden))))
     {
         if (topLeftNeighborForbidden)
         {
-            return BOTTOMRIGHT;
+            return Waypoint::BOTTOM_RIGHT;
         }
         else if (topRightNeighborForbidden)
         {
-            return BOTTOMLEFT;
+            return Waypoint::BOTTOM_LEFT;
         }
         else if (bottomRightNeighborForbidden)
         {
-            return TOPLEFT;
+            return Waypoint::TOP_LEFT;
         }
         else if (bottomLeftNeighborForbidden)
         {
-            return TOPRIGHT;
+            return Waypoint::TOP_RIGHT;
         }
     }
     else
     {
-        return NO;
+        return Waypoint::NONE;
         throw std::runtime_error("ERROR 110");
     }
 
@@ -433,76 +430,59 @@ WAYPOINT GraphVG::isWaypoint(Node *node)
         leftNeighborForbidden ||
         rightNeighborForbidden)
     {
-        return NO;
+        return Waypoint::NONE;
     }
     else if (bottomRightNeighborForbidden)
     {
-        return TOPLEFT;
+        return Waypoint::TOP_LEFT;
     }
     else if (bottomLeftNeighborForbidden)
     {
-        return TOPRIGHT;
+        return Waypoint::TOP_RIGHT;
     }
     if (topLeftNeighborForbidden)
     {
-        return BOTTOMRIGHT;
+        return Waypoint::BOTTOM_RIGHT;
     }
     else if (topRightNeighborForbidden)
     {
-        return BOTTOMLEFT;
+        return Waypoint::BOTTOM_LEFT;
     }
 
-    return NO;
+    return Waypoint::NONE;
 }
 
 // Checks if b is taut to a
 bool GraphVG::isTaut(Node *a, Node *b)
 {
-    switch (a->waypoint)
+    switch (a->get_waypoint())
     {
-    case TOPLEFT:
+    case Waypoint::TOP_LEFT:
     {
         switch (getPositionRelative(a, b))
         {
-        case B_TOP_A:
-        case B_RIGHT_A:
-        case B_BOTTOM_A:
-        case B_LEFT_A:
-        case B_TOPRIGHT_A:
-        case B_BOTTOMLEFT_A:
+        case Position::TOP:
+        case Position::RIGHT:
+        case Position::BOTTOM:
+        case Position::LEFT:
+        case Position::TOP_RIGHT:
+        case Position::BOTTOM_LEFT:
         {
             return true;
             break;
         }
         }
     }
-    case TOPRIGHT:
+    case Waypoint::TOP_RIGHT:
     {
         switch (getPositionRelative(a, b))
         {
-        case B_TOP_A:
-        case B_RIGHT_A:
-        case B_BOTTOM_A:
-        case B_LEFT_A:
-        case B_TOPLEFT_A:
-        case B_BOTTOMRIGHT_A:
-        {
-            return true;
-            break;
-        }
-        }
-        break;
-    }
-    case BOTTOMRIGHT:
-    {
-        switch (getPositionRelative(a, b))
-        {
-        case B_TOP_A:
-        case B_RIGHT_A:
-        case B_BOTTOM_A:
-        case B_LEFT_A:
-        case B_TOPRIGHT_A:
-        case B_BOTTOMLEFT_A:
+        case Position::TOP:
+        case Position::RIGHT:
+        case Position::BOTTOM:
+        case Position::LEFT:
+        case Position::TOP_LEFT:
+        case Position::BOTTOM_RIGHT:
         {
             return true;
             break;
@@ -510,16 +490,33 @@ bool GraphVG::isTaut(Node *a, Node *b)
         }
         break;
     }
-    case BOTTOMLEFT:
+    case Waypoint::BOTTOM_RIGHT:
     {
         switch (getPositionRelative(a, b))
         {
-        case B_TOP_A:
-        case B_RIGHT_A:
-        case B_BOTTOM_A:
-        case B_LEFT_A:
-        case B_TOPLEFT_A:
-        case B_BOTTOMRIGHT_A:
+        case Position::TOP:
+        case Position::RIGHT:
+        case Position::BOTTOM:
+        case Position::LEFT:
+        case Position::TOP_RIGHT:
+        case Position::BOTTOM_LEFT:
+        {
+            return true;
+            break;
+        }
+        }
+        break;
+    }
+    case Waypoint::BOTTOM_LEFT:
+    {
+        switch (getPositionRelative(a, b))
+        {
+        case Position::TOP:
+        case Position::RIGHT:
+        case Position::BOTTOM:
+        case Position::LEFT:
+        case Position::TOP_LEFT:
+        case Position::BOTTOM_RIGHT:
         {
             return true;
             break;
@@ -593,7 +590,7 @@ bool GraphVG::hasLOS(Node *a, Node *b)
 
     switch (getPositionRelative(a, b))
     {
-    case B_TOPLEFT_A:
+    case Position::TOP_LEFT:
     {
         xSlope *= (-1.0);
         ySlope *= (-1.0);
@@ -602,16 +599,16 @@ bool GraphVG::hasLOS(Node *a, Node *b)
             y += ySlope;
             x += xSlope;
 
-            if (nodes[int(y)][int(x)]->forbidden)
+            if (nodes[int(y)][int(x)]->get_is_forbidden())
             {
-                nodes[int(y)][int(x)]->hit = true;
+                // nodes[int(y)][int(x)]->hit = true;
                 return false;
             }
         }
         break;
     }
-    case B_TOPRIGHT_A:
-    case B_TOP_A:
+    case Position::TOP_RIGHT:
+    case Position::TOP:
     {
         ySlope *= (-1);
         while (y + ySlope >= b->y && x + xSlope <= b->x)
@@ -619,17 +616,17 @@ bool GraphVG::hasLOS(Node *a, Node *b)
             y += ySlope;
             x += xSlope;
 
-            if (nodes[int(y)][int(x)]->forbidden)
+            if (nodes[int(y)][int(x)]->get_is_forbidden())
             {
-                nodes[int(y)][int(x)]->hit = true;
+                // nodes[int(y)][int(x)]->hit = true;
                 return false;
             }
         }
         break;
     }
-    case B_BOTTOMRIGHT_A:
-    case B_BOTTOM_A:
-    case B_RIGHT_A:
+    case Position::BOTTOM_RIGHT:
+    case Position::BOTTOM:
+    case Position::RIGHT:
         // FIX: same y, different x, xSlope = dx / (10 * dx), dx = number of nodes (+1 for inclusive?)
         {
             while (y + ySlope <= b->y && x + xSlope <= b->x)
@@ -637,16 +634,16 @@ bool GraphVG::hasLOS(Node *a, Node *b)
                 y += ySlope;
                 x += xSlope;
 
-                if (nodes[int(y)][int(x)]->forbidden)
+                if (nodes[int(y)][int(x)]->get_is_forbidden())
                 {
-                    nodes[int(y)][int(x)]->hit = true;
+                    // nodes[int(y)][int(x)]->hit = true;
                     return false;
                 }
             }
             break;
         }
-    case B_BOTTOMLEFT_A:
-    case B_LEFT_A:
+    case Position::BOTTOM_LEFT:
+    case Position::LEFT:
     {
         xSlope *= (-1);
         while (y + ySlope <= b->y && x + xSlope >= b->x)
@@ -654,9 +651,9 @@ bool GraphVG::hasLOS(Node *a, Node *b)
             y += ySlope;
             x += xSlope;
 
-            if (nodes[int(y)][int(x)]->forbidden)
+            if (nodes[int(y)][int(x)]->get_is_forbidden())
             {
-                nodes[int(y)][int(x)]->hit = true;
+                // nodes[int(y)][int(x)]->hit = true;
                 return false;
             }
         }
@@ -675,7 +672,7 @@ bool GraphVG::hasLOS(Node *a, Node *b)
         y += ySlope;
         x += xSlope;
 
-        if (nodes[int(y)][int(x)]->forbidden)
+        if (nodes[int(y)][int(x)]->get_is_forbidden())
         {
             return false;
         }
@@ -693,24 +690,24 @@ void GraphVG::findWaypoints()
         {
             Node *node = nodes[y][x];
 
-            if (node->forbidden)
+            if (node->get_is_forbidden())
             {
                 continue;
             }
 
-            WAYPOINT corner = isWaypoint(node);
-            node->waypoint = corner;
+            Waypoint corner = isWaypoint(node);
+            node->set_waypoint(corner);
 
             switch (corner)
             {
-            case NO:
+            case Waypoint::NONE:
             {
                 break;
             }
-            case TOPLEFT:
-            case TOPRIGHT:
-            case BOTTOMRIGHT:
-            case BOTTOMLEFT:
+            case Waypoint::TOP_LEFT:
+            case Waypoint::TOP_RIGHT:
+            case Waypoint::BOTTOM_RIGHT:
+            case Waypoint::BOTTOM_LEFT:
             {
                 waypoints.insert(node);
                 break;
@@ -735,8 +732,10 @@ void GraphVG::addNeighboringWaypoints()
             {
                 if (areTautWaypoints(nodeA, nodeB) && hasLOS(nodeA, nodeB))
                 {
-                    nodeA->waypointNeighbors.insert(nodeB);
-                    nodeB->waypointNeighbors.insert(nodeA);
+                    nodeA->add_waypoint_neighbor(nodeB);
+                    nodeB->add_waypoint_neighbor(nodeA);
+                    // nodeA->get_waypoint_neighbors().insert(nodeB);
+                    // nodeB->get_waypoint_neighbors().insert(nodeA);
                 }
             }
         }

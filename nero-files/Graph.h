@@ -10,16 +10,8 @@
 
 class Graph
 {
-protected:
-  Node ***nodes;
-  std::vector<Node *> forbiddenNodes;
-
-  POSITION getPositionRelative(Node *a, Node *b);
-  int getEdgeCost(Node *a, Node *b);
-  std::vector<Node *> reconstructPath(Node *currentNode, std::map<Node *, Node *> cameFrom);
-
 public:
-  GRAPH_TYPE type;
+  GraphType type;
   int xNodes;
   int yNodes;
   double cellSize;
@@ -39,4 +31,19 @@ public:
   virtual void forbidTriangle(Node *a, Node *b);
   virtual void forbidRectangle(Node *topLeftPoint, Node *topRightPoint, Node *bottomLeftPoint);
   Node *getHit();
+
+  void add_edge(Node *a, Node *b);
+  void remove_edge(Node *a, Node *b);
+
+  void addForbiddenNodes(Graph *graph);
+
+protected:
+  Node ***nodes;
+  std::vector<Node *> forbiddenNodes;
+
+  Position getPositionRelative(Node *a, Node *b);
+  int getEdgeCost(Node *a, Node *b);
+  std::vector<Node *> reconstructPath(Node *currentNode, std::map<Node *, Node *> cameFrom);
+
+private:
 };
