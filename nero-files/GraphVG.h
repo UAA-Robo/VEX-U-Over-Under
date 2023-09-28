@@ -19,7 +19,6 @@ public:
     std::set<Node *> waypoints;
     GraphVG(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE);
     bool check_LOS(Node *a, Node *b);
-    void create_VG();
 
     std::vector<Node *> get_path(Node *origin, Node *destination);
     std::vector<Node *> get_random_path();

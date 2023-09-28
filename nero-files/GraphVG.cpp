@@ -10,13 +10,7 @@
 #include "Graph.h"
 #include "Enums.h"
 
-GraphVG::GraphVG(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE) : Graph::Graph(X_NODES_COUNT, Y_NODES_COUNT, NODE_SIZE)
-{
-    type = GraphType::VG;
-    create_VG();
-}
-
-void GraphVG::create_VG()
+GraphVG::GraphVG(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE) : Graph::Graph(X_NODES_COUNT, Y_NODES_COUNT, NODE_SIZE, GraphType::VG)
 {
     findWaypoints();
     addNeighboringWaypoints();

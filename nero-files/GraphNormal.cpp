@@ -7,9 +7,8 @@
 #include "Graph.h"
 #include "GraphNormal.h"
 
-GraphNormal::GraphNormal(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE) : Graph::Graph(X_NODES_COUNT, Y_NODES_COUNT, NODE_SIZE)
+GraphNormal::GraphNormal(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE) : Graph::Graph(X_NODES_COUNT, Y_NODES_COUNT, NODE_SIZE, GraphType::NORMAL)
 {
-    type = GraphType::NORMAL;
 }
 
 std::vector<Node *> GraphNormal::get_path(Node *origin, Node *destination)

@@ -9,14 +9,16 @@
 #include "Triangle.h"
 #include "Rectangle.h"
 
-Graph::Graph(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE)
+Graph::Graph(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE, GraphType type)
+    : X_NODES_COUNT(X_NODES_COUNT),
+      Y_NODES_COUNT(Y_NODES_COUNT),
+      NODE_SIZE(NODE_SIZE),
+      type(type),
+      waypoints(new std::set<Node *>),
+      forbidden_nodes(new std::vector<Node *>),
+      nodes(new Node **[Y_NODES_COUNT])
+
 {
-  this->X_NODES_COUNT = X_NODES_COUNT;
-  this->Y_NODES_COUNT = Y_NODES_COUNT;
-  this->NODE_SIZE = NODE_SIZE;
-
-  nodes = new Node **[Y_NODES_COUNT];
-
   for (int x = 0; x < Y_NODES_COUNT; x++)
   {
     nodes[x] = new Node *[X_NODES_COUNT];
@@ -146,7 +148,7 @@ Node *Graph::get_node(int x, int y)
   return nodes[y][x];
 };
 
-std::vector<Node *> Graph::get_forbidden_nodes()
+std::vector<Node *> *Graph::get_forbidden_nodes()
 {
   // std::vector<Node *> forbidden_nodes;
   // Node *node;
@@ -158,7 +160,7 @@ std::vector<Node *> Graph::get_forbidden_nodes()
   //     node = nodes[y][x];
   //     if (node->forbidden)
   //     {
-  //       forbidden_nodes.push_back(node);
+  //       forbidden_nodes->push_back(node);
   //     }
   //   }
   // }
@@ -168,7 +170,7 @@ std::vector<Node *> Graph::get_forbidden_nodes()
 
 void Graph::add_forbidden_node(Node *node)
 {
-  forbidden_nodes.push_back(node);
+  forbidden_nodes->push_back(node);
 }
 
 void Graph::forbid_triangle(Node *a, Node *b)
@@ -268,16 +270,19 @@ void Graph::forbid_rectangle(Node *topLeftPoint, Node *topRightPoint, Node *bott
   }
 }
 
-std::vector<Node *> Graph::get_path(Node *origin, Node *destination)
+std::vector<Node *> *Graph::get_path(Node *origin, Node *destination)
 {
 }
-std::vector<Node *> Graph::get_random_path()
+
+std::vector<Node *> *Graph::get_random_path()
 {
 }
-std::vector<std::vector<Node *> *> Graph::get_path_snapshots(Node *origin, Node *destination)
+
+std::vector<std::vector<Node *> *> *Graph::get_path_snapshots(Node *origin, Node *destination)
 {
 }
-std::vector<std::vector<Node *> *> Graph::get_random_path_snapshots()
+
+std::vector<std::vector<Node *> *> *Graph::get_random_path_snapshots()
 {
 }
 
@@ -308,7 +313,7 @@ int Graph::get_edge_cost(Node *a, Node *b)
   }
 }
 
-std::vector<Node *> Graph::reconstruct_path(Node *currentNode, std::map<Node *, Node *> cameFrom)
+std::vector<Node *> *Graph::reconstruct_path(Node *currentNode, std::map<Node *, Node *> cameFrom)
 {
   std::vector<Node *> path;
 
