@@ -9,8 +9,8 @@ private:
 public:
     GraphNormal(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE);
 
-    std::vector<Node *> get_path(Node *origin, Node *destination);
-    std::vector<Node *> get_random_path();
-    std::vector<std::vector<Node *> *> get_path_snapshots(Node *origin, Node *destination);
-    std::vector<std::vector<Node *> *> get_random_path_snapshots();
+    std::vector<Node *> *get_path(Node *origin, Node *destination);
+    std::vector<Node *> *get_random_path();
+    std::vector<std::vector<Node *> *> *get_path_snapshots(Node *origin, Node *destination);
+    std::vector<std::vector<Node *> *> *get_random_path_snapshots();
 };

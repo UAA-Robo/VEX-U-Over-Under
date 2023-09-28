@@ -15,3 +15,5 @@ const int X_NODES_COUNT = FIELD_SIZE / NODE_SIZE;
 const int Y_NODES_COUNT = FIELD_SIZE / NODE_SIZE;
 // const int X_NODES_COUNT = 10;
 // const int Y_NODES_COUNT = 10;
+
+const int MAX_INT = 2147483647;

@@ -11,7 +11,7 @@ GraphNormal::GraphNormal(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE)
 {
 }
 
-std::vector<Node *> GraphNormal::get_path(Node *origin, Node *destination)
+std::vector<Node *> *GraphNormal::get_path(Node *origin, Node *destination)
 {
     std::set<Node *> frontier;
     std::set<Node *> closed;
@@ -105,7 +105,7 @@ std::vector<Node *> GraphNormal::get_path(Node *origin, Node *destination)
     throw std::runtime_error("ERROR 002");
 }
 
-std::vector<Node *> GraphNormal::get_random_path()
+std::vector<Node *> *GraphNormal::get_random_path()
 {
     srand(time(0));
 
@@ -130,14 +130,14 @@ std::vector<Node *> GraphNormal::get_random_path()
     return get_path(nodes[originY][originX], nodes[destinationY][destinationX]);
 }
 
-std::vector<std::vector<Node *> *> GraphNormal::get_path_snapshots(Node *origin, Node *destination)
+std::vector<std::vector<Node *> *> *GraphNormal::get_path_snapshots(Node *origin, Node *destination)
 {
     std::set<Node *> frontier;
     std::set<Node *> closed;
     std::map<Node *, Node *> cameFrom;
     std::map<Node *, int> gScores;
     std::map<Node *, int> fScores;
-    std::vector<std::vector<Node *> *> snapshots;
+    std::vector<std::vector<Node *> *> *snapshots;
 
     frontier.insert(origin);
     cameFrom[origin] = origin;
@@ -146,7 +146,7 @@ std::vector<std::vector<Node *> *> GraphNormal::get_path_snapshots(Node *origin,
 
     while (frontier.size() > 0)
     {
-        snapshots.push_back(new std::vector<Node *>);
+        snapshots->push_back(new std::vector<Node *>);
         int lowestFScore = 2147483647;
         int lowestHScore = 2147483647;
         int lowestGScore = 2147483647;
@@ -155,16 +155,6 @@ std::vector<std::vector<Node *> *> GraphNormal::get_path_snapshots(Node *origin,
 
         for (Node *node : frontier)
         {
-            // if (fScores[node] < lowestFScore)
-            // {
-            //   lowestFScore = fScores[node];
-            //   currentNode = node;
-            // }
-            // else if (fScores[node] == lowestFScore && getHCost(node, destination) < getHCost(currentNode, destination))
-            // {
-            //   currentNode = node;
-            // }
-
             if (getHCost(node, destination) < lowestHScore)
             {
                 lowestHScore = getHCost(node, destination);
@@ -178,10 +168,10 @@ std::vector<std::vector<Node *> *> GraphNormal::get_path_snapshots(Node *origin,
         }
 
         Node *temp = currentNode;
-        snapshots.back()->push_back(temp);
+        snapshots->back()->push_back(temp);
         while (temp != cameFrom[temp])
         {
-            snapshots.back()->push_back(cameFrom[temp]);
+            snapshots->back()->push_back(cameFrom[temp]);
             temp = cameFrom[temp];
         }
 
@@ -219,7 +209,7 @@ std::vector<std::vector<Node *> *> GraphNormal::get_path_snapshots(Node *origin,
     throw std::runtime_error("ERROR 100");
 }
 
-std::vector<std::vector<Node *> *> GraphNormal::get_random_path_snapshots()
+std::vector<std::vector<Node *> *> *GraphNormal::get_random_path_snapshots()
 {
     srand(time(0));
 

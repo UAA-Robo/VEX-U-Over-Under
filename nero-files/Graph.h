@@ -36,6 +36,7 @@ public:
 protected:
   Node ***const nodes;
   std::vector<Node *> *const forbidden_nodes;
+  std::vector<Node *> *const path_nodes;
 
   Position get_relative_position(Node *a, Node *b);
   int get_edge_cost(Node *a, Node *b);

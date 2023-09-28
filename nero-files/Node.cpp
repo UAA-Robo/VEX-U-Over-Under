@@ -20,6 +20,22 @@ bool Node::get_is_forbidden()
   return is_forbidden;
 }
 
+void Node::print_neighbors()
+{
+  for (Node *neighbor_node : (*neighbors))
+  {
+    neighbor_node->println();
+  }
+}
+
+void Node::print_waypoint_neighbors()
+{
+  for (Node *waypoint_neighbor_node : (*waypoint_neighbors))
+  {
+    waypoint_neighbor_node->println();
+  }
+}
+
 Waypoint Node::set_waypoint(Waypoint waypoint_value)
 {
   waypoint = waypoint_value;

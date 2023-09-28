@@ -9,14 +9,14 @@
 #include "Triangle.h"
 #include "Rectangle.h"
 
-Graph::Graph(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE, GraphType type)
-    : X_NODES_COUNT(X_NODES_COUNT),
-      Y_NODES_COUNT(Y_NODES_COUNT),
-      NODE_SIZE(NODE_SIZE),
-      type(type),
-      waypoints(new std::set<Node *>),
-      forbidden_nodes(new std::vector<Node *>),
-      nodes(new Node **[Y_NODES_COUNT])
+Graph::Graph(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE, GraphType type) : X_NODES_COUNT(X_NODES_COUNT),
+                                                                                       Y_NODES_COUNT(Y_NODES_COUNT),
+                                                                                       NODE_SIZE(NODE_SIZE),
+                                                                                       type(type),
+                                                                                       waypoints(new std::set<Node *>),
+                                                                                       forbidden_nodes(new std::vector<Node *>),
+                                                                                       nodes(new Node **[Y_NODES_COUNT]),
+                                                                                       path_nodes(new std::vector<Node *>)
 
 {
   for (int x = 0; x < Y_NODES_COUNT; x++)
@@ -315,17 +315,18 @@ int Graph::get_edge_cost(Node *a, Node *b)
 
 std::vector<Node *> *Graph::reconstruct_path(Node *currentNode, std::map<Node *, Node *> cameFrom)
 {
-  std::vector<Node *> path;
+  // std::vector<Node *> *path;
+  path_nodes->clear();
 
   while (currentNode != cameFrom[currentNode])
   {
-    path.push_back(currentNode);
+    path_nodes->push_back(currentNode);
     currentNode = cameFrom[currentNode];
   }
 
-  path.push_back(currentNode);
+  path_nodes->push_back(currentNode);
 
-  return path;
+  return path_nodes;
 }
 
 // Returns the position of b relative to a

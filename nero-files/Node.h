@@ -28,6 +28,9 @@ public:
   void print();
   void println();
 
+  void print_neighbors();
+  void print_waypoint_neighbors();
+
 private:
   // TODO - should this be capitalized, since underlying value can change?
   Graph *const graph;

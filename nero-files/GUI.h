@@ -39,11 +39,13 @@ private:
   SDL_bool quit;
   SDL_bool mouse_active;
   SDL_bool mouse_hover;
-  std::vector<Node *> forbidden_nodes;
-  std::set<Node *> waypoints;
-  std::vector<Node *> selected_nodes;
-  std::vector<Node *> path_nodes;
-  std::vector<std::vector<Node *> *> path_nodes_snapshots;
+
+  std::vector<Node *> *forbidden_nodes;
+  std::vector<Node *> *selected_nodes;
+  std::vector<Node *> *path_nodes;
+  std::vector<std::vector<Node *> *> *path_nodes_snapshots;
+  std::set<Node *> *waypoints;
+
   SDL_Rect cursor;
   const SDL_Color BACKGROUND_COLOR;
   const SDL_Color LINE_COLOR;

@@ -1,5 +1,7 @@
 #pragma once
 
+// TODO - merge Position and Waypoint
+
 enum class Position
 {
   TOP,

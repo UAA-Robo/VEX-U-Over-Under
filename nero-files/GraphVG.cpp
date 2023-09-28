@@ -9,8 +9,9 @@
 #include <cmath>
 #include "Graph.h"
 #include "Enums.h"
+#include "Constants.h"
 
-GraphVG::GraphVG(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE) : Graph::Graph(X_NODES_COUNT, Y_NODES_COUNT, NODE_SIZE, GraphType::VG)
+GraphVG::GraphVG(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE) : Graph::Graph(X_NODES_COUNT, Y_NODES_COUNT, NODE_SIZE, GraphType::VG), waypoints(new std::set<Node *>)
 {
     findWaypoints();
     addNeighboringWaypoints();
@@ -18,7 +19,7 @@ GraphVG::GraphVG(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE) : Graph
 
 void GraphVG::insertWaypoint(Node *node)
 {
-    for (Node *waypoint : waypoints)
+    for (Node *waypoint : (*waypoints))
     {
         bool cond = check_LOS(node, waypoint);
 
@@ -29,17 +30,24 @@ void GraphVG::insertWaypoint(Node *node)
         }
     }
 
-    waypoints.insert(node);
+    waypoints->insert(node);
 }
 
 // TODO - IMPORTANT - editing list/set as you're iterating over it, look for it elsewhere
 void GraphVG::removeWaypoint(Node *node)
 {
+    std::set<Node *> toBeRemoved;
 
     for (Node *waypoint_neighbor : (*node->get_waypoint_neighbors()))
     {
-        node->remove_waypoint_neighbor(waypoint_neighbor);
+        toBeRemoved.insert(waypoint_neighbor);
+        // node->remove_waypoint_neighbor(waypoint_neighbor);
         waypoint_neighbor->remove_waypoint_neighbor(node);
+    }
+
+    for (Node *waypoint_neighbor : toBeRemoved)
+    {
+        node->remove_waypoint_neighbor(waypoint_neighbor);
     }
 
     // std::set<Node *> toBeRemoved;
@@ -58,7 +66,7 @@ void GraphVG::removeWaypoint(Node *node)
     //     node->get_waypoint_neighbors()->erase(waypointNeighbor);
     // }
 
-    waypoints.erase(node);
+    waypoints->erase(node);
 }
 
 // Octile distance
@@ -72,7 +80,7 @@ int GraphVG::getHCost(Node *currentNode, Node *destination)
     return std::sqrt(std::pow(x2 - x1, 2) + std::pow(y2 - y1, 2));
 }
 
-std::vector<Node *> GraphVG::get_path(Node *origin, Node *destination)
+std::vector<Node *> *GraphVG::get_path(Node *origin, Node *destination)
 {
     std::set<Node *> frontier;
     std::set<Node *> closed;
@@ -90,36 +98,19 @@ std::vector<Node *> GraphVG::get_path(Node *origin, Node *destination)
 
     while (frontier.size() > 0)
     {
+        std::cout << "CCCCCCCCCCC\n";
 
-        int lowestFScore = 2147483647;
-        int lowestHScore = 2147483647;
-        int lowestGScore = 2147483647;
+        // int lowestFScore = 2147483647;
+        // int lowestHScore = 2147483647;
+        // int lowestGScore = 2147483647;
+        int lowestFScore = MAX_INT;
+        int lowestHScore = MAX_INT;
+        int lowestGScore = MAX_INT;
         int highestGScore = 0;
         Node *currentNode;
 
         for (Node *node : frontier)
         {
-            // if (fScores[node] < lowestFScore)
-            // {
-            //   lowestFScore = fScores[node];
-            //   currentNode = node;
-            // }
-            // else if (fScores[node] == lowestFScore && getHCost(node, destination) < getHCost(currentNode, destination))
-            // {
-            //   currentNode = node;
-            // }
-
-            // if (getHCost(node, destination) < lowestHScore)
-            // {
-            //     lowestHScore = getHCost(node, destination);
-            //     currentNode = node;
-            // }
-            // else if (getHCost(node, destination) == lowestHScore && gScores[node] < lowestGScore)
-            // {
-            //     lowestGScore = gScores[node];
-            //     currentNode = node;
-            // }
-
             if (fScores[node] < lowestFScore)
             {
                 lowestFScore = fScores[node];
@@ -131,13 +122,18 @@ std::vector<Node *> GraphVG::get_path(Node *origin, Node *destination)
             }
         }
 
+        std::cout << "EEEEEEEEEEEEE\n";
         frontier.erase(currentNode);
+        std::cout << "EEEEEEEEEEEEE\n";
 
         if (currentNode == destination)
         {
 
+            std::cout << "QQQQQQQQQ\n";
             removeWaypoint(origin);
+            std::cout << "QQQQQQQQQ\n";
             removeWaypoint(destination);
+            std::cout << "QQQQQQQQQ\n";
             return reconstruct_path(currentNode, cameFrom);
         }
 
@@ -157,6 +153,7 @@ std::vector<Node *> GraphVG::get_path(Node *origin, Node *destination)
         //     }
         //   }
         // }
+        std::cout << "DDDDDDDDDDDDD\n";
         for (Node *neighbor : (*currentNode->get_waypoint_neighbors()))
         {
             if (closed.find(neighbor) == closed.end())
@@ -184,14 +181,14 @@ std::vector<Node *> GraphVG::get_path(Node *origin, Node *destination)
     throw std::runtime_error("ERROR 002");
 }
 
-std::vector<std::vector<Node *> *> GraphVG::get_path_snapshots(Node *origin, Node *destination)
+std::vector<std::vector<Node *> *> *GraphVG::get_path_snapshots(Node *origin, Node *destination)
 {
     std::set<Node *> frontier;
     std::set<Node *> closed;
     std::map<Node *, Node *> cameFrom;
     std::map<Node *, int> gScores;
     std::map<Node *, int> fScores;
-    std::vector<std::vector<Node *> *> snapshots;
+    std::vector<std::vector<Node *> *> *snapshots;
 
     frontier.insert(origin);
     cameFrom[origin] = origin;
@@ -203,25 +200,18 @@ std::vector<std::vector<Node *> *> GraphVG::get_path_snapshots(Node *origin, Nod
 
     while (frontier.size() > 0)
     {
-        snapshots.push_back(new std::vector<Node *>);
-        int lowestFScore = 2147483647;
-        int lowestHScore = 2147483647;
-        int lowestGScore = 2147483647;
+        snapshots->push_back(new std::vector<Node *>);
+        // int lowestFScore = 2147483647;
+        // int lowestHScore = 2147483647;
+        // int lowestGScore = 2147483647;
+        int lowestFScore = MAX_INT;
+        int lowestHScore = MAX_INT;
+        int lowestGScore = MAX_INT;
         int highestGScore = 0;
         Node *currentNode;
 
         for (Node *node : frontier)
         {
-            // if (fScores[node] < lowestFScore)
-            // {
-            //   lowestFScore = fScores[node];
-            //   currentNode = node;
-            // }
-            // else if (fScores[node] == lowestFScore && getHCost(node, destination) < getHCost(currentNode, destination))
-            // {
-            //   currentNode = node;
-            // }
-
             if (getHCost(node, destination) < lowestHScore)
             {
                 lowestHScore = getHCost(node, destination);
@@ -235,10 +225,10 @@ std::vector<std::vector<Node *> *> GraphVG::get_path_snapshots(Node *origin, Nod
         }
 
         Node *temp = currentNode;
-        snapshots.back()->push_back(temp);
+        snapshots->back()->push_back(temp);
         while (temp != cameFrom[temp])
         {
-            snapshots.back()->push_back(cameFrom[temp]);
+            snapshots->back()->push_back(cameFrom[temp]);
             temp = cameFrom[temp];
         }
 
@@ -279,7 +269,7 @@ std::vector<std::vector<Node *> *> GraphVG::get_path_snapshots(Node *origin, Nod
     throw std::runtime_error("ERROR 100");
 }
 
-std::vector<Node *> GraphVG::get_random_path()
+std::vector<Node *> *GraphVG::get_random_path()
 {
     srand(time(0));
 
@@ -309,7 +299,7 @@ std::vector<Node *> GraphVG::get_random_path()
     return get_path(nodes[originY][originX], nodes[destinationY][destinationX]);
 }
 
-std::vector<std::vector<Node *> *> GraphVG::get_random_path_snapshots()
+std::vector<std::vector<Node *> *> *GraphVG::get_random_path_snapshots()
 {
     srand(time(0));
 
@@ -339,7 +329,7 @@ std::vector<std::vector<Node *> *> GraphVG::get_random_path_snapshots()
     return get_path_snapshots(nodes[originY][originX], nodes[destinationY][destinationX]);
 }
 
-std::set<Node *> GraphVG::getWaypoints()
+std::set<Node *> *GraphVG::getWaypoints()
 {
 
     return waypoints;
@@ -703,7 +693,7 @@ void GraphVG::findWaypoints()
             case Waypoint::BOTTOM_RIGHT:
             case Waypoint::BOTTOM_LEFT:
             {
-                waypoints.insert(node);
+                waypoints->insert(node);
                 break;
             }
             default:
@@ -718,9 +708,9 @@ void GraphVG::findWaypoints()
 
 void GraphVG::addNeighboringWaypoints()
 {
-    for (Node *nodeA : waypoints)
+    for (Node *nodeA : (*waypoints))
     {
-        for (Node *nodeB : waypoints)
+        for (Node *nodeB : (*waypoints))
         {
             if (nodeA != nodeB)
             {
