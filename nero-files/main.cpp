@@ -27,8 +27,6 @@
 #include "Enums.h"
 #include "Node.h"
 #include "Graph.h"
-#include "Triangle.h"
-#include "Rectangle.h"
 #include "GUI.h"
 #include <iostream>
 #include "Constants.h"

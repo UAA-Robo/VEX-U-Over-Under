@@ -16,21 +16,6 @@ enum class Position
   BOTTOM_LEFT,
 };
 
-// enum class Waypoint
-// {
-//   NONE,
-//   TOP_LEFT,
-//   TOP_RIGHT,
-//   BOTTOM_RIGHT,
-//   BOTTOM_LEFT
-// };
-
-enum class GraphType
-{
-  NORMAL,
-  VG
-};
-
 enum class GUIMode
 {
   SIMPLE,

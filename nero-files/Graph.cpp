@@ -6,8 +6,6 @@
 #include "Node.h"
 #include "Graph.h"
 #include "Constants.h"
-#include "Triangle.h"
-#include "Rectangle.h"
 
 #include "Graph.h"
 #include <time.h>
@@ -149,6 +147,7 @@ Graph::Graph(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE) : X_NODES_C
   };
 
   add_forbidden_zones(this);
+
   find_waypoints();
   add_neighbor_waypoints();
 };
@@ -406,52 +405,34 @@ void Graph::add_forbidden_zones(Graph *graph)
   double const BAR_MAIN_SIZE_X = 4 * ZONE_SIZE;
   double const BAR_MAIN_SIZE_Y = 2.375;
 
-  std::vector<Triangle> forbiddenZonesTriangles;
-  std::vector<Rectangle> forbiddenZonesRectangles;
+  forbid_triangle(
+      graph->get_node(0, ROLLER_SIZE),
+      graph->get_node(ROLLER_SIZE, 0));
+  forbid_triangle(
+      graph->get_node(FIELD_SIZE - 1, ROLLER_SIZE),
+      graph->get_node(FIELD_SIZE - 1 - ROLLER_SIZE, 0));
+  forbid_triangle(
+      graph->get_node(0, FIELD_SIZE - 1 - ROLLER_SIZE),
+      graph->get_node(ROLLER_SIZE, FIELD_SIZE - 1));
+  forbid_triangle(
+      graph->get_node(FIELD_SIZE - 1, FIELD_SIZE - 1 - ROLLER_SIZE),
+      graph->get_node(FIELD_SIZE - 1 - ROLLER_SIZE, FIELD_SIZE - 1));
 
-  forbiddenZonesTriangles.push_back(Triangle(graph->get_node(0, 0),
-                                             graph->get_node(0, ROLLER_SIZE),
-                                             graph->get_node(ROLLER_SIZE, 0)));
-  forbiddenZonesTriangles.push_back(Triangle(graph->get_node(FIELD_SIZE - 1, 0),
-                                             graph->get_node(FIELD_SIZE - 1, ROLLER_SIZE),
-                                             graph->get_node(FIELD_SIZE - 1 - ROLLER_SIZE, 0)));
-  forbiddenZonesTriangles.push_back(Triangle(graph->get_node(0, FIELD_SIZE - 1),
-                                             graph->get_node(0, FIELD_SIZE - 1 - ROLLER_SIZE),
-                                             graph->get_node(ROLLER_SIZE, FIELD_SIZE - 1)));
-  forbiddenZonesTriangles.push_back(Triangle(graph->get_node(FIELD_SIZE - 1, FIELD_SIZE - 1),
-                                             graph->get_node(FIELD_SIZE - 1, FIELD_SIZE - 1 - ROLLER_SIZE),
-                                             graph->get_node(FIELD_SIZE - 1 - ROLLER_SIZE, FIELD_SIZE - 1)));
-
-  forbiddenZonesRectangles.push_back(Rectangle(graph->get_node(GOAL_START_X, GOAL_START_Y),
-                                               graph->get_node(GOAL_START_X + GOAL_SIZE_X, GOAL_START_Y),
-                                               graph->get_node(GOAL_START_X, GOAL_START_Y + GOAL_SIZE_Y),
-                                               graph->get_node(GOAL_START_X + GOAL_SIZE_X, GOAL_START_Y + GOAL_SIZE_Y)));
-  forbiddenZonesRectangles.push_back(Rectangle(graph->get_node(GOAL_START_X, FIELD_SIZE - 1 - GOAL_SIZE_Y),
-                                               graph->get_node(GOAL_START_X + GOAL_SIZE_X, FIELD_SIZE - 1 - GOAL_SIZE_Y),
-                                               graph->get_node(GOAL_START_X, FIELD_SIZE - 1),
-                                               graph->get_node(GOAL_START_X + GOAL_SIZE_X, FIELD_SIZE - 1)));
-  forbiddenZonesRectangles.push_back(Rectangle(graph->get_node(BAR_LEFT_START_X, BAR_LEFT_START_Y),
-                                               graph->get_node(BAR_LEFT_START_X + BAR_LEFT_SIZE_X, BAR_LEFT_START_Y),
-                                               graph->get_node(BAR_LEFT_START_X, BAR_LEFT_START_Y + BAR_LEFT_SIZE_Y),
-                                               graph->get_node(BAR_LEFT_START_X + BAR_LEFT_SIZE_X, BAR_LEFT_START_Y + BAR_LEFT_SIZE_Y)));
-  forbiddenZonesRectangles.push_back(Rectangle(graph->get_node(BAR_RIGHT_START_X, BAR_RIGHT_START_Y),
-                                               graph->get_node(BAR_RIGHT_START_X + BAR_RIGHT_SIZE_X, BAR_RIGHT_START_Y),
-                                               graph->get_node(BAR_RIGHT_START_X, BAR_RIGHT_START_Y + BAR_RIGHT_SIZE_Y),
-                                               graph->get_node(BAR_RIGHT_START_X + BAR_RIGHT_SIZE_X, BAR_RIGHT_START_Y + BAR_RIGHT_SIZE_Y)));
-  forbiddenZonesRectangles.push_back(Rectangle(graph->get_node(BAR_MAIN_START_X, BAR_MAIN_START_Y),
-                                               graph->get_node(BAR_MAIN_START_X + BAR_MAIN_SIZE_X, BAR_MAIN_START_Y),
-                                               graph->get_node(BAR_MAIN_START_X, BAR_MAIN_START_Y + BAR_MAIN_SIZE_Y),
-                                               graph->get_node(BAR_MAIN_START_X + BAR_MAIN_SIZE_X, BAR_MAIN_START_Y + BAR_MAIN_SIZE_Y)));
-
-  for (Triangle triangle : forbiddenZonesTriangles)
-  {
-    graph->forbid_triangle(triangle.sidePointA, triangle.sidePointB);
-  }
-
-  for (Rectangle rectangle : forbiddenZonesRectangles)
-  {
-    graph->forbid_rectangle(rectangle.topLeftPoint, rectangle.topRightPoint, rectangle.bottomLeftPoint);
-  }
+  forbid_rectangle(graph->get_node(GOAL_START_X, GOAL_START_Y),
+                   graph->get_node(GOAL_START_X + GOAL_SIZE_X, GOAL_START_Y),
+                   graph->get_node(GOAL_START_X, GOAL_START_Y + GOAL_SIZE_Y));
+  forbid_rectangle(graph->get_node(GOAL_START_X, FIELD_SIZE - 1 - GOAL_SIZE_Y),
+                   graph->get_node(GOAL_START_X + GOAL_SIZE_X, FIELD_SIZE - 1 - GOAL_SIZE_Y),
+                   graph->get_node(GOAL_START_X, FIELD_SIZE - 1));
+  forbid_rectangle(graph->get_node(BAR_LEFT_START_X, BAR_LEFT_START_Y),
+                   graph->get_node(BAR_LEFT_START_X + BAR_LEFT_SIZE_X, BAR_LEFT_START_Y),
+                   graph->get_node(BAR_LEFT_START_X, BAR_LEFT_START_Y + BAR_LEFT_SIZE_Y));
+  forbid_rectangle(graph->get_node(BAR_RIGHT_START_X, BAR_RIGHT_START_Y),
+                   graph->get_node(BAR_RIGHT_START_X + BAR_RIGHT_SIZE_X, BAR_RIGHT_START_Y),
+                   graph->get_node(BAR_RIGHT_START_X, BAR_RIGHT_START_Y + BAR_RIGHT_SIZE_Y));
+  forbid_rectangle(graph->get_node(BAR_MAIN_START_X, BAR_MAIN_START_Y),
+                   graph->get_node(BAR_MAIN_START_X + BAR_MAIN_SIZE_X, BAR_MAIN_START_Y),
+                   graph->get_node(BAR_MAIN_START_X, BAR_MAIN_START_Y + BAR_MAIN_SIZE_Y));
 }
 //
 
