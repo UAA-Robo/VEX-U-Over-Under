@@ -30,13 +30,11 @@
 #include "Triangle.h"
 #include "Rectangle.h"
 #include "GUI.h"
-#include "GraphNormal.h"
-#include "GraphVG.h"
 #include <iostream>
 #include "Constants.h"
 
 int main(int argv, char **args)
 {
-  Graph *graph = new GraphVG(X_NODES_COUNT, Y_NODES_COUNT, VISUAL_NODE_SIZE);
+  Graph *graph = new Graph(X_NODES_COUNT, Y_NODES_COUNT, VISUAL_NODE_SIZE);
   GUI gui = GUI(graph, VISUAL_NODE_SIZE);
 }

@@ -36,7 +36,7 @@ GUI::GUI(Graph *graph, int visual_node_size) : GRAPH(graph),
   mouse_hover = SDL_FALSE;
 
   forbidden_nodes = GRAPH->get_forbidden_nodes();
-  waypoints = GRAPH->waypoints;
+  waypoints = GRAPH->get_waypoints();
 
   cursor = {0, 0, VISUAL_NODE_SIZE, VISUAL_NODE_SIZE};
 
@@ -660,15 +660,9 @@ void GUI::draw_main()
 
 void GUI::draw_path()
 {
-  switch (GRAPH->type)
-  {
-  case GraphType::NORMAL:
-    draw_normal_path();
-    break;
-  case GraphType::VG:
-    draw_vg_path();
-    break;
-  }
+
+  draw_lines_between_nodes((*path_nodes), PATH_NODE_COLOR);
+  draw_vector_nodes((*path_nodes), PATH_NODE_COLOR, ORIGIN_NODE_COLOR, DESTINATION_NODE_COLOR);
 }
 
 void GUI::draw_normal_path()
@@ -687,43 +681,7 @@ void GUI::draw_normal_path()
   }
 }
 
-void GUI::draw_vg_path()
-{
-  draw_lines_between_nodes((*path_nodes), PATH_NODE_COLOR);
-  draw_vector_nodes((*path_nodes), PATH_NODE_COLOR, ORIGIN_NODE_COLOR, DESTINATION_NODE_COLOR);
-}
-
 void GUI::draw_snapshots()
-{
-  switch (GRAPH->type)
-  {
-  case GraphType::NORMAL:
-    draw_normal_snapshots();
-    break;
-  case GraphType::VG:
-    draw_vg_snapshots();
-    break;
-  }
-}
-
-void GUI::draw_normal_snapshots()
-{
-  // TODO - handle snapshot_number and its errors, after generating snapshot path should not have to move forward to show initial state
-  for (int s = 0; s <= snapshot_number; s++)
-  {
-    if (s == snapshot_number)
-    {
-      draw_vector_nodes((*path_nodes_snapshots->at(s)), PATH_NODE_COLOR, ORIGIN_NODE_COLOR, DESTINATION_NODE_COLOR);
-      draw_vector_nodes((*path_nodes_snapshots->at(s)), PATH_NODE_COLOR, ORIGIN_NODE_COLOR, DESTINATION_NODE_COLOR);
-    }
-    else
-    {
-      draw_vector_nodes((*path_nodes_snapshots->at(s)), PAST_PATH_NODE_COLOR, ORIGIN_NODE_COLOR, DESTINATION_NODE_COLOR);
-    }
-  }
-}
-
-void GUI::draw_vg_snapshots()
 {
   if (path_nodes_snapshots->size() == 0)
   {
