@@ -30,6 +30,7 @@ GUI::GUI(Graph *graph, int visual_node_size) : GRAPH(graph),
   mode = GUIMode::SIMPLE;
   is_selecting_nodes_allowed = false;
   is_auto_mode = false;
+  has_data_to_draw = false;
   quit = SDL_FALSE;
   mouse_active = SDL_FALSE;
   mouse_hover = SDL_FALSE;
@@ -55,7 +56,8 @@ GUI::GUI(Graph *graph, int visual_node_size) : GRAPH(graph),
   SDL_SetWindowTitle(window, "Pathfinding");
 
   path_nodes = new std::vector<Node *>;
-  path_nodes_snapshots = new std::vector<std::vector<Node *> *>;  
+  path_nodes_snapshots = new std::vector<std::vector<Node *> *>;
+  selected_nodes = new std::vector<Node *>;
 
   run();
 }
@@ -93,7 +95,6 @@ void GUI::event_loop()
 {
   while (!quit)
   {
-    std::cout << "QQQQQQQQQQQQQQQQ\n";
     SDL_Event event;
     while (SDL_PollEvent(&event))
     {
@@ -167,25 +168,17 @@ void GUI::event_loop()
         break;
       }
     }
-    std::cout << "AAAAAAAAAAA\n";
 
     if (is_auto_mode && snapshot_number + 1 < path_nodes_snapshots->size())
     {
       snapshot_number++;
     }
 
-    std::cout << "AAAAAAAAAAA\n";
     draw_background();
-    std::cout << "AAAAAAAAAAA\n";
     draw_grid();
-    std::cout << "AAAAAAAAAAA\n";
     draw_forbidden_nodes();
-    std::cout << "AAAAAAAAAAA\n";
     draw_main();
-    std::cout << "AAAAAAAAAAA\n";
     draw_cursor();
-    std::cout << "AAAAAAAAAAA\n";
-    std::cout << "QQQQQQQQQQQQQQ\n";
 
     // drawing mode -> GRAPH mode
 
@@ -225,12 +218,7 @@ void GUI::clear_data()
   {
   case GUIMode::SIMPLE:
   {
-    // path_nodes->clear();
-    std::cout << "AAAAAAAAA\n";
-    if (path_nodes != NULL)
-      delete path_nodes;
-    std::cout << "AAAAAAAAA\n";
-    // path_nodes = new std::vector<Node *>;
+    delete path_nodes;
     break;
   }
   case GUIMode::SNAPSHOTS:
@@ -240,7 +228,6 @@ void GUI::clear_data()
       delete vec;
     }
     delete path_nodes_snapshots;
-    // path_nodes_snapshots = new std::vector<std::vector<Node *> *>;
     snapshot_number = 0;
     break;
   }
@@ -253,6 +240,7 @@ void GUI::clear_data()
 
 void GUI::get_path(Node *a, Node *b)
 {
+  has_data_to_draw = true;
   clear_data();
   auto start = std::chrono::high_resolution_clock::now();
   path_nodes = GRAPH->get_path((*selected_nodes)[0], (*selected_nodes)[1]);
@@ -266,6 +254,7 @@ void GUI::get_path(Node *a, Node *b)
 
 void GUI::get_random_path()
 {
+  has_data_to_draw = true;
   clear_data();
 
   auto start = std::chrono::high_resolution_clock::now();
@@ -280,12 +269,14 @@ void GUI::get_random_path()
 
 void GUI::get_path_snapshots(Node *a, Node *b)
 {
+  has_data_to_draw = true;
   clear_data();
   path_nodes_snapshots = GRAPH->get_path_snapshots((*selected_nodes)[0], (*selected_nodes)[1]);
 }
 
 void GUI::get_random_path_snapshots()
 {
+  has_data_to_draw = true;
   clear_data();
   path_nodes_snapshots = GRAPH->get_random_path_snapshots();
 }
@@ -340,6 +331,7 @@ void GUI::change_modes()
 
 void GUI::reset_grid()
 {
+  has_data_to_draw = false;
   clear_data();
   is_selecting_nodes_allowed = true;
   selected_nodes_count = 0;
@@ -402,6 +394,7 @@ void GUI::select_node(SDL_Event &event)
   {
     if (selected_nodes_count == 2)
     {
+      has_data_to_draw = true;
       is_selecting_nodes_allowed = false;
       auto start = std::chrono::high_resolution_clock::now();
       path_nodes = GRAPH->get_path((*selected_nodes)[0], (*selected_nodes)[1]);
@@ -418,6 +411,7 @@ void GUI::select_node(SDL_Event &event)
   {
     if (selected_nodes_count == 2)
     {
+      has_data_to_draw = true;
       is_selecting_nodes_allowed = false;
       snapshot_number = 0;
       path_nodes_snapshots = GRAPH->get_path_snapshots((*selected_nodes)[0], (*selected_nodes)[1]);
@@ -639,21 +633,21 @@ void GUI::draw_forbidden_nodes()
 
 void GUI::draw_main()
 {
-  std::cout << "CCCCCCCCCCCCCCCC\n";
+  if (!has_data_to_draw)
+  {
+    return;
+  }
+
   switch (mode)
   {
   case GUIMode::SIMPLE:
   {
-    std::cout << "DDDDDDDDDDDDDDD\n";
     draw_path();
-    std::cout << "DDDDDDDDDDDDDDD\n";
     break;
   }
   case GUIMode::SNAPSHOTS:
   {
-    std::cout << "BBBBBBBBBBBBBBBBB\n";
     draw_snapshots();
-    std::cout << "BBBBBBBBBBBBBBBBB\n";
     break;
   }
   case GUIMode::LOS:
@@ -662,7 +656,6 @@ void GUI::draw_main()
     break;
   }
   }
-  std::cout << "CCCCCCCCCCCCCCCCCC\n";
 }
 
 void GUI::draw_path()
@@ -732,8 +725,6 @@ void GUI::draw_normal_snapshots()
 
 void GUI::draw_vg_snapshots()
 {
-  std::cout << path_nodes_snapshots << std::endl;
-  std::cout << path_nodes_snapshots->size() << std::endl;
   if (path_nodes_snapshots->size() == 0)
   {
     return;

@@ -16,6 +16,7 @@ public:
   const int Y_NODES_COUNT;
   const double NODE_SIZE;
   std::set<Node *> *const waypoints;
+  Position get_node_position(int x, int y);
 
   Graph(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE, GraphType type);
   ~Graph();

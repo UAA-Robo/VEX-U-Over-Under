@@ -12,7 +12,7 @@ Node::Node(const int x, const int y, Graph *const graph) : x(x),
                                                            waypoint_neighbors(new std::set<Node *>)
 {
   is_forbidden = false;
-  waypoint = Waypoint::NONE;
+  waypoint = Position::NONE;
 };
 
 bool Node::get_is_forbidden()
@@ -36,12 +36,12 @@ void Node::print_waypoint_neighbors()
   }
 }
 
-Waypoint Node::set_waypoint(Waypoint waypoint_value)
+Position Node::set_waypoint(Position waypoint_value)
 {
   waypoint = waypoint_value;
 }
 
-Waypoint Node::get_waypoint()
+Position Node::get_waypoint()
 {
   return waypoint;
 }

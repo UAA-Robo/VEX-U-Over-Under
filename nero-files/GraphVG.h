@@ -4,7 +4,7 @@
 class GraphVG : public Graph
 {
 private:
-    Waypoint isWaypoint(Node *node);
+    Position isWaypoint(Node *node);
     bool isTaut(Node *a, Node *b);
     bool areTautWaypoints(Node *a, Node *b);
     void findWaypoints();

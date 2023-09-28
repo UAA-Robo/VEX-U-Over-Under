@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <cmath>
 #include "Graph.h"
+#include "Constants.h"
 #include "GraphNormal.h"
 
 GraphNormal::GraphNormal(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE) : Graph::Graph(X_NODES_COUNT, Y_NODES_COUNT, NODE_SIZE, GraphType::NORMAL)
@@ -26,24 +27,14 @@ std::vector<Node *> *GraphNormal::get_path(Node *origin, Node *destination)
 
     while (frontier.size() > 0)
     {
-        int lowestFScore = 2147483647;
-        int lowestHScore = 2147483647;
-        int lowestGScore = 2147483647;
+        int lowestFScore = MAX_INT;
+        int lowestHScore = MAX_INT;
+        int lowestGScore = MAX_INT;
         int highestGScore = 0;
         Node *currentNode;
 
         for (Node *node : frontier)
         {
-            // if (fScores[node] < lowestFScore)
-            // {
-            //   lowestFScore = fScores[node];
-            //   currentNode = node;
-            // }
-            // else if (fScores[node] == lowestFScore && getHCost(node, destination) < getHCost(currentNode, destination))
-            // {
-            //   currentNode = node;
-            // }
-
             if (getHCost(node, destination) < lowestHScore)
             {
                 lowestHScore = getHCost(node, destination);
@@ -63,22 +54,6 @@ std::vector<Node *> *GraphNormal::get_path(Node *origin, Node *destination)
             return reconstruct_path(currentNode, cameFrom);
         }
 
-        // for (Node *neighbor : currentNode->neighbors)
-        // {
-        //   int neighborGScore = gScores[currentNode] + get_edge_cost(currentNode, neighbor);
-
-        //   if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
-        //   {
-        //     cameFrom[neighbor] = currentNode;
-        //     gScores[neighbor] = neighborGScore;
-        //     fScores[neighbor] = neighborGScore + getHCost(neighbor, destination);
-
-        //     if (frontier.find(neighbor) == frontier.end())
-        //     {
-        //       frontier.insert(neighbor);
-        //     }
-        //   }
-        // }
         for (Node *neighbor : (*currentNode->get_neighbors()))
         {
             if (closed.find(neighbor) == closed.end())
@@ -109,7 +84,6 @@ std::vector<Node *> *GraphNormal::get_random_path()
 {
     srand(time(0));
 
-    // std::random_device rd;
     std::mt19937 rng(rand());
     std::uniform_int_distribution<int> randX(0, X_NODES_COUNT - 1);
     std::uniform_int_distribution<int> randY(0, Y_NODES_COUNT - 1);
@@ -132,19 +106,11 @@ std::vector<Node *> *GraphNormal::get_random_path()
 
 std::vector<std::vector<Node *> *> *GraphNormal::get_path_snapshots(Node *origin, Node *destination)
 {
-
-    // for (std::vector<Node *> *vec : (*snapshots))
-    // {
-    //     delete vec;
-    // }
-    // snapshots->clear();
-
     std::set<Node *> frontier;
     std::set<Node *> closed;
     std::map<Node *, Node *> cameFrom;
     std::map<Node *, int> gScores;
     std::map<Node *, int> fScores;
-    // std::vector<std::vector<Node *> *> *snapshots;
     snapshots = new std::vector<std::vector<Node *> *>;
 
     frontier.insert(origin);
@@ -155,9 +121,9 @@ std::vector<std::vector<Node *> *> *GraphNormal::get_path_snapshots(Node *origin
     while (frontier.size() > 0)
     {
         snapshots->push_back(new std::vector<Node *>);
-        int lowestFScore = 2147483647;
-        int lowestHScore = 2147483647;
-        int lowestGScore = 2147483647;
+        int lowestFScore = MAX_INT;
+        int lowestHScore = MAX_INT;
+        int lowestGScore = MAX_INT;
         int highestGScore = 0;
         Node *currentNode;
 
@@ -187,7 +153,6 @@ std::vector<std::vector<Node *> *> *GraphNormal::get_path_snapshots(Node *origin
 
         if (currentNode == destination)
         {
-            // return reconstruct_path(currentNode, cameFrom);
             return snapshots;
         }
 
@@ -221,7 +186,6 @@ std::vector<std::vector<Node *> *> *GraphNormal::get_random_path_snapshots()
 {
     srand(time(0));
 
-    // std::random_device rd;
     std::mt19937 rng(rand());
     std::uniform_int_distribution<int> randX(0, this->X_NODES_COUNT - 1);
     std::uniform_int_distribution<int> randY(0, this->Y_NODES_COUNT - 1);

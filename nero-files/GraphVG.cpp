@@ -41,7 +41,6 @@ void GraphVG::removeWaypoint(Node *node)
     for (Node *waypoint_neighbor : (*node->get_waypoint_neighbors()))
     {
         toBeRemoved.insert(waypoint_neighbor);
-        // node->remove_waypoint_neighbor(waypoint_neighbor);
         waypoint_neighbor->remove_waypoint_neighbor(node);
     }
 
@@ -49,22 +48,6 @@ void GraphVG::removeWaypoint(Node *node)
     {
         node->remove_waypoint_neighbor(waypoint_neighbor);
     }
-
-    // std::set<Node *> toBeRemoved;
-    // int x = node->get_waypoint_neighbors()->size();
-
-    // for (Node *waypointNeighbor : (*node->get_waypoint_neighbors()))
-    // {
-    //     toBeRemoved.insert(waypointNeighbor);
-    //     // waypointNeighbor->get_waypoint_neighbors().erase(node);
-    //     // node->get_waypoint_neighbors()->erase(waypointNeighbor);
-    // }
-
-    // for (Node *waypointNeighbor : toBeRemoved)
-    // {
-    //     waypointNeighbor->get_waypoint_neighbors().erase(node);
-    //     node->get_waypoint_neighbors()->erase(waypointNeighbor);
-    // }
 
     waypoints->erase(node);
 }
@@ -76,6 +59,7 @@ int GraphVG::getHCost(Node *currentNode, Node *destination)
     int y1 = currentNode->y;
     int x2 = destination->x;
     int y2 = destination->y;
+    // TODO - which one?
     // return std::sqrt(std::pow(x2 - x1, 2) * 10 + std::pow(y2 - y1, 2) * 10);
     return std::sqrt(std::pow(x2 - x1, 2) + std::pow(y2 - y1, 2));
 }
@@ -98,10 +82,6 @@ std::vector<Node *> *GraphVG::get_path(Node *origin, Node *destination)
 
     while (frontier.size() > 0)
     {
-
-        // int lowestFScore = 2147483647;
-        // int lowestHScore = 2147483647;
-        // int lowestGScore = 2147483647;
         int lowestFScore = MAX_INT;
         int lowestHScore = MAX_INT;
         int lowestGScore = MAX_INT;
@@ -125,33 +105,15 @@ std::vector<Node *> *GraphVG::get_path(Node *origin, Node *destination)
 
         if (currentNode == destination)
         {
-
             removeWaypoint(origin);
             removeWaypoint(destination);
             return reconstruct_path(currentNode, cameFrom);
         }
 
-        // for (Node *neighbor : currentNode->neighbors)
-        // {
-        //   int neighborGScore = gScores[currentNode] + get_edge_cost(currentNode, neighbor);
-
-        //   if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
-        //   {
-        //     cameFrom[neighbor] = currentNode;
-        //     gScores[neighbor] = neighborGScore;
-        //     fScores[neighbor] = neighborGScore + get_edge_cost(neighbor, destination);
-
-        //     if (frontier.find(neighbor) == frontier.end())
-        //     {
-        //       frontier.insert(neighbor);
-        //     }
-        //   }
-        // }
         for (Node *neighbor : (*currentNode->get_waypoint_neighbors()))
         {
             if (closed.find(neighbor) == closed.end())
             {
-                // int neighborGScore = gScores[currentNode] + get_edge_cost(currentNode, neighbor);
                 int neighborGScore = gScores[currentNode] + get_edge_cost(currentNode, neighbor);
 
                 if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
@@ -176,18 +138,11 @@ std::vector<Node *> *GraphVG::get_path(Node *origin, Node *destination)
 
 std::vector<std::vector<Node *> *> *GraphVG::get_path_snapshots(Node *origin, Node *destination)
 {
-    // for (std::vector<Node *> *vec : (*snapshots))
-    // {
-    //     delete vec;
-    // }
-    // snapshots->clear();
-
     std::set<Node *> frontier;
     std::set<Node *> closed;
     std::map<Node *, Node *> cameFrom;
     std::map<Node *, int> gScores;
     std::map<Node *, int> fScores;
-    // std::vector<std::vector<Node *> *> *snapshots;
     snapshots = new std::vector<std::vector<Node *> *>;
 
     frontier.insert(origin);
@@ -201,9 +156,6 @@ std::vector<std::vector<Node *> *> *GraphVG::get_path_snapshots(Node *origin, No
     while (frontier.size() > 0)
     {
         snapshots->push_back(new std::vector<Node *>);
-        // int lowestFScore = 2147483647;
-        // int lowestHScore = 2147483647;
-        // int lowestGScore = 2147483647;
         int lowestFScore = MAX_INT;
         int lowestHScore = MAX_INT;
         int lowestGScore = MAX_INT;
@@ -236,7 +188,6 @@ std::vector<std::vector<Node *> *> *GraphVG::get_path_snapshots(Node *origin, No
 
         if (currentNode == destination)
         {
-            // return reconstruct_path(currentNode, cameFrom);
             removeWaypoint(origin);
             removeWaypoint(destination);
             return snapshots;
@@ -246,7 +197,6 @@ std::vector<std::vector<Node *> *> *GraphVG::get_path_snapshots(Node *origin, No
         {
             if (closed.find(neighbor) == closed.end())
             {
-                // int neighborGScore = gScores[currentNode] + get_edge_cost(currentNode, neighbor);
                 int neighborGScore = gScores[currentNode] + get_edge_cost(currentNode, neighbor);
 
                 if (gScores.find(neighbor) == gScores.end() || neighborGScore < gScores[neighbor])
@@ -273,7 +223,6 @@ std::vector<Node *> *GraphVG::get_random_path()
 {
     srand(time(0));
 
-    // std::random_device rd;
     std::mt19937 rng(rand());
     std::uniform_int_distribution<int> randX(0, X_NODES_COUNT - 1);
     std::uniform_int_distribution<int> randY(0, Y_NODES_COUNT - 1);
@@ -342,7 +291,7 @@ std::set<Node *> *GraphVG::getWaypoints()
 // * topleft topright, topright bottomright, bottomright bottomleft, bottomleft topleft are not forbidden
 // * topleft, topright, bottomright, or bottomleft is forbidden
 // FIX THIS, idk how
-Waypoint GraphVG::isWaypoint(Node *node)
+Position GraphVG::isWaypoint(Node *node)
 {
     int x = node->x;
     int y = node->y;
@@ -377,24 +326,24 @@ Waypoint GraphVG::isWaypoint(Node *node)
     {
         if (topLeftNeighborForbidden)
         {
-            return Waypoint::BOTTOM_RIGHT;
+            return Position::BOTTOM_RIGHT;
         }
         else if (topRightNeighborForbidden)
         {
-            return Waypoint::BOTTOM_LEFT;
+            return Position::BOTTOM_LEFT;
         }
         else if (bottomRightNeighborForbidden)
         {
-            return Waypoint::TOP_LEFT;
+            return Position::TOP_LEFT;
         }
         else if (bottomLeftNeighborForbidden)
         {
-            return Waypoint::TOP_RIGHT;
+            return Position::TOP_RIGHT;
         }
     }
     else
     {
-        return Waypoint::NONE;
+        return Position::NONE;
         throw std::runtime_error("ERROR 110");
     }
 
@@ -414,26 +363,26 @@ Waypoint GraphVG::isWaypoint(Node *node)
         leftNeighborForbidden ||
         rightNeighborForbidden)
     {
-        return Waypoint::NONE;
+        return Position::NONE;
     }
     else if (bottomRightNeighborForbidden)
     {
-        return Waypoint::TOP_LEFT;
+        return Position::TOP_LEFT;
     }
     else if (bottomLeftNeighborForbidden)
     {
-        return Waypoint::TOP_RIGHT;
+        return Position::TOP_RIGHT;
     }
     if (topLeftNeighborForbidden)
     {
-        return Waypoint::BOTTOM_RIGHT;
+        return Position::BOTTOM_RIGHT;
     }
     else if (topRightNeighborForbidden)
     {
-        return Waypoint::BOTTOM_LEFT;
+        return Position::BOTTOM_LEFT;
     }
 
-    return Waypoint::NONE;
+    return Position::NONE;
 }
 
 // Checks if b is taut to a
@@ -441,7 +390,7 @@ bool GraphVG::isTaut(Node *a, Node *b)
 {
     switch (a->get_waypoint())
     {
-    case Waypoint::TOP_LEFT:
+    case Position::TOP_LEFT:
     {
         switch (get_relative_position(a, b))
         {
@@ -457,7 +406,7 @@ bool GraphVG::isTaut(Node *a, Node *b)
         }
         }
     }
-    case Waypoint::TOP_RIGHT:
+    case Position::TOP_RIGHT:
     {
         switch (get_relative_position(a, b))
         {
@@ -474,7 +423,7 @@ bool GraphVG::isTaut(Node *a, Node *b)
         }
         break;
     }
-    case Waypoint::BOTTOM_RIGHT:
+    case Position::BOTTOM_RIGHT:
     {
         switch (get_relative_position(a, b))
         {
@@ -491,7 +440,7 @@ bool GraphVG::isTaut(Node *a, Node *b)
         }
         break;
     }
-    case Waypoint::BOTTOM_LEFT:
+    case Position::BOTTOM_LEFT:
     {
         switch (get_relative_position(a, b))
         {
@@ -679,19 +628,19 @@ void GraphVG::findWaypoints()
                 continue;
             }
 
-            Waypoint corner = isWaypoint(node);
+            Position corner = isWaypoint(node);
             node->set_waypoint(corner);
 
             switch (corner)
             {
-            case Waypoint::NONE:
+            case Position::NONE:
             {
                 break;
             }
-            case Waypoint::TOP_LEFT:
-            case Waypoint::TOP_RIGHT:
-            case Waypoint::BOTTOM_RIGHT:
-            case Waypoint::BOTTOM_LEFT:
+            case Position::TOP_LEFT:
+            case Position::TOP_RIGHT:
+            case Position::BOTTOM_RIGHT:
+            case Position::BOTTOM_LEFT:
             {
                 waypoints->insert(node);
                 break;

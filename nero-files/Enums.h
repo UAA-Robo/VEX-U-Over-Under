@@ -4,6 +4,8 @@
 
 enum class Position
 {
+  NONE,
+  CENTER,
   TOP,
   RIGHT,
   BOTTOM,
@@ -11,17 +13,17 @@ enum class Position
   TOP_LEFT,
   TOP_RIGHT,
   BOTTOM_RIGHT,
-  BOTTOM_LEFT
+  BOTTOM_LEFT,
 };
 
-enum class Waypoint
-{
-  NONE,
-  TOP_LEFT,
-  TOP_RIGHT,
-  BOTTOM_RIGHT,
-  BOTTOM_LEFT
-};
+// enum class Waypoint
+// {
+//   NONE,
+//   TOP_LEFT,
+//   TOP_RIGHT,
+//   BOTTOM_RIGHT,
+//   BOTTOM_LEFT
+// };
 
 enum class GraphType
 {

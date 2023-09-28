@@ -36,6 +36,7 @@ private:
   GUIMode mode;
   bool is_selecting_nodes_allowed;
   bool is_auto_mode;
+  bool has_data_to_draw;
   SDL_bool quit;
   SDL_bool mouse_active;
   SDL_bool mouse_hover;

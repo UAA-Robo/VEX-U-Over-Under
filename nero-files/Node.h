@@ -14,8 +14,8 @@ public:
 
   bool get_is_forbidden();
 
-  Waypoint set_waypoint(Waypoint waypoint_value);
-  Waypoint get_waypoint();
+  Position set_waypoint(Position waypoint_value);
+  Position get_waypoint();
 
   std::set<Node *> *get_neighbors();
   std::set<Node *> *get_waypoint_neighbors();
@@ -35,7 +35,7 @@ private:
   // TODO - should this be capitalized, since underlying value can change?
   Graph *const graph;
   bool is_forbidden;
-  Waypoint waypoint;
+  Position waypoint;
   std::set<Node *> *const neighbors;
   std::set<Node *> *const waypoint_neighbors;
 };
