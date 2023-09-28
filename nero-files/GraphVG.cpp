@@ -98,7 +98,6 @@ std::vector<Node *> *GraphVG::get_path(Node *origin, Node *destination)
 
     while (frontier.size() > 0)
     {
-        std::cout << "CCCCCCCCCCC\n";
 
         // int lowestFScore = 2147483647;
         // int lowestHScore = 2147483647;
@@ -122,18 +121,13 @@ std::vector<Node *> *GraphVG::get_path(Node *origin, Node *destination)
             }
         }
 
-        std::cout << "EEEEEEEEEEEEE\n";
         frontier.erase(currentNode);
-        std::cout << "EEEEEEEEEEEEE\n";
 
         if (currentNode == destination)
         {
 
-            std::cout << "QQQQQQQQQ\n";
             removeWaypoint(origin);
-            std::cout << "QQQQQQQQQ\n";
             removeWaypoint(destination);
-            std::cout << "QQQQQQQQQ\n";
             return reconstruct_path(currentNode, cameFrom);
         }
 
@@ -153,7 +147,6 @@ std::vector<Node *> *GraphVG::get_path(Node *origin, Node *destination)
         //     }
         //   }
         // }
-        std::cout << "DDDDDDDDDDDDD\n";
         for (Node *neighbor : (*currentNode->get_waypoint_neighbors()))
         {
             if (closed.find(neighbor) == closed.end())
@@ -183,12 +176,19 @@ std::vector<Node *> *GraphVG::get_path(Node *origin, Node *destination)
 
 std::vector<std::vector<Node *> *> *GraphVG::get_path_snapshots(Node *origin, Node *destination)
 {
+    // for (std::vector<Node *> *vec : (*snapshots))
+    // {
+    //     delete vec;
+    // }
+    // snapshots->clear();
+
     std::set<Node *> frontier;
     std::set<Node *> closed;
     std::map<Node *, Node *> cameFrom;
     std::map<Node *, int> gScores;
     std::map<Node *, int> fScores;
-    std::vector<std::vector<Node *> *> *snapshots;
+    // std::vector<std::vector<Node *> *> *snapshots;
+    snapshots = new std::vector<std::vector<Node *> *>;
 
     frontier.insert(origin);
     cameFrom[origin] = origin;

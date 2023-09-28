@@ -132,12 +132,20 @@ std::vector<Node *> *GraphNormal::get_random_path()
 
 std::vector<std::vector<Node *> *> *GraphNormal::get_path_snapshots(Node *origin, Node *destination)
 {
+
+    // for (std::vector<Node *> *vec : (*snapshots))
+    // {
+    //     delete vec;
+    // }
+    // snapshots->clear();
+
     std::set<Node *> frontier;
     std::set<Node *> closed;
     std::map<Node *, Node *> cameFrom;
     std::map<Node *, int> gScores;
     std::map<Node *, int> fScores;
-    std::vector<std::vector<Node *> *> *snapshots;
+    // std::vector<std::vector<Node *> *> *snapshots;
+    snapshots = new std::vector<std::vector<Node *> *>;
 
     frontier.insert(origin);
     cameFrom[origin] = origin;

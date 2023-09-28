@@ -55,6 +55,7 @@ GUI::GUI(Graph *graph, int visual_node_size) : GRAPH(graph),
   SDL_SetWindowTitle(window, "Pathfinding");
 
   path_nodes = new std::vector<Node *>;
+  path_nodes_snapshots = new std::vector<std::vector<Node *> *>;  
 
   run();
 }
@@ -92,6 +93,7 @@ void GUI::event_loop()
 {
   while (!quit)
   {
+    std::cout << "QQQQQQQQQQQQQQQQ\n";
     SDL_Event event;
     while (SDL_PollEvent(&event))
     {
@@ -165,17 +167,25 @@ void GUI::event_loop()
         break;
       }
     }
+    std::cout << "AAAAAAAAAAA\n";
 
     if (is_auto_mode && snapshot_number + 1 < path_nodes_snapshots->size())
     {
       snapshot_number++;
     }
 
+    std::cout << "AAAAAAAAAAA\n";
     draw_background();
+    std::cout << "AAAAAAAAAAA\n";
     draw_grid();
+    std::cout << "AAAAAAAAAAA\n";
     draw_forbidden_nodes();
+    std::cout << "AAAAAAAAAAA\n";
     draw_main();
+    std::cout << "AAAAAAAAAAA\n";
     draw_cursor();
+    std::cout << "AAAAAAAAAAA\n";
+    std::cout << "QQQQQQQQQQQQQQ\n";
 
     // drawing mode -> GRAPH mode
 
@@ -215,9 +225,12 @@ void GUI::clear_data()
   {
   case GUIMode::SIMPLE:
   {
-    std::cout << "DDDDDDDDDD\n";
-    path_nodes->clear();
-    std::cout << "DDDDDDDDDD\n";
+    // path_nodes->clear();
+    std::cout << "AAAAAAAAA\n";
+    if (path_nodes != NULL)
+      delete path_nodes;
+    std::cout << "AAAAAAAAA\n";
+    // path_nodes = new std::vector<Node *>;
     break;
   }
   case GUIMode::SNAPSHOTS:
@@ -226,7 +239,8 @@ void GUI::clear_data()
     {
       delete vec;
     }
-    path_nodes_snapshots->clear();
+    delete path_nodes_snapshots;
+    // path_nodes_snapshots = new std::vector<std::vector<Node *> *>;
     snapshot_number = 0;
     break;
   }
@@ -252,21 +266,16 @@ void GUI::get_path(Node *a, Node *b)
 
 void GUI::get_random_path()
 {
-  std::cout << "BBBBBBBBB\n";
-
   clear_data();
 
   auto start = std::chrono::high_resolution_clock::now();
-  std::cout << "BBBBBBBBB\n";
   path_nodes = GRAPH->get_random_path();
-  std::cout << "BBBBBBBBB\n";
   auto stop = std::chrono::high_resolution_clock::now();
 
   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
   paths_found_count++;
   total_computation_duration += duration.count();
   std::cout << "Time for path " << paths_found_count << ": " << duration.count() << std::endl;
-  std::cout << "BBBBBBBBB\n";
 }
 
 void GUI::get_path_snapshots(Node *a, Node *b)
@@ -310,6 +319,7 @@ void GUI::change_modes()
   {
     clear_data();
     mode = GUIMode::SNAPSHOTS;
+    generate_path();
     break;
   }
   case GUIMode::SNAPSHOTS:
@@ -317,6 +327,7 @@ void GUI::change_modes()
     clear_data();
     // mode = GUIMode::SIMPLE;
     mode = GUIMode::LOS;
+    generate_path();
     break;
   }
   case GUIMode::LOS:
@@ -628,16 +639,21 @@ void GUI::draw_forbidden_nodes()
 
 void GUI::draw_main()
 {
+  std::cout << "CCCCCCCCCCCCCCCC\n";
   switch (mode)
   {
   case GUIMode::SIMPLE:
   {
+    std::cout << "DDDDDDDDDDDDDDD\n";
     draw_path();
+    std::cout << "DDDDDDDDDDDDDDD\n";
     break;
   }
   case GUIMode::SNAPSHOTS:
   {
+    std::cout << "BBBBBBBBBBBBBBBBB\n";
     draw_snapshots();
+    std::cout << "BBBBBBBBBBBBBBBBB\n";
     break;
   }
   case GUIMode::LOS:
@@ -646,6 +662,7 @@ void GUI::draw_main()
     break;
   }
   }
+  std::cout << "CCCCCCCCCCCCCCCCCC\n";
 }
 
 void GUI::draw_path()
@@ -715,6 +732,8 @@ void GUI::draw_normal_snapshots()
 
 void GUI::draw_vg_snapshots()
 {
+  std::cout << path_nodes_snapshots << std::endl;
+  std::cout << path_nodes_snapshots->size() << std::endl;
   if (path_nodes_snapshots->size() == 0)
   {
     return;

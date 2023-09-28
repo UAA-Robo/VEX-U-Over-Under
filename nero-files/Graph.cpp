@@ -15,8 +15,9 @@ Graph::Graph(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE, GraphType t
                                                                                        type(type),
                                                                                        waypoints(new std::set<Node *>),
                                                                                        forbidden_nodes(new std::vector<Node *>),
-                                                                                       nodes(new Node **[Y_NODES_COUNT]),
-                                                                                       path_nodes(new std::vector<Node *>)
+                                                                                       nodes(new Node **[Y_NODES_COUNT])
+//  path_nodes(new std::vector<Node *>),
+//  snapshots(new std::vector<std::vector<Node *> *>)
 
 {
   for (int x = 0; x < Y_NODES_COUNT; x++)
@@ -316,7 +317,8 @@ int Graph::get_edge_cost(Node *a, Node *b)
 std::vector<Node *> *Graph::reconstruct_path(Node *currentNode, std::map<Node *, Node *> cameFrom)
 {
   // std::vector<Node *> *path;
-  path_nodes->clear();
+  // path_nodes->clear();
+  path_nodes = new std::vector<Node *>;
 
   while (currentNode != cameFrom[currentNode])
   {
