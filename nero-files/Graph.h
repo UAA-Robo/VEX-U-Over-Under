@@ -34,8 +34,8 @@ private:
   std::vector<Node *> *path_nodes;
   std::vector<std::vector<Node *> *> *path_nodes_snapshots;
 
-  void forbid_triangle(Node *a, Node *b);
-  void forbid_rectangle(Node *topLeftPoint, Node *topRightPoint, Node *bottomLeftPoint);
+  void forbid_triangle(Node *a, Node *b, int robot_zones_count, int buffer_zones_count);
+  void forbid_rectangle(Node *topLeftPoint, Node *topRightPoint, Node *bottomLeftPoint, int robot_zones_count, int buffer_zones_count);
   void add_forbidden_zones(Graph *graph);
   void add_edge(Node *a, Node *b);
   void remove_edge(Node *a, Node *b);
@@ -51,6 +51,9 @@ private:
   void remove_waypoint(Node *node);
   int get_h_cost(Node *currentNode, Node *destination);
   std::vector<Node *> *reconstruct_path(Node *currentNode, std::map<Node *, Node *> cameFrom);
+
+  ForbiddenType get_forbidden_type(int loc, int start, int end, int robot_zones_count, int buffer_zones_count);
+  ForbiddenType get_forbidden_type(int x, int y, int start, int end, int robot_zones_count, int buffer_zones_count);
 };
 
 // // Remove redundant this->

@@ -13,6 +13,7 @@ Node::Node(const int x, const int y, Graph *const graph) : x(x),
 {
   is_forbidden = false;
   waypoint = Position::NONE;
+  forbidden_type = ForbiddenType::NONE;
 };
 
 bool Node::get_is_forbidden()
@@ -56,9 +57,10 @@ std::set<Node *> *Node::get_waypoint_neighbors()
   return waypoint_neighbors;
 }
 
-void Node::forbid()
+void Node::forbid(ForbiddenType type)
 {
   is_forbidden = true;
+  forbidden_type = type;
 
   for (Node *neighbor : (*neighbors))
   {

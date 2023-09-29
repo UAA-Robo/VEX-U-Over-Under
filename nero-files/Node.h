@@ -9,6 +9,7 @@ class Node
 public:
   const int x;
   const int y;
+  ForbiddenType forbidden_type;
 
   Node(const int x, const int y, Graph *const graph);
 
@@ -20,7 +21,7 @@ public:
   std::set<Node *> *get_neighbors();
   std::set<Node *> *get_waypoint_neighbors();
 
-  void forbid();
+  void forbid(ForbiddenType type);
   void add_neighbor(Node *neighbor_node);
   void remove_neighbor(Node *neighbor_node);
   void add_waypoint_neighbor(Node *neighbor_node);

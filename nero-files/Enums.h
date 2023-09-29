@@ -22,3 +22,11 @@ enum class GUIMode
   SNAPSHOTS,
   LOS
 };
+
+enum class ForbiddenType
+{
+  NONE,
+  CORE,
+  ROBOT,
+  BUFFER
+};
