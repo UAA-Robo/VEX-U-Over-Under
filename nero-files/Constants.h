@@ -18,5 +18,5 @@ const int Y_NODES_COUNT = FIELD_SIZE / NODE_SIZE;
 
 const int MAX_INT = 2147483647;
 
-const int BUFFER_ZONES_COUNT = 5;
 const int ROBOT_ZONES_COUNT = 10;
+const int BUFFER_ZONES_COUNT = 5;

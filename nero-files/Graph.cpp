@@ -6,19 +6,7 @@
 #include "Node.h"
 #include "Graph.h"
 #include "Constants.h"
-
-#include "Graph.h"
-#include <time.h>
-#include <random>
-#include <iostream>
-#include <iostream>
-#include <time.h>
-#include <random>
-#include <stdexcept>
-#include <cmath>
-#include "Graph.h"
 #include "Enums.h"
-#include "Constants.h"
 
 Position Graph::get_node_position(int x, int y)
 {
@@ -147,9 +135,11 @@ Graph::Graph(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE) : X_NODES_C
   };
 
   add_forbidden_zones(this);
-
+  std::cout << "BBBBBBBBBB\n";
   find_waypoints();
+  std::cout << "BBBBBBBBBB\n";
   add_neighbor_waypoints();
+  std::cout << "BBBBBBBBBB\n";
 };
 
 Graph::~Graph()
@@ -212,189 +202,365 @@ ForbiddenType Graph::get_forbidden_type(int loc, int start, int end, int robot_z
 ForbiddenType Graph::get_forbidden_type(int x, int y, int start, int end, int robot_zones_count, int buffer_zones_count)
 {
 }
-void Graph::forbid_triangle(Node *a, Node *b, int robot_zones_count, int buffer_zones_count)
+
+bool Graph::is_valid_node(int x, int y)
 {
+  if ((x >= 0 && x < X_NODES_COUNT) && (y >= 0 && y < Y_NODES_COUNT))
+  {
+    return true;
+  }
+
+  return false;
+}
+
+Position Graph::get_triangle_position(Node *right_angle_node, Node *a, Node *b)
+{
+  Position position_a = get_relative_position(right_angle_node, a);
+  Position position_b = get_relative_position(right_angle_node, b);
+
+  switch (position_a)
+  {
+  case Position::TOP:
+  {
+    switch (position_b)
+    {
+    case Position::RIGHT:
+    {
+      return Position::BOTTOM_LEFT;
+    }
+    case Position::LEFT:
+    {
+      return Position::BOTTOM_RIGHT;
+    }
+    default:
+    {
+      throw std::runtime_error("ERROR 23819723");
+    }
+    }
+    break;
+  }
+  case Position::RIGHT:
+  {
+    switch (position_b)
+    {
+    case Position::TOP:
+    {
+      return Position::BOTTOM_LEFT;
+    }
+    case Position::BOTTOM:
+    {
+      return Position::TOP_LEFT;
+    }
+    default:
+    {
+      throw std::runtime_error("ERROR 23819723");
+    }
+    }
+  }
+  case Position::BOTTOM:
+  {
+    switch (position_b)
+    {
+    case Position::RIGHT:
+    {
+      return Position::TOP_LEFT;
+    }
+    case Position::LEFT:
+    {
+      return Position::TOP_RIGHT;
+    }
+    default:
+    {
+      throw std::runtime_error("ERROR 23819723");
+    }
+    }
+  }
+  case Position::LEFT:
+  {
+    switch (position_b)
+    {
+    case Position::TOP:
+    {
+      return Position::BOTTOM_RIGHT;
+    }
+    case Position::BOTTOM:
+    {
+      return Position::TOP_RIGHT;
+    }
+    default:
+    {
+      throw std::runtime_error("ERROR 23819723");
+    }
+    }
+  }
+  default:
+  {
+    throw std::runtime_error("ERROR 59172983719028");
+  }
+  }
+
+  // if ((position_a == Position::TOP || position_a == Position::RIGHT || position_a == Position::BOTTOM || position_a == Position::LEFT) && (position_b == Position::TOP || position_b == Position::RIGHT || position_b == Position::BOTTOM || position_b == Position::LEFT))
+  // {
+  // }
+
+  // throw std::runtime_error("ERROR 000001");
+
+  throw std::runtime_error("ERROR 129381298318198237123");
+}
+
+// given right angle node, which triangle orientation is it
+// given 3 nodes and triangle orientation, which is a (same x as right angle node) and which is b
+// get slope, and if isoceles, readjust slope to 1/1
+
+// different side lengths, if equal can go by one/one
+void Graph::forbid_triangle(Node *right_angle_node, Node *a, Node *b, int robot_nodes_count, int buffer_nodes_count)
+{
+  if (right_angle_node->x == b->x)
+  {
+    Node *temp = a;
+    a = b;
+    b = temp;
+  }
+
   int x_start = a->x;
   int y_start = a->y;
   int x_end = b->x;
   int y_end = b->y;
-  int x = x_start;
-  int y = y_start;
-  Position position = get_relative_position(b, a);
+  double x = x_start;
+  double y = y_start;
+
+  double dx = x_end - x_start;
+  double dy = y_end - y_start;
+  double x_slope;
+  double y_slope;
+
+  if (dx < 0)
+  {
+    dx = dx * (-1);
+  }
+
+  if (dy < 0)
+  {
+    dy = dy * (-1);
+  }
+
+  if (dx == dy)
+  {
+    x_slope = 1;
+    y_slope = 1;
+  }
+  else
+  {
+    throw std::runtime_error("ERROR 1892313");
+    x_slope = (dx / dy) / 140;
+    y_slope = (dy / dx) / 140;
+  }
+
+  if (x_slope < 0)
+  {
+    x_slope = x_slope * (-1);
+  }
+
+  if (y_slope < 0)
+  {
+    y_slope = y_slope * (-1);
+  }
+
+  Position position = get_triangle_position(right_angle_node, a, b);
 
   switch (position)
   {
   case Position::TOP_LEFT:
   {
-    while (x <= x_end && y <= y_end)
+    y_slope = y_slope * (-1);
+
+    while (x <= x_end && y >= y_end)
     {
-      for (int sub_x = x; sub_x <= x_end; sub_x++)
+      for (int sub_x = x_start; sub_x <= x; sub_x++)
       {
-        nodes[y][sub_x]->forbid(ForbiddenType::CORE);
+        if (is_valid_node(y, sub_x) && nodes[int(y)][sub_x]->forbidden_type == ForbiddenType::NONE)
+        // if (is_valid_node(y, sub_x) && get_node(sub_x, y)->forbidden_type == ForbiddenType::NONE)
+        {
+          // nodes[int(y)][sub_x]->forbidden_type = ForbiddenType::CORE;
+          nodes[int(y)][sub_x]->forbid(ForbiddenType::CORE);
+        }
       }
 
-      x++;
-      y++;
+      x += x_slope;
+      y += y_slope;
     }
 
-    x_start = a->x - robot_zones_count;
-    y_start = a->y;
-    x_end = b->x;
-    y_end = b->y + robot_zones_count;
+    x_start = a->x - robot_nodes_count;
+    y_start = a->y + robot_nodes_count * 2;
+    x_end = b->x + robot_nodes_count * 2;
+    y_end = b->y - robot_nodes_count;
     x = x_start;
     y = y_start;
 
-    while (x <= x_end && y <= y_end)
+    while (x <= x_end && y >= y_end)
     {
-      for (int sub_x = x; sub_x <= x_end; sub_x++)
+      for (int sub_x = x_start; sub_x <= x; sub_x++)
       {
-        if (nodes[y][sub_x]->forbidden_type != ForbiddenType::NONE)
+        if (is_valid_node(y, sub_x) && nodes[int(y)][sub_x]->forbidden_type == ForbiddenType::NONE)
         {
-          break;
+          // nodes[int(y)][sub_x]->forbidden_type = ForbiddenType::ROBOT;
+          nodes[int(y)][sub_x]->forbid(ForbiddenType::ROBOT);
         }
-        nodes[y][sub_x]->forbid(ForbiddenType::ROBOT);
       }
 
-      x++;
-      y++;
+      x += x_slope;
+      y += y_slope;
     }
 
-    x_start = a->x - robot_zones_count - buffer_zones_count;
-    y_start = a->y;
-    x_end = b->x;
-    y_end = b->y + robot_zones_count + buffer_zones_count;
+    x_start = a->x - robot_nodes_count - buffer_nodes_count;
+    y_start = a->y + robot_nodes_count * 2 + buffer_nodes_count * 2;
+    x_end = b->x + robot_nodes_count * 2 + buffer_nodes_count * 2;
+    y_end = b->y - robot_nodes_count - buffer_nodes_count;
     x = x_start;
     y = y_start;
 
-    while (x <= x_end && y <= y_end)
+    while (x <= x_end && y >= y_end)
     {
-      for (int sub_x = x; sub_x <= x_end; sub_x++)
+      for (int sub_x = x_start; sub_x <= x; sub_x++)
       {
-        if (nodes[y][sub_x]->forbidden_type != ForbiddenType::NONE)
+        if (is_valid_node(y, sub_x) && nodes[int(y)][sub_x]->forbidden_type == ForbiddenType::NONE)
         {
-          break;
+          // nodes[int(y)][sub_x]->forbidden_type = ForbiddenType::BUFFER;
+          nodes[int(y)][sub_x]->forbid(ForbiddenType::BUFFER);
         }
-        nodes[y][sub_x]->forbid(ForbiddenType::BUFFER);
       }
 
-      x++;
-      y++;
+      x += x_slope;
+      y += y_slope;
     }
     break;
   }
   case Position::TOP_RIGHT:
   {
-    while (x <= x_end && y <= y_end)
+    x_slope = x_slope * (-1);
+    y_slope = y_slope * (-1);
+
+    while (x >= x_end && y >= y_end)
     {
-      for (int sub_x = x; sub_x <= x_end; sub_x++)
+      for (int sub_x = x_start; sub_x >= x; sub_x--)
       {
-        nodes[y][sub_x]->forbid(ForbiddenType::CORE);
+        if (is_valid_node(y, sub_x) && nodes[int(y)][sub_x]->forbidden_type == ForbiddenType::NONE)
+        {
+          // nodes[int(y)][sub_x]->forbidden_type = ForbiddenType::CORE;
+          nodes[int(y)][sub_x]->forbid(ForbiddenType::CORE);
+        }
       }
 
-      x--;
-      y++;
+      x += x_slope;
+      y += y_slope;
     }
 
-    x_start = a->x - robot_zones_count;
-    y_start = a->y;
-    x_end = b->x;
-    y_end = b->y + robot_zones_count;
+    x_start = a->x + robot_nodes_count;
+    y_start = a->y + robot_nodes_count * 2;
+    x_end = b->x - robot_nodes_count * 2;
+    y_end = b->y - robot_nodes_count;
     x = x_start;
     y = y_start;
 
-    while (x <= x_end && y <= y_end)
+    while (x >= x_end && y >= y_end)
     {
-      for (int sub_x = x; sub_x <= x_end; sub_x++)
+      for (int sub_x = x_start; sub_x >= x; sub_x--)
       {
-        if (nodes[y][sub_x]->forbidden_type != ForbiddenType::NONE)
+        if (is_valid_node(y, sub_x) && nodes[int(y)][sub_x]->forbidden_type == ForbiddenType::NONE)
         {
-          break;
+          // nodes[int(y)][sub_x]->forbidden_type = ForbiddenType::ROBOT;
+          nodes[int(y)][sub_x]->forbid(ForbiddenType::ROBOT);
         }
-        nodes[y][sub_x]->forbid(ForbiddenType::ROBOT);
       }
 
-      x--;
-      y++;
+      x += x_slope;
+      y += y_slope;
     }
 
-    x_start = a->x - robot_zones_count - buffer_zones_count;
-    y_start = a->y;
-    x_end = b->x;
-    y_end = b->y + robot_zones_count + buffer_zones_count;
+    x_start = a->x + robot_nodes_count + buffer_nodes_count;
+    y_start = a->y + robot_nodes_count * 2 + buffer_nodes_count * 2;
+    x_end = b->x - robot_nodes_count * 2 - buffer_nodes_count * 2;
+    y_end = b->y - robot_nodes_count - buffer_nodes_count;
     x = x_start;
     y = y_start;
 
-    while (x <= x_end && y <= y_end)
+    while (x >= x_end && y >= y_end)
     {
-      for (int sub_x = x; sub_x <= x_end; sub_x++)
+      for (int sub_x = x_start; sub_x >= x; sub_x--)
       {
-        if (nodes[y][sub_x]->forbidden_type != ForbiddenType::NONE)
+        if (is_valid_node(y, sub_x) && nodes[int(y)][sub_x]->forbidden_type == ForbiddenType::NONE)
         {
-          break;
+          // nodes[int(y)][sub_x]->forbidden_type = ForbiddenType::BUFFER;
+          nodes[int(y)][sub_x]->forbid(ForbiddenType::BUFFER);
         }
-        nodes[y][sub_x]->forbid(ForbiddenType::BUFFER);
       }
 
-      x--;
-      y++;
+      x += x_slope;
+      y += y_slope;
     }
     break;
   }
   case Position::BOTTOM_RIGHT:
   {
-    while (x <= x_end && y <= y_end)
+    x_slope = x_slope * (-1);
+
+    while (x >= x_end && y <= y_end)
     {
-      for (int sub_x = x; sub_x <= x_end; sub_x++)
+      for (int sub_x = x_start; sub_x >= x; sub_x--)
       {
-        nodes[y][sub_x]->forbid(ForbiddenType::CORE);
+        if (is_valid_node(y, sub_x) && nodes[int(y)][sub_x]->forbidden_type == ForbiddenType::NONE)
+        {
+          // nodes[int(y)][sub_x]->forbidden_type = ForbiddenType::CORE;
+          nodes[int(y)][sub_x]->forbid(ForbiddenType::CORE);
+        }
       }
 
-      x++;
-      y++;
+      x += x_slope;
+      y += y_slope;
     }
 
-    x_start = a->x - robot_zones_count;
-    y_start = a->y;
-    x_end = b->x;
-    y_end = b->y + robot_zones_count;
+    x_start = a->x + robot_nodes_count;
+    y_start = a->y - robot_nodes_count * 2;
+    x_end = b->x - robot_nodes_count * 2;
+    y_end = b->y + robot_nodes_count;
     x = x_start;
     y = y_start;
 
-    while (x <= x_end && y <= y_end)
+    while (x >= x_end && y <= y_end)
     {
-      for (int sub_x = x; sub_x <= x_end; sub_x++)
+      for (int sub_x = x_start; sub_x >= x; sub_x--)
       {
-        if (nodes[y][sub_x]->forbidden_type != ForbiddenType::NONE)
+        if (is_valid_node(y, sub_x) && nodes[int(y)][sub_x]->forbidden_type == ForbiddenType::NONE)
         {
-          break;
+          // nodes[int(y)][sub_x]->forbidden_type = ForbiddenType::ROBOT;
+          nodes[int(y)][sub_x]->forbid(ForbiddenType::ROBOT);
         }
-        nodes[y][sub_x]->forbid(ForbiddenType::ROBOT);
       }
 
-      x++;
-      y++;
+      x += x_slope;
+      y += y_slope;
     }
 
-    x_start = a->x - robot_zones_count - buffer_zones_count;
-    y_start = a->y;
-    x_end = b->x;
-    y_end = b->y + robot_zones_count + buffer_zones_count;
+    x_start = a->x + robot_nodes_count + buffer_nodes_count;
+    y_start = a->y - robot_nodes_count * 2 - buffer_nodes_count * 2;
+    x_end = b->x - robot_nodes_count * 2 - buffer_nodes_count * 2;
+    y_end = b->y + robot_nodes_count + buffer_nodes_count;
     x = x_start;
     y = y_start;
 
-    while (x <= x_end && y <= y_end)
+    while (x >= x_end && y <= y_end)
     {
-      for (int sub_x = x; sub_x <= x_end; sub_x++)
+      for (int sub_x = x_start; sub_x >= x; sub_x--)
       {
-        if (nodes[y][sub_x]->forbidden_type != ForbiddenType::NONE)
+        if (is_valid_node(y, sub_x) && nodes[int(y)][sub_x]->forbidden_type == ForbiddenType::NONE)
         {
-          break;
+          // nodes[int(y)][sub_x]->forbidden_type = ForbiddenType::BUFFER;
+          nodes[int(y)][sub_x]->forbid(ForbiddenType::BUFFER);
         }
-        nodes[y][sub_x]->forbid(ForbiddenType::BUFFER);
       }
 
-      x++;
-      y++;
+      x += x_slope;
+      y += y_slope;
     }
     break;
   }
@@ -402,67 +568,322 @@ void Graph::forbid_triangle(Node *a, Node *b, int robot_zones_count, int buffer_
   {
     while (x <= x_end && y <= y_end)
     {
-      for (int sub_x = x; sub_x <= x_end; sub_x++)
+      for (int sub_x = x_start; sub_x <= x; sub_x++)
       {
-        nodes[y][sub_x]->forbid(ForbiddenType::CORE);
+        if (is_valid_node(y, sub_x) && nodes[int(y)][sub_x]->forbidden_type == ForbiddenType::NONE)
+        {
+          // nodes[int(y)][sub_x]->forbidden_type = ForbiddenType::CORE;
+          nodes[int(y)][sub_x]->forbid(ForbiddenType::CORE);
+        }
       }
 
-      x++;
-      y++;
+      x += x_slope;
+      y += y_slope;
     }
 
-    x_start = a->x - robot_zones_count;
-    y_start = a->y;
-    x_end = b->x;
-    y_end = b->y + robot_zones_count;
+    x_start = a->x - robot_nodes_count;
+    y_start = a->y - robot_nodes_count * 2;
+    x_end = b->x + robot_nodes_count * 2;
+    y_end = b->y + robot_nodes_count;
     x = x_start;
     y = y_start;
 
     while (x <= x_end && y <= y_end)
     {
-      for (int sub_x = x; sub_x <= x_end; sub_x++)
+      for (int sub_x = x_start; sub_x <= x; sub_x++)
       {
-        if (nodes[y][sub_x]->forbidden_type != ForbiddenType::NONE)
+        if (is_valid_node(y, sub_x) && nodes[int(y)][sub_x]->forbidden_type == ForbiddenType::NONE)
         {
-          break;
+          // nodes[int(y)][sub_x]->forbidden_type = ForbiddenType::ROBOT;
+          nodes[int(y)][sub_x]->forbid(ForbiddenType::ROBOT);
         }
-        nodes[y][sub_x]->forbid(ForbiddenType::ROBOT);
       }
 
-      x++;
-      y++;
+      x += x_slope;
+      y += y_slope;
     }
 
-    x_start = a->x - robot_zones_count - buffer_zones_count;
-    y_start = a->y;
-    x_end = b->x;
-    y_end = b->y + robot_zones_count + buffer_zones_count;
+    x_start = a->x - robot_nodes_count - buffer_nodes_count;
+    y_start = a->y - robot_nodes_count * 2 - buffer_nodes_count * 2;
+    x_end = b->x + robot_nodes_count * 2 + buffer_nodes_count * 2;
+    y_end = b->y + robot_nodes_count + buffer_nodes_count;
     x = x_start;
     y = y_start;
 
     while (x <= x_end && y <= y_end)
     {
-      for (int sub_x = x; sub_x <= x_end; sub_x++)
+      for (int sub_x = x_start; sub_x <= x; sub_x++)
       {
-        if (nodes[y][sub_x]->forbidden_type != ForbiddenType::NONE)
+        if (is_valid_node(y, sub_x) && nodes[int(y)][sub_x]->forbidden_type == ForbiddenType::NONE)
         {
-          break;
+          // nodes[int(y)][sub_x]->forbidden_type = ForbiddenType::BUFFER;
+          nodes[int(y)][sub_x]->forbid(ForbiddenType::BUFFER);
         }
-        nodes[y][sub_x]->forbid(ForbiddenType::BUFFER);
       }
 
-      x++;
-      y++;
+      x += x_slope;
+      y += y_slope;
     }
     break;
   }
   default:
   {
-    throw std::runtime_error("ERROR 00000");
-    break;
+    throw std::runtime_error("ERROR 12837129");
   }
   }
 }
+
+// void Graph::forbid_triangle(Node *a, Node *b, int robot_zones_count, int buffer_zones_count)
+// {
+//   int x_start = a->x;
+//   int y_start = a->y;
+//   int x_end = b->x;
+//   int y_end = b->y;
+//   int x = x_start;
+//   int y = y_start;
+//   Position position = get_relative_position(b, a);
+
+//   switch (position)
+//   {
+//   case Position::TOP_LEFT:
+//   {
+//     while (x <= x_end && y <= y_end)
+//     {
+//       for (int sub_x = x; sub_x <= x_end; sub_x++)
+//       {
+//         nodes[int(y)][sub_x]->forbid(ForbiddenType::CORE);
+//       }
+
+//       x++;
+//       y++;
+//     }
+
+//     x_start = a->x - robot_zones_count;
+//     y_start = a->y;
+//     x_end = b->x;
+//     y_end = b->y + robot_zones_count;
+//     x = x_start;
+//     y = y_start;
+
+//     while (x <= x_end && y <= y_end)
+//     {
+//       for (int sub_x = x; sub_x <= x_end; sub_x++)
+//       {
+//         if (nodes[int(y)][sub_x]->forbidden_type != ForbiddenType::NONE)
+//         {
+//           break;
+//         }
+//         nodes[int(y)][sub_x]->forbid(ForbiddenType::ROBOT);
+//       }
+
+//       x++;
+//       y++;
+//     }
+
+//     x_start = a->x - robot_zones_count - buffer_zones_count;
+//     y_start = a->y;
+//     x_end = b->x;
+//     y_end = b->y + robot_zones_count + buffer_zones_count;
+//     x = x_start;
+//     y = y_start;
+
+//     while (x <= x_end && y <= y_end)
+//     {
+//       for (int sub_x = x; sub_x <= x_end; sub_x++)
+//       {
+//         if (nodes[int(y)][sub_x]->forbidden_type != ForbiddenType::NONE)
+//         {
+//           break;
+//         }
+//         nodes[int(y)][sub_x]->forbid(ForbiddenType::BUFFER);
+//       }
+
+//       x++;
+//       y++;
+//     }
+//     break;
+//   }
+//   case Position::TOP_RIGHT:
+//   {
+//     while (x <= x_end && y <= y_end)
+//     {
+//       for (int sub_x = x; sub_x <= x_end; sub_x++)
+//       {
+//         nodes[int(y)][sub_x]->forbid(ForbiddenType::CORE);
+//       }
+
+//       x--;
+//       y++;
+//     }
+
+//     x_start = a->x - robot_zones_count;
+//     y_start = a->y;
+//     x_end = b->x;
+//     y_end = b->y + robot_zones_count;
+//     x = x_start;
+//     y = y_start;
+
+//     while (x <= x_end && y <= y_end)
+//     {
+//       for (int sub_x = x; sub_x <= x_end; sub_x++)
+//       {
+//         if (nodes[int(y)][sub_x]->forbidden_type != ForbiddenType::NONE)
+//         {
+//           break;
+//         }
+//         nodes[int(y)][sub_x]->forbid(ForbiddenType::ROBOT);
+//       }
+
+//       x--;
+//       y++;
+//     }
+
+//     x_start = a->x - robot_zones_count - buffer_zones_count;
+//     y_start = a->y;
+//     x_end = b->x;
+//     y_end = b->y + robot_zones_count + buffer_zones_count;
+//     x = x_start;
+//     y = y_start;
+
+//     while (x <= x_end && y <= y_end)
+//     {
+//       for (int sub_x = x; sub_x <= x_end; sub_x++)
+//       {
+//         if (nodes[int(y)][sub_x]->forbidden_type != ForbiddenType::NONE)
+//         {
+//           break;
+//         }
+//         nodes[int(y)][sub_x]->forbid(ForbiddenType::BUFFER);
+//       }
+
+//       x--;
+//       y++;
+//     }
+//     break;
+//   }
+//   case Position::BOTTOM_RIGHT:
+//   {
+//     while (x <= x_end && y <= y_end)
+//     {
+//       for (int sub_x = x; sub_x <= x_end; sub_x++)
+//       {
+//         nodes[int(y)][sub_x]->forbid(ForbiddenType::CORE);
+//       }
+
+//       x++;
+//       y++;
+//     }
+
+//     x_start = a->x - robot_zones_count;
+//     y_start = a->y;
+//     x_end = b->x;
+//     y_end = b->y + robot_zones_count;
+//     x = x_start;
+//     y = y_start;
+
+//     while (x <= x_end && y <= y_end)
+//     {
+//       for (int sub_x = x; sub_x <= x_end; sub_x++)
+//       {
+//         if (nodes[int(y)][sub_x]->forbidden_type != ForbiddenType::NONE)
+//         {
+//           break;
+//         }
+//         nodes[int(y)][sub_x]->forbid(ForbiddenType::ROBOT);
+//       }
+
+//       x++;
+//       y++;
+//     }
+
+//     x_start = a->x - robot_zones_count - buffer_zones_count;
+//     y_start = a->y;
+//     x_end = b->x;
+//     y_end = b->y + robot_zones_count + buffer_zones_count;
+//     x = x_start;
+//     y = y_start;
+
+//     while (x <= x_end && y <= y_end)
+//     {
+//       for (int sub_x = x; sub_x <= x_end; sub_x++)
+//       {
+//         if (nodes[int(y)][sub_x]->forbidden_type != ForbiddenType::NONE)
+//         {
+//           break;
+//         }
+//         nodes[int(y)][sub_x]->forbid(ForbiddenType::BUFFER);
+//       }
+
+//       x++;
+//       y++;
+//     }
+//     break;
+//   }
+//   case Position::BOTTOM_LEFT:
+//   {
+//     while (x <= x_end && y <= y_end)
+//     {
+//       for (int sub_x = x; sub_x <= x_end; sub_x++)
+//       {
+//         nodes[int(y)][sub_x]->forbid(ForbiddenType::CORE);
+//       }
+
+//       x++;
+//       y++;
+//     }
+
+//     x_start = a->x - robot_zones_count;
+//     y_start = a->y;
+//     x_end = b->x;
+//     y_end = b->y + robot_zones_count;
+//     x = x_start;
+//     y = y_start;
+
+//     while (x <= x_end && y <= y_end)
+//     {
+//       for (int sub_x = x; sub_x <= x_end; sub_x++)
+//       {
+//         if (nodes[int(y)][sub_x]->forbidden_type != ForbiddenType::NONE)
+//         {
+//           break;
+//         }
+//         nodes[int(y)][sub_x]->forbid(ForbiddenType::ROBOT);
+//       }
+
+//       x++;
+//       y++;
+//     }
+
+//     x_start = a->x - robot_zones_count - buffer_zones_count;
+//     y_start = a->y;
+//     x_end = b->x;
+//     y_end = b->y + robot_zones_count + buffer_zones_count;
+//     x = x_start;
+//     y = y_start;
+
+//     while (x <= x_end && y <= y_end)
+//     {
+//       for (int sub_x = x; sub_x <= x_end; sub_x++)
+//       {
+//         if (nodes[int(y)][sub_x]->forbidden_type != ForbiddenType::NONE)
+//         {
+//           break;
+//         }
+//         nodes[int(y)][sub_x]->forbid(ForbiddenType::BUFFER);
+//       }
+
+//       x++;
+//       y++;
+//     }
+//     break;
+//   }
+//   default:
+//   {
+//     throw std::runtime_error("ERROR 00000");
+//     break;
+//   }
+//   }
+// }
 
 // void Graph::forbid_triangle(Node *a, Node *b, int robot_zones_count, int buffer_zones_count)
 // {
@@ -709,7 +1130,7 @@ void Graph::forbid_rectangle(Node *topLeftPoint, Node *topRightPoint, Node *bott
   {
     for (int x = topLeftPoint->x; x <= topRightPoint->x; x++)
     {
-      nodes[y][x]->forbid();
+      nodes[y][x]->forbid(ForbiddenType::CORE);
     }
   }
 }
@@ -838,21 +1259,25 @@ void Graph::add_forbidden_zones(Graph *graph)
   double const BAR_MAIN_SIZE_Y = 2.375;
 
   forbid_triangle(
+      graph->get_node(0, 0),
       graph->get_node(0, ROLLER_SIZE),
       graph->get_node(ROLLER_SIZE, 0),
       ROBOT_ZONES_COUNT,
       BUFFER_ZONES_COUNT);
   forbid_triangle(
+      graph->get_node(FIELD_SIZE - 1, 0),
       graph->get_node(FIELD_SIZE - 1, ROLLER_SIZE),
       graph->get_node(FIELD_SIZE - 1 - ROLLER_SIZE, 0),
       ROBOT_ZONES_COUNT,
       BUFFER_ZONES_COUNT);
   forbid_triangle(
+      graph->get_node(0, FIELD_SIZE - 1),
       graph->get_node(0, FIELD_SIZE - 1 - ROLLER_SIZE),
       graph->get_node(ROLLER_SIZE, FIELD_SIZE - 1),
       ROBOT_ZONES_COUNT,
       BUFFER_ZONES_COUNT);
   forbid_triangle(
+      graph->get_node(FIELD_SIZE - 1, FIELD_SIZE - 1),
       graph->get_node(FIELD_SIZE - 1, FIELD_SIZE - 1 - ROLLER_SIZE),
       graph->get_node(FIELD_SIZE - 1 - ROLLER_SIZE, FIELD_SIZE - 1),
       ROBOT_ZONES_COUNT,
@@ -1367,6 +1792,7 @@ bool Graph::check_LOS(Node *a, Node *b)
   double y = a->y + (1 / 2);
   // double dx = (b->x + (NODE_SIZE / 2)) - a->x;
   // double dy = (b->y + (NODE_SIZE / 2)) - a->y;
+  // TODO - dx or dy can never be zero because adding half. Add half before taking distance? Can result in rounding error. Take difference first then check if zero otherwise add half?
   double dx = ((b->x - a->x) + (1 / 2));
   double dy = ((b->y - a->y) + (1 / 2));
   double xSlope;

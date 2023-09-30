@@ -17,7 +17,9 @@ GUI::GUI(Graph *graph, int visual_node_size) : GRAPH(graph),
                                                CURSOR_COLOR({200, 200, 200, 255}),
                                                ORIGIN_NODE_COLOR({255, 255, 0, 255}),
                                                DESTINATION_NODE_COLOR({0, 0, 0, 255}),
-                                               FORBIDDEN_NODE_COLOR({255, 0, 0, 255}),
+                                               FORBIDDEN_CORE_NODE_COLOR({255, 0, 0, 255}),
+                                               FORBIDDEN_ROBOT_NODE_COLOR({255, 165, 0, 255}),
+                                               FORBIDDEN_BUFFER_NODE_COLOR({255, 255, 0, 255}),
                                                PATH_NODE_COLOR({0, 255, 0, 255}),
                                                PAST_PATH_NODE_COLOR({0, 0, 255, 255})
 {
@@ -455,10 +457,20 @@ void GUI::draw_grid()
 
 void GUI::draw_forbidden_nodes()
 {
-
   for (Node *node : (*forbidden_nodes))
   {
-    draw_cell(renderer, node, FORBIDDEN_NODE_COLOR);
+    if (node->forbidden_type == ForbiddenType::CORE)
+    {
+      draw_cell(renderer, node, FORBIDDEN_CORE_NODE_COLOR);
+    }
+    else if (node->forbidden_type == ForbiddenType::ROBOT)
+    {
+      draw_cell(renderer, node, FORBIDDEN_ROBOT_NODE_COLOR);
+    }
+    else if (node->forbidden_type == ForbiddenType::BUFFER)
+    {
+      draw_cell(renderer, node, FORBIDDEN_BUFFER_NODE_COLOR);
+    }
   }
 }
 

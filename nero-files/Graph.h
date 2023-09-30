@@ -54,6 +54,9 @@ private:
 
   ForbiddenType get_forbidden_type(int loc, int start, int end, int robot_zones_count, int buffer_zones_count);
   ForbiddenType get_forbidden_type(int x, int y, int start, int end, int robot_zones_count, int buffer_zones_count);
+  void forbid_triangle(Node *right_angle_node, Node *a, Node *b, int robot_nodes_count, int buffer_nodes_count);
+  bool is_valid_node(int x, int y);
+  Position get_triangle_position(Node *right_angle_node, Node *a, Node *b);
 };
 
 // // Remove redundant this->

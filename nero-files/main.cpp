@@ -33,6 +33,11 @@
 
 int main(int argv, char **args)
 {
-  Graph *graph = new Graph(X_NODES_COUNT, Y_NODES_COUNT, VISUAL_NODE_SIZE);
+  std::cout << "AAAAAAAAAAA\n";
+  Graph *graph = new Graph(X_NODES_COUNT, Y_NODES_COUNT, NODE_SIZE);
+  std::cout << "AAAAAAAAAAA\n";
   GUI gui = GUI(graph, VISUAL_NODE_SIZE);
+  std::cout << "AAAAAAAAAAA\n";
 }
+
+// TODO - IMPORTANT - add robot and buffer zones to edges of map
