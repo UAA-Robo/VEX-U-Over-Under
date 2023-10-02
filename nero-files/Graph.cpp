@@ -1168,7 +1168,7 @@ void Graph::forbid_rectangle(Node *topLeftPoint, Node *topRightPoint, Node *bott
   }
 }
 
-int Graph::get_edge_cost(Node *a, Node *b)
+double Graph::get_edge_cost(Node *a, Node *b)
 {
   // return 10;
   // if nodes are cardinal neighbors
@@ -1184,10 +1184,10 @@ int Graph::get_edge_cost(Node *a, Node *b)
   else
   {
     // Euclidean distance
-    int x1 = a->x;
-    int y1 = a->y;
-    int x2 = b->x;
-    int y2 = b->y;
+    double x1 = a->x;
+    double y1 = a->y;
+    double x2 = b->x;
+    double y2 = b->y;
     // return std::sqrt(std::pow(x2 - x1, 2) * 10 + std::pow(y2 - y1, 2) * 10);
     return std::sqrt(std::pow(x2 - x1, 2) + std::pow(y2 - y1, 2));
 
@@ -1392,13 +1392,21 @@ void Graph::remove_waypoint(Node *node)
 }
 
 // Octile distance
-int Graph::get_h_cost(Node *currentNode, Node *destination)
+double Graph::get_h_cost(Node *currentNode, Node *destination)
 {
-  int x1 = currentNode->x;
-  int y1 = currentNode->y;
-  int x2 = destination->x;
-  int y2 = destination->y;
-  // TODO - which one?
+  // int x1 = currentNode->x;
+  // int y1 = currentNode->y;
+  // int x2 = destination->x;
+  // int y2 = destination->y;
+  // // TODO - which one?
+  // // return std::sqrt(std::pow(x2 - x1, 2) * 10 + std::pow(y2 - y1, 2) * 10);
+  // return std::sqrt(std::pow(x2 - x1, 2) + std::pow(y2 - y1, 2));
+
+  // Euclidean distance
+  double x1 = currentNode->x;
+  double y1 = currentNode->y;
+  double x2 = destination->x;
+  double y2 = destination->y;
   // return std::sqrt(std::pow(x2 - x1, 2) * 10 + std::pow(y2 - y1, 2) * 10);
   return std::sqrt(std::pow(x2 - x1, 2) + std::pow(y2 - y1, 2));
 }
@@ -1408,8 +1416,8 @@ std::vector<Node *> *Graph::get_path(Node *origin, Node *destination)
   std::set<Node *> frontier;
   std::set<Node *> closed;
   std::map<Node *, Node *> cameFrom;
-  std::map<Node *, int> gScores;
-  std::map<Node *, int> fScores;
+  std::map<Node *, double> gScores;
+  std::map<Node *, double> fScores;
 
   frontier.insert(origin);
   cameFrom[origin] = origin;
@@ -1421,10 +1429,10 @@ std::vector<Node *> *Graph::get_path(Node *origin, Node *destination)
 
   while (frontier.size() > 0)
   {
-    int lowestFScore = MAX_INT;
-    int lowestHScore = MAX_INT;
-    int lowestGScore = MAX_INT;
-    int highestGScore = 0;
+    double lowestFScore = MAX_INT;
+    double lowestHScore = MAX_INT;
+    double lowestGScore = MAX_INT;
+    double highestGScore = 0;
     Node *currentNode;
 
     for (Node *node : frontier)
@@ -1480,8 +1488,8 @@ std::vector<std::vector<Node *> *> *Graph::get_path_snapshots(Node *origin, Node
   std::set<Node *> frontier;
   std::set<Node *> closed;
   std::map<Node *, Node *> cameFrom;
-  std::map<Node *, int> gScores;
-  std::map<Node *, int> fScores;
+  std::map<Node *, double> gScores;
+  std::map<Node *, double> fScores;
   path_nodes_snapshots = new std::vector<std::vector<Node *> *>;
 
   frontier.insert(origin);
@@ -1495,22 +1503,21 @@ std::vector<std::vector<Node *> *> *Graph::get_path_snapshots(Node *origin, Node
   while (frontier.size() > 0)
   {
     path_nodes_snapshots->push_back(new std::vector<Node *>);
-    int lowestFScore = MAX_INT;
-    int lowestHScore = MAX_INT;
-    int lowestGScore = MAX_INT;
-    int highestGScore = 0;
+    double lowestFScore = MAX_INT;
+    double lowestHScore = MAX_INT;
+    double lowestGScore = MAX_INT;
+    double highestGScore = 0;
     Node *currentNode;
 
     for (Node *node : frontier)
     {
-      if (get_h_cost(node, destination) < lowestHScore)
+      if (fScores[node] < lowestFScore)
       {
-        lowestHScore = get_h_cost(node, destination);
+        lowestFScore = fScores[node];
         currentNode = node;
       }
-      else if (get_h_cost(node, destination) == lowestHScore && gScores[node] < lowestGScore)
+      else if (fScores[node] == lowestFScore && get_h_cost(node, destination) < get_h_cost(currentNode, destination))
       {
-        lowestGScore = gScores[node];
         currentNode = node;
       }
     }

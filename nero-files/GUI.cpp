@@ -1,7 +1,10 @@
 #pragma once
 #include <iostream>
 #include <chrono>
+#include <random>
+#include <time.h>
 #include "GUI.h"
+#include "Constants.h"
 
 GUI::GUI(Graph *graph, int visual_node_size) : GRAPH(graph),
                                                VISUAL_NODE_SIZE(visual_node_size),
@@ -61,6 +64,9 @@ GUI::GUI(Graph *graph, int visual_node_size) : GRAPH(graph),
   path_nodes_snapshots = new std::vector<std::vector<Node *> *>;
   selected_nodes = new std::vector<Node *>;
 
+  a = nullptr;
+  b = nullptr;
+
   run();
 }
 
@@ -80,6 +86,7 @@ int GUI::run()
   }
   case GUIMode::LOS:
   {
+    get_random_nodes();
     break;
   }
   }
@@ -210,6 +217,8 @@ void GUI::clear_data()
   }
   case GUIMode::LOS:
   {
+    a = nullptr;
+    b = nullptr;
     break;
   }
   }
@@ -272,6 +281,11 @@ void GUI::generate_path()
     get_random_path_snapshots();
     break;
   }
+  case GUIMode::LOS:
+  {
+    get_random_nodes();
+    break;
+  }
   default:
   {
     throw std::runtime_error("2000");
@@ -300,6 +314,8 @@ void GUI::change_modes()
   }
   case GUIMode::LOS:
   {
+    clear_data();
+    get_random_nodes();
     mode = GUIMode::SIMPLE;
     break;
   }
@@ -326,6 +342,11 @@ void GUI::select_node(SDL_Event &event)
 
   for (Node *forbiddenNode : (*forbidden_nodes))
   {
+    // TODO - IMPORTANT - don't iterate over forbidden nodes, there's already a flag for that
+    if (GRAPH->get_node(x / VISUAL_NODE_SIZE, y / VISUAL_NODE_SIZE)->get_is_forbidden())
+    {
+      nodeAllowed = false;
+    }
     if (forbiddenNode->x * VISUAL_NODE_SIZE == x && forbiddenNode->y * VISUAL_NODE_SIZE == y)
     {
       nodeAllowed = false;
@@ -375,6 +396,18 @@ void GUI::select_node(SDL_Event &event)
       is_selecting_nodes_allowed = false;
       snapshot_number = 0;
       path_nodes_snapshots = GRAPH->get_path_snapshots((*selected_nodes)[0], (*selected_nodes)[1]);
+    }
+    break;
+  }
+  case GUIMode::LOS:
+  {
+    if (selected_nodes_count == 2)
+    {
+      has_data_to_draw = true;
+      is_selecting_nodes_allowed = false;
+      snapshot_number = 0;
+      a = selected_nodes->at(0);
+      b = selected_nodes->at(1);
     }
     break;
   }
@@ -551,6 +584,21 @@ void GUI::draw_snapshots()
 
 void GUI::draw_LOS()
 {
+  if (a != nullptr && b != nullptr)
+  {
+    if (GRAPH->check_LOS(a, b))
+    {
+      draw_cell(renderer, a, PATH_NODE_COLOR);
+      draw_cell(renderer, b, PATH_NODE_COLOR);
+      draw_line(renderer, a, b, PATH_NODE_COLOR);
+    }
+    else
+    {
+      draw_cell(renderer, a, FORBIDDEN_CORE_NODE_COLOR);
+      draw_cell(renderer, b, FORBIDDEN_CORE_NODE_COLOR);
+      draw_line(renderer, a, b, FORBIDDEN_CORE_NODE_COLOR);
+    }
+  }
 }
 
 void GUI::draw_cursor()
@@ -665,3 +713,33 @@ void GUI::draw_cell(SDL_Renderer *renderer, Node *node)
 }
 
 // Propogate those fixes to other parts of the code
+
+void GUI::get_random_nodes()
+{
+  srand(time(0));
+
+  std::mt19937 rng(rand());
+  std::uniform_int_distribution<int> randX(0, X_NODES_COUNT - 1);
+  std::uniform_int_distribution<int> randY(0, Y_NODES_COUNT - 1);
+
+  int originX;
+  int originY;
+  int destinationX;
+  int destinationY;
+
+  do
+  {
+    originX = randX(rng);
+    originY = randY(rng);
+    destinationX = randX(rng);
+    destinationY = randY(rng);
+  } while (GRAPH->get_node(originX, originY)->get_is_forbidden() || GRAPH->get_node(destinationX, destinationY)->get_is_forbidden() || (originX == destinationX && originY == destinationY));
+
+  if (originX == destinationX && originY == destinationY)
+  {
+    throw std::runtime_error("ERROR SAME ORIGIN AND DESTINATION");
+  }
+
+  a = GRAPH->get_node(originX, originY);
+  b = GRAPH->get_node(destinationX, destinationY);
+}

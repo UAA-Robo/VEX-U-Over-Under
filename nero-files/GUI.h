@@ -41,6 +41,9 @@ private:
   SDL_bool mouse_active;
   SDL_bool mouse_hover;
 
+  Node *a;
+  Node *b;
+
   std::vector<Node *> *forbidden_nodes;
   std::vector<Node *> *selected_nodes;
   std::vector<Node *> *path_nodes;
@@ -83,7 +86,7 @@ private:
   void draw_normal_snapshots();
   void draw_vg_snapshots();
   void draw_LOS();
-  void draw_LOS(Node *a, Node *b);
+  // void draw_LOS(Node *a, Node *b);
   void draw_cursor();
   void draw_vector_nodes(std::vector<Node *> nodes, SDL_Color pathColor, SDL_Color startingNodeColor, SDL_Color endingNodeColor);
   void draw_line(SDL_Renderer *renderer, Node *a, Node *b, SDL_Color color);
@@ -94,6 +97,7 @@ private:
   void draw_cell(SDL_Renderer *renderer, Node *node, SDL_Color color);
   void draw_cell(SDL_Renderer *renderer, Node *node);
   void draw_cellSecond(SDL_Renderer *renderer, Node *node, SDL_Color color, int xDifference);
+  void get_random_nodes();
 
 public:
   GUI(Graph *graph, int visual_node_size);

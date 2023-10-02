@@ -20,8 +20,8 @@ public:
   Node *get_node(int x, int y);
   void add_forbidden_node(Node *node);
   std::vector<Node *> *get_forbidden_nodes();
-  std::set<Node *> *get_waypoints();
   bool check_LOS(Node *a, Node *b);
+  std::set<Node *> *get_waypoints();
   std::vector<Node *> *get_path(Node *origin, Node *destination);
   std::vector<Node *> *get_random_path();
   std::vector<std::vector<Node *> *> *get_path_snapshots(Node *origin, Node *destination);
@@ -42,14 +42,14 @@ private:
   Position get_relative_position(Node *a, Node *b);
   Position get_is_waypoint(Node *node);
   Position get_node_position(int x, int y);
-  int get_edge_cost(Node *a, Node *b);
+  double get_edge_cost(Node *a, Node *b);
   bool get_is_taut(Node *a, Node *b);
   bool get_are_taut_waypoints(Node *a, Node *b);
   void find_waypoints();
   void add_neighbor_waypoints();
   void insert_waypoint(Node *node);
   void remove_waypoint(Node *node);
-  int get_h_cost(Node *currentNode, Node *destination);
+  double get_h_cost(Node *currentNode, Node *destination);
   std::vector<Node *> *reconstruct_path(Node *currentNode, std::map<Node *, Node *> cameFrom);
 
   ForbiddenType get_forbidden_type(int loc, int start, int end, int robot_zones_count, int buffer_zones_count);
