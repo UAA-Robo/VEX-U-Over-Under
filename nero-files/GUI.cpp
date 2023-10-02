@@ -299,24 +299,23 @@ void GUI::change_modes()
   {
   case GUIMode::SIMPLE:
   {
-    clear_data();
+    // clear_data();
     mode = GUIMode::SNAPSHOTS;
     generate_path();
     break;
   }
   case GUIMode::SNAPSHOTS:
   {
-    clear_data();
-    // mode = GUIMode::SIMPLE;
+    // clear_data();
     mode = GUIMode::LOS;
     generate_path();
     break;
   }
   case GUIMode::LOS:
   {
-    clear_data();
-    get_random_nodes();
+    // clear_data();
     mode = GUIMode::SIMPLE;
+    generate_path();
     break;
   }
   }
@@ -584,7 +583,7 @@ void GUI::draw_snapshots()
 
 void GUI::draw_LOS()
 {
-  if (a != nullptr && b != nullptr)
+  if (has_data_to_draw && a != nullptr && b != nullptr)
   {
     if (GRAPH->check_LOS(a, b))
     {
@@ -716,6 +715,9 @@ void GUI::draw_cell(SDL_Renderer *renderer, Node *node)
 
 void GUI::get_random_nodes()
 {
+  clear_data();
+  has_data_to_draw = true;
+
   srand(time(0));
 
   std::mt19937 rng(rand());
