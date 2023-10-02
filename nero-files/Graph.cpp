@@ -135,11 +135,8 @@ Graph::Graph(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE) : X_NODES_C
   };
 
   add_forbidden_zones(this);
-  std::cout << "BBBBBBBBBB\n";
   find_waypoints();
-  std::cout << "BBBBBBBBBB\n";
   add_neighbor_waypoints();
-  std::cout << "BBBBBBBBBB\n";
 };
 
 Graph::~Graph()
@@ -1124,13 +1121,49 @@ void Graph::forbid_triangle(Node *right_angle_node, Node *a, Node *b, int robot_
 //   }
 // }
 
+// void Graph::forbid_rectangle(Node *topLeftPoint, Node *topRightPoint, Node *bottomLeftPoint, int robot_zones_count, int buffer_zones_count)
+// {
+//   for (int y = topLeftPoint->y; y <= bottomLeftPoint->y; y++)
+//   {
+//     for (int x = topLeftPoint->x; x <= topRightPoint->x; x++)
+//     {
+//       nodes[y][x]->forbid(ForbiddenType::CORE);
+//     }
+//   }
+// }
+
 void Graph::forbid_rectangle(Node *topLeftPoint, Node *topRightPoint, Node *bottomLeftPoint, int robot_zones_count, int buffer_zones_count)
 {
   for (int y = topLeftPoint->y; y <= bottomLeftPoint->y; y++)
   {
     for (int x = topLeftPoint->x; x <= topRightPoint->x; x++)
     {
-      nodes[y][x]->forbid(ForbiddenType::CORE);
+      if (is_valid_node(x, y) && nodes[y][x]->forbidden_type == ForbiddenType::NONE)
+      {
+        nodes[y][x]->forbid(ForbiddenType::CORE);
+      }
+    }
+  }
+
+  for (int y = topLeftPoint->y - robot_zones_count; y <= bottomLeftPoint->y + robot_zones_count; y++)
+  {
+    for (int x = topLeftPoint->x - robot_zones_count; x <= topRightPoint->x + robot_zones_count; x++)
+    {
+      if (is_valid_node(x, y) && nodes[y][x]->forbidden_type == ForbiddenType::NONE)
+      {
+        nodes[y][x]->forbid(ForbiddenType::ROBOT);
+      }
+    }
+  }
+
+  for (int y = topLeftPoint->y - robot_zones_count - buffer_zones_count; y <= bottomLeftPoint->y + robot_zones_count + buffer_zones_count; y++)
+  {
+    for (int x = topLeftPoint->x - robot_zones_count - buffer_zones_count; x <= topRightPoint->x + robot_zones_count + buffer_zones_count; x++)
+    {
+      if (is_valid_node(x, y) && nodes[y][x]->forbidden_type == ForbiddenType::NONE)
+      {
+        nodes[y][x]->forbid(ForbiddenType::BUFFER);
+      }
     }
   }
 }
@@ -1293,6 +1326,11 @@ void Graph::add_forbidden_zones(Graph *graph)
                    graph->get_node(GOAL_START_X, FIELD_SIZE - 1),
                    ROBOT_ZONES_COUNT,
                    BUFFER_ZONES_COUNT);
+  forbid_rectangle(graph->get_node(BAR_MAIN_START_X, BAR_MAIN_START_Y),
+                   graph->get_node(BAR_MAIN_START_X + BAR_MAIN_SIZE_X, BAR_MAIN_START_Y),
+                   graph->get_node(BAR_MAIN_START_X, BAR_MAIN_START_Y + BAR_MAIN_SIZE_Y),
+                   ROBOT_ZONES_COUNT,
+                   BUFFER_ZONES_COUNT);
   forbid_rectangle(graph->get_node(BAR_LEFT_START_X, BAR_LEFT_START_Y),
                    graph->get_node(BAR_LEFT_START_X + BAR_LEFT_SIZE_X, BAR_LEFT_START_Y),
                    graph->get_node(BAR_LEFT_START_X, BAR_LEFT_START_Y + BAR_LEFT_SIZE_Y),
@@ -1301,11 +1339,6 @@ void Graph::add_forbidden_zones(Graph *graph)
   forbid_rectangle(graph->get_node(BAR_RIGHT_START_X, BAR_RIGHT_START_Y),
                    graph->get_node(BAR_RIGHT_START_X + BAR_RIGHT_SIZE_X, BAR_RIGHT_START_Y),
                    graph->get_node(BAR_RIGHT_START_X, BAR_RIGHT_START_Y + BAR_RIGHT_SIZE_Y),
-                   ROBOT_ZONES_COUNT,
-                   BUFFER_ZONES_COUNT);
-  forbid_rectangle(graph->get_node(BAR_MAIN_START_X, BAR_MAIN_START_Y),
-                   graph->get_node(BAR_MAIN_START_X + BAR_MAIN_SIZE_X, BAR_MAIN_START_Y),
-                   graph->get_node(BAR_MAIN_START_X, BAR_MAIN_START_Y + BAR_MAIN_SIZE_Y),
                    ROBOT_ZONES_COUNT,
                    BUFFER_ZONES_COUNT);
 }
