@@ -1,7 +1,7 @@
 {
 	"env": {
-		"vex_compilerPath": "${config:vexrobotics.vexcode.Cpp.Toolchain.Path}/clang/bin/clang",
-		"vex_sdkPath": "${config:vexrobotics.vexcode.Cpp.Sdk.Home}/V5/V5_20220726_10_00_00/vexv5",
+		"vex_compilerPath": "${config:vexrobotics.vexcode.Cpp.Toolchain.Path}\\clang\\bin\\clang",
+		"vex_sdkPath": "${config:vexrobotics.vexcode.Cpp.Sdk.Home}\\V5\\V5_20220726_10_00_00\\vexv5",
 		"vex_gcc": "${vex_sdkPath}/gcc/include/c++/4.9.3",
 		"vex_sdkIncludes": [
 			"${vex_sdkPath}/clang/8.0.0/include/**",
@@ -15,14 +15,14 @@
 	},
 	"configurations": [
 		{
-			"name": "Win32",
+			"name": "windows-gcc-x64",
 			"includePath": [
-				"${vex_sdkIncludes}"
+				"${workspaceFolder}/**"
 			],
-			"compilerPath": "${vex_compilerPath}",
-			"cStandard": "gnu99",
-			"cppStandard": "gnu++11",
-			"intelliSenseMode": "windows-clang-x86"
+			"compilerPath": "C:/Program Files/mingw-w64/x86_64-8.1.0-release-posix-seh-rt_v6-rev0/mingw64/bin/gcc.exe",
+			"cStandard": "${default}",
+			"cppStandard": "${default}",
+			"intelliSenseMode": "windows-gcc-x64"
 		},
 		{
 			"name": "Mac",

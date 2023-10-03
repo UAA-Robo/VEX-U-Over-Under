@@ -42,4 +42,6 @@ private:
     ///                             being the center of the field.
     /// @param ISBACKTOPOSITION     Boolean that if true, rotates the back of the robot to the coordinate instead of the front.
     void rotate_and_drive_to_position(std::pair<double, double> position, bool ISBACKTOPOSITION = false);
+
+    void test_pathfinding();
 };

@@ -49,6 +49,7 @@ void pre_auton(void) {
 
 
 void autonomous(void) {
+    std::cout << "BBBBBBBBBBB\n";
   //if(!isControlled){
     icebot->driveAuto();
   //}
@@ -81,9 +82,11 @@ void usercontrol(void) {
 int main() {
   
 
+    std::cout << "AAAAAAAAAAAAAAA\n";
   //Competition callbacks
   Competition.autonomous(autonomous);
-  Competition.drivercontrol(usercontrol);
+  // Competition.drivercontrol(usercontrol);
+  Competition.drivercontrol(autonomous);
   
   // Run the pre-autonomous function.
   pre_auton();
@@ -94,7 +97,9 @@ int main() {
   }
 
   // Prevent main from exiting with an infinite loop.
+    std::cout << "AAAAAAAAAAAAAAA\n";
   while (true) {
     wait(100, msec);
   }
+    std::cout << "AAAAAAAAAAAAAAA\n";
 }
