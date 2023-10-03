@@ -7,8 +7,8 @@
 class Telemetry
 {
 private:
-    std::pair<double, double> currentPosition;
-    double currHeading;
+    std::pair<double, double> current_position;
+    double current_heading;
 
 public:
     Telemetry(Hardware *hardware, RobotConfig *robotConfig);
@@ -17,31 +17,35 @@ public:
     static int update_position(void *param);
 
     /// @brief              Calculates the distance (in inches) between to points
-    /// @param initPos      Pair of doubles {x, y} that represent the first coordinate (where the origin is the center of the field)
-    /// @param finalPos     Pair of doubles {x, y} that represent the second coordinate (where the origin is the center of the field)
+    /// @param initial_position      Pair of doubles {x, y} that represent the first coordinate (where the origin is the center of the field)
+    /// @param final_position     Pair of doubles {x, y} that represent the second coordinate (where the origin is the center of the field)
     /// @return             Returns the distance in inches
-    double getDistanceBtwnPoints(std::pair<double, double> initPos, std::pair<double, double> finalPos);
+    double get_distance_between_points(std::pair<double, double> initial_position, std::pair<double, double> final_position);
 
     /// @brief              Calculates the counterclockwise angle from the x axis (of the field) to the line formed from by 2 points.
-    /// @param initPos      Pair of doubles {x, y} that represent the first coordinate (where the origin is the center of the field)
-    /// @param finalPos     Pair of doubles {x, y} that represent the second coordinate (where the origin is the center of the field)
+    /// @param initial_position      Pair of doubles {x, y} that represent the first coordinate (where the origin is the center of the field)
+    /// @param final_position     Pair of doubles {x, y} that represent the second coordinate (where the origin is the center of the field)
     /// @return             Returns angle in degrees.
-    double getHeadingBtwnPoints(std::pair<double, double> initPos, std::pair<double, double> finalPos);
+    double get_heading_between_points(std::pair<double, double> initial_position, std::pair<double, double> final_position);
     float x_position = 0;
     float y_position = 0;
     float heading = 0;
 
     /// @brief      Gets the current position of the robot
-    /// @return     Returns the currentPosition
-    std::pair<double, double> getCurrPosition();
+    /// @return     Returns the current_position
+    std::pair<double, double> get_current_position();
 
-    void setCurrHeading(double currPos);
-    void headingErrorCorrection(double errorBounds = 5);
-    double getCurrHeading();
+    /// @brief      Sets the curent position of the robot
+    /// @param current_position
+    void set_current_heading(std::pair<double, double> current_position);
+
+    void set_current_heading(double current_position);
+    // void headingErrorCorrection(double errorBounds = 5);
+    double get_current_heading();
 
     /// @brief      Checks the current position and compares it with the gps position. If it is within a certain constraint the gps is used
     //              Not 100% accureate at the moment
-    void positionErrorCorrection(double errorBounds = 5);
+    // void positionErrorCorrection(double errorBounds = 5);
 
 private:
     Hardware *hw;

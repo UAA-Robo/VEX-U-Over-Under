@@ -9,8 +9,8 @@ public:
     const float ODOMETRY_BACK_RADIUS = 10;  // TODO: change
     const float ODOMETRY_CIRCUMFERENCE  = 2.75 * M_PI;
     const double WHEELCIRC = 4 * M_PI; // Drive train wheel circumference in inches
-    double autoDriveVelPercent = 45;
-    double autoRotateVelPercent = 20;
+    double auto_drive_velocity_percent = 45;
+    double auto_rotate_velocity_percent = 20;
     const double DRIVETRAINWIDTH = 14.5; // distance (in inch) between left and right side of the drivetrain (measured from the center of the wheels)
 
 private:

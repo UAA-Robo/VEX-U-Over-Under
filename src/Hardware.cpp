@@ -20,7 +20,7 @@ Hardware::Hardware()
 
     // Drivetrain
     drivetrain.setStopping(vex::brakeType::coast);
-    smartDriveTrain.setStopping(vex::brakeType::brake);
+    // smartDriveTrain.setStopping(vex::brakeType::brake);
 
     // Odometry
     left_odometry.resetPosition();

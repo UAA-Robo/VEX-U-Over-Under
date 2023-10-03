@@ -13,7 +13,7 @@ public:
     vex::motor_group drivetrain = vex::motor_group(
         front_left_drivetrain_motor, middle_left_drivetrain_motor, back_left_drivetrain_motor,
         front_right_drivetrain_motor, middle_right_drivetrain_motor, back_right_drivetrain_motor);
-    vex::smartdrive smartDriveTrain = vex::smartdrive(leftWheels, rightWheels, inertiaSensor);
+    // vex::smartdrive smartDriveTrain = vex::smartdrive(left_drivetrain_motors, right_drivetrain_motors, inertiaSensor);
 
     // Left motors
     vex::motor_group left_drivetrain_motors = vex::motor_group(

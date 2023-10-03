@@ -59,56 +59,34 @@ int Telemetry::update_position(void* param) {
     }
 }
 
-double Telemetry ::getDistanceBtwnPoints(std::pair<double, double> initPos, std::pair<double, double> finalPos)
+double Telemetry ::get_distance_between_points(std::pair<double, double> initial_position, std::pair<double, double> final_position)
 {
-    double distanceToFinalPosition = sqrt(pow((finalPos.first - initPos.first), 2) + pow((finalPos.second - initPos.second), 2));
-    return distanceToFinalPosition;
+    double distance_to_final_position = sqrt(pow((final_position.first - initial_position.first), 2) + pow((final_position.second - initial_position.second), 2));
+    return distance_to_final_position;
 }
 
-double Telemetry ::getHeadingBtwnPoints(std::pair<double, double> initPos, std::pair<double, double> finalPos)
+double Telemetry ::get_heading_between_points(std::pair<double, double> initial_position, std::pair<double, double> final_position)
 {
-    double angleToFinalPosition = (atan2((finalPos.second - initPos.second), (finalPos.first - initPos.first)) * (180 / (M_PI)));
-    return angleToFinalPosition;
+    double angle_to_final_position = (atan2((final_position.second - initial_position.second), (final_position.first - initial_position.first)) * (180 / (M_PI)));
+    return angle_to_final_position;
 }
 
-std::pair<double, double> Telemetry::getCurrPosition()
+std::pair<double, double> Telemetry::get_current_position()
 {
-    return this->currentPosition;
+    return this->current_position;
 }
 
-void Telemetry::setCurrPosition(std::pair<double, double> currPos)
+double Telemetry::get_current_heading()
 {
-    this->currentPosition = currPos;
+    return this->current_heading;
 }
 
-double Telemetry::getCurrHeading()
+void Telemetry::set_current_heading(double current_heading)
 {
-    return this->currHeading;
+    this->current_heading = current_heading;
 }
 
-void Telemetry::setCurrHeading(double currHeading)
+void Telemetry::set_current_heading(std::pair<double, double> current_position)
 {
-    this->currHeading = currHeading;
-}
-
-void Telemetry::headingErrorCorrection(double errorBounds)
-{
-    const int numChecks = 3;
-    double gpsEstimate = getGPSHeading();
-    int x = 0;
-    while (fabs(gpsEstimate - currHeading) > errorBounds && x < numChecks)
-    {
-        gpsEstimate = getGPSHeading();
-        ++x;
-    }
-
-    if (x == numChecks)
-    {
-        hw->controller.Screen.setCursor(3, 1);
-        hw->controller.Screen.print("Used Encoder Heading");
-        return;
-    }
-    hw->controller.Screen.setCursor(3, 1);
-    hw->controller.Screen.print("Used GPS Heading");
-    this->currHeading = gpsEstimate;
+    this->current_position = current_position;
 }
