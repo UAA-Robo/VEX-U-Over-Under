@@ -13,7 +13,6 @@ private:
 public:
     Telemetry(Hardware *hardware, RobotConfig *robotConfig);
 
-
     static int update_position(void *param);
 
     /// @brief              Calculates the distance (in inches) between to points
@@ -40,12 +39,7 @@ public:
     void set_current_heading(std::pair<double, double> current_position);
 
     void set_current_heading(double current_position);
-    // void headingErrorCorrection(double errorBounds = 5);
     double get_current_heading();
-
-    /// @brief      Checks the current position and compares it with the gps position. If it is within a certain constraint the gps is used
-    //              Not 100% accureate at the moment
-    // void positionErrorCorrection(double errorBounds = 5);
 
 private:
     Hardware *hw;

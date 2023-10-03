@@ -15,5 +15,4 @@ public:
 
 private:
     Hardware* hw;
-
 };

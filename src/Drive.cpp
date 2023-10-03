@@ -56,8 +56,8 @@ void Drive::move_drivetrain_distance(std::pair<double, double> velocity_percent,
     hw->front_right_drivetrain_motor.spinFor(number_wheel_revolutions, vex::rotationUnits::rev, velocity.second, vex::velocityUnits::pct);
 
     vex::wait(50, vex::timeUnits::msec);
-    while (fabs(hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0 || fabs(hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0)
-        ; // Blocks other tasks from starting
+    while (fabs(hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0 || 
+        fabs(hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0); // Blocks other tasks from starting
 
     double curr_heading = tm->get_current_heading();
     double newX = tm->get_current_position().first + distance * cos(curr_heading * M_PI / 180.0); // need to convert degrees to radians
