@@ -7,6 +7,7 @@
 #include "Graph.h"
 #include "Constants.h"
 #include "Enums.h"
+#include "Hardware.h"
 
 Position Graph::get_node_position(int x, int y)
 {
@@ -48,13 +49,14 @@ Position Graph::get_node_position(int x, int y)
   }
 }
 
-Graph::Graph(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE) : X_NODES_COUNT(X_NODES_COUNT),
-                                                                       Y_NODES_COUNT(Y_NODES_COUNT),
-                                                                       NODE_SIZE(NODE_SIZE),
-                                                                       waypoints(new std::set<Node *>),
-                                                                       forbidden_nodes(new std::vector<Node *>),
-                                                                       nodes(new Node **[Y_NODES_COUNT])
+Graph::Graph(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE, Hardware *hw) : X_NODES_COUNT(X_NODES_COUNT),
+                                                                                     Y_NODES_COUNT(Y_NODES_COUNT),
+                                                                                     NODE_SIZE(NODE_SIZE),
+                                                                                     waypoints(new std::set<Node *>),
+                                                                                     forbidden_nodes(new std::vector<Node *>),
+                                                                                     nodes(new Node **[Y_NODES_COUNT])
 {
+  this->hw = hw;
   // std::cout << "CCCCCCCCCCC\n";
   for (int x = 0; x < Y_NODES_COUNT; x++)
   {
@@ -68,6 +70,13 @@ Graph::Graph(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE) : X_NODES_C
     {
       // std::cout << "DDDDDDDDDDDDD\n";
       // std::cout << x << ", " << y << "\n";
+
+      // hw->controller.Screen.clearScreen();
+      // hw->controller.Screen.setCursor(1, 1);
+  // hw->controller.Screen.setCursor(2, 1);
+
+      // hw->controller.Screen.print("(%d, %d)\n", x, y);
+
       nodes[y][x] = new Node(x, y, this);
       // std::cout << "EEEEEEEEEEEEEE\n";
 
@@ -137,13 +146,30 @@ Graph::Graph(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE) : X_NODES_C
       }
     };
   };
+  // hw->controller.Screen.clearScreen();
+  // hw->controller.Screen.setCursor(2, 1);
 
-  std::cout << "CCCCCCCCCCC\n";
+  // std::cout << "CCCCCCCCCCC\n";
+  // hw->controller.Screen.setCursor(2, 1);
+
+  // hw->controller.Screen.print("AAAAAAAAAAAA\n");
   add_forbidden_zones(this);
-  std::cout << "CCCCCCCCCCC\n";
+  // hw->controller.Screen.setCursor(2, 1);
+
+  // hw->controller.Screen.print("BBBBBBBBBBB\n");
+  // std::cout << "CCCCCCCCCCC\n";
   find_waypoints();
-  std::cout << "CCCCCCCCCCC\n";
+  // hw->controller.Screen.setCursor(2, 1);
+
+  // hw->controller.Screen.print("CCCCCCCCCCCCc\n");
+  // std::cout << "CCCCCCCCCCC\n";
+  // hw->controller.Screen.setCursor(2, 1);
+
+  // hw->controller.Screen.print("DDDDDDDDDDDDd\n");
   add_neighbor_waypoints();
+  // hw->controller.Screen.setCursor(2, 1);
+
+  // hw->controller.Screen.print("EEEEEEEEEEEE\n");
   std::cout << "CCCCCCCCCCC\n";
 };
 
@@ -1275,6 +1301,9 @@ void Graph::add_forbidden_zones(Graph *graph)
   double const BAR_MAIN_START_Y = 3 * ZONE_SIZE;
   double const BAR_MAIN_SIZE_X = 4 * ZONE_SIZE;
   double const BAR_MAIN_SIZE_Y = 2.375;
+  // hw->controller.Screen.setCursor(2, 1);
+
+  // hw->controller.Screen.print("1\n");
 
   forbid_triangle(
       graph->get_node(0, 0),
@@ -1282,50 +1311,77 @@ void Graph::add_forbidden_zones(Graph *graph)
       graph->get_node(ROLLER_SIZE, 0),
       ROBOT_ZONES_COUNT,
       BUFFER_ZONES_COUNT);
+  // hw->controller.Screen.setCursor(2, 1);
+
+  // hw->controller.Screen.print("2\n");
   forbid_triangle(
       graph->get_node(FIELD_SIZE - 1, 0),
       graph->get_node(FIELD_SIZE - 1, ROLLER_SIZE),
       graph->get_node(FIELD_SIZE - 1 - ROLLER_SIZE, 0),
       ROBOT_ZONES_COUNT,
       BUFFER_ZONES_COUNT);
+  // hw->controller.Screen.setCursor(2, 1);
+
+  // hw->controller.Screen.print("3\n");
   forbid_triangle(
       graph->get_node(0, FIELD_SIZE - 1),
       graph->get_node(0, FIELD_SIZE - 1 - ROLLER_SIZE),
       graph->get_node(ROLLER_SIZE, FIELD_SIZE - 1),
       ROBOT_ZONES_COUNT,
       BUFFER_ZONES_COUNT);
+  // hw->controller.Screen.setCursor(2, 1);
+
+  // hw->controller.Screen.print("4\n");
   forbid_triangle(
       graph->get_node(FIELD_SIZE - 1, FIELD_SIZE - 1),
       graph->get_node(FIELD_SIZE - 1, FIELD_SIZE - 1 - ROLLER_SIZE),
       graph->get_node(FIELD_SIZE - 1 - ROLLER_SIZE, FIELD_SIZE - 1),
       ROBOT_ZONES_COUNT,
       BUFFER_ZONES_COUNT);
+  // hw->controller.Screen.setCursor(2, 1);
+
+  // hw->controller.Screen.print("5\n");
 
   forbid_rectangle(graph->get_node(GOAL_START_X, GOAL_START_Y),
                    graph->get_node(GOAL_START_X + GOAL_SIZE_X, GOAL_START_Y),
                    graph->get_node(GOAL_START_X, GOAL_START_Y + GOAL_SIZE_Y),
                    ROBOT_ZONES_COUNT,
                    BUFFER_ZONES_COUNT);
+  // hw->controller.Screen.setCursor(2, 1);
+
+  // hw->controller.Screen.print("6\n");
   forbid_rectangle(graph->get_node(GOAL_START_X, FIELD_SIZE - 1 - GOAL_SIZE_Y),
                    graph->get_node(GOAL_START_X + GOAL_SIZE_X, FIELD_SIZE - 1 - GOAL_SIZE_Y),
                    graph->get_node(GOAL_START_X, FIELD_SIZE - 1),
                    ROBOT_ZONES_COUNT,
                    BUFFER_ZONES_COUNT);
+  // hw->controller.Screen.setCursor(2, 1);
+
+  // hw->controller.Screen.print("7\n");
   forbid_rectangle(graph->get_node(BAR_MAIN_START_X, BAR_MAIN_START_Y),
                    graph->get_node(BAR_MAIN_START_X + BAR_MAIN_SIZE_X, BAR_MAIN_START_Y),
                    graph->get_node(BAR_MAIN_START_X, BAR_MAIN_START_Y + BAR_MAIN_SIZE_Y),
                    ROBOT_ZONES_COUNT,
                    BUFFER_ZONES_COUNT);
+  // hw->controller.Screen.setCursor(2, 1);
+
+  // hw->controller.Screen.print("8\n");
   forbid_rectangle(graph->get_node(BAR_LEFT_START_X, BAR_LEFT_START_Y),
                    graph->get_node(BAR_LEFT_START_X + BAR_LEFT_SIZE_X, BAR_LEFT_START_Y),
                    graph->get_node(BAR_LEFT_START_X, BAR_LEFT_START_Y + BAR_LEFT_SIZE_Y),
                    ROBOT_ZONES_COUNT,
                    BUFFER_ZONES_COUNT);
+  // hw->controller.Screen.setCursor(2, 1);
+
+  // hw->controller.Screen.print("9\n");
   forbid_rectangle(graph->get_node(BAR_RIGHT_START_X, BAR_RIGHT_START_Y),
                    graph->get_node(BAR_RIGHT_START_X + BAR_RIGHT_SIZE_X, BAR_RIGHT_START_Y),
                    graph->get_node(BAR_RIGHT_START_X, BAR_RIGHT_START_Y + BAR_RIGHT_SIZE_Y),
                    ROBOT_ZONES_COUNT,
                    BUFFER_ZONES_COUNT);
+  // hw->controller.Screen.setCursor(2, 1);
+
+  // hw->controller.Screen.print("10\n");
 }
 //
 

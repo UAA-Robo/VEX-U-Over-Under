@@ -89,7 +89,7 @@ void AutoDrive::rotate_and_drive_to_position(std::pair<double, double> position,
 void AutoDrive::test_pathfinding() {
     std::cout << "ZZZZZZZZZZZZZZZZ\n";
     
-    Graph *graph = new Graph(X_NODES_COUNT, Y_NODES_COUNT, NODE_SIZE);
+    Graph *graph = new Graph(X_NODES_COUNT, Y_NODES_COUNT, NODE_SIZE, hw);
     // std::vector<Node*> path = new std::vector<Node*>;
     std::cout << "ZZZZZZZZZZZZZZZZ\n";
     std::vector<Node*> *path;

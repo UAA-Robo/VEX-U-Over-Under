@@ -42,15 +42,19 @@ Drive(hardware, robotConfig, telemetry)
 void UserDrive::drive()
 {
 
-    hw->controller.Screen.clearScreen();
-    //hw->controller.Screen.print("(%.1lf, %.1lf)", tm->x_position, tm->y_position);
-    hw->controller.Screen.setCursor(1,1);
-    //hw->controller.Screen.print("%.1lf deg", tm->heading);
-    hw->controller.Screen.print("left %.1f",hw->left_odometry.position(vex::rotationUnits::rev));
-    hw->controller.Screen.setCursor(2,1);
-    hw->controller.Screen.print("right %.1f",hw->right_odometry.position(vex::rotationUnits::rev));
-    hw->controller.Screen.setCursor(3,1);
-    hw->controller.Screen.print("back %.1f",hw->back_odometry.position(vex::rotationUnits::rev));
+    // hw->controller.Screen.clearScreen();
+    // //hw->controller.Screen.print("(%.1lf, %.1lf)", tm->x_position, tm->y_position);
+    // hw->controller.Screen.setCursor(1,1);
+    // //hw->controller.Screen.print("%.1lf deg", tm->heading);
+    // hw->controller.Screen.print("left %.1f",hw->left_odometry.position(vex::rotationUnits::rev));
+    // hw->controller.Screen.setCursor(2,1);
+    // hw->controller.Screen.print("right %.1f",hw->right_odometry.position(vex::rotationUnits::rev));
+    // hw->controller.Screen.setCursor(3,1);
+    // hw->controller.Screen.print("back %.1f",hw->back_odometry.position(vex::rotationUnits::rev));
+
+
+    // hw->controller.Screen.setCursor(3,1);
+    // hw->controller.Screen.print("back %.1f",hw->back_odometry.position(vex::rotationUnits::rev));
 
     get_inputs();
     macro_controls();

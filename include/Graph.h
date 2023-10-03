@@ -7,6 +7,7 @@
 #include <vector>
 #include <map>
 #include "Node.h"
+#include "Hardware.h"
 
 class Graph
 {
@@ -14,8 +15,9 @@ public:
   const int X_NODES_COUNT;
   const int Y_NODES_COUNT;
   const double NODE_SIZE;
+  Hardware *hw;
 
-  Graph(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE);
+  Graph(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE, Hardware *hw);
   ~Graph();
   Node *get_node(int x, int y);
   void add_forbidden_node(Node *node);
