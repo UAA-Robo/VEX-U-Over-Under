@@ -3,7 +3,13 @@
 
 AutoDrive::AutoDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry) : Drive(hardware, robotConfig, telemetry) {}
 
-void AutoDrive::drive() {}
+void AutoDrive::drive() {
+    // rotate_and_drive_to_position({24, 0});
+    // rotate_and_drive_to_position({24, 60});
+    // rotate_and_drive_to_position({0, 24});
+
+    rotate_to_relative_angle(90);
+}
 
 void AutoDrive::rotate_to_relative_angle(double angle) // Based on ENCODERS,
 {

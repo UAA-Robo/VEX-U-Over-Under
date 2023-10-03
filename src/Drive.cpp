@@ -41,7 +41,7 @@ void Drive::move_drivetrain(std::pair<double, double> velocity_percent)
 void Drive::move_drivetrain_distance(std::pair<double, double> velocity_percent, double distance)
 {
     // (4 * 3.14) should be rc->WHEELCIRC in the future
-    double number_wheel_revolutions = distance / (4 * 3.14);
+    double number_wheel_revolutions = distance / rc->WHEELCIRC;
 
     std::pair<double, double> velocity = calculate_drivetrain_velocity(velocity_percent);
 
