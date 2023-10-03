@@ -11,7 +11,7 @@ public:
     const double WHEELCIRC = 3.25 * M_PI; // Drive train wheel circumference in inches
     double auto_drive_velocity_percent = 20;
     double auto_rotate_velocity_percent = 20;
-    const double DRIVETRAINWIDTH = 14.5; // distance (in inch) between left and right side of the drivetrain (measured from the center of the wheels)
+    const double DRIVETRAINWIDTH = 12; // distance (in inch) between left and right side of the drivetrain (measured from the center of the wheels)
 
 private:
     Hardware* hw;
