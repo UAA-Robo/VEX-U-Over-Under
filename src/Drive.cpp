@@ -1,21 +1,21 @@
 #include "Drive.h"
 #include <iostream>
 
-Drive::Drive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry) {
+Drive::Drive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry)
+{
     hw = hardware;
     rc = robotConfig;
     tm = telemetry;
 }
 
-
-std::pair<double, double> Drive::calculate_drivetrain_velocity(
-    std::pair<double, double> velocity_percent) {
+std::pair<double, double> Drive::calculate_drivetrain_velocity(std::pair<double, double> velocity_percent)
+{
     double vertical_velocity_percent = velocity_percent.first / 100;
     double horizontal_velocity_percent = velocity_percent.second / 100;
 
     // Calculate raw left and right motor velocity
-    double raw_left_velocity = vertical_velocity_percent + horizontal_velocity_percent;  
-    double raw_right_velocity = vertical_velocity_percent - horizontal_velocity_percent; 
+    double raw_left_velocity = vertical_velocity_percent + horizontal_velocity_percent;
+    double raw_right_velocity = vertical_velocity_percent - horizontal_velocity_percent;
 
     // Normalize the motor velocity
     double max_raw_velocity = std::max(std::abs(raw_left_velocity), std::abs(raw_right_velocity));
@@ -30,36 +30,37 @@ std::pair<double, double> Drive::calculate_drivetrain_velocity(
     return {left_velocity, right_velocity};
 }
 
-
-void Drive::move_drivetrain(std::pair<double, double> velocity_percent) {
+void Drive::move_drivetrain(std::pair<double, double> velocity_percent)
+{
     std::pair<double, double> velocity = calculate_drivetrain_velocity(velocity_percent);
 
-    hw->left_drivetrain_motors.spin(vex::directionType::fwd, velocity.first, 
-                                    vex::velocityUnits::pct);
-    hw->right_drivetrain_motors.spin(vex::directionType::fwd, velocity.second, 
-                                    vex::velocityUnits::pct);
+    hw->left_drivetrain_motors.spin(vex::directionType::fwd, velocity.first, vex::velocityUnits::pct);
+    hw->right_drivetrain_motors.spin(vex::directionType::fwd, velocity.second, vex::velocityUnits::pct);
 }
 
-
-void Drive::move_drivetrain_distance(std::pair<double, double> velocity_percent, double distance) {
+void Drive::move_drivetrain_distance(std::pair<double, double> velocity_percent, double distance)
+{
     // (4 * 3.14) should be rc->WHEELCIRC in the future
-    double number_wheel_revolutions = distance / (4 * 3.14); 
+    double number_wheel_revolutions = distance / rc->WHEELCIRC;
 
     std::pair<double, double> velocity = calculate_drivetrain_velocity(velocity_percent);
 
     // Left
-    hw->front_left_drivetrain_motor.spinFor(number_wheel_revolutions, vex::rotationUnits::rev, 
-                                            velocity.first, vex::velocityUnits::pct, false);
-    hw->middle_left_drivetrain_motor.spinFor(number_wheel_revolutions, vex::rotationUnits::rev, 
-                                            velocity.first, vex::velocityUnits::pct, false);
-    hw->back_left_drivetrain_motor.spinFor(number_wheel_revolutions, vex::rotationUnits::rev, 
-                                            velocity.second, vex::velocityUnits::pct, false);
+    hw->front_left_drivetrain_motor.spinFor(number_wheel_revolutions, vex::rotationUnits::rev, velocity.first, vex::velocityUnits::pct, false);
+    hw->middle_left_drivetrain_motor.spinFor(number_wheel_revolutions, vex::rotationUnits::rev, velocity.first, vex::velocityUnits::pct, false);
+    hw->back_left_drivetrain_motor.spinFor(number_wheel_revolutions, vex::rotationUnits::rev, velocity.second, vex::velocityUnits::pct, false);
 
     // Right
-    hw->back_right_drivetrain_motor.spinFor(number_wheel_revolutions, vex::rotationUnits::rev, 
-                                            velocity.second, vex::velocityUnits::pct, false);
-    hw->middle_right_drivetrain_motor.spinFor(number_wheel_revolutions, vex::rotationUnits::rev, 
-                                            velocity.first, vex::velocityUnits::pct, false);
-    hw->front_right_drivetrain_motor.spinFor(number_wheel_revolutions, vex::rotationUnits::rev, 
-                                            velocity.second, vex::velocityUnits::pct);
+    hw->back_right_drivetrain_motor.spinFor(number_wheel_revolutions, vex::rotationUnits::rev, velocity.second, vex::velocityUnits::pct, false);
+    hw->middle_right_drivetrain_motor.spinFor(number_wheel_revolutions, vex::rotationUnits::rev, velocity.first, vex::velocityUnits::pct, false);
+    hw->front_right_drivetrain_motor.spinFor(number_wheel_revolutions, vex::rotationUnits::rev, velocity.second, vex::velocityUnits::pct);
+
+    vex::wait(50, vex::timeUnits::msec);
+    while (fabs(hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0 || 
+        fabs(hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0); // Blocks other tasks from starting
+
+    double curr_heading = tm->get_current_heading();
+    double newX = tm->get_current_position().first + distance * cos(curr_heading * M_PI / 180.0); // need to convert degrees to radians
+    double newY = tm->get_current_position().second + distance * sin(curr_heading * M_PI / 180.0);
+    tm->set_current_heading({newX, newY});
 }
