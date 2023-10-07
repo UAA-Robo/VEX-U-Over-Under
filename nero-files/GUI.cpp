@@ -24,7 +24,8 @@ GUI::GUI(Graph *graph, int visual_node_size) : GRAPH(graph),
                                                FORBIDDEN_ROBOT_NODE_COLOR({255, 165, 0, 255}),
                                                FORBIDDEN_BUFFER_NODE_COLOR({255, 255, 0, 255}),
                                                PATH_NODE_COLOR({0, 255, 0, 255}),
-                                               PAST_PATH_NODE_COLOR({0, 0, 255, 255})
+                                               PAST_PATH_NODE_COLOR({0, 0, 255, 255}),
+                                               WAYPOINT_COLOR({255, 0, 255, 255})
 {
   y_offset = 0;
   selected_nodes_count = 0;
@@ -66,6 +67,7 @@ GUI::GUI(Graph *graph, int visual_node_size) : GRAPH(graph),
 
   a = nullptr;
   b = nullptr;
+  selected_node_waypoints_neighbors = nullptr;
 
   run();
 }
@@ -102,8 +104,11 @@ int GUI::run()
 
 void GUI::event_loop()
 {
+  int z = 0;
+  auto start = std::chrono::high_resolution_clock::now();
   while (!quit)
   {
+    z++;
     SDL_Event event;
     while (SDL_PollEvent(&event))
     {
@@ -150,6 +155,7 @@ void GUI::event_loop()
       }
       break;
       case SDL_MOUSEBUTTONDOWN:
+      {
         if (event.button.button == SDL_BUTTON_RIGHT)
         {
           reset_grid();
@@ -158,7 +164,16 @@ void GUI::event_loop()
         {
           select_node(event);
         }
+
+        int x = (double(event.motion.x - X_PADDING) / VISUAL_NODE_SIZE) * VISUAL_NODE_SIZE;
+        int y = (double(event.motion.y - Y_PADDING - y_offset) / VISUAL_NODE_SIZE) * VISUAL_NODE_SIZE;
+        x = x / VISUAL_NODE_SIZE;
+        y = y / VISUAL_NODE_SIZE;
+        selected_node_waypoints_neighbors = GRAPH->get_node(x, y);
+
+        // draw_neighboring_waypoints(event);
         break;
+      }
       case SDL_MOUSEMOTION:
         move_cursor(event);
         break;
@@ -188,15 +203,28 @@ void GUI::event_loop()
     draw_forbidden_nodes();
     draw_main();
     draw_cursor();
+    // if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT)
+    // {
+    //   draw_neighboring_waypoints(event);
+    // }
+    draw_neighboring_waypoints(event);
+    // // draw_waypoints();
 
     SDL_RenderPresent(renderer);
   }
+
+  auto stop = std::chrono::high_resolution_clock::now();
+  auto duration = std::chrono::duration_cast<std::chrono::seconds>(stop - start);
+  std::cout << z << "\n";
+  std::cout << duration.count() << "\n";
+  std::cout << "UPS: " << (double(z) / double(duration.count())) << "\n";
 }
 
 void GUI::clear_data()
 {
   is_auto_mode = false;
   is_selecting_nodes_allowed = false;
+  selected_node_waypoints_neighbors = nullptr;
 
   switch (mode)
   {
@@ -744,4 +772,18 @@ void GUI::get_random_nodes()
 
   a = GRAPH->get_node(originX, originY);
   b = GRAPH->get_node(destinationX, destinationY);
+}
+
+void GUI::draw_neighboring_waypoints(SDL_Event &event)
+{
+  if (selected_node_waypoints_neighbors == nullptr)
+  {
+    return;
+  }
+
+  for (Node *neighboring_waypoint : (*selected_node_waypoints_neighbors->get_waypoint_neighbors()))
+  {
+    std::cout << "BBBBBBBBBBBBB\n";
+    draw_cell(renderer, neighboring_waypoint, WAYPOINT_COLOR);
+  }
 }

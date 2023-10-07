@@ -43,6 +43,7 @@ private:
 
   Node *a;
   Node *b;
+  Node *selected_node_waypoints_neighbors;
 
   std::vector<Node *> *forbidden_nodes;
   std::vector<Node *> *selected_nodes;
@@ -61,6 +62,7 @@ private:
   const SDL_Color PAST_PATH_NODE_COLOR;
   const SDL_Color ORIGIN_NODE_COLOR;
   const SDL_Color DESTINATION_NODE_COLOR;
+  const SDL_Color WAYPOINT_COLOR;
 
   int run();
   void event_loop();
@@ -98,6 +100,7 @@ private:
   void draw_cell(SDL_Renderer *renderer, Node *node);
   void draw_cellSecond(SDL_Renderer *renderer, Node *node, SDL_Color color, int xDifference);
   void get_random_nodes();
+  void draw_neighboring_waypoints(SDL_Event &event);
 
 public:
   GUI(Graph *graph, int visual_node_size);

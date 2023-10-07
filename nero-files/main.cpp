@@ -27,14 +27,29 @@
 #include "Enums.h"
 #include "Node.h"
 #include "Graph.h"
-#include "GUI.h"
+// #include "GUI.h"
 #include <iostream>
 #include "Constants.h"
+
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
 
 int main(int argv, char **args)
 {
   Graph *graph = new Graph(X_NODES_COUNT, Y_NODES_COUNT, NODE_SIZE);
-  GUI gui = GUI(graph, VISUAL_NODE_SIZE);
+  _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+  _CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
+  // GUI gui = GUI(graph, VISUAL_NODE_SIZE);
+  // auto path = graph->get_random_path();
+  // for (Node *node : (*path))
+  // {
+  //   node->println();
+  // }
 }
 
 // TODO - IMPORTANT - add robot and buffer zones to edges of map
+// TODO - IMPORTANT - visualization mode: click waypoint, origin, or destination node and show its neighboring waypoints
+// TODO - IMPORTANT - debug taut waypoints detection algorithm
+// * GUIMode += TAUT
+// auto mode beyond auto period

@@ -37,7 +37,7 @@ void Node::print_waypoint_neighbors()
   }
 }
 
-Position Node::set_waypoint(Position waypoint_value)
+void Node::set_waypoint(Position waypoint_value)
 {
   waypoint = waypoint_value;
 }

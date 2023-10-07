@@ -15,7 +15,7 @@ public:
 
   bool get_is_forbidden();
 
-  Position set_waypoint(Position waypoint_value);
+  void set_waypoint(Position waypoint_value);
   Position get_waypoint();
 
   std::set<Node *> *get_neighbors();
