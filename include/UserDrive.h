@@ -41,4 +41,10 @@ private:
 
     /// @brief Test action function TO BE REMOVED LATER
     void test_print();
+
+    /// @brief For testing pneumatics. Pushes air out when left button is pressed.
+    void pneumatic_out();
+
+    /// @brief For testing pneumatics. Sucks air in when right button is pressed.
+    void pneumatic_in();
 };

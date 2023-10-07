@@ -47,6 +47,8 @@ void UserDrive::drive()
     macro_controls();
     test_print();
     drivetrain_controls();
+    pneumatic_in();
+    pneumatic_out();
 
 
 
@@ -166,4 +168,28 @@ void UserDrive::test_print()
     if (button_B.value) hw->brain.Screen.printAt(40, 20, "%c", 'B');
     if (button_X.value) hw->brain.Screen.printAt(10, 40, "%c", 'X');
     if (button_Y.value) hw->brain.Screen.printAt(40, 40, "%c", 'Y');
+}
+
+void UserDrive::pneumatic_out()
+{
+
+    if (button_left.value) {
+        hw->controller.Screen.setCursor(1,1);
+        hw->controller.Screen.print("Releasing Air!");
+        hw->pneumatic_output.set(true);
+    }
+    //hw->controller.Screen.clearScreen();
+
+}
+
+void UserDrive::pneumatic_in()
+{
+
+    if (button_right.value) {
+        hw->controller.Screen.setCursor(1,1);
+        hw->controller.Screen.print("Other Air!");
+        hw->pneumatic_output.set(false);
+    }
+    //hw->controller.Screen.clearScreen();
+
 }
