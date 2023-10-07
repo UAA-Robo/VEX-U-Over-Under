@@ -77,6 +77,7 @@ void UserDrive::drivetrain_controls()
     {
         left_right.value = 0;
     }
+    forward_backward.value = forward_backward.value / (M_PI / 2) * 100;
 
     move_drivetrain({forward_backward.value, left_right.value});
 }

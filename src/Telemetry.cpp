@@ -43,41 +43,27 @@ int Telemetry::update_position(void* param) {
         //Easy Math
         float x_displacement = center_displacement * cos(current_heading) - horizontal_displacement * -sin(current_heading);
         float y_displacement = center_displacement  * sin(current_heading) + horizontal_displacement * cos(current_heading);
-
-        //Advanced math This assumes constant curviture
-        //DOES NOT WORK
-        //float x_displacement = (center_displacement *
-        //    (cos(current_heading) * sin(heading_displacement)
-        //    + -sin(current_heading) * (1 - cos(heading_displacement)))
-//
-        //    + (horizontal_displacement * 
-        //    (cos(current_heading) * (cos(heading_displacement) -1)) 
-        //    + -sin(current_heading) * sin(heading_displacement)) );
-        //    / sin(heading_displacement);
-        //   
-        //float y_displacement = (center_displacement *
-        //    (sin(current_heading) * sin(heading_displacement)
-        //    + cos(current_heading) * (1 - cos(heading_displacement)))
-//
-        //    + (horizontal_displacement * 
-        //    (sin(current_heading) * (cos(heading_displacement) -1)) 
-        //    +cos(current_heading) * sin(heading_displacement)) );
-        //    / sin(heading_displacement);
-       
        
         tm->x_position += x_displacement;
         tm->y_position +=  y_displacement;
-        
-        //tm->heading += heading_displacement;
-        tm->heading = std::fmod(tm->heading, 2 * M_PI);
+    
 
+        //tm->heading = std::fmod(tm->heading, 2 * M_PI);
+        //tm->heading_displacement = std::fmod(tm->heading_displacement, 2 * M_PI);
+        
+        //convert deg for modding
+        tm->heading += heading_displacement;
+        tm->heading = std::fmod(tm->heading * (180/ M_PI), 360);
 
         tm->hw->left_odometry.resetPosition();
         tm->hw->right_odometry.resetPosition();
         tm->hw->back_odometry.resetPosition();
 
         // Print to command line
-        std::cout << tm->x_position << "," << tm->y_position << "," << tm->heading  * (180 / M_PI)<< std::endl;
+        std::cout << tm->x_position << "," << tm->y_position << "," << tm->heading<< std::endl; //already in deg
+
+        //convert heading back into rads for calculations
+        tm->heading = tm->heading * (M_PI / 180.0);
 
         vex::wait(50, vex::timeUnits::msec);
     }
