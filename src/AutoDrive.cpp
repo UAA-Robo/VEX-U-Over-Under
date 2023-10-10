@@ -59,7 +59,8 @@ void AutoDrive::rotate_to_heading_odometry(double heading)
         bool turnClockWise = true;
         //rotate counter-clockwise
 
-        while (tm->get_current_heading != heading)
+        while (tm->get_current_heading != heading) {
+        }
             
 
 

@@ -5,10 +5,7 @@
 		"optional": "cpp",
 		"system_error": "cpp",
 		"cmath": "cpp",
-<<<<<<< HEAD
-=======
 		"fstream": "cpp",
->>>>>>> 8616b17f4cc40b1b05cff1138dd07e69a997eec0
 		"algorithm": "cpp",
 		"array": "cpp",
 		"*.tcc": "cpp",
@@ -26,10 +23,6 @@
 		"unordered_map": "cpp",
 		"vector": "cpp",
 		"exception": "cpp",
-<<<<<<< HEAD
-		"fstream": "cpp",
-=======
->>>>>>> 8616b17f4cc40b1b05cff1138dd07e69a997eec0
 		"functional": "cpp",
 		"initializer_list": "cpp",
 		"iosfwd": "cpp",
