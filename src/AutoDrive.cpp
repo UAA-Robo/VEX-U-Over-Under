@@ -55,23 +55,23 @@ void AutoDrive::rotate_to_heading_odometry(double heading)
         heading += 360;
 
     // Determines whether to rotate left or right based on the  shortest distance
-    if (fabs(heading - tm->get_heading_between_points) > 180)
-        bool turnClockWise = true;
-        //rotate counter-clockwise
+    // Check if spin- is non-blocking
+    // Clockwise
+    if (fabs(heading - tm->get_current_heading()) > 180) {
+        hw->left_drivetrain_motors.spin(vex::directionType::fwd);
+        hw->right_drivetrain_motors.spin(vex::directionType::rev);
+    }
+    // Counter-clockwise
+    else {
+        hw->left_drivetrain_motors.spin(vex::directionType::rev);
+        hw->right_drivetrain_motors.spin(vex::directionType::fwd);
+    }
+    // range -0.05 to 0.05...for now
+    while (fabs(heading - tm->get_current_heading()) > 0.05);   // Stop motors
 
-        while (tm->get_current_heading != heading) {
-        }
-            
+    hw->left_drivetrain_motors.stop();                          // TODO: Give a vel value later
+    hw->right_drivetrain_motors.stop();
 
-
-
-        //rotate clockwise
-
-        
-    
-
-    
-    tm->set_current_heading(heading);
 
 }
 

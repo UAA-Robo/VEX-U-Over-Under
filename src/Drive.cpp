@@ -64,3 +64,29 @@ void Drive::move_drivetrain_distance(std::pair<double, double> velocity_percent,
     double newY = tm->get_current_position().second + distance * sin(curr_heading * M_PI / 180.0);
     tm->set_current_heading({newX, newY});
 }
+
+
+
+void Drive::move_drivetrain_distance_odometry(double distance) // Params??? 
+                                                               // Lol, 
+                                                               // later.
+{
+    //if(ISBACKTOPOSITION)
+
+    // Left
+    hw->left_drivetrain_motors.spin(vex::directionType:: fwd);
+
+    // Right
+
+
+    // Check if reached
+    // range -0.05 to 0.05...for now
+    while (fabs(distance) > 0.05) {             // stop wheels
+        hw->left_drivetrain_motors.stop();
+        hw->right_drivetrain_motors.stop();
+
+        // update distance from final position (goal)
+        //distance = tm->get_distance_between_points(tm->get_current_position(), position);
+    }
+
+}

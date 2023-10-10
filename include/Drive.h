@@ -45,4 +45,8 @@ protected:
     ///                           {verticalVelocityPercent, horizontalVelocityPercent}
     void move_drivetrain_distance(std::pair<double, double> velocity_percent, double distance);
 
+    ///Add summmm
+    
+    void move_drivetrain_distance_odometry(double distance);
+
 };
