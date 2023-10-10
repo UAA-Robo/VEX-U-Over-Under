@@ -13,13 +13,6 @@ Telemetry::Telemetry(Hardware* hardware, RobotConfig* robotConfig)
 int Telemetry::update_position(void* param) {
     Telemetry* tm = static_cast<Telemetry*>(param);
 
-        float left_total = tm->hw->left_odometry.position(vex::rotationUnits::rev);
-        float right_total = tm->hw->right_odometry.position(vex::rotationUnits::rev);
-        float back_total =  tm->hw->back_odometry.position(vex::rotationUnits::rev);
-
-    
-
-
     // Updates continuously
     while(true) {
 
@@ -44,32 +37,32 @@ int Telemetry::update_position(void* param) {
         // can use either sin or angle, sin uses straight line, angle uses arc
         float horizontal_displacement = back_displacement - heading_displacement *  tm->rc->ODOMETRY_BACK_RADIUS; 
 
-        float current_heading = std::fmod(tm->heading + heading_displacement, 2 * M_PI);  
+        float current_heading = std::fmod(tm->odometry_heading + heading_displacement, 2 * M_PI);  
 
         //Easy Math
         float x_displacement = center_displacement * cos(current_heading) - horizontal_displacement * -sin(current_heading);
         float y_displacement = center_displacement  * sin(current_heading) + horizontal_displacement * cos(current_heading);
        
-        tm->x_position += x_displacement;
-        tm->y_position +=  y_displacement;
+        tm->odometry_x_position += x_displacement;
+        tm->odometry_y_position +=  y_displacement;
     
 
         //tm->heading = std::fmod(tm->heading, 2 * M_PI);
         //tm->heading_displacement = std::fmod(tm->heading_displacement, 2 * M_PI);
         
         //convert deg for modding
-        tm->heading += heading_displacement;
-        tm->heading = std::fmod(tm->heading * (180/ M_PI), 360);
+        tm->odometry_heading += heading_displacement;
+        tm->odometry_heading = std::fmod(tm->odometry_heading * (180/ M_PI), 360);
 
         tm->hw->left_odometry.resetPosition();
         tm->hw->right_odometry.resetPosition();
         tm->hw->back_odometry.resetPosition();
 
         // Print to command line
-        std::cout << tm->x_position << "," << tm->y_position << "," << tm->heading<< " |"<< left_odometry_revolutions << "|" << right_odometry_revolutions << "|" <<back_odometry_revolutions << std::endl; //already in deg
+        std::cout << tm->odometry_x_position << "," << tm->odometry_y_position << "," << tm->odometry_heading << " |"<< left_odometry_revolutions << "|" << right_odometry_revolutions << "|" <<back_odometry_revolutions << std::endl; //already in deg
 
         //convert heading back into rads for calculations
-        tm->heading = tm->heading * (M_PI / 180.0);
+        tm->odometry_heading = tm->odometry_heading * (M_PI / 180.0);
 
         vex::wait(50, vex::timeUnits::msec);
     }
@@ -106,5 +99,4 @@ void Telemetry::set_current_heading(std::pair<double, double> current_position)
 {
     this->current_position = current_position;
         vex::wait(50, vex::timeUnits::msec);
-    }
 }

@@ -47,6 +47,34 @@ void AutoDrive::rotate_to_heading(double heading)
     // tm->positionErrorCorrection();
 }
 
+void AutoDrive::rotate_to_heading_odometry(double heading)
+{
+    // Corrects heading to be from 0-360 from the x axis counterclockwise if applicable
+    heading = fmod(heading, 360);
+    if (heading < 0)
+        heading += 360;
+
+    // Determines whether to rotate left or right based on the  shortest distance
+    if (fabs(heading - tm->get_heading_between_points) > 180)
+        bool turnClockWise = true;
+        //rotate counter-clockwise
+
+        while (tm->get_current_heading != heading)
+            
+
+
+
+        //rotate clockwise
+
+        
+    
+
+    
+    tm->set_current_heading(heading);
+
+}
+
+
 void AutoDrive::rotate_to_position(std::pair<double, double> final_position, bool ISBACKROTATION)
 {
     // if (IS_USING_GPS_POSITION) tm->set_current_heading(tm->getGPSPosition());

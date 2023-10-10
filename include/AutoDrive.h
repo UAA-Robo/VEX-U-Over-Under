@@ -23,6 +23,10 @@ private:
     /// @param heading  Double that is the counterclockwise angle in degrees from the x asis.
     void rotate_to_heading(double heading);
 
+    /// @brief  Rotates the shortest distance by turning left or right to the heading. Uses odometry sensors.
+    /// @param heading  Double that is the counterclockwise angle in degrees from the x asis.
+    void rotate_to_heading_odometry(double heading);
+
     // /// @brief   Rotates the robot to align with the element on the field. Assumes the inertia sensor is set so 0 is at the positive x axis.
     // /// @param gameElement  GameElement that is the object to rotate to.
     // void rotate_to_position(GameElement *gameElement);
