@@ -7,9 +7,9 @@
       "request": "launch",
       "args": [],
       "stopAtEntry": false,
-      "externalConsole": true,
-      "cwd": "c:/Users/neroz/OneDrive/Documents/repos/test/VEX-U-Over-Under/src",
-      "program": "c:/Users/neroz/OneDrive/Documents/repos/test/VEX-U-Over-Under/src/build/Debug/outDebug",
+      "externalConsole": false,
+      "cwd": "/home/nero/repos/test/VEX-U-Over-Under/src",
+      "program": "/home/nero/repos/test/VEX-U-Over-Under/src/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

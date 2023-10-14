@@ -1,7 +1,7 @@
 #pragma once
 
-const double FIELD_SIZE = 138.73;
-// const double FIELD_SIZE = 5;
+// const double FIELD_SIZE = 138.73;
+const double FIELD_SIZE = 10;
 // length and width of nodes in inches, for real-life movement
 // TODO - IMPORTANT - LOS algorithm assumes this is always 1, multiply this by cell size and take half that to get to center of node
 const double NODE_SIZE = 1;

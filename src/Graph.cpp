@@ -8,6 +8,7 @@
 #include "Constants.h"
 #include "Enums.h"
 #include "Hardware.h"
+#include <chrono>
 
 Position Graph::get_node_position(int x, int y)
 {
@@ -64,6 +65,7 @@ Graph::Graph(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE, Hardware *h
   }
   std::cout << "CCCCCCCCCCC\n";
 
+  auto start = std::chrono::high_resolution_clock::now();
   for (int y = 0; y < Y_NODES_COUNT; y++)
   {
     for (int x = 0; x < X_NODES_COUNT; x++)
@@ -73,7 +75,7 @@ Graph::Graph(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE, Hardware *h
 
       // hw->controller.Screen.clearScreen();
       // hw->controller.Screen.setCursor(1, 1);
-  // hw->controller.Screen.setCursor(2, 1);
+      // hw->controller.Screen.setCursor(2, 1);
 
       // hw->controller.Screen.print("(%d, %d)\n", x, y);
 
@@ -146,6 +148,9 @@ Graph::Graph(int X_NODES_COUNT, int Y_NODES_COUNT, double NODE_SIZE, Hardware *h
       }
     };
   };
+  auto stop = std::chrono::high_resolution_clock::now();
+  auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+  std::cout << "Time to construct nodes: " << duration.count() << std::endl;
   // hw->controller.Screen.clearScreen();
   // hw->controller.Screen.setCursor(2, 1);
 
