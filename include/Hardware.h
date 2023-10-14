@@ -35,4 +35,9 @@ public:
 
     // Pneumatic Test
     vex::digital_out pneumatic_output = vex::digital_out(brain.ThreeWirePort.A);
+
+    // Catapult
+    vex::motor left_catapult_motor = vex::motor(vex::PORT14, vex::ratio18_1, true);
+    vex::motor right_catapult_motor = vex::motor(vex::PORT15, vex::ratio18_1, false);
+    vex::motor_group catapult = vex::motor_group(left_catapult_motor, right_catapult_motor);
 };

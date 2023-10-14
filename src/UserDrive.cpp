@@ -49,6 +49,7 @@ void UserDrive::drive()
     drivetrain_controls();
     pneumatic_in();
     pneumatic_out();
+    launch_catapult();
 
 
 
@@ -192,4 +193,16 @@ void UserDrive::pneumatic_in()
     }
     //hw->controller.Screen.clearScreen();
 
+}
+
+
+void UserDrive::launch_catapult() {
+    if (button_R1.value) {
+        hw->catapult.spin(vex::directionType::rev, 12, vex::voltageUnits::volt);
+
+        hw->controller.Screen.setCursor(1,1);
+        hw->controller.Screen.print("Catapult!");
+    }else {
+        hw->catapult.stop();
+    }    
 }

@@ -47,4 +47,7 @@ private:
 
     /// @brief For testing pneumatics. Sucks air in when right button is pressed.
     void pneumatic_in();
+
+    /// @brief For testing purposes. Spins catapult motors while right bumper (R1) is pressed.
+    void launch_catapult();
 };
