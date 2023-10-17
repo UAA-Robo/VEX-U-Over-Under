@@ -50,4 +50,7 @@ private:
 
     /// @brief For testing purposes. Spins catapult motors while right bumper (R1) is pressed.
     void launch_catapult();
+
+    /// @brief For testing purposes. Activates intake motor while right bumper (L1) is pressed.
+    void activate_intake();
 };
