@@ -49,7 +49,7 @@ void UserDrive::drive()
     pneumatic_in();
     pneumatic_out();
     launch_catapult();
-    active_intake();
+    activate_intake();
 
     set_previous_inputs(); // Tracks previous inputs to compare to
     if (macro_loop_iteration == macro_length)
@@ -215,11 +215,11 @@ void UserDrive::launch_catapult()
     }
 }
 
-void UserDriver::active_intake()
+void UserDrive::activate_intake()
 {
     if (button_L1.value)
     {
-        hw->intake_motor.spin(vex::directionType::rev, 12, vex::voltageUnits::volts);
+        hw->intake_motor.spin(vex::directionType::rev, 12, vex::voltageUnits::volt);
 
         hw->controller.Screen.setCursor(1, 1);
         hw->controller.Screen.print("Activating Intake!");
