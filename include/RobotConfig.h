@@ -16,3 +16,9 @@ public:
 private:
     Hardware* hw;
 };
+
+//
+//
+//
+// const double WHEELCIRIC
+//

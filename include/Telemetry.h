@@ -7,8 +7,10 @@
 class Telemetry
 {
 private:
-    std::pair<double, double> current_position;
-    double current_heading;
+    // std::pair<double, double> current_position;
+    //double current_heading;
+
+
 
 public:
     Telemetry(Hardware *hardware, RobotConfig *robotConfig);
@@ -32,8 +34,9 @@ public:
     //in degrees
     float odometry_heading = 0;
 
-    /// @brief      Gets the current position of the robot
-    /// @return     Returns the current_position
+
+    /// @brief      Gets the current odometry position
+    /// @return     Returns odometry_x_position, odometry_y_position
     std::pair<double, double> get_current_position();
 
     /// @brief      Sets the curent position of the robot

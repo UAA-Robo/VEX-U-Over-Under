@@ -44,12 +44,9 @@ int Telemetry::update_position(void* param) {
         float y_displacement = center_displacement  * sin(current_heading) + horizontal_displacement * cos(current_heading);
        
         tm->odometry_x_position += x_displacement;
-        tm->odometry_y_position +=  y_displacement;
+        tm->odometry_y_position += y_displacement;
     
 
-        //tm->heading = std::fmod(tm->heading, 2 * M_PI);
-        //tm->heading_displacement = std::fmod(tm->heading_displacement, 2 * M_PI);
-        
         //convert deg for modding
         tm->odometry_heading += heading_displacement;
         tm->odometry_heading = std::fmod(tm->odometry_heading * (180/ M_PI), 360);
@@ -80,23 +77,29 @@ double Telemetry ::get_heading_between_points(std::pair<double, double> initial_
     return angle_to_final_position;
 }
 
+// std::pair<double, double> Telemetry::get_current_position()
+// {
+//     return this->current_position;
+// }
+
 std::pair<double, double> Telemetry::get_current_position()
 {
-    return this->current_position;
+    return std::pair<double, double> (odometry_x_position, odometry_y_position);
 }
+
 
 double Telemetry::get_current_heading()
 {
-    return this->current_heading;
+    return odometry_heading;
 }
 
-void Telemetry::set_current_heading(double current_heading)
-{
-    this->current_heading = current_heading;
-}
+// void Telemetry::set_current_heading(double current_heading)
+// {
+//     this->current_heading = current_heading;
+// }
 
-void Telemetry::set_current_heading(std::pair<double, double> current_position)
-{
-    this->current_position = current_position;
-        vex::wait(50, vex::timeUnits::msec);
-}
+// void Telemetry::set_current_heading(std::pair<double, double> current_position)
+// {
+//     this->current_position = current_position;
+//         vex::wait(50, vex::timeUnits::msec);
+// }
