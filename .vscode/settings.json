@@ -41,7 +41,7 @@
 		"utility": "cpp",
 		"typeinfo": "cpp"
 	},
-	"C_Cpp.errorSquiggles": "disabled",
+	"C_Cpp.errorSquiggles": "enabled",
 	"C_Cpp.default.compilerPath": "e:\\MSYS2\\mingw64\\bin\\c++.exe",
 	"editor.rulers": [
 		100

@@ -5,6 +5,7 @@
 #include "Hardware.h"
 #include "RobotConfig.h"
 
+
 #include "vex.h"
 
 /// @brief   Holds all the classes needed to run the robot.
@@ -18,9 +19,9 @@ public:
 
     /// @brief    Initializes the autonomous-period code.
     void driveAuto();
-
-private:
     Hardware* hw;
+private:
+    //Hardware* hw;
     RobotConfig* rc;
     Telemetry* tm;
 

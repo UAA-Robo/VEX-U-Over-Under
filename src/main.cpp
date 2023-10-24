@@ -6,9 +6,13 @@
 /*    Description:  V5 project                                                */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
-
+#include <fstream>
 #include "vex.h"
 #include "Robot.h"
+#include "Hardware.h"
+//#include <termios.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 using namespace vex;
 
@@ -16,6 +20,9 @@ using namespace vex;
 competition Competition;
 Robot* icebot = new Robot();
 bool isControlled;
+
+
+
 
 // define your global instances of motors and other devices here
 
@@ -50,7 +57,44 @@ void pre_auton(void) {
 
 void autonomous(void) {
   //if(!isControlled){
-    icebot->driveAuto();
+    icebot = new Robot();
+    int rf = open("dev/serial1",O_RDWR);\
+
+    printf("$d", read);
+    //std::ofstream rf("/dev/serial1");
+    
+    int i;
+
+    while(true)
+    {
+      icebot->hw->controller.Screen.clearScreen();
+      //hw->controller.Screen.print("(%.1lf, %.1lf)", tm->x_position, tm->y_position);
+      icebot->hw->controller.Screen.setCursor(1,1);
+      i++;
+      //std::string msg 
+      char msg[100] = "";
+
+      int i = read(rf, msg, 100);
+      //fseek(read, 0, SEEK_SET);
+      //fread(msg, 1, 1, read );
+      
+      icebot->hw->controller.Screen.print("%s",msg); 
+      icebot->hw->controller.Screen.clearScreen();
+    }
+
+    icebot->hw->controller.Screen.print("back %.1f");
+    
+
+    //FILE *fp = fopen("/dev/serial1", "w");
+    //
+    //static char msg[] = "AA55CC3301\r\n"; 
+//
+    //  // send
+    //  fwrite( msg, 1, strlen(msg), fp );
+//
+    //  // close, flush buffers
+    //  fclose(fp);
+    //icebot->driveAuto();
   //}
 }
 
@@ -66,12 +110,12 @@ void autonomous(void) {
 
 
 void usercontrol(void) {
-  //icebot = new Robot();
-  while (true) {
-    icebot->drive();
-    // Sleep the task for a short amount of time to prevent wasted resources.
-    vex::wait(20, vex::msec); 
-  }
+  
+  //while (true) {
+  //  icebot->drive();
+  //  // Sleep the task for a short amount of time to prevent wasted resources.
+  //  vex::wait(20, vex::msec); 
+  //}
 }
 
 
