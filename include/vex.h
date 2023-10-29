@@ -9,7 +9,8 @@
 #include <ctime>
 #include <vector>
 #include <iostream>
-
+#include <unistd.h>
+#include <fcntl.h>
 
 #include "v5.h"
 #include "v5_vcs.h"

@@ -58,7 +58,7 @@ void pre_auton(void) {
 void autonomous(void) {
   //if(!isControlled){
     icebot = new Robot();
-    int rf = open("dev/serial1",O_RDWR);\
+    int rf = open("dev/serial1",O_RDWR);
 
     printf("$d", read);
     //std::ofstream rf("/dev/serial1");
