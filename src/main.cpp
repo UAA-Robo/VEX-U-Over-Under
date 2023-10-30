@@ -60,7 +60,7 @@ void autonomous(void) {
     icebot = new Robot();
     int rf = open("dev/serial1",O_RDWR);
 
-    printf("$d", read);
+    //printf("$d", read);
     //std::ofstream rf("/dev/serial1");
     
     int i;
