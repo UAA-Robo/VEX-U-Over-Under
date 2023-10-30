@@ -4,7 +4,7 @@
 #include "Telemetry.h"
 #include "Hardware.h"
 #include "RobotConfig.h"
-
+#include "RaspiComm.hpp"
 
 #include "vex.h"
 

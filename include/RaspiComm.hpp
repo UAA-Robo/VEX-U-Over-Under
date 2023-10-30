@@ -1,6 +1,8 @@
+#pragma once
 #include "vex.h"
 #include <string>
 #include <vector>
+#include <vex_thread.h>
 
 
 class RaspiComm
@@ -10,32 +12,29 @@ class RaspiComm
         std::string readMsg();
         bool messageRecieved();
         void stopThreads();
-        RaspiComm(){
-
-            PORT = "dev/serial1";
-            *last_send_ack = 0;
-            *last_recieve_ack = 0;
-
-        }
+        RaspiComm();
+        static int startSendRecieveThread(void * param);
     private:
         const int REFRESHRATE = 1000; // in msec
 
 
-        static const char * PORT;
-        static const int MSG_SIZE = 100;
-        static std::string *msg_to_send;
-        static std::string *last_msg_recieved;
+        char * PORT;
+        int MSG_SIZE = 100;
+        std::string msg_to_send;
+        std::string last_msg_recieved;
         //static void startRecieveThread();
-        static void startSendRecieveThread();
+        
         std::string last_message; 
-        static int * last_send_ack;
-        static int * last_recieve_ack;
+        int last_send_ack;
+        int last_recieve_ack;
         bool mesg_recieved = true;
-        static bool *keepRunning;  
+        bool keepRunning;  
         bool handShake();
-        static const char * createACK(int ack);
-        static const char * createMessage(std::string msg, int ack);
+        const char * createACK(int ack);
+        const char * createMessage(std::string msg, int ack);
 
+    
+        
         
         
 
