@@ -36,7 +36,7 @@ void RaspiComm::startSendRecieveThread()
 
         if(msg_recieved_string.substr(0,3) == "MSG")
         {
-            int i = write(rf, msg_recieved_string.substr(3,8).c_str());
+            int i = write(rf, msg_recieved_string.substr(3,8).c_str(), MSG_SIZE);
         }
 
         
