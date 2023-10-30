@@ -33,8 +33,8 @@ class RaspiComm
         bool mesg_recieved = true;
         static bool *keepRunning;  
         bool handShake();
-        char * createACK(int ack);
-        char * createMessage(std::string msg);
+        static const char * createACK(int ack);
+        static const char * createMessage(std::string msg, int ack);
 
         
         
