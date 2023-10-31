@@ -67,27 +67,56 @@ void Drive::move_drivetrain(std::pair<double, double> velocity_percent)
 
 
 
+// void Drive::move_drivetrain_distance_odometry(double distance, bool ISBACKTOPOSITION, std::pair<double, double> position) 
+// {
+//     if(ISBACKTOPOSITION)  // Move Back
+//     {
+//     hw->left_drivetrain_motors.spin(vex::directionType:: rev);
+//     hw->right_drivetrain_motors.spin(vex::directionType:: rev);
+//     }
+//     else                  // Move forward
+//     {
+//         hw->left_drivetrain_motors.spin(vex::directionType:: fwd);
+//         hw->right_drivetrain_motors.spin(vex::directionType:: fwd);
+//     }
+
+//     // Check if reached
+//     // range -0.05 to 0.05...for now // check with 5 inches
+//     while (fabs(distance) > 5) {
+//         // update distance from final position (goal)
+//         distance = tm->get_distance_between_points(tm->get_current_position(), position);
+
+//     }
+
+//     hw->left_drivetrain_motors.stop();      // stop wheels
+//     hw->right_drivetrain_motors.stop();
+
+// }
+
+
+// new function
 void Drive::move_drivetrain_distance_odometry(double distance, bool ISBACKTOPOSITION, std::pair<double, double> position) 
 {
-    if(ISBACKTOPOSITION)  // Move Back
-    {
-    hw->left_drivetrain_motors.spin(vex::directionType:: rev);
-    hw->right_drivetrain_motors.spin(vex::directionType:: rev);
-    }
-    else                  // Move forward
-    {
-        hw->left_drivetrain_motors.spin(vex::directionType:: fwd);
-        hw->right_drivetrain_motors.spin(vex::directionType:: fwd);
-    }
 
     // Check if reached
-    // range -0.05 to 0.05...for now
+    // range -0.05 to 0.05...for now // check with 5 inches
     while (fabs(distance) > 0.05) {
+
+        if(ISBACKTOPOSITION)  // Move Back
+        {
+        hw->left_drivetrain_motors.spinTo(-90, vex::rotationUnits::deg, 100.0, vex::velocityUnits::pct, false);
+        hw->right_drivetrain_motors.spinTo(-90, vex::rotationUnits::deg, 100.0, vex::velocityUnits::pct, false);
+        }
+        else                  // Move forward
+        {
+        hw->left_drivetrain_motors.spinTo(90, vex::rotationUnits::deg, 100.0, vex::velocityUnits::pct, false);
+        hw->right_drivetrain_motors.spinTo(90, vex::rotationUnits::deg, 100.0, vex::velocityUnits::pct, false);
+        }
+
         // update distance from final position (goal)
         distance = tm->get_distance_between_points(tm->get_current_position(), position);
     }
 
     hw->left_drivetrain_motors.stop();      // stop wheels
     hw->right_drivetrain_motors.stop();
-
 }

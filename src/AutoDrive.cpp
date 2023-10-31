@@ -7,7 +7,7 @@ void AutoDrive::drive() {
     // rotate_and_drive_to_position({24, 0});
     // rotate_and_drive_to_position({24, 60});
     // rotate_and_drive_to_position({0, 0});
-    rotate_and_drive_to_position({27,27});
+    rotate_and_drive_to_position({10,0});
 
     //rotate_to_relative_angle(115);
 }
@@ -31,11 +31,13 @@ void AutoDrive::rotate_to_heading_odometry(double heading)
         hw->left_drivetrain_motors.spin(vex::directionType::rev);
         hw->right_drivetrain_motors.spin(vex::directionType::fwd);
     }
-    // range -0.05 to 0.05...for now -test with 5
-    while (fabs(heading - tm->get_current_heading()) > 5);      // Stop motors
+    // range -0.05 to 0.05...for now
+    while (fabs(heading - tm->get_current_heading()) > 0.05);       // Stop motors
 
     hw->left_drivetrain_motors.stop();                          // TODO: Give a vel value later
     hw->right_drivetrain_motors.stop();
+
+
 
 
 }
