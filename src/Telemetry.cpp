@@ -68,7 +68,7 @@ int Telemetry::update_position(void* param) {
     }
 }
 
-double Telemetry ::get_distance_between_points(std::pair<double, double> initial_position, std::pair<double, double> final_position)
+double Telemetry::get_distance_between_points(std::pair<double, double> initial_position, std::pair<double, double> final_position)
 {
     double distance_to_final_position = sqrt(pow((final_position.first - initial_position.first), 2) + pow((final_position.second - initial_position.second), 2));
     return distance_to_final_position;
@@ -80,23 +80,27 @@ double Telemetry ::get_heading_between_points(std::pair<double, double> initial_
     return angle_to_final_position;
 }
 
-std::pair<double, double> Telemetry::get_current_position()
+std::pair<double, double> Telemetry::get_current_position() // Revised for odometry
 {
-    return this->current_position;
+    return std::pair<double, double>(odometry_x_position, odometry_y_position);
 }
 
-double Telemetry::get_current_heading()
+double Telemetry::get_current_heading() // Revised for odometry
 {
-    return this->current_heading;
+    return this->odometry_heading; 
 }
 
-void Telemetry::set_current_heading(double current_heading)
-{
-    this->current_heading = current_heading;
-}
 
-void Telemetry::set_current_heading(std::pair<double, double> current_position)
-{
-    this->current_position = current_position;
-        vex::wait(50, vex::timeUnits::msec);
-}
+
+// May use later (if GPS)
+
+// void Telemetry::set_current_heading(double current_heading)
+// {
+//     this->current_heading = current_heading;
+// }
+
+// void Telemetry::set_current_heading(std::pair<double, double> current_position)
+// {
+//     this->current_position = current_position;
+//         vex::wait(50, vex::timeUnits::msec);
+// }

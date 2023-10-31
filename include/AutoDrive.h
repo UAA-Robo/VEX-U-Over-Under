@@ -19,10 +19,6 @@ private:
     /// @param angle Angle in degrees (-360 to 360) where positive angle is counterclockwise rotation
     void rotate_to_relative_angle(double angle);
 
-    /// @brief  Rotates the shortest distance by turning left or right to the heading. Assumes the inertia sensor is set so 0 is at the positive x axis.
-    /// @param heading  Double that is the counterclockwise angle in degrees from the x asis.
-    void rotate_to_heading(double heading);
-
     /// @brief  Rotates the shortest distance by turning left or right to the heading. Uses odometry sensors.
     /// @param heading  Double that is the counterclockwise angle in degrees from the x asis.
     void rotate_to_heading_odometry(double heading);
