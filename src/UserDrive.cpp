@@ -219,7 +219,7 @@ void UserDrive::activate_intake()
 {
     if (button_L1.value)
     {
-        hw->intake_motor.spin(vex::directionType::rev, 12, vex::voltageUnits::volt);
+        hw->intake_motor.spin(vex::directionType::fwd, 12, vex::voltageUnits::volt);
 
         hw->controller.Screen.setCursor(1, 1);
         hw->controller.Screen.print("Activating Intake!");
