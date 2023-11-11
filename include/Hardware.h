@@ -42,5 +42,7 @@ public:
     vex::motor_group catapult = vex::motor_group(left_catapult_motor, right_catapult_motor);
 
     // Intake
-    vex::motor intake_motor = vex::motor(vex::PORT10, vex::ratio18_1, true);
+    vex::motor left_intake_motor = vex::motor(vex::PORT3, vex::ratio18_1, true);
+    vex::motor right_intake_motor = vex::motor(vex::PORT10, vex::ratio18_1, true);
+    
 };

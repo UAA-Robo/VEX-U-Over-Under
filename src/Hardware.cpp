@@ -18,6 +18,10 @@ Hardware::Hardware()
 
     drivetrain.setStopping(vex::brakeType::coast);
 
+    // Intake
+    right_intake_motor.setStopping(vex::brakeType::hold);
+    left_catapult_motor.setStopping(vex::brakeType::hold);    
+
     // Catapult
     right_catapult_motor.setStopping(vex::brakeType::hold);
     left_catapult_motor.setStopping(vex::brakeType::hold);
