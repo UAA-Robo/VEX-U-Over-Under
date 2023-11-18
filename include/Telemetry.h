@@ -31,8 +31,9 @@ public:
     //in degrees
     float odometry_heading = 0;
 
-    /// @brief      Gets the current odometry position of the robot
-    /// @return     Returns odomrety position
+
+    /// @brief      Gets the current odometry position
+    /// @return     Returns odometry_x_position, odometry_y_position
     std::pair<double, double> get_current_position();
 
     // May use later (if GPS)

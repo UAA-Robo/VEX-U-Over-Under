@@ -44,12 +44,9 @@ int Telemetry::update_position(void* param) {
         double y_displacement = center_displacement  * sin(current_heading) + horizontal_displacement * cos(current_heading);
        
         tm->odometry_x_position += x_displacement;
-        tm->odometry_y_position +=  y_displacement;
+        tm->odometry_y_position += y_displacement;
     
 
-        //tm->heading = std::fmod(tm->heading, 2 * M_PI);
-        //tm->heading_displacement = std::fmod(tm->heading_displacement, 2 * M_PI);
-        
         //convert deg for modding
         tm->odometry_heading += heading_displacement;
         tm->odometry_heading = std::fmod(tm->odometry_heading * (180/ M_PI), 360);

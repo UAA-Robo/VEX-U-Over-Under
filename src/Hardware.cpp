@@ -26,4 +26,7 @@ Hardware::Hardware()
     left_odometry.resetPosition();
     right_odometry.resetPosition();
     back_odometry.resetPosition();
+
+    // Distance sensor
+    distanceSensor.installed();
 }

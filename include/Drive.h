@@ -45,10 +45,13 @@ protected:
     ///                           {verticalVelocityPercent, horizontalVelocityPercent}
     void move_drivetrain_distance(std::pair<double, double> velocity_percent, double distance);
 
-    /// @brief      Moves drivetrain until odometry position is within acceptable margin
-    ///             of error from destination
-    /// @param ISBACKTOPOSITION     Decides which direction to travel
-    /// @param position             Position of final destination
-    void move_to_position(bool ISBACKTOPOSITION, std::pair<double, double> position);
+    /// @brief      Moves the drivetrain until the distance between the final destination and
+    ///             the bot is minimal.
+    /// @param distance             Distance between robot and final destination.
+    /// @param ISBACKTOPOSITION     A bool value that determines the direction
+    ///                             the bot moves.
+    /// @param position             Pair of doubles:
+    ///                             {X, Y}
+    void move_drivetrain_distance_odometry(double distance, bool ISBACKTOPOSITION, std::pair<double, double> position);
 
 };
