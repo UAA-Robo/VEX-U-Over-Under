@@ -16,32 +16,32 @@ int Telemetry::update_position(void* param) {
     // Updates continuously
     while(true) {
 
-        float left_odometry_revolutions = tm->hw->left_odometry.position(vex::rotationUnits::rev);
-        float right_odometry_revolutions = tm->hw->right_odometry.position(vex::rotationUnits::rev);
-        float back_odometry_revolutions =  tm->hw->back_odometry.position(vex::rotationUnits::rev);
+        double left_odometry_revolutions = tm->hw->left_odometry.position(vex::rotationUnits::rev);
+        double right_odometry_revolutions = tm->hw->right_odometry.position(vex::rotationUnits::rev);
+        double back_odometry_revolutions =  tm->hw->back_odometry.position(vex::rotationUnits::rev);
 
 
-        const float ODOMETRY_WIDTH = 2 * tm->rc->ODOMETRY_LEFT_RIGHT_RADIUS;
+        const double ODOMETRY_WIDTH = 2 * tm->rc->ODOMETRY_LEFT_RIGHT_RADIUS;
 
-        float left_displacement = left_odometry_revolutions * tm->rc->ODOMETRY_CIRCUMFERENCE;
+        double left_displacement = left_odometry_revolutions * tm->rc->ODOMETRY_CIRCUMFERENCE;
 
-        float right_displacement = right_odometry_revolutions * tm->rc->ODOMETRY_CIRCUMFERENCE;
+        double right_displacement = right_odometry_revolutions * tm->rc->ODOMETRY_CIRCUMFERENCE;
 
-        float back_displacement = back_odometry_revolutions * tm->rc->ODOMETRY_CIRCUMFERENCE; 
+        double back_displacement = back_odometry_revolutions * tm->rc->ODOMETRY_CIRCUMFERENCE; 
         
-        float heading_displacement = (left_displacement - right_displacement) / ODOMETRY_WIDTH;  
+        double heading_displacement = (left_displacement - right_displacement) / ODOMETRY_WIDTH;  
 
-        float center_displacement  = (left_displacement + right_displacement) / 2;
+        double center_displacement  = (left_displacement + right_displacement) / 2;
 
 
         // can use either sin or angle, sin uses straight line, angle uses arc
-        float horizontal_displacement = back_displacement - heading_displacement *  tm->rc->ODOMETRY_BACK_RADIUS; 
+        double horizontal_displacement = back_displacement - heading_displacement *  tm->rc->ODOMETRY_BACK_RADIUS; 
 
-        float current_heading = std::fmod(tm->odometry_heading + heading_displacement, 2 * M_PI);  
+        double current_heading = std::fmod(tm->odometry_heading + heading_displacement, 2 * M_PI);  
 
         //Easy Math
-        float x_displacement = center_displacement * cos(current_heading) - horizontal_displacement * -sin(current_heading);
-        float y_displacement = center_displacement  * sin(current_heading) + horizontal_displacement * cos(current_heading);
+        double x_displacement = center_displacement * cos(current_heading) - horizontal_displacement * -sin(current_heading);
+        double y_displacement = center_displacement  * sin(current_heading) + horizontal_displacement * cos(current_heading);
        
         tm->odometry_x_position += x_displacement;
         tm->odometry_y_position +=  y_displacement;
@@ -72,6 +72,8 @@ double Telemetry::get_distance_between_points(std::pair<double, double> initial_
 {
     double distance_to_final_position = sqrt(pow((final_position.first - initial_position.first), 2) + pow((final_position.second - initial_position.second), 2));
     return distance_to_final_position;
+
+    std::cout << "Distance() called successful!" << std::endl;  // TDOD: remove later
 }
 
 double Telemetry ::get_heading_between_points(std::pair<double, double> initial_position, std::pair<double, double> final_position)
@@ -82,14 +84,13 @@ double Telemetry ::get_heading_between_points(std::pair<double, double> initial_
 
 std::pair<double, double> Telemetry::get_current_position() // Revised for odometry
 {
-    return std::pair<double, double>(odometry_x_position, odometry_y_position);
+    return std::make_pair(static_cast<double>(this->odometry_x_position), static_cast<double>(this->odometry_y_position));
 }
 
 double Telemetry::get_current_heading() // Revised for odometry
 {
     return this->odometry_heading; 
 }
-
 
 
 // May use later (if GPS)

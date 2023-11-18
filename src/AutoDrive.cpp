@@ -4,11 +4,10 @@
 AutoDrive::AutoDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry) : Drive(hardware, robotConfig, telemetry) {}
 
 void AutoDrive::drive() {
-    rotate_and_drive_to_position({24, 0});
-    rotate_and_drive_to_position({24, 60});
-    rotate_and_drive_to_position({0, 0});
+    // rotate_and_drive_to_position({24, 0});
+    // rotate_and_drive_to_position({24, 60});
+    rotate_and_drive_to_position({10, 0});
 
-    rotate_to_relative_angle(115);
 }
 
 void AutoDrive::rotate_to_relative_angle(double angle) // Based on ENCODERS,
@@ -39,11 +38,13 @@ void AutoDrive::rotate_to_heading_odometry(double heading)
     if (fabs(heading - tm->get_current_heading()) > 180) {
         hw->left_drivetrain_motors.spin(vex::directionType::fwd);
         hw->right_drivetrain_motors.spin(vex::directionType::rev);
+
     }
     // Counter-clockwise
     else {
         hw->left_drivetrain_motors.spin(vex::directionType::rev);
         hw->right_drivetrain_motors.spin(vex::directionType::fwd);
+
     }
     // range -1 to 1...for now
     while (fabs(heading - tm->get_current_heading()) > 1);   // Stop motors
@@ -73,6 +74,6 @@ void AutoDrive::rotate_and_drive_to_position(std::pair<double, double> position,
     // if (IS_USING_GPS_HEADING) tm->set_current_heading(tm->getGPSPosition());
 
     double distance_to_position = tm->get_distance_between_points(tm->get_current_position(), position); // inches
-    move_drivetrain_distance_odometry(distance_to_position, ISBACKTOPOSITION, position);    // TODO: Calculate initial position within function
+    move_to_position(ISBACKTOPOSITION, position);    // TODO: Calculate initial distance within function
 }
 

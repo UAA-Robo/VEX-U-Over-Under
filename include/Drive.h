@@ -47,9 +47,8 @@ protected:
 
     /// @brief      Moves drivetrain until odometry position is within acceptable margin
     ///             of error from destination
-    /// @param distance             Initial distance from destination
     /// @param ISBACKTOPOSITION     Decides which direction to travel
     /// @param position             Position of final destination
-    void move_drivetrain_distance_odometry(double distance, bool ISBACKTOPOSITION, std::pair<double, double> position);
+    void move_to_position(bool ISBACKTOPOSITION, std::pair<double, double> position);
 
 };
