@@ -33,6 +33,7 @@ private:
     double maxYInteractableOffset;
     double minYInteractableOffset;
     bool isBackAligned = false;
+    double interactionAngle;
 
 protected:
     /// @brief Game Element Constructor. This class is designed to have child classes built off of it. Allowing for easy customization and handling of map elements.
@@ -47,6 +48,7 @@ protected:
     /// @param maxXInterOffset Maximum X Interactable Offset, used to decide if robot can approach element at an angle, or if it needs to be straight on
     /// @param minYInterOffset Minimum Y Interactable Offset, used to decide if robot can approach element at an angle, or if it needs to be straight on
     /// @param maxYInterOffset Maximum Y Interactable Offset, used to decide if robot can approach element at an angle, or if it needs to be straight on
+    /// @param The angle required for the bot to interact with the Game Element.
     GameElement(
         int id,
         double x,
@@ -58,7 +60,8 @@ protected:
         double minXInterOffset = 0,
         double maxXInterOffset = 0,
         double minYInterOffset = 0,
-        double maxYInterOffset = 0)
+        double maxYInterOffset = 0
+        double interactionAngle = 0;)
     {
         this->id = id;
         this->position = std::pair<double, double>(x, y);
@@ -70,6 +73,7 @@ protected:
         this->maxXInteractableOffset = maxXInterOffset;
         this->minYInteractableOffset = minYInterOffset;
         this->maxYInteractableOffset = maxYInterOffset;
+        this->interactionAngle = interactionAngle;
     }
 
 public:
