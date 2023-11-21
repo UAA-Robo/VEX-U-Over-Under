@@ -1,11 +1,12 @@
 #include "UserDrive.h"
 #include "iostream"
 
-UserDrive::UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry) : Drive(hardware, robotConfig, telemetry)
+UserDrive::UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry) : Drive(hardware, robotConfig, telemetry), tick(0)
 {
     IS_MACRO_RUNNING = false;
     IS_MACRO_RECORDING = false;
     macro_length = -2;
+
 
     if (input_list.size() == 0) // Setup vector
     {
@@ -48,8 +49,11 @@ void UserDrive::drive()
     drivetrain_controls();
     pneumatic_in();
     pneumatic_out();
-    launch_catapult();
+    launch_catapult(tick);
     activate_intake();
+    retract_intake();
+
+    ++tick;
 
     set_previous_inputs(); // Tracks previous inputs to compare to
     if (macro_loop_iteration == macro_length)
@@ -179,7 +183,7 @@ void UserDrive::test_print()
 void UserDrive::pneumatic_out()
 {
 
-    if (button_left.value)
+    if (button_up.value)
     {
         hw->controller.Screen.setCursor(1, 1);
         hw->controller.Screen.print("Releasing Air!");
@@ -191,7 +195,7 @@ void UserDrive::pneumatic_out()
 void UserDrive::pneumatic_in()
 {
 
-    if (button_right.value)
+    if (button_down.value)
     {
         hw->controller.Screen.setCursor(1, 1);
         hw->controller.Screen.print("Other Air!");
@@ -200,24 +204,45 @@ void UserDrive::pneumatic_in()
     // hw->controller.Screen.clearScreen();
 }
 
-void UserDrive::launch_catapult()
+void UserDrive::launch_catapult(int time)
 {
-    if (button_R1.value)
-    {
-        hw->catapult.spin(vex::directionType::rev, 12, vex::voltageUnits::volt);
+    // if (!CATAPULT_RETURNING_TO_POSITION && (tick - catapult_returning_tick) > 5 &&
+    // catapult_returning_tick > 0)
+    // {
+    //     hw->catapult.stop();
+    //     hw->controller.Screen.print("STOPPPPPP");
+    // }
+    // else if (button_R1.value && !CATAPULT_RETURNING_TO_POSITION)
+    // {
+    //     // hw->catapult.spinToPosition(vex::directionType::rev, 12, vex::voltageUnits::volt);
+    //     hw->catapult.stop(vex::brakeType::coast);
 
-        hw->controller.Screen.setCursor(1, 1);
-        hw->controller.Screen.print("Catapult!");
-    }
-    else
-    {
-        hw->catapult.stop();
-    }
+    //     hw->controller.Screen.setCursor(1, 1);
+    //     hw->controller.Screen.print("Catapult!");
+    //     CATAPULT_RETURNING_TO_POSITION = true;
+    // }
+    // else if (CATAPULT_RETURNING_TO_POSITION)
+    // {
+    //     // hw->catapult.spinFor(vex::directionType::rev, 2, vex::rotationUnits::rev, true);
+    //     // hw->left_catapult_motor.spinFor(vex::directionType::rev, 2, vex::rotationUnits::rev, true);
+    //     // hw->right_catapult_motor.spinFor(vex::directionType::rev, 2, vex::rotationUnits::rev, true);
+    //     // hw->left_catapult_motor.spin(vex::directionType::rev, 12, vex::voltageUnits::volt);
+    //     // hw->right_catapult_motor.spin(vex::directionType::rev, 12, vex::voltageUnits::volt);
+    //     catapult_returning_tick = tick;
+    //     hw->catapult.spin(vex::directionType::rev, 12, vex::voltageUnits::volt);
+    //     hw->drivetrain.spin(vex::directionType::fwd);
+    //     hw->controller.Screen.print("}}}}}}}}}}}}}}}}");
+    //     CATAPULT_RETURNING_TO_POSITION = false;
+    // }
+    // else if (hw->catapult_limit.pressing() && !CATAPULT_RETURNING_TO_POSITION)
+    // {
+    //     hw->catapult.stop();
+    // }
 }
 
 void UserDrive::activate_intake()
 {
-    if (button_L1.value)
+    if (button_left.value)
     {
         hw->left_intake_motor.spin(vex::directionType::fwd, 12, vex::voltageUnits::volt);
         hw->right_intake_motor.spin(vex::directionType::rev, 12, vex::voltageUnits::volt);
@@ -225,9 +250,26 @@ void UserDrive::activate_intake()
         hw->controller.Screen.setCursor(1, 1);
         hw->controller.Screen.print("Activating Intake!");
     }
-    else
+    // else if (!button_right.value)
+    // {
+    //     hw->left_intake_motor.stop();
+    //     hw->right_intake_motor.stop();
+    // }
+}
+
+void UserDrive::retract_intake()
+{
+    if (button_right.value)
     {
-        hw->left_intake_motor.stop();
-        hw->right_intake_motor.stop();
+        hw->left_intake_motor.spin(vex::directionType::rev, 12, vex::voltageUnits::volt);
+        hw->right_intake_motor.spin(vex::directionType::fwd, 12, vex::voltageUnits::volt);
+
+        hw->controller.Screen.setCursor(1, 1);
+        hw->controller.Screen.print("Retracting Intake!");
     }
+    // else if (!button_left.value)
+    // {
+    //     hw->left_intake_motor.stop();
+    //     hw->right_intake_motor.stop();
+    // }
 }

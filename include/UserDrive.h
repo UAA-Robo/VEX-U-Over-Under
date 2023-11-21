@@ -12,7 +12,13 @@ private:
     struct input {
     int value;
     int previous;
+
     };
+
+    int tick;
+
+    bool CATAPULT_RETURNING_TO_POSITION = true;
+    int catapult_returning_tick;
 
     std::vector<input*> input_list;
     std::vector<int32_t> controller_values;
@@ -49,8 +55,11 @@ private:
     void pneumatic_in();
 
     /// @brief For testing purposes. Spins catapult motors while right bumper (R1) is pressed.
-    void launch_catapult();
+    void launch_catapult(int time);
 
-    /// @brief For testing purposes. Activates intake motor while right bumper (L1) is pressed.
+    /// @brief For testing purposes. Activates intake motor while left button (<) is pressed.
     void activate_intake();
+
+    /// @brief For testing purposes. Retracts intake motor while right button (>) is pressed.
+    void retract_intake();
 };
