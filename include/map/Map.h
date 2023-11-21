@@ -18,11 +18,11 @@ class Map {
         void addObstacle() {
             ;
         }
-        void addTriball() {
+        void addTriball() {         // head-to-head
             // red side
             Triball Triball1(46.83 + xAdjust, 70.20 + yAdjust, false, 0);   /// add min offset for interaction
             Triball Triball2(65.95 + xAdjust, 93.77 + yAdjust, false, 0);   /// offset = robot_front - robot_center
-            Triball Triball3(65.95 + xAdjust, 70.20 + yAdjust, false, 0);   /// add team color
+            Triball Triball3(65.95 + xAdjust, 70.20 + yAdjust, false, 0);   /// replace interacion angle with odometry_heading + headingAdjust
 
             // middle bar
             Triball Triball4(70.20 + xAdjust, 129.11 + yAdjust, false, 0);
@@ -36,13 +36,33 @@ class Map {
         }
 
         void addLoadZone() {
-            LoadZone LoadZone1(22.89 / 2 + xAdjust, 129.11 + yAdjust, -45 + headingAdjust, false, )
-            
+            // red side
+            LoadZone LoadZone1(22.89 / 2 + xAdjust, 129.11 + yAdjust, R, 1, false, 45 + headingAdjust);
+            LoadZone LoadZone2(22.89 / 2 + xAdjust, 11.30  + yAdjust, R, 1, false, 135 + headingAdjust);
+
+            // blue side
+            LoadZone LoadZone3(122.76 + xAdjust, 129.11 + yAdjust, B, 1, false, -45 + headingAdjust);
+            LoadZone LoadZone4(122.76 + xAdjust, 11.30 + yAdjust, B,  1, false, -135 + headingAdjust);
         }
 
         void addGoal() {
             ;
         }
+
+        void addHighBar() {
+            // blue side
+            HighBar HighBar1(70.20 + xAdjust, 129.11 + yAdjust, B, false, 45 + headingAdjust);  // fix heading
+
+            // red side
+            HighBar HighBar2(70.20 + xAdjust, 11.30 + yAdjust, R, false, 45 + headingAdjust);   // fix heading
+
+        }
+
+        void addLines() {
+            ;    
+        }
+
+
 
     public:
         Map() {
@@ -52,7 +72,7 @@ class Map {
         }
     
 
-    private:
+    public:
         // coordinates-angle-readjustment
         double xAdjust = -70.20;    // inches
         double yAdjust = -70.20;    // inches

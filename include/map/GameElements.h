@@ -25,7 +25,6 @@ class GameElement
 private:
     int id;
     std::pair<double, double> position;
-    double rotation;
     char teamColor;
     char type;
     double maxXInteractableOffset;

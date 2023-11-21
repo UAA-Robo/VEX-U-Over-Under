@@ -1,14 +1,15 @@
 #include <GameElements.h>
 
-class LoadZone : private
+class LoadZone : private GameElement
 {
+    public:
     GameElement(
         //int id,
         double x,
         double y,
-        double rotation,
-        // char teamColor,
+        char teamColor,
         // char type,
+        int currentCapacity,
         bool BackTowardsTarget = false,
         // double minXInterOffset = 0,
         // double maxXInterOffset = 0,
@@ -18,9 +19,9 @@ class LoadZone : private
     {
         //this->id = id;
         this->position = std::pair<double, double>(x, y);
-        this->rotation = rotation;
-        // this->teamColor = teamColor;
+        this->teamColor = teamColor;
         // this->type = type;
+        this->currentCapacity = currentCapacity;
         this->isBackAligned = BackTowardsTarget;
         // this->minXInteractableOffset = minXInterOffset;
         // this->maxXInteractableOffset = maxXInterOffset;
@@ -28,4 +29,8 @@ class LoadZone : private
         // this->maxYInteractableOffset = maxYInterOffset;
         this->interactionAngle = interactionAngle;
     }
-}
+
+    private:
+        int currentCapacity;
+
+};
