@@ -176,7 +176,9 @@ void UserDrive::pneumatic_out()
     if (button_left.value) {
         hw->controller.Screen.setCursor(1,1);
         hw->controller.Screen.print("Releasing Air!");
-        hw->pneumatic_output.set(true);
+        hw->pneumatic_output_F.set(true);
+        hw->pneumatic_output_H.set(true);
+
     }
     //hw->controller.Screen.clearScreen();
 
@@ -188,7 +190,8 @@ void UserDrive::pneumatic_in()
     if (button_right.value) {
         hw->controller.Screen.setCursor(1,1);
         hw->controller.Screen.print("Other Air!");
-        hw->pneumatic_output.set(false);
+        hw->pneumatic_output_F.set(false);
+        hw->pneumatic_output_H.set(false);
     }
     //hw->controller.Screen.clearScreen();
 

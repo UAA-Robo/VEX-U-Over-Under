@@ -34,5 +34,6 @@ public:
     vex::motor back_right_drivetrain_motor = vex::motor(vex::PORT18, vex::ratio6_1, true);
 
     // Pneumatic Test
-    vex::digital_out pneumatic_output = vex::digital_out(brain.ThreeWirePort.A);
+    vex::digital_out pneumatic_output_F = vex::digital_out(brain.ThreeWirePort.F);
+    vex::digital_out pneumatic_output_H = vex::digital_out(brain.ThreeWirePort.H);
 };
