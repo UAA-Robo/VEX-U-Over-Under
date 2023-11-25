@@ -6,6 +6,7 @@
 #include "TriballGoal.h"
 #include "Triballs.h"
 #include "GameElements.h"
+#include "MapObstacles.h"
 
 /*
     Representation of Map
@@ -16,7 +17,21 @@
 class Map {
     private:
         void addObstacle() {
-            ;
+            // outer walls
+            Obstacle Wall1(0 + xAdjust, 140.40 + yAdjust, 0 + xAdjust, 0 + yAdjust);
+            Obstacle Wall2(0 + xAdjust, 140.40 + yAdjust, 140.40 + xAdjust, 140.40 + yAdjust);
+            Obstacle Wall3(0 + xAdjust, 0 + yAdjust, 140.40 + xAdjust, 0 + yAdjust);
+            Obstacle Wall4(140.40 + xAdjust, 140.40 + yAdjust, 0 + xAdjust, 140.40 + yAdjust);
+
+            // inner walls
+            Obstacle Wall5(45.61 + xAdjust, 118.51 + yAdjust, 94.79 + xAdjust, 118.51 + yAdjust);
+            Obstacle Wall6(45.61 + xAdjust, 118.51 + yAdjust, 94.79 + xAdjust, 118.51 + yAdjust);
+            Obstacle Wall7(69.01 + xAdjust, 118.51 + yAdjust, 69.01 + xAdjust, 21.89 + yAdjust);
+            Obstacle Wall8(71.39 + xAdjust, 118.51 + yAdjust, 71.39 + xAdjust, 21.89 + yAdjust);
+
+            Obstacle Wall9(45.61 + xAdjust, 24.26 + yAdjust, 94.79 + xAdjust, 24.26 + yAdjust);
+            Obstacle Wall10(45.61 + xAdjust, 21.89 + yAdjust, 94.79 + xAdjust, 21.89 + yAdjust);
+
         }
         void addTriball() {         // head-to-head
             // red side
@@ -35,6 +50,10 @@ class Map {
 
         }
 
+        void addTriball() {         // skills
+            Triball Triball1()
+        }
+
         void addLoadZone() {
             // red side
             LoadZone LoadZone1(22.89 / 2 + xAdjust, 129.11 + yAdjust, R, 1, false, 45 + headingAdjust);
@@ -51,15 +70,21 @@ class Map {
 
         void addHighBar() {
             // blue side
-            HighBar HighBar1(70.20 + xAdjust, 129.11 + yAdjust, B, false, 45 + headingAdjust);  // fix heading
+            HighBar HighBar1(70.20 + xAdjust, 129.11 + yAdjust, B, false);  // fix heading
 
             // red side
-            HighBar HighBar2(70.20 + xAdjust, 11.30 + yAdjust, R, false, 45 + headingAdjust);   // fix heading
+            HighBar HighBar2(70.20 + xAdjust, 11.30 + yAdjust, R, false);   // fix heading
 
         }
 
         void addLines() {
-            ;    
+            // red side
+            Line Line1(0 + xAdjust, 70.20 + xAdjust, 70.20 + yAdjust, R, true);
+            Line Line2(0 + xAdjust, 70.20 + xAdjust, 58.42 + yAdjust, R, false);
+
+            // blue side
+            Line Line3(70.20 + xAdjust, 140.41 + xAdjust, 81.98 + yAdjust, B, false);
+            Line Line4(70.20 + xAdjust, 140.41 + xAdjust, 70.20 + yAdjust, B, true);
         }
 
 

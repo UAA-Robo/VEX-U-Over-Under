@@ -1,3 +1,4 @@
+#pragma once
 #include <GameElements.h>
 
 class Triball : private GameElement

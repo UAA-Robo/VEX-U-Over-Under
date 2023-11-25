@@ -59,7 +59,7 @@ protected:
         double minXInterOffset = 0,
         double maxXInterOffset = 0,
         double minYInterOffset = 0,
-        double maxYInterOffset = 0
+        double maxYInterOffset = 0,
         double interactionAngle = 0;)
     {
         this->id = id;
