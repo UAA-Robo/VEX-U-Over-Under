@@ -43,13 +43,19 @@ void UserDrive::drive()
 {
     hw->controller.Screen.clearScreen();
     hw->controller.Screen.setCursor(1, 1);
+
+    if (hw->catapult_limit_switch.value() == 0) {
+        hw->controller.Screen.print("0");
+    }
+
     get_inputs();
     macro_controls();
     test_print();
     drivetrain_controls();
     pneumatic_in();
     pneumatic_out();
-    launch_catapult(tick);
+    launch_catapult();
+    if (CATAPULT_RETURNING_TO_POSITION) return_catapult_to_position();
     activate_intake();
     retract_intake();
 
@@ -204,40 +210,30 @@ void UserDrive::pneumatic_in()
     // hw->controller.Screen.clearScreen();
 }
 
-void UserDrive::launch_catapult(int time)
+void UserDrive::launch_catapult()
 {
-    // if (!CATAPULT_RETURNING_TO_POSITION && (tick - catapult_returning_tick) > 5 &&
-    // catapult_returning_tick > 0)
-    // {
-    //     hw->catapult.stop();
-    //     hw->controller.Screen.print("STOPPPPPP");
-    // }
-    // else if (button_R1.value && !CATAPULT_RETURNING_TO_POSITION)
-    // {
-    //     // hw->catapult.spinToPosition(vex::directionType::rev, 12, vex::voltageUnits::volt);
-    //     hw->catapult.stop(vex::brakeType::coast);
+    if (button_R1.value == 1 && !CATAPULT_RETURNING_TO_POSITION)
+    {
+        std::cout << "R1 pressed\n";
+        hw->catapult.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
+        CATAPULT_RETURNING_TO_POSITION = true;
+    }
+    last_catapult_limit_switch_value = hw->catapult_limit_switch.value();
+}
 
-    //     hw->controller.Screen.setCursor(1, 1);
-    //     hw->controller.Screen.print("Catapult!");
-    //     CATAPULT_RETURNING_TO_POSITION = true;
-    // }
-    // else if (CATAPULT_RETURNING_TO_POSITION)
-    // {
-    //     // hw->catapult.spinFor(vex::directionType::rev, 2, vex::rotationUnits::rev, true);
-    //     // hw->left_catapult_motor.spinFor(vex::directionType::rev, 2, vex::rotationUnits::rev, true);
-    //     // hw->right_catapult_motor.spinFor(vex::directionType::rev, 2, vex::rotationUnits::rev, true);
-    //     // hw->left_catapult_motor.spin(vex::directionType::rev, 12, vex::voltageUnits::volt);
-    //     // hw->right_catapult_motor.spin(vex::directionType::rev, 12, vex::voltageUnits::volt);
-    //     catapult_returning_tick = tick;
-    //     hw->catapult.spin(vex::directionType::rev, 12, vex::voltageUnits::volt);
-    //     hw->drivetrain.spin(vex::directionType::fwd);
-    //     hw->controller.Screen.print("}}}}}}}}}}}}}}}}");
-    //     CATAPULT_RETURNING_TO_POSITION = false;
-    // }
-    // else if (hw->catapult_limit.pressing() && !CATAPULT_RETURNING_TO_POSITION)
-    // {
-    //     hw->catapult.stop();
-    // }
+void UserDrive::return_catapult_to_position()
+{
+    if (button_L1.value == 1) {
+    hw->catapult.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
+    std::cout << "L1 pressed" << '\n';
+    if (hw->catapult_limit_switch.value() == 0 && last_catapult_limit_switch_value != 0)
+    {
+        std::cout << "Stop" << '\n';
+        hw->catapult.stop(vex::brakeType::hold);
+        CATAPULT_RETURNING_TO_POSITION = false;
+    }
+    // last_catapult_limit_switch_value = hw->catapult_limit_switch.value();
+    }
 }
 
 void UserDrive::activate_intake()
@@ -272,4 +268,9 @@ void UserDrive::retract_intake()
     //     hw->left_intake_motor.stop();
     //     hw->right_intake_motor.stop();
     // }
+}
+
+void UserDrive::limit_switch_pressed() {
+
+    hw->brain.Screen.clearScreen(100);
 }

@@ -18,7 +18,7 @@ private:
     int tick;
 
     bool CATAPULT_RETURNING_TO_POSITION = true;
-    int catapult_returning_tick;
+    int last_catapult_limit_switch_value = 1;
 
     std::vector<input*> input_list;
     std::vector<int32_t> controller_values;
@@ -54,12 +54,17 @@ private:
     /// @brief For testing pneumatics. Sucks air in when right button is pressed.
     void pneumatic_in();
 
-    /// @brief For testing purposes. Spins catapult motors while right bumper (R1) is pressed.
-    void launch_catapult(int time);
+    /// @brief Spins catapult motors when right bumer (R1) is pressed.
+    void launch_catapult();
+
+    /// @brief Auto-return catapult to position.
+    void return_catapult_to_position();
 
     /// @brief For testing purposes. Activates intake motor while left button (<) is pressed.
     void activate_intake();
 
     /// @brief For testing purposes. Retracts intake motor while right button (>) is pressed.
     void retract_intake();
+
+    void limit_switch_pressed();
 };
