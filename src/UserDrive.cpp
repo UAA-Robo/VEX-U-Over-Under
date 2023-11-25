@@ -4,6 +4,7 @@
 UserDrive::UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry) : 
 Drive(hardware, robotConfig, telemetry) 
 {
+    
     IS_MACRO_RUNNING = false;
     IS_MACRO_RECORDING = false;
     macro_length = -2;
@@ -37,29 +38,17 @@ Drive(hardware, robotConfig, telemetry)
 
     for (int i = 0; i < input_list.size(); ++i) input_list[i]->previous = 0;
 
+    
+
 }
 
 void UserDrive::drive()
 {
 
-    hw->controller.Screen.clearScreen();
-    //hw->controller.Screen.print("(%.1lf, %.1lf)", tm->x_position, tm->y_position);
-    hw->controller.Screen.setCursor(1,1);
-    //hw->controller.Screen.print("%.1lf deg", tm->heading);
-    hw->controller.Screen.print("left %.1f",hw->left_odometry.position(vex::rotationUnits::rev));
-    hw->controller.Screen.setCursor(2,1);
-    hw->controller.Screen.print("right %.1f",hw->right_odometry.position(vex::rotationUnits::rev));
-    hw->controller.Screen.setCursor(3,1);
-    hw->controller.Screen.print("back %.1f",hw->back_odometry.position(vex::rotationUnits::rev));
-
     get_inputs();
     macro_controls();
     test_print();
     drivetrain_controls();
-
-
-
-
 
 
     set_previous_inputs(); // Tracks previous inputs to compare to

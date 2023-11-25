@@ -52,6 +52,6 @@ protected:
     ///                             the bot moves.
     /// @param position             Pair of doubles:
     ///                             {X, Y}
-    void move_drivetrain_distance_odometry(double distance, bool ISBACKTOPOSITION, std::pair<double, double> position);
+    void move_drivetrain_distance_odometry(std::pair<double, double> position, bool ISBACKTOPOSITION = false);
 
 };

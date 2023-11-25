@@ -61,7 +61,9 @@ int Telemetry::update_position(void* param) {
         //convert heading back into rads for calculations
         tm->odometry_heading = tm->odometry_heading * (M_PI / 180.0);
 
-        vex::wait(50, vex::timeUnits::msec);
+        // Rotation sensor is updated every 20ms so 50ms wait should be fine 
+        // https://www.vexforum.com/t/rotation-sensor-update-rate-optical-shaft-encoder-vs-rotation-sensor/106917
+        vex::wait(50, vex::timeUnits::msec); 
     }
 }
 
@@ -81,7 +83,7 @@ double Telemetry ::get_heading_between_points(std::pair<double, double> initial_
 
 std::pair<double, double> Telemetry::get_current_position() // Revised for odometry
 {
-    return std::make_pair(static_cast<double>(this->odometry_x_position), static_cast<double>(this->odometry_y_position));
+    return std::make_pair(this->odometry_x_position, this->odometry_y_position);
 }
 
 double Telemetry::get_current_heading() // Revised for odometry

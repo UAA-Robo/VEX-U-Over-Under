@@ -7,7 +7,8 @@ void AutoDrive::drive() {
     // rotate_and_drive_to_position({24, 0});
     // rotate_and_drive_to_position({24, 60});
     // rotate_and_drive_to_position({0, 0});
-    rotate_and_drive_to_position({10,0});
+    // Assume heading, x and y are all 0
+    move_drivetrain_distance_odometry({3,0});
 
     //rotate_to_relative_angle(115);
 }
@@ -69,6 +70,6 @@ void AutoDrive::rotate_and_drive_to_position(std::pair<double, double> position,
         
     // move_drivetrain_distance({rc->auto_drive_velocity_percent, 0}, distance_to_position); // Drive at auto_drive_velocity_percent% velocity
     //changed to odometry function
-    move_drivetrain_distance_odometry(distance_to_position, ISBACKTOPOSITION, position);
+    move_drivetrain_distance_odometry(position, ISBACKTOPOSITION);
 }
 

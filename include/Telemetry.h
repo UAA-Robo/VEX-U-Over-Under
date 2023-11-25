@@ -7,7 +7,7 @@
 class Telemetry
 {
 private:
-    std::pair<double, double> odometry_position;    // removed current_position and current_heading
+    //std::pair<double, double> odometry_position;    // removed current_position and current_heading
 
 public:
     Telemetry(Hardware *hardware, RobotConfig *robotConfig);
@@ -26,10 +26,10 @@ public:
     /// @param final_position     Pair of doubles {x, y} that represent the second coordinate (where the origin is the center of the field)
     /// @return             Returns angle in degrees.
     double get_heading_between_points(std::pair<double, double> initial_position, std::pair<double, double> final_position);
-    float odometry_x_position = 0;
-    float odometry_y_position = 0;
+    double odometry_x_position = 0;
+    double odometry_y_position = 0;
     //in degrees
-    float odometry_heading = 0;
+    double odometry_heading = 0;
 
 
     /// @brief      Gets the current odometry position
@@ -45,6 +45,8 @@ public:
     // void set_current_heading(double current_position);
 
     double get_current_heading();
+    
+   
 
 private:
     Hardware *hw;
