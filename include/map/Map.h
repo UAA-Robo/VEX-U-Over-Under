@@ -17,55 +17,15 @@
 class Map {
     private:
         void addObstacle() {
-            // outer walls
-            Obstacle Wall1(0 + xAdjust, 140.40 + yAdjust, 0 + xAdjust, 0 + yAdjust);
-            Obstacle Wall2(0 + xAdjust, 140.40 + yAdjust, 140.40 + xAdjust, 140.40 + yAdjust);
-            Obstacle Wall3(0 + xAdjust, 0 + yAdjust, 140.40 + xAdjust, 0 + yAdjust);
-            Obstacle Wall4(140.40 + xAdjust, 140.40 + yAdjust, 0 + xAdjust, 140.40 + yAdjust);
-
-            // inner walls
-            Obstacle Wall5(45.61 + xAdjust, 118.51 + yAdjust, 94.79 + xAdjust, 118.51 + yAdjust);
-            Obstacle Wall6(45.61 + xAdjust, 118.51 + yAdjust, 94.79 + xAdjust, 118.51 + yAdjust);
-            Obstacle Wall7(69.01 + xAdjust, 118.51 + yAdjust, 69.01 + xAdjust, 21.89 + yAdjust);
-            Obstacle Wall8(71.39 + xAdjust, 118.51 + yAdjust, 71.39 + xAdjust, 21.89 + yAdjust);
-
-            Obstacle Wall9(45.61 + xAdjust, 24.26 + yAdjust, 94.79 + xAdjust, 24.26 + yAdjust);
-            Obstacle Wall10(45.61 + xAdjust, 21.89 + yAdjust, 94.79 + xAdjust, 21.89 + yAdjust);
-
-        }
-        void addTriball() {         // head-to-head
-            // red side
-            Triball Triball1(46.83 + xAdjust, 70.20 + yAdjust, false, 0);   /// add min offset for interaction
-            Triball Triball2(65.95 + xAdjust, 93.77 + yAdjust, false, 0);   /// offset = robot_front - robot_center
-            Triball Triball3(65.95 + xAdjust, 70.20 + yAdjust, false, 0);   /// replace interacion angle with odometry_heading + headingAdjust
-
-            // middle bar
-            Triball Triball4(70.20 + xAdjust, 129.11 + yAdjust, false, 0);
-            Triball Triball5(70.20 + xAdjust, 11.30 + yAdjust, false, 0);
-
-            // blue side
-            Triball Triball6(74.46 + xAdjust, 70.20 + yAdjust, false, 0);
-            Triball Triball7(74.46 + xAdjust, 46.64 + yAdjust, false, 0);
-            Triball Triball8(93.77 + xAdjust, 70.20 + yAdjust, false, 0);
-
+            mapElements.push_back(new Obstacle(nextElementID++, upperLeftX, upperLeftY, lowerRightX, lowerRightY));
         }
 
-        void addTriball() {         // skills
-            Triball Triball1()
+        void addTriball() {
+            mapElements.push_back(new Triball(nextElementID++, x, y, teamColor));
         }
 
         void addLoadZone() {
-            // red side
-            LoadZone LoadZone1(22.89 / 2 + xAdjust, 129.11 + yAdjust, R, 1, false, 45 + headingAdjust);
-            LoadZone LoadZone2(22.89 / 2 + xAdjust, 11.30  + yAdjust, R, 1, false, 135 + headingAdjust);
-
-            // blue side
-            LoadZone LoadZone3(122.76 + xAdjust, 129.11 + yAdjust, B, 1, false, -45 + headingAdjust);
-            LoadZone LoadZone4(122.76 + xAdjust, 11.30 + yAdjust, B,  1, false, -135 + headingAdjust);
-        }
-
-        void addGoal() {
-            ;
+            mapElements.push_back(new LoadZone(nextElementID++, x, y, currentCapacity, interactionAngle));
         }
 
         void addHighBar() {
@@ -74,7 +34,7 @@ class Map {
 
             // red side
             HighBar HighBar2(70.20 + xAdjust, 11.30 + yAdjust, R, false);   // fix heading
-
+            mapElements.push_back()
         }
 
         void addLines() {
@@ -85,6 +45,12 @@ class Map {
             // blue side
             Line Line3(70.20 + xAdjust, 140.41 + xAdjust, 81.98 + yAdjust, B, false);
             Line Line4(70.20 + xAdjust, 140.41 + xAdjust, 70.20 + yAdjust, B, true);
+
+            mapElements.push_back(new Line());
+        }
+
+        void addGoal() {
+            ;
         }
 
 
@@ -93,14 +59,83 @@ class Map {
         Map() {
             nextElementID = 0;
 
-            addObstacle(dbpair())
-        }
-    
+            // outer walls
+            addObstacle(0 + xAdjust, 140.40 + yAdjust, 0 + xAdjust, 0 + yAdjust);                   // element 0                                                           
+            addObstacle(0 + xAdjust, 140.40 + yAdjust, 140.40 + xAdjust, 140.40 + yAdjust);         // element 1
+            addObstacle(0 + xAdjust, 0 + yAdjust, 140.40 + xAdjust, 0 + yAdjust);                   // element 2
+            addObstacle(140.40 + xAdjust, 140.40 + yAdjust, 0 + xAdjust, 140.40 + yAdjust);         // element 3
 
-    public:
+            // inner walls
+            addObstacle(45.61 + xAdjust, 118.51 + yAdjust, 94.79 + xAdjust, 118.51 + yAdjust);      // element 4
+            addObstacle(45.61 + xAdjust, 118.51 + yAdjust, 94.79 + xAdjust, 118.51 + yAdjust);      // element 5
+            addObstacle(69.01 + xAdjust, 118.51 + yAdjust, 69.01 + xAdjust, 21.89 + yAdjust);       // element 6
+            addObstacle(71.39 + xAdjust, 118.51 + yAdjust, 71.39 + xAdjust, 21.89 + yAdjust);       // element 7
+            addObstacle(45.61 + xAdjust, 24.26 + yAdjust, 94.79 + xAdjust, 24.26 + yAdjust);        // element 8
+            addObstacle(45.61 + xAdjust, 21.89 + yAdjust, 94.79 + xAdjust, 21.89 + yAdjust);        // element 9
+
+            /*
+                HEAD TO HEAD TRIBALLS --------------------------------------------------------------
+            */
+
+            // add min offsets
+            // offset = robot_front - robot_center
+
+                // red
+            addTriball(46.64 + xAdjust, 70.20 + yAdjust, R);                                        // element 10
+            addTriball(65.95 + xAdjust, 93.77 + yAdjust, R);                                        // element 11
+            addTriball(65.95 + xAdjust, 70.20 + yAdjust, R);                                        // element 12
+                // nuetral
+            addTriball(70.20 + xAdjust, 129.11 + yAdjust, N);                                       // element 13
+            addTriball(70.20 + xAdjust, 11.30 + yAdjust, N);                                        // element 14
+                // blue
+            addTriball(74.46 + xAdjust, 70.20 + yAdjust, B);                                        // element 15
+            addTriball(74.46 + xAdjust, 46.64 + yAdjust, B);                                        // element 16
+            addTriball(93.77 + xAdjust, 70.20 + yAdjust, B);                                        // element 17
+
+
+            /*
+                SKILLS TRIBALLS --------------------------------------------------------------------
+            */
+            
+                // red
+            addTriball(44.64 + xAdjust, 70.22 + yAdjust, R);                                        // element 10
+            addTriball(60.22 + xAdjust, 113.17 + yAdjust, R);                                       // element 11
+            addTriball(60.22 + xAdjust, 93.79 + yAdjust, R);                                        // element 12
+            addTriball(60.22 + xAdjust, 70.22 + yAdjust, R);                                        // element 13
+            addTriball(60.22 + xAdjust, 46.66 + yAdjust, R);                                        // element 14
+            addTriball(60.22 + xAdjust, 27.28 + yAdjust, R);                                        // element 15
+
+                // nuetral
+            addTriball(70.20 + xAdjust, 129.13 + yAdjust, N);                                       // element 16
+            addTriball(70.20 + xAdjust, 11.32 + yAdjust, N);                                        // element 17
+
+
+            // load Zones
+                // red
+            addLoadZone(22.89 / 2 + xAdjust, 129.11 + yAdjust, R, 1, 45 + headingAdjust);           // element 18
+            addLoadZone(22.89 / 2 + xAdjust, 11.30  + yAdjust, R, 1, 135 + headingAdjust);          // element 19
+                // blue
+            addLoadZone(122.76 + xAdjust, 129.11 + yAdjust, B, 1, -45 + headingAdjust);             // element 20
+            addLoadZone(122.76 + xAdjust, 11.30 + yAdjust, B,  1, -135 + headingAdjust);            // element 21
+
+
+            // high bar
+                // red
+            addHighBar();
+                // blue
+            addHighBar();
+        }
+
+
+
+
+
         // coordinates-angle-readjustment
         double xAdjust = -70.20;    // inches
         double yAdjust = -70.20;    // inches
-        double headingAdjust = 90;  // when rad: M_PI / 2
+        double headingAdjust = 90;  // degree
+
+        std::vector<GameElement*> mapElements;
+
 
 }

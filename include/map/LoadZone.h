@@ -4,31 +4,31 @@
 class LoadZone : private GameElement
 {
     public:
-    GameElement(
+    LoadZone(
         //int id,
         double x,
         double y,
+        int currentCapacity,
         char teamColor,
         // char type,
-        int currentCapacity,
-        bool BackTowardsTarget = false,
         // double minXInterOffset = 0,
         // double maxXInterOffset = 0,
         // double minYInterOffset = 0,
         // double maxYInterOffset = 0,
-        double interactionAngle = 0;)
+        double interactionAngle)
+
     {
         //this->id = id;
         this->position = std::pair<double, double>(x, y);
+        this->currentCapacity = currentCapacity;
         this->teamColor = teamColor;
         // this->type = type;
-        this->currentCapacity = currentCapacity;
-        this->isBackAligned = BackTowardsTarget;
         // this->minXInteractableOffset = minXInterOffset;
         // this->maxXInteractableOffset = maxXInterOffset;
         // this->minYInteractableOffset = minYInterOffset;
         // this->maxYInteractableOffset = maxYInterOffset;
         this->interactionAngle = interactionAngle;
+        this->isBackAligned = false;
     }
 
     private:

@@ -1,10 +1,10 @@
 #pragma once
 #include <GameElements.h>
 
-class Lines : private GameElement
+class Line : private GameElement
 {
     public:
-        Lines(
+        Line(
             double startX, 
             double endX, 
             double y,
@@ -17,7 +17,7 @@ class Lines : private GameElement
             this->endX      = endX;
             this->y         = y;
             this->teamColor = teamColor;
-            this->canCross  = canCross;
+            //this->canCross  = canCross;
         }
 
 
@@ -27,6 +27,6 @@ class Lines : private GameElement
         /// @brief canInteract - Determines whether the line can be crossed
         double startX;
         double endX;
-        bool canCross;
+        //bool canCross;
 
 };
