@@ -212,21 +212,37 @@ void UserDrive::pneumatic_in()
 void UserDrive::run_catapult()
 {
     hw->controller.Screen.clearScreen();
-    if (hw->catapult_limit_switch.value() == 0) hw->controller.Screen.print("LOCKED");
-    // // 0 is True
-    // if (hw->catapult_limit_switch.value() == 0) CATAPULT_STOPPED = true; // if limit switch touched, stop catapult
-    // if (CATAPULT_STOPPED) hw->catapult.stop();
+    if (hw->catapult_limit_switch.value() == 0) {
+        hw->catapult.spin(vex::directionType::rev, 0.0, vex::voltageUnits::volt);
+        hw->catapult.stop();
+        CATAPULT_STOPPED = true; // if limit switch touched, stop catapult
+        hw->controller.Screen.print("LOCKED");
+    }
     // // {
     // //     hw->catapult.stop();
     // //     CATAPULT_STOPPED = true;
     // //     hw->controller.Screen.print("LIMIT SWITCH");
     // // }
     // // else CATAPULT_STOPPED = false;
-    // if (button_R1.value == 1) CATAPULT_STOPPED = false;
-    // if (!CATAPULT_STOPPED/* || button_R1.value == 1*/) // if catapult spinning, do this
+    if (button_R1.value == 1) CATAPULT_STOPPED = false;
+    if (!CATAPULT_STOPPED/* || button_R1.value == 1*/) // if catapult spinning, do this
+    {
+        hw->controller.Screen.print("CATAPULT SPINNING");
+        hw->catapult.spin(vex::directionType::rev, 6.0, vex::voltageUnits::volt);
+    }
+
+    // if (!CATAPULT_STOPPED && button_R1.value == 1/* || button_R1.value == 1*/) // if catapult spinning, do this
     // {
     //     hw->controller.Screen.print("CATAPULT SPINNING");
-    //     hw->catapult.spin(vex::directionType::rev, 4.0, vex::voltageUnits::volt);
+    //     hw->catapult.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
+    // }
+
+    // if (button_R1.value == 1) // if catapult spinning, do this
+    // {
+    //     hw->controller.Screen.print("CATAPULT SPINNING");
+    //     hw->catapult.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
+    // }else {
+    //     hw->catapult.stop();
     // }
     
 

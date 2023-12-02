@@ -32,7 +32,7 @@ bool isControlled;
 void pre_auton(void) {
 
   
-  vex::wait(3000, vex::msec);
+  vex::wait(20, vex::msec);
   
   return;
 }
