@@ -18,6 +18,7 @@ private:
     int tick;
 
     bool CATAPULT_RUNNING = false;
+    bool CATAPULT_STOPPED = false;
 
     std::vector<input*> input_list;
     std::vector<int32_t> controller_values;
