@@ -74,26 +74,23 @@ void Drive::move_drivetrain_distance_odometry(std::pair<double, double> position
 {
 
     // update distance from final position (goal)
-    double distance = distance = tm->get_distance_between_points(tm->get_current_position(), position);
-    // Check if reached
+    double distance = tm->get_distance_between_points(tm->get_current_position(), position);
+
+
+    double velocity_percent = 10.0;
+    // Check if reache
     // range -0.05 to 0.05...for now // check with 5 inches
-    while (fabs(distance) > 0.05) {
-        hw->controller.Screen.clearScreen();
-        //hw->controller.Screen.print("(%.1lf, %.1lf)", tm->x_position, tm->y_position);
-        hw->controller.Screen.setCursor(1,1);
-        //hw->controller.Screen.print("%.1lf deg", tm->heading);
-        hw->controller.Screen.print("x %.1f",tm->odometry_x_position);
-        hw->controller.Screen.setCursor(2,1);
-        hw->controller.Screen.print("y %.1f",tm->odometry_y_position);
-        hw->controller.Screen.setCursor(3,1);
-        hw->controller.Screen.print("heading %.1f",tm->odometry_heading);
-        if(ISBACKTOPOSITION) {  // Move Back
-            hw->left_drivetrain_motors.spinFor(-90, vex::rotationUnits::deg, 100.0, vex::velocityUnits::pct, false);
-            hw->right_drivetrain_motors.spinFor(-90, vex::rotationUnits::deg, 100.0, vex::velocityUnits::pct, false);
-        } else {                // Move forward
-            hw->left_drivetrain_motors.spinFor(90, vex::rotationUnits::deg, 100.0, vex::velocityUnits::pct, false);
-            hw->right_drivetrain_motors.spinFor(90, vex::rotationUnits::deg, 100.0, vex::velocityUnits::pct, false);
-        }
+    if (ISBACKTOPOSITION) {
+        hw->left_drivetrain_motors.spin(vex::directionType::rev, velocity_percent, vex::velocityUnits::pct);
+        hw->right_drivetrain_motors.spin(vex::directionType::rev, velocity_percent, vex::velocityUnits::pct);
+    } else {
+    hw->left_drivetrain_motors.spin(vex::directionType::fwd, velocity_percent, vex::velocityUnits::pct);
+    hw->right_drivetrain_motors.spin(vex::directionType::fwd, velocity_percent, vex::velocityUnits::pct);
+    }
+
+    while (fabs(distance) > 0.5) {
+        distance = tm->get_distance_between_points(tm->get_current_position(), position);
+        std::cout << "Drive: " << tm->odometry_x_position << "," << tm->odometry_y_position << "," << tm->odometry_heading << " |"<< distance << std::endl;
         vex::wait(50, vex::timeUnits::msec);
     }
 
