@@ -37,17 +37,17 @@ class Map {
             mapElements.push_back()
         }
 
-        void addLines() {
-            // red side
-            Line Line1(0 + xAdjust, 70.20 + xAdjust, 70.20 + yAdjust, R, true);
-            Line Line2(0 + xAdjust, 70.20 + xAdjust, 58.42 + yAdjust, R, false);
+        // void addLines() {
+        //     // red side
+        //     Line Line1(0 + xAdjust, 70.20 + xAdjust, 70.20 + yAdjust, R, true);
+        //     Line Line2(0 + xAdjust, 70.20 + xAdjust, 58.42 + yAdjust, R, false);
 
-            // blue side
-            Line Line3(70.20 + xAdjust, 140.41 + xAdjust, 81.98 + yAdjust, B, false);
-            Line Line4(70.20 + xAdjust, 140.41 + xAdjust, 70.20 + yAdjust, B, true);
+        //     // blue side
+        //     Line Line3(70.20 + xAdjust, 140.41 + xAdjust, 81.98 + yAdjust, B, false);
+        //     Line Line4(70.20 + xAdjust, 140.41 + xAdjust, 70.20 + yAdjust, B, true);
 
-            mapElements.push_back(new Line());
-        }
+        //     //mapElements.push_back(new Line());
+        // }
 
         void addGoal() {
             ;
@@ -77,8 +77,9 @@ class Map {
                 HEAD TO HEAD TRIBALLS --------------------------------------------------------------
             */
 
+            // if (!isSkills)
             // add min offsets
-            // offset = robot_front - robot_center
+            // offset = (robot_front to robot_back) - robot_center
 
                 // red
             addTriball(46.64 + xAdjust, 70.20 + yAdjust, R);                                        // element 10
@@ -117,6 +118,14 @@ class Map {
                 // blue
             addLoadZone(122.76 + xAdjust, 129.11 + yAdjust, B, 1, -45 + headingAdjust);             // element 20
             addLoadZone(122.76 + xAdjust, 11.30 + yAdjust, B,  1, -135 + headingAdjust);            // element 21
+
+
+            // corners-starting zones
+            addObstacle(0 + xAdjust, 140.41 + yAdjust, 70.20 + xAdjust, (46.64 + 70.20)/2 + yAdjust);// element 22
+            addObstacle(0 + xAdjust, 70.20 + yAdjust, 70.20 + xAdjust, 0 + yAdjust);                // element 23
+            addObstacle(70.20 + xAdjust, 140.41 + yAdjust, 140.41 + xAdjust, 70.20 + yAdjust);      // element 24
+            addObstalce(70.20 + xAdjust, (70.20 + 93.77)/2 +yAdjust, 140.41 + xAdjust, 0 + yAdjust);// element 25
+
 
 
             // high bar
