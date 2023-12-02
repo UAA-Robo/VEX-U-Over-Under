@@ -54,8 +54,7 @@ void UserDrive::drive()
     drivetrain_controls();
     pneumatic_in();
     pneumatic_out();
-    launch_catapult();
-    if (CATAPULT_RETURNING_TO_POSITION) return_catapult_to_position();
+    run_catapult();
     activate_intake();
     retract_intake();
 
@@ -210,30 +209,16 @@ void UserDrive::pneumatic_in()
     // hw->controller.Screen.clearScreen();
 }
 
-void UserDrive::launch_catapult()
+void UserDrive::run_catapult()
 {
-    if (button_R1.value == 1 && !CATAPULT_RETURNING_TO_POSITION)
+    if (hw->catapult_limit_switch.value() == 1 || button_R1.value)
     {
-        std::cout << "R1 pressed\n";
         hw->catapult.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
-        CATAPULT_RETURNING_TO_POSITION = true;
     }
-    last_catapult_limit_switch_value = hw->catapult_limit_switch.value();
-}
+    if (hw->catapult.isSpinning()) CATAPULT_RUNNING = true;
+    else CATAPULT_RUNNING = false;
 
-void UserDrive::return_catapult_to_position()
-{
-    if (button_L1.value == 1) {
-    hw->catapult.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
-    std::cout << "L1 pressed" << '\n';
-    if (hw->catapult_limit_switch.value() == 0 && last_catapult_limit_switch_value != 0)
-    {
-        std::cout << "Stop" << '\n';
-        hw->catapult.stop(vex::brakeType::hold);
-        CATAPULT_RETURNING_TO_POSITION = false;
-    }
-    // last_catapult_limit_switch_value = hw->catapult_limit_switch.value();
-    }
+
 }
 
 void UserDrive::activate_intake()
