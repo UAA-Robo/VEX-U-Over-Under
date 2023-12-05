@@ -45,12 +45,20 @@ private:
     //          Left/right on the right joystick is turning.
     void drivetrain_controls();
 
-    /// @brief Test action function TO BE REMOVED LATER
-    void test_print();
+    /// @brief Spins the catapult motors until limit switch is hit. Loops forever because it is on,
+    ///     it's own thread.
+    static int run_catapult(void* param);
 
-    /// @brief For testing pneumatics. Pushes air out when left button is pressed.
+    /// @brief Pushes air out when X button is pressed to expand snowplow.
     void snowplow_out();
 
-    /// @brief For testing pneumatics. Sucks air in when right button is pressed.
+    /// @brief Sucks air in when Y button is pressed to retract snowplow.
     void snowplow_in();
+
+    /// @brief Activates intake motor while L1 is pressed.
+    void activate_intake();
+
+    /// @brief Expand intake motor while A is pressed. Retracts intake motor while B is pressed.
+    void adjust_intake();
+
 };

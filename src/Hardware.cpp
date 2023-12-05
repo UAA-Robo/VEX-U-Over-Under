@@ -26,4 +26,8 @@ Hardware::Hardware()
     right_catapult_motor.setStopping(vex::brakeType::brake);
     left_catapult_motor.setStopping(vex::brakeType::brake);
     catapult.setStopping(vex::brakeType::brake);
+
+    // Retract plows initially
+    right_plow.set(true);
+    left_plow.set(true);
 }

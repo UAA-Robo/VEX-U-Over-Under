@@ -46,18 +46,13 @@ void UserDrive::drive()
     hw->controller.Screen.clearScreen();
     hw->controller.Screen.setCursor(1, 1);
 
-    if (hw->catapult_limit_switch.value() == 0) {
-        hw->controller.Screen.print("0");
-    }
-
     get_inputs();
     macro_controls();
-    test_print();
     drivetrain_controls();
     snowplow_in();
     snowplow_out();
     activate_intake();
-    retract_intake();
+    adjust_intake();
 
     ++tick;
 
@@ -173,48 +168,24 @@ void UserDrive::macro_controls()
     }
 }
 
-void UserDrive::test_print()
-{
-    hw->brain.Screen.clearScreen(0);
-    if (button_A.value)
-        hw->brain.Screen.printAt(10, 20, "%c", 'A');
-    if (button_B.value)
-        hw->brain.Screen.printAt(40, 20, "%c", 'B');
-    if (button_X.value)
-        hw->brain.Screen.printAt(10, 40, "%c", 'X');
-    if (button_Y.value)
-        hw->brain.Screen.printAt(40, 40, "%c", 'Y');
-}
 
 void UserDrive::snowplow_out()
 {
-
-    if (button_up.value)
-    {
-        hw->controller.Screen.setCursor(1, 1);
-        hw->controller.Screen.print("Releasing Air!");
-        hw->pneumatic_output_F.set(true);
-        hw->pneumatic_output_H.set(true);
-        hw->pneumatic_output_B.set(true);
-        hw->pneumatic_output_C.set(true);
-
+    if (button_X.value) {
+        hw->right_plow.set(false);
+        hw->left_plow.set(false);
     }
-    // hw->controller.Screen.clearScreen();
+
 }
 
 void UserDrive::snowplow_in()
 {
 
-    if (button_down.value)
-    {
-        hw->controller.Screen.setCursor(1, 1);
-        hw->controller.Screen.print("Other Air!");
-        hw->pneumatic_output_F.set(false);
-        hw->pneumatic_output_H.set(false);
-        hw->pneumatic_output_B.set(false);
-        hw->pneumatic_output_C.set(false);
+    if (button_Y.value) {
+        hw->right_plow.set(true);
+        hw->left_plow.set(true);
     }
-    // hw->controller.Screen.clearScreen();
+
 }
 
 int UserDrive::run_catapult(void* param)
@@ -238,39 +209,27 @@ int UserDrive::run_catapult(void* param)
 
 void UserDrive::activate_intake()
 {
-    if (button_left.value)
-    {
-        hw->left_intake_motor.spin(vex::directionType::fwd, 12, vex::voltageUnits::volt);
-        hw->right_intake_motor.spin(vex::directionType::rev, 12, vex::voltageUnits::volt);
-
+    if (button_L1.value == 1) {
+        hw->intake.spin(vex::directionType::fwd, 12, vex::voltageUnits::volt);
         hw->controller.Screen.setCursor(1, 1);
         hw->controller.Screen.print("Activating Intake!");
+    } else {
+        hw->intake.stop();
     }
-    // else if (!button_right.value)
-    // {
-    //     hw->left_intake_motor.stop();
-    //     hw->right_intake_motor.stop();
-    // }
 }
 
-void UserDrive::retract_intake()
-{
-    if (button_right.value)
-    {
-        hw->left_intake_motor.spin(vex::directionType::rev, 12, vex::voltageUnits::volt);
-        hw->right_intake_motor.spin(vex::directionType::fwd, 12, vex::voltageUnits::volt);
 
+void UserDrive::adjust_intake()
+{
+    if (button_A.value == 1) {
+        hw->intake_expansion.spin(vex::directionType::rev, 6, vex::voltageUnits::volt);
+        hw->controller.Screen.setCursor(1, 1);
+        hw->controller.Screen.print("Expanding Intake!");
+    } else if (button_B.value == 1) {
+        hw->intake_expansion.spin(vex::directionType::fwd, 6, vex::voltageUnits::volt);
         hw->controller.Screen.setCursor(1, 1);
         hw->controller.Screen.print("Retracting Intake!");
+    } else {
+        hw->intake_expansion.stop();
     }
-    // else if (!button_left.value)
-    // {
-    //     hw->left_intake_motor.stop();
-    //     hw->right_intake_motor.stop();
-    // }
-}
-
-void UserDrive::limit_switch_pressed() {
-
-    hw->brain.Screen.clearScreen(100);
 }
