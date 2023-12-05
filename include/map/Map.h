@@ -37,17 +37,6 @@ class Map {
             mapElements.push_back()
         }
 
-        // void addLines() {
-        //     // red side
-        //     Line Line1(0 + xAdjust, 70.20 + xAdjust, 70.20 + yAdjust, R, true);
-        //     Line Line2(0 + xAdjust, 70.20 + xAdjust, 58.42 + yAdjust, R, false);
-
-        //     // blue side
-        //     Line Line3(70.20 + xAdjust, 140.41 + xAdjust, 81.98 + yAdjust, B, false);
-        //     Line Line4(70.20 + xAdjust, 140.41 + xAdjust, 70.20 + yAdjust, B, true);
-
-        //     //mapElements.push_back(new Line());
-        // }
 
         void addGoal() {
             ;
@@ -74,12 +63,10 @@ class Map {
             addObstacle(45.61 + xAdjust, 21.89 + yAdjust, 94.79 + xAdjust, 21.89 + yAdjust);        // element 9
 
             /*
-                HEAD TO HEAD TRIBALLS --------------------------------------------------------------
+            ----HEAD TO HEAD TRIBALLS --------------------------------------------------------------
             */
 
             // if (!isSkills)
-            // add min offsets
-            // offset = (robot_front to robot_back) - robot_center
 
                 // red
             addTriball(46.64 + xAdjust, 70.20 + yAdjust, R);                                        // element 10
@@ -95,9 +82,10 @@ class Map {
 
 
             /*
-                SKILLS TRIBALLS --------------------------------------------------------------------
+            ----SKILLS TRIBALLS --------------------------------------------------------------------
             */
-            
+            // else
+
                 // red
             addTriball(44.64 + xAdjust, 70.22 + yAdjust, R);                                        // element 10
             addTriball(60.22 + xAdjust, 113.17 + yAdjust, R);                                       // element 11
@@ -110,6 +98,9 @@ class Map {
             addTriball(70.20 + xAdjust, 129.13 + yAdjust, N);                                       // element 16
             addTriball(70.20 + xAdjust, 11.32 + yAdjust, N);                                        // element 17
 
+            /*
+            ----------------------------------------------------------------------------------------
+            */
 
             // load Zones
                 // red
@@ -125,6 +116,10 @@ class Map {
             addObstacle(0 + xAdjust, 70.20 + yAdjust, 70.20 + xAdjust, 0 + yAdjust);                // element 23
             addObstacle(70.20 + xAdjust, 140.41 + yAdjust, 140.41 + xAdjust, 70.20 + yAdjust);      // element 24
             addObstalce(70.20 + xAdjust, (70.20 + 93.77)/2 +yAdjust, 140.41 + xAdjust, 0 + yAdjust);// element 25
+
+            // 
+
+
 
 
 
