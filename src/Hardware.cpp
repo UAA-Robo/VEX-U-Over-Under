@@ -23,7 +23,7 @@ Hardware::Hardware()
     left_catapult_motor.setStopping(vex::brakeType::hold);    
 
     // Catapult
-    right_catapult_motor.setStopping(vex::brakeType::hold);
-    left_catapult_motor.setStopping(vex::brakeType::hold);
-    catapult.setStopping(vex::brakeType::hold);
+    right_catapult_motor.setStopping(vex::brakeType::brake);
+    left_catapult_motor.setStopping(vex::brakeType::brake);
+    catapult.setStopping(vex::brakeType::brake);
 }

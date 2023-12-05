@@ -6,7 +6,8 @@ UserDrive::UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *te
     IS_MACRO_RUNNING = false;
     IS_MACRO_RECORDING = false;
     macro_length = -2;
-
+    
+    vex::task run_catapult_task = vex::task(run_catapult, this, 1); // Start catapult. TODO: fix so this goes in drive()
 
     if (input_list.size() == 0) // Setup vector
     {
@@ -37,6 +38,7 @@ UserDrive::UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *te
 
     for (int i = 0; i < input_list.size(); ++i)
         input_list[i]->previous = 0;
+    
 }
 
 void UserDrive::drive()
@@ -54,7 +56,7 @@ void UserDrive::drive()
     drivetrain_controls();
     pneumatic_in();
     pneumatic_out();
-    run_catapult();
+    //run_catapult();
     activate_intake();
     retract_intake();
 
@@ -209,43 +211,23 @@ void UserDrive::pneumatic_in()
     // hw->controller.Screen.clearScreen();
 }
 
-void UserDrive::run_catapult()
+int UserDrive::run_catapult(void* param)
 {
-    hw->controller.Screen.clearScreen();
-    if (hw->catapult_limit_switch.value() == 0) {
-        hw->catapult.spin(vex::directionType::rev, 0.0, vex::voltageUnits::volt);
-        hw->catapult.stop();
-        CATAPULT_STOPPED = true; // if limit switch touched, stop catapult
-        hw->controller.Screen.print("LOCKED");
-    }
-    // // {
-    // //     hw->catapult.stop();
-    // //     CATAPULT_STOPPED = true;
-    // //     hw->controller.Screen.print("LIMIT SWITCH");
-    // // }
-    // // else CATAPULT_STOPPED = false;
-    if (button_R1.value == 1) CATAPULT_STOPPED = false;
-    if (!CATAPULT_STOPPED/* || button_R1.value == 1*/) // if catapult spinning, do this
-    {
-        hw->controller.Screen.print("CATAPULT SPINNING");
-        hw->catapult.spin(vex::directionType::rev, 6.0, vex::voltageUnits::volt);
-    }
-
-    // if (!CATAPULT_STOPPED && button_R1.value == 1/* || button_R1.value == 1*/) // if catapult spinning, do this
-    // {
-    //     hw->controller.Screen.print("CATAPULT SPINNING");
-    //     hw->catapult.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
-    // }
-
-    // if (button_R1.value == 1) // if catapult spinning, do this
-    // {
-    //     hw->controller.Screen.print("CATAPULT SPINNING");
-    //     hw->catapult.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
-    // }else {
-    //     hw->catapult.stop();
-    // }
+    // WARNING: DON'T print in this thread or it will take too long and miss the catapult press
+    UserDrive* ud = static_cast<UserDrive*>(param);
     
-
+    while(1) {
+        
+        if (ud->hw->catapult_limit_switch.value() == 0) {
+            ud->hw->catapult.stop();
+            ud->CATAPULT_STOPPED = true; // if limit switch touched, stop catapult
+        }
+        if (ud->button_R1.value == 1) ud->CATAPULT_STOPPED = false;
+        if (!ud->CATAPULT_STOPPED) {
+            ud->hw->catapult.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
+        }
+        vex::wait(10, vex::timeUnits::msec);
+    }
 }
 
 void UserDrive::activate_intake()

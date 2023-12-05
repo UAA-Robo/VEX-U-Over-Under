@@ -54,8 +54,9 @@ private:
     /// @brief For testing pneumatics. Sucks air in when right button is pressed.
     void pneumatic_in();
 
-    /// @brief Spins the catapult motors until limit switch is hit.
-    void run_catapult();
+    /// @brief Spins the catapult motors until limit switch is hit. Loops forever because it is on,
+    ///     it's own thread.
+    static int run_catapult(void* param);
 
     /// @brief For testing purposes. Activates intake motor while left button (<) is pressed.
     void activate_intake();
