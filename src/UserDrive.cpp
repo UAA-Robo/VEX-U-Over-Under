@@ -56,7 +56,6 @@ void UserDrive::drive()
     drivetrain_controls();
     pneumatic_in();
     pneumatic_out();
-    //run_catapult();
     activate_intake();
     retract_intake();
 
