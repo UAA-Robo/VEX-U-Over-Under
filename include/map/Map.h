@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 
+#include "ElevationBars.h"
 #include "LoadZone.h"
 #include "TriballGoal.h"
 #include "Triballs.h"
@@ -28,15 +29,9 @@ class Map {
             mapElements.push_back(new LoadZone(nextElementID++, x, y, currentCapacity, interactionAngle));
         }
 
-        void addHighBar() {
-            // blue side
-            HighBar HighBar1(70.20 + xAdjust, 129.11 + yAdjust, B, false);  // fix heading
-
-            // red side
-            HighBar HighBar2(70.20 + xAdjust, 11.30 + yAdjust, R, false);   // fix heading
-            mapElements.push_back()
+        void addElevationBar() {
+            mapElements.push_back(new ElevationBar(nextElementID++, x, y));
         }
-
 
         void addGoal() {
             ;
@@ -65,20 +60,21 @@ class Map {
             /*
             ----HEAD TO HEAD TRIBALLS --------------------------------------------------------------
             */
+            /////////////////////// Change interaction angle to tm->odometry_heading + headingAdjust
 
             // if (!isSkills)
 
                 // red
-            addTriball(46.64 + xAdjust, 70.20 + yAdjust, R);                                        // element 10
-            addTriball(65.95 + xAdjust, 93.77 + yAdjust, R);                                        // element 11
-            addTriball(65.95 + xAdjust, 70.20 + yAdjust, R);                                        // element 12
+            addTriball(46.64 + xAdjust, 70.20 + yAdjust, R, 0);                                     // element 10
+            addTriball(65.95 + xAdjust, 93.77 + yAdjust, R, 0);                                     // element 11
+            addTriball(65.95 + xAdjust, 70.20 + yAdjust, R, 0);                                     // element 12
                 // nuetral
-            addTriball(70.20 + xAdjust, 129.11 + yAdjust, N);                                       // element 13
-            addTriball(70.20 + xAdjust, 11.30 + yAdjust, N);                                        // element 14
+            addTriball(70.20 + xAdjust, 129.11 + yAdjust, N, 0);                                    // element 13
+            addTriball(70.20 + xAdjust, 11.30 + yAdjust, N, 0);                                     // element 14
                 // blue
-            addTriball(74.46 + xAdjust, 70.20 + yAdjust, B);                                        // element 15
-            addTriball(74.46 + xAdjust, 46.64 + yAdjust, B);                                        // element 16
-            addTriball(93.77 + xAdjust, 70.20 + yAdjust, B);                                        // element 17
+            addTriball(74.46 + xAdjust, 70.20 + yAdjust, B, 0);                                     // element 15
+            addTriball(74.46 + xAdjust, 46.64 + yAdjust, B, 0);                                     // element 16
+            addTriball(93.77 + xAdjust, 70.20 + yAdjust, B, 0);                                     // element 17
 
 
             /*
@@ -87,25 +83,27 @@ class Map {
             // else
 
                 // red
-            addTriball(44.64 + xAdjust, 70.22 + yAdjust, R);                                        // element 10
-            addTriball(60.22 + xAdjust, 113.17 + yAdjust, R);                                       // element 11
-            addTriball(60.22 + xAdjust, 93.79 + yAdjust, R);                                        // element 12
-            addTriball(60.22 + xAdjust, 70.22 + yAdjust, R);                                        // element 13
-            addTriball(60.22 + xAdjust, 46.66 + yAdjust, R);                                        // element 14
-            addTriball(60.22 + xAdjust, 27.28 + yAdjust, R);                                        // element 15
+            addTriball(44.64 + xAdjust, 70.22 + yAdjust, R, 0);                                     // element 10
+            addTriball(60.22 + xAdjust, 113.17 + yAdjust, R, 0);                                    // element 11
+            addTriball(60.22 + xAdjust, 93.79 + yAdjust, R, 0);                                     // element 12
+            addTriball(60.22 + xAdjust, 70.22 + yAdjust, R, 0);                                     // element 13
+            addTriball(60.22 + xAdjust, 46.66 + yAdjust, R, 0);                                     // element 14
+            addTriball(60.22 + xAdjust, 27.28 + yAdjust, R, 0);                                     // element 15
 
                 // nuetral
-            addTriball(70.20 + xAdjust, 129.13 + yAdjust, N);                                       // element 16
-            addTriball(70.20 + xAdjust, 11.32 + yAdjust, N);                                        // element 17
+            addTriball(70.20 + xAdjust, 129.13 + yAdjust, N, 0);                                    // element 16
+            addTriball(70.20 + xAdjust, 11.32 + yAdjust, N, 0);                                     // element 17
 
             /*
             ----------------------------------------------------------------------------------------
             */
 
             // load Zones
+            
                 // red
             addLoadZone(22.89 / 2 + xAdjust, 129.11 + yAdjust, R, 1, 45 + headingAdjust);           // element 18
             addLoadZone(22.89 / 2 + xAdjust, 11.30  + yAdjust, R, 1, 135 + headingAdjust);          // element 19
+
                 // blue
             addLoadZone(122.76 + xAdjust, 129.11 + yAdjust, B, 1, -45 + headingAdjust);             // element 20
             addLoadZone(122.76 + xAdjust, 11.30 + yAdjust, B,  1, -135 + headingAdjust);            // element 21
@@ -117,17 +115,31 @@ class Map {
             addObstacle(70.20 + xAdjust, 140.41 + yAdjust, 140.41 + xAdjust, 70.20 + yAdjust);      // element 24
             addObstalce(70.20 + xAdjust, (70.20 + 93.77)/2 +yAdjust, 140.41 + xAdjust, 0 + yAdjust);// element 25
 
-            // 
-
-
-
-
 
             // high bar
+
                 // red
-            addHighBar();
+            addHighBar(70.20 + xAdjust, 129.11 + yAdjust);                                          // element 26
+
                 // blue
-            addHighBar();
+            addHighBar(70.20 + xAdjust, 11.30 + yAdjust);                                           // element 27
+
+
+            // triball goals--interaction point
+                // red
+            addTriball();                                                                           // element 28
+            addTriball(23.32 + xAdjust, 81.985 + yAdjust, R, 90);                                   // element 29
+            addTriball(23.32 + xAdjust, 70.20 + yAdjust, R, 90);                                    // element 30
+            addTriball(23.32 + xAdjust, 58.41 + yAdjust, R, 90);                                    // element 31
+            addTriball();                                                                           // element 32
+
+                //blue
+            addTriball();                                                                           // element 33
+            addTriball();                                                                           // element 34
+            addTriball();                                                                           // element 35
+            addTriball();                                                                           // element 36
+            addTriball();                                                                           // element 37
+            
         }
 
 

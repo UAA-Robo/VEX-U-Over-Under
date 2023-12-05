@@ -10,26 +10,17 @@ class Triball : private GameElement
         /// @param y Y Component Position
         /// @param teamColor Side of the field the triball is on
         Triball(
-            int id;
+            int id,
             double x,
             double y,
-            // double minXInterOffset = 0,
-            // double maxXInterOffset = 0,
-            // double minYInterOffset = 0,
-            // double maxYInterOffset = 0
-            //double interactionAngle,
-            char teamColor)
-
+            char teamColor,
+            double interactionAngle)
 
         {
             this->id = id;
             this->position = std::pair<double, double>(x, y);
-            // this->minXInteractableOffset = minXInterOffset;
-            // this->maxXInteractableOffset = maxXInterOffset;
-            // this->minYInteractableOffset = minYInterOffset;
-            // this->maxYInteractableOffset = maxYInterOffset;
-            this->interactionAngle = 0;                         // Change to tm->odometry_heading + headingAdjust
             this->teamColor = teamColor;
+            this->interactionAngle = interactionAngle;
             this->isBackAligned = false;
         }
 };
