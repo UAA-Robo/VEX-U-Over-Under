@@ -49,20 +49,8 @@ private:
     void test_print();
 
     /// @brief For testing pneumatics. Pushes air out when left button is pressed.
-    void pneumatic_out();
+    void snowplow_out();
 
     /// @brief For testing pneumatics. Sucks air in when right button is pressed.
-    void pneumatic_in();
-
-    /// @brief Spins the catapult motors until limit switch is hit. Loops forever because it is on,
-    ///     it's own thread.
-    static int run_catapult(void* param);
-
-    /// @brief For testing purposes. Activates intake motor while left button (<) is pressed.
-    void activate_intake();
-
-    /// @brief For testing purposes. Retracts intake motor while right button (>) is pressed.
-    void retract_intake();
-
-    void limit_switch_pressed();
+    void snowplow_in();
 };

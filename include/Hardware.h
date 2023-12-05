@@ -33,20 +33,11 @@ public:
     vex::motor middle_right_drivetrain_motor = vex::motor(vex::PORT19, vex::ratio6_1, true);
     vex::motor back_right_drivetrain_motor = vex::motor(vex::PORT18, vex::ratio6_1, true);
 
-    // Pneumatic Test
-    vex::digital_out pneumatic_output = vex::digital_out(brain.ThreeWirePort.A);
+    // Pneumatic test
 
-    // Catapult
-    vex::motor left_catapult_motor = vex::motor(vex::PORT14, vex::ratio18_1, true);
-    vex::motor right_catapult_motor = vex::motor(vex::PORT15, vex::ratio18_1, false);
-    vex::motor_group catapult = vex::motor_group(left_catapult_motor, right_catapult_motor);
+    vex::digital_out pneumatic_output_F = vex::digital_out(brain.ThreeWirePort.F);
+    vex::digital_out pneumatic_output_H = vex::digital_out(brain.ThreeWirePort.H);
+    vex::digital_out pneumatic_output_B = vex::digital_out(brain.ThreeWirePort.B);
+    vex::digital_out pneumatic_output_C = vex::digital_out(brain.ThreeWirePort.C);
 
-    // Intake
-    vex::motor left_intake_motor = vex::motor(vex::PORT4, vex::ratio18_1, true);
-    vex::motor right_intake_motor = vex::motor(vex::PORT5, vex::ratio18_1, true);
-    vex::motor_group intake = vex::motor_group(left_intake_motor, right_intake_motor);
-
-    // Limit switches
-    vex::digital_in catapult_limit_switch = vex::digital_in(brain.ThreeWirePort.A);
-    
 };
