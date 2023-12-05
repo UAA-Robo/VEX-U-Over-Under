@@ -1,8 +1,8 @@
 #include "UserDrive.h"
 #include "iostream"
 
-UserDrive::UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry) : Drive(hardware, robotConfig, telemetry), tick(0)
-{
+UserDrive::UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry) 
+    : Drive(hardware, robotConfig, telemetry), tick(0) {
     IS_MACRO_RUNNING = false;
     IS_MACRO_RECORDING = false;
     macro_length = -2;
@@ -41,8 +41,7 @@ UserDrive::UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *te
     
 }
 
-void UserDrive::drive()
-{
+void UserDrive::drive() {
     hw->controller.Screen.clearScreen();
     hw->controller.Screen.setCursor(1, 1);
 
@@ -63,25 +62,21 @@ void UserDrive::drive()
         ++macro_loop_iteration; // Last item
 }
 
-void UserDrive::drivetrain_controls()
-{
+void UserDrive::drivetrain_controls() {
     const int DEADZONE = 2;
 
-    if (std::abs(forward_backward.value) < DEADZONE)
-    {
+    if (std::abs(forward_backward.value) < DEADZONE) {
         forward_backward.value = 0;
     }
 
-    if (std::abs(left_right.value) < DEADZONE)
-    {
+    if (std::abs(left_right.value) < DEADZONE) {
         left_right.value = 0;
     }
 
     move_drivetrain({forward_backward.value, left_right.value});
 }
 
-void UserDrive::get_inputs()
-{
+void UserDrive::get_inputs() {
 
     // List of controller values
     controller_values[0] = hw->controller.Axis3.position(vex::percentUnits::pct);
@@ -99,11 +94,9 @@ void UserDrive::get_inputs()
     controller_values[12] = (int32_t)hw->controller.ButtonLeft.pressing();
     controller_values[13] = (int32_t)hw->controller.ButtonRight.pressing();
 
-    if (IS_MACRO_RUNNING)
-    {
+    if (IS_MACRO_RUNNING) {
         hw->controller.Screen.print("MACRO: RUNNING");
-        for (int i = 0; i < input_list.size(); ++i)
-        {
+        for (int i = 0; i < input_list.size(); ++i) {
             input_list[i]->value = macro_inputs[macro_loop_iteration][i];
         }
         button_up.value = hw->controller.ButtonUp.pressing(); // Stop running macro early by user
@@ -134,15 +127,13 @@ void UserDrive::macro_controls()
 {
     if (button_down.value && !button_down.previous && !IS_MACRO_RUNNING)
     {
-        if (IS_MACRO_RECORDING)
-        { // Stop recording macro
+        if (IS_MACRO_RECORDING) { // Stop recording macro
             hw->controller.Screen.print("MACRO: STOP RECORD");
             macro_length = macro_loop_iteration;
             macro_loop_iteration = -1;
             IS_MACRO_RECORDING = false;
         }
-        else if (!IS_MACRO_RECORDING)
-        { // Start recording macro
+        else if (!IS_MACRO_RECORDING) { // Start recording macro
             hw->controller.Screen.print("MACRO: START RECORD");
             if (macro_inputs.size() != 0)
                 macro_inputs.clear();
@@ -151,16 +142,12 @@ void UserDrive::macro_controls()
             IS_MACRO_RECORDING = true;
         }
     }
-    if (button_up.value && !button_up.previous && !IS_MACRO_RECORDING)
-    {
-        if (IS_MACRO_RUNNING)
-        { // Stop running macro
+    if (button_up.value && !button_up.previous && !IS_MACRO_RECORDING) {
+        if (IS_MACRO_RUNNING) { // Stop running macro
             hw->controller.Screen.print("MACRO: STOP RUN");
             macro_loop_iteration = -1;
             IS_MACRO_RUNNING = false;
-        }
-        else if (!IS_MACRO_RUNNING) // Start running macro
-        {
+        } else if (!IS_MACRO_RUNNING) { // Start running macro
             hw->controller.Screen.print("MACRO: START RUN");
             macro_loop_iteration = -1;
             IS_MACRO_RUNNING = true;
@@ -169,8 +156,7 @@ void UserDrive::macro_controls()
 }
 
 
-void UserDrive::snowplow_out()
-{
+void UserDrive::snowplow_out() {
     if (button_X.value) {
         hw->right_plow.set(false);
         hw->left_plow.set(false);
@@ -178,8 +164,7 @@ void UserDrive::snowplow_out()
 
 }
 
-void UserDrive::snowplow_in()
-{
+void UserDrive::snowplow_in() {
 
     if (button_Y.value) {
         hw->right_plow.set(true);
