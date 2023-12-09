@@ -4,11 +4,14 @@
 AutoDrive::AutoDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry) : Drive(hardware, robotConfig, telemetry) {}
 
 void AutoDrive::drive() {
+    // Set braking
+    hw->left_drivetrain_motors.setStopping(vex::brakeType::brake);
+    hw ->right_drivetrain_motors.setStopping(vex::brakeType::brake);
     // rotate_and_drive_to_position({24, 0});
     // rotate_and_drive_to_position({24, 60});
     // rotate_and_drive_to_position({0, 0});
     // Assume heading, x and y are all 0
-    move_drivetrain_distance_odometry({3,0});
+    move_drivetrain_distance_odometry({12,0});
 
     //rotate_to_relative_angle(115);
 }
@@ -39,9 +42,6 @@ void AutoDrive::rotate_to_heading_odometry(double heading)
 
     hw->left_drivetrain_motors.stop();                       // TODO: Give a vel value later
     hw->right_drivetrain_motors.stop();
-
-
-
 
 }
 
