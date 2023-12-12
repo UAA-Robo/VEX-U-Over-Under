@@ -75,6 +75,7 @@ void Drive::move_drivetrain_distance_odometry(std::pair<double, double> position
     // update distance from final position (goal)
     double distance = tm->get_distance_between_points(tm->get_current_position(), position);
     double distance_goal = distance;
+    double previous_distance = distance; 
 
 
 
@@ -83,8 +84,9 @@ void Drive::move_drivetrain_distance_odometry(std::pair<double, double> position
     // m+atan(x)−atan(x-D)−1.5
     // m is minimum speed, D is distance, x is distance travelled
     
-    double min_velocity = 1;
+    double min_velocity = 5;
     double max_velocity = 30;
+    double stopping_aggression = 0.3; // higher number is higher aggression (steeper slope)
     double velocity;
     if (ISBACKTOPOSITION) {
         hw->drivetrain.spin(vex::directionType::rev, min_velocity, vex::velocityUnits::pct);
@@ -92,17 +94,24 @@ void Drive::move_drivetrain_distance_odometry(std::pair<double, double> position
         hw->drivetrain.spin(vex::directionType::fwd, min_velocity, vex::velocityUnits::pct);
     }
 
-
-    while (fabs(distance) > 0.5) {
+    double change_in_distance = 0.1;
+    while (fabs(distance) > 0.5 && (previous_distance - distance) >= -0.01) {
+        previous_distance = distance; // So don't move overshoot
         distance = tm->get_distance_between_points(tm->get_current_position(), position);
-        // Slows down when leaving or approaching destination
-        velocity = (atan(distance_goal - distance) + atan(distance)) / M_PI 
-            * (max_velocity - min_velocity) + min_velocity; 
+
+
+        // Slows down as approaching destination
+        if (distance >= distance_goal/2) {
+            velocity = atan(distance_goal - distance) * 2 * max_velocity / M_PI + min_velocity;
+        } else {
+            velocity = atan(stopping_aggression * distance) * 2 * max_velocity / M_PI;
+        }
         hw->drivetrain.setVelocity(velocity, vex::velocityUnits::pct);
-        //std::cout << "Drive: " << velocity << "," << tm->odometry_x_position << "," << tm->odometry_y_position << "," << tm->odometry_heading << " |"<< distance << std::endl;
-        vex::wait(10, vex::timeUnits::msec);
+        std::cout << "Drive: " << distance << ", " << velocity << "," << tm->odometry_x_position << "," << tm->odometry_y_position << "," << tm->odometry_heading << " |"<< distance << std::endl;
+        vex::wait(35, vex::timeUnits::msec);
     }
 
     hw->left_drivetrain_motors.stop();      // stop wheels
     hw->right_drivetrain_motors.stop();
+    vex::wait(35, vex::timeUnits::msec);  // Wait for odom wheels to update
 }

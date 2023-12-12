@@ -11,7 +11,8 @@ void AutoDrive::drive() {
     // rotate_and_drive_to_position({24, 60});
     // rotate_and_drive_to_position({0, 0});
     // Assume heading, x and y are all 0
-    move_drivetrain_distance_odometry({12,0});
+    move_drivetrain_distance_odometry({24,0});
+    move_drivetrain_distance_odometry({48,0});
 
     //rotate_to_relative_angle(115);
 }
