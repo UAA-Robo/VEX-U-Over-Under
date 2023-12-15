@@ -3,11 +3,9 @@
 #include <string>
 
 #include "ElevationBars.h"
-#include "LoadZone.h"
-#include "TriballGoal.h"
-#include "Triballs.h"
+#include "InteractionObject.h"
 #include "GameElements.h"
-#include "MapObstacles.h"
+#include "MapObstacle.h"
 
 /*
     Representation of Map
@@ -22,11 +20,11 @@ class Map {
         }
 
         void addTriball() {
-            mapElements.push_back(new Triball(nextElementID++, x, y, teamColor));
+            mapElements.push_back(new InteractionObject(nextElementID++, x, y, teamColor, interactionAngle));
         }
 
-        void addLoadZone() {
-            mapElements.push_back(new LoadZone(nextElementID++, x, y, currentCapacity, interactionAngle));
+        void addObject() {
+            mapElements.push_back(new InteractionObject(nextElementID++, x, y, teamColor, interactionAngle));
         }
 
         void addElevationBar() {
@@ -101,23 +99,22 @@ class Map {
             // load Zones
             
                 // red
-            addLoadZone(22.89 / 2 + xAdjust, 129.11 + yAdjust, R, 1, 45 + headingAdjust);           // element 18
-            addLoadZone(22.89 / 2 + xAdjust, 11.30  + yAdjust, R, 1, 135 + headingAdjust);          // element 19
+            addObject(22.89 / 2 + xAdjust, 129.11 + yAdjust, R, 45 + headingAdjust);                // element 18
+            addObject(22.89 / 2 + xAdjust, 11.30  + yAdjust, R, 135 + headingAdjust);               // element 19
 
                 // blue
-            addLoadZone(122.76 + xAdjust, 129.11 + yAdjust, B, 1, -45 + headingAdjust);             // element 20
-            addLoadZone(122.76 + xAdjust, 11.30 + yAdjust, B,  1, -135 + headingAdjust);            // element 21
+            addObject(122.76 + xAdjust, 129.11 + yAdjust, B, -45 + headingAdjust);                  // element 20
+            addObject(122.76 + xAdjust, 11.30 + yAdjust, B, -135 + headingAdjust);                  // element 21
 
 
             // corners-starting zones
-            addObstacle(0 + xAdjust, 140.41 + yAdjust, 70.20 + xAdjust, (46.64 + 70.20)/2 + yAdjust);// element 22
+            addObstacle(0 + xAdjust, 140.41 + yAdjust, 70.20 + xAdjust, 58.42 + yAdjust);           // element 22
             addObstacle(0 + xAdjust, 70.20 + yAdjust, 70.20 + xAdjust, 0 + yAdjust);                // element 23
             addObstacle(70.20 + xAdjust, 140.41 + yAdjust, 140.41 + xAdjust, 70.20 + yAdjust);      // element 24
-            addObstalce(70.20 + xAdjust, (70.20 + 93.77)/2 +yAdjust, 140.41 + xAdjust, 0 + yAdjust);// element 25
+            addObstalce(70.20 + xAdjust, 81.985 +yAdjust, 140.41 + xAdjust, 0 + yAdjust);           // element 25
 
 
             // high bar
-
                 // red
             addHighBar(70.20 + xAdjust, 129.11 + yAdjust);                                          // element 26
 
@@ -127,19 +124,18 @@ class Map {
 
             // triball goals--interaction point
                 // red
-            addTriball();                                                                           // element 28
-            addTriball(23.32 + xAdjust, 81.985 + yAdjust, R, 90);                                   // element 29
-            addTriball(23.32 + xAdjust, 70.20 + yAdjust, R, 90);                                    // element 30
-            addTriball(23.32 + xAdjust, 58.41 + yAdjust, R, 90);                                    // element 31
-            addTriball();                                                                           // element 32
+            addObject(11.66 + xAdjust, 93.77 + yAdjust, R, 180);                                    // element 28
+            addObject(11.66 + xAdjust, 46.64 + yAdjust, R, 180);                                    // element 29
+            addObject(23.32 + xAdjust, 81.985 + yAdjust, R, 90);                                    // element 30
+            addObject(23.32 + xAdjust, 70.20 + yAdjust, R, 90);                                     // element 31
+            addObject(23.32 + xAdjust, 58.41 + yAdjust, R, 90);                                     // element 32
 
                 //blue
-            addTriball();                                                                           // element 33
-            addTriball();                                                                           // element 34
-            addTriball();                                                                           // element 35
-            addTriball();                                                                           // element 36
-            addTriball();                                                                           // element 37
-            
+            addObject(117.09 + xAdjust, 81.985 + yAdjust, B, 270);                                  // element 33
+            addObject(117.09 + xAdjust, 70.20 + yAdjust, B, 270);                                   // element 34
+            addObject(117.09 + xAdjust, 58.41 + yAdjust, B, 270);                                   // element 35
+            addObject(128.75 + xAdjust, 93.77 + yAdjust, B, 180);                                   // element 36
+            addObject(128.75 + xAdjust, 46.64 + yAdjust, B, 180);                                   // element 37
         }
 
 

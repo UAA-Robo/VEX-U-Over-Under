@@ -1,7 +1,7 @@
 #pragma once
 #include <GameElements.h>
 
-class Triball : private GameElement
+class InteractionObject : private GameElement
 {
     public:
         /// @brief Triball Element Constructor
@@ -9,7 +9,7 @@ class Triball : private GameElement
         /// @param x X Component Position
         /// @param y Y Component Position
         /// @param teamColor Side of the field the triball is on
-        Triball(
+        InteractionObject(
             int id,
             double x,
             double y,
