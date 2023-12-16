@@ -11,7 +11,7 @@ public:
     //double WHEELCIRC;
     double auto_drive_velocity_percent;
     double auto_rotate_velocity_percent;
-    //double DRIVETRAINWIDTH; // distance (in inch) between left and right side of the drivetrain (measured from the center of the wheels)
+    double DRIVETRAIN_WIDTH; // distance (in inch) between left and right side of the drivetrain (measured from the center of the wheels)
 
 private:
     Hardware* hw;
