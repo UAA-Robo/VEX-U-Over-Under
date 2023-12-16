@@ -78,15 +78,10 @@ void Drive::move_drivetrain_distance_odometry(std::pair<double, double> position
     double previous_distance = distance; 
 
 
-
-    // Check if reache
-    // range -0.05 to 0.05...for now // check with 5 inches
-    // m+atan(x)−atan(x-D)−1.5
-    // m is minimum speed, D is distance, x is distance travelled
     
     double min_velocity = 5;
-    double max_velocity = 30;
-    double stopping_aggression = 0.3; // higher number is higher aggression (steeper slope)
+    double max_velocity = 40;
+    double stopping_aggression = 0.1; // higher number is higher aggression (steeper slope)
     double velocity;
     if (ISBACKTOPOSITION) {
         hw->drivetrain.spin(vex::directionType::rev, min_velocity, vex::velocityUnits::pct);
