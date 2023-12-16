@@ -6,6 +6,7 @@ class RobotConfig {
 public:
     RobotConfig(Hardware* hw);
 
+    int DRIVETRAINWIDTH = 10.0; // ! Temporary!
 private:
     Hardware* hw;
 
