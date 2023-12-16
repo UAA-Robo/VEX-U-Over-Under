@@ -30,10 +30,10 @@ void AutoDrive::rotate_to_heading_odometry(double heading)
 
 
     
-    double min_velocity = 1;
+    double min_velocity = 3;
     //double min_velocity = 5;
-    double max_velocity = 5;
-    double stopping_aggression = 0.05; // higher number is higher aggression (steeper slope)
+    double max_velocity = 10;
+    double stopping_aggression = 0.1; // higher number is higher aggression (steeper slope)
     double velocity;
     double heading_difference = 0;
     double initial_heading = curr_heading;
@@ -54,7 +54,8 @@ void AutoDrive::rotate_to_heading_odometry(double heading)
     hw->left_drivetrain_motors.spin(vex::directionType::rev, min_velocity, vex::velocityUnits::pct);
     hw->right_drivetrain_motors.spin(vex::directionType::fwd, min_velocity, vex::velocityUnits::pct);
 
-    while (fabs(heading - curr_heading) > 5 ) {
+    // Takes approx 10 degrees to stop 
+    while (fabs(heading - curr_heading) > 10 ) {
         curr_heading = tm->get_current_heading();
         heading_difference = fabs(heading - curr_heading);
 
