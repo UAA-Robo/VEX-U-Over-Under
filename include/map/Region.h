@@ -5,7 +5,7 @@ class Region {
     public:
         Region(int id) : ID(id) { }
 
-        bool virtual in_region(std::pair<int, int> position) { }
+        bool virtual in_region(std::pair<double, double> position) { }
 
         int ID;
 };
@@ -24,7 +24,7 @@ class SimpleRegion : public Region {
                 upper_critical_point(upper_critical_point),
                 lower_critical_point(lower_critical_point) { }
 
-        bool in_region(std::pair<int, int> position) override {
+        bool in_region(std::pair<double, double> position) override {
             if (position.first >= upper_left_corner.first &&
             position.first <= bottom_right_corner.first &&
             position.second <= upper_left_corner.second &&
@@ -56,7 +56,7 @@ class CompositeRegion : public Region {
             upper_critical_point(upper_critical_point),
             lower_critical_point(lower_critical_point) { }
         
-        bool in_region(std::pair<int, int> position) override {
+        bool in_region(std::pair<double, double> position) override {
             if (
                 (
                     position.first >= upper_left_corner_1.first &&

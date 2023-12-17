@@ -87,60 +87,60 @@ class Map {
            */
 
             add_composite_region( // Lower Left L-Region
-                {0.0 + xAdjust, 46.64 + yAdjust},
-                {23.08 + xAdjust, 0.0 + yAdjust},
-                {22.89 + xAdjust, 23.08 + yAdjust},
-                {46.83 + xAdjust, 0.0 + yAdjust},
-                {34.955 + xAdjust, 34.86 + yAdjust},
-                {34.955 + xAdjust, 11.445 + yAdjust}
+                {0.0 + x_adjust, 46.64 + y_adjust},
+                {23.08 + x_adjust, 0.0 + y_adjust},
+                {22.89 + x_adjust, 23.08 + y_adjust},
+                {46.83 + x_adjust, 0.0 + y_adjust},
+                {34.955 + x_adjust, 34.86 + y_adjust},
+                {34.955 + x_adjust, 11.445 + y_adjust}
             );
             add_simple_region( // Left Offensive Region
-                {22.89 + xAdjust, 117.52 + yAdjust},
-                {70.20 + xAdjust, 22.89 + yAdjust},
-                {34.955 + xAdjust, 105.55 + yAdjust},
-                {34.955 + xAdjust, 34.86 + yAdjust}
+                {22.89 + x_adjust, 117.52 + y_adjust},
+                {70.20 + x_adjust, 22.89 + y_adjust},
+                {34.955 + x_adjust, 105.55 + y_adjust},
+                {34.955 + x_adjust, 34.86 + y_adjust}
             );
             add_composite_region( // Top Left L-Region
-                {0.0 + xAdjust, 140.41 + yAdjust},
-                {23.08 + xAdjust, 93.77 + yAdjust},
-                {22.89 + xAdjust, 140.41 + yAdjust},
-                {46.83 + xAdjust, 117.33 + yAdjust},
-                {34.955 + xAdjust, 128.965 + yAdjust},
-                {34.955 + xAdjust, 105.55 + yAdjust}   
+                {0.0 + x_adjust, 140.41 + y_adjust},
+                {23.08 + x_adjust, 93.77 + y_adjust},
+                {22.89 + x_adjust, 140.41 + y_adjust},
+                {46.83 + x_adjust, 117.33 + y_adjust},
+                {34.955 + x_adjust, 128.965 + y_adjust},
+                {34.955 + x_adjust, 105.55 + y_adjust}   
             );
             add_simple_region( // Top Way Region
-                {46.83 + xAdjust, 140.41 + yAdjust},
-                {93.58 + xAdjust, 117.33 + yAdjust},
-                {105.55 + xAdjust, 128.965 + yAdjust},
-                {34.955 + xAdjust, 128.965 + yAdjust}
+                {46.83 + x_adjust, 140.41 + y_adjust},
+                {93.58 + x_adjust, 117.33 + y_adjust},
+                {105.55 + x_adjust, 128.965 + y_adjust},
+                {34.955 + x_adjust, 128.965 + y_adjust}
             );
             add_composite_region( // Top Right L-Region
-                {93.58 + xAdjust, 140.41 + yAdjust},
-                {117.52 + xAdjust, 117.33 + yAdjust},
-                {117.33 + xAdjust, 140.41 + yAdjust},
-                {140.41 + xAdjust, 93.77 + yAdjust},
-                {105.55 + xAdjust, 105.645 + yAdjust},
-                {105.55 + xAdjust, 128.965 + yAdjust}
+                {93.58 + x_adjust, 140.41 + y_adjust},
+                {117.52 + x_adjust, 117.33 + y_adjust},
+                {117.33 + x_adjust, 140.41 + y_adjust},
+                {140.41 + x_adjust, 93.77 + y_adjust},
+                {105.55 + x_adjust, 105.645 + y_adjust},
+                {105.55 + x_adjust, 128.965 + y_adjust}
             );
             add_simple_region( // Right Offensive Region
-                {70.20 + xAdjust, 117.52 + yAdjust},
-                {117.52 + xAdjust, 22.89 + yAdjust},
-                {105.55 + xAdjust, 34.86 + yAdjust},
-                {105.55 + xAdjust, 105.645 + yAdjust}
+                {70.20 + x_adjust, 117.52 + y_adjust},
+                {117.52 + x_adjust, 22.89 + y_adjust},
+                {105.55 + x_adjust, 34.86 + y_adjust},
+                {105.55 + x_adjust, 105.645 + y_adjust}
             );
             add_composite_region( // Lower Right L-Region
-                {93.58 + xAdjust, 23.08 + yAdjust},
-                {117.52 + xAdjust, 0.0 + yAdjust},
-                {117.33 + xAdjust, 46.64 + yAdjust},
-                {140.41 + xAdjust, 0.0 + yAdjust},
-                {105.55 + xAdjust, 11.445 + yAdjust},
-                {105.55 + xAdjust, 34.86 + yAdjust}
+                {93.58 + x_adjust, 23.08 + y_adjust},
+                {117.52 + x_adjust, 0.0 + y_adjust},
+                {117.33 + x_adjust, 46.64 + y_adjust},
+                {140.41 + x_adjust, 0.0 + y_adjust},
+                {105.55 + x_adjust, 11.445 + y_adjust},
+                {105.55 + x_adjust, 34.86 + y_adjust}
             );
             add_simple_region( // Bottom Way Region
-                {46.83 + xAdjust, 23.08 + yAdjust},
-                {93.58 + xAdjust, 0.0 + yAdjust},
-                {34.955 + xAdjust, 11.445 + yAdjust},
-                {105.55 + xAdjust, 11.445 + yAdjust}
+                {46.83 + x_adjust, 23.08 + y_adjust},
+                {93.58 + x_adjust, 0.0 + y_adjust},
+                {34.955 + x_adjust, 11.445 + y_adjust},
+                {105.55 + x_adjust, 11.445 + y_adjust}
             );
 
             /*
@@ -149,56 +149,59 @@ class Map {
 
             add_buffer( // Blue Goal
                 { // Upper Left Corner
-                    0.0 - drive_train_adjustment + xAdjust,
-                    97.77 + drive_train_adjustment + yAdjust
+                    0.0 - drive_train_adjustment + x_adjust,
+                    97.77 + drive_train_adjustment + y_adjust
                 },
                 { // Bottom Right Corner
-                    27.08 + drive_train_adjustment + xAdjust,
-                    42.64 - drive_train_adjustment + yAdjust
+                    27.08 + drive_train_adjustment + x_adjust,
+                    42.64 - drive_train_adjustment + y_adjust
                 }
             );
             add_buffer( // Red Goal
                 { // Upper Left Corner
-                    113.33 - drive_train_adjustment + xAdjust,
-                    97.77 + drive_train_adjustment + yAdjust
+                    113.33 - drive_train_adjustment + x_adjust,
+                    97.77 + drive_train_adjustment + y_adjust
                 },
                 { // Bottom Right Corner
-                    140.41 + drive_train_adjustment + xAdjust,
-                    42.64 - drive_train_adjustment + yAdjust
+                    140.41 + drive_train_adjustment + x_adjust,
+                    42.64 - drive_train_adjustment + y_adjust
                 }
             );
             add_buffer( // Bottom Barrier Bar
                 { // Upper Left Corner
-                    45.83 - drive_train_adjustment + xAdjust,
-                    24.58 + drive_train_adjustment + yAdjust
+                    45.83 - drive_train_adjustment + x_adjust,
+                    24.58 + drive_train_adjustment + y_adjust
                 },
                 { // Bottom Right Corner
-                    94.58 + drive_train_adjustment + xAdjust,
-                    21.39 - drive_train_adjustment + yAdjust
+                    94.58 + drive_train_adjustment + x_adjust,
+                    21.39 - drive_train_adjustment + y_adjust
                 }
             );
             add_buffer( // Top Barrier Bar
                 { // Upper Left Corner
-                    45.83 - drive_train_adjustment + xAdjust,
-                    119.02 + drive_train_adjustment + yAdjust
+                    45.83 - drive_train_adjustment + x_adjust,
+                    119.02 + drive_train_adjustment + y_adjust
                 },
                 { // Bottom Right Corner
-                    94.58 + drive_train_adjustment + xAdjust,
-                    115.83 - drive_train_adjustment +yAdjust
+                    94.58 + drive_train_adjustment + x_adjust,
+                    115.83 - drive_train_adjustment +y_adjust
                 }
             );
             add_buffer( // Middle Barrier Bar
                 { // Upper Left Corner
-                    68.7 - drive_train_adjustment + xAdjust,
-                    119,02 + drive_train_adjustment + yAdjust
+                    68.7 - drive_train_adjustment + x_adjust,
+                    119.02 + drive_train_adjustment + y_adjust
                 },
                 { // Bottom Right Corner
-                    71.7 + drive_train_adjustment + xAdjust,
-                    21.39 - drive_train_adjustment + yAdjust
+                    71.7 + drive_train_adjustment + x_adjust,
+                    21.39 - drive_train_adjustment + y_adjust
                 }
             );
         }
 
+        /// @brief Retrieves the ID of the region for the given position
+        /// @param position A coordinate pair for a position
+        /// @return The integer ID of the container region, -1 if none
         int in_which_region(std::pair<double, double> position) {
             for (int i = 0; i < regions.size(); ++i) {
                 if (regions[i].in_region(position)) return i;
@@ -206,9 +209,18 @@ class Map {
             return -1;
         }
 
+        /// @brief Retrieves the critical point for a region
+        /// @param region The ID of the region
+        /// @param IS_UPPER Whether the critical point must be an upper or lower point
+        /// @return A pair of coordinates
+        std::pair<double, double> get_critical_point(int region, bool IS_UPPER) {
+            if (IS_UPPER) return regions[region].upper_critical_point;
+            else if (!IS_UPPER) return regions[region].lower_critical_point;
+        }
+
         // coordinates-angle-readjustment - Wa did this it's so cool!
-        double xAdjust = -70.20;    // inches
-        double yAdjust = -70.20;    // inches
+        double x_adjust = -70.20;    // inches
+        double y_adjust = -70.20;    // inches
         double headingAdjust = 90;  // degree
 
         std::vector<Buffer> buffers;
