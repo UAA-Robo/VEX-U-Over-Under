@@ -60,8 +60,8 @@ void AutoDrive::rotate_to_heading_odometry(double heading)
         heading_difference = fabs(heading - curr_heading);
 
         // Speeds up as leaving init position lows down as approaching destination
-        if (curr_heading >= (initial_heading+ heading)/2) {
-            velocity = atan(fabs(curr_heading - initial_heading)) * 2 * max_velocity / M_PI + min_velocity;
+        if (curr_heading >= (initial_heading+heading)/2) {
+            velocity = atan(fabs(curr_heading - initial_heading)) * 2 * (max_velocity-min_velocity) / M_PI + min_velocity;
         } else {
             velocity = atan(stopping_aggression * heading_difference) * 2 * max_velocity / M_PI;
         }

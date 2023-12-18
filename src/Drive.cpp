@@ -97,7 +97,7 @@ void Drive::move_drivetrain_distance_odometry(std::pair<double, double> position
 
         // Slows down as approaching destination
         if (distance >= distance_goal/2) {
-            velocity = atan(distance_goal - distance) * 2 * max_velocity / M_PI + min_velocity;
+            velocity = atan(distance_goal - distance) * 2 * (max_velocity-min_velocity) / M_PI + min_velocity;
         } else {
             velocity = atan(stopping_aggression * distance) * 2 * max_velocity / M_PI;
         }

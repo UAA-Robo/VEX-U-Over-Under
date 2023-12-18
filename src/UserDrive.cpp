@@ -44,7 +44,6 @@ Drive(hardware, robotConfig, telemetry)
 void UserDrive::drive()
 {
 
-
     while(true) {
         get_inputs();
         macro_controls();
