@@ -35,7 +35,6 @@ void AutoDrive::rotate_to_heading_odometry(double heading)
     double max_velocity = 10;
     double stopping_aggression = 0.1; // higher number is higher aggression (steeper slope)
     double velocity;
-    double heading_difference = 0;
     double initial_heading = curr_heading;
 
     // Determines whether to rotate left or right based on the  shortest distance
@@ -57,13 +56,15 @@ void AutoDrive::rotate_to_heading_odometry(double heading)
     // Takes approx 10 degrees to stop 
     while (fabs(heading - curr_heading) > 10 ) {
         curr_heading = tm->get_current_heading();
-        heading_difference = fabs(heading - curr_heading);
+
 
         // Speeds up as leaving init position lows down as approaching destination
-        if (curr_heading >= (initial_heading+heading)/2) {
+        if (curr_heading <= (initial_heading+heading)/2) {
+            // First half of distance
             velocity = atan(fabs(curr_heading - initial_heading)) * 2 * (max_velocity-min_velocity) / M_PI + min_velocity;
         } else {
-            velocity = atan(stopping_aggression * heading_difference) * 2 * max_velocity / M_PI;
+            // Second half of distance
+            velocity = atan(stopping_aggression * fabs(heading - curr_heading)) * 2 * max_velocity / M_PI;
         }
         hw->left_drivetrain_motors.setVelocity(-velocity, vex::velocityUnits::pct);
         hw->right_drivetrain_motors.setVelocity(velocity, vex::velocityUnits::pct);

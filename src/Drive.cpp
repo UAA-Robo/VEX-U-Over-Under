@@ -97,8 +97,10 @@ void Drive::move_drivetrain_distance_odometry(std::pair<double, double> position
 
         // Slows down as approaching destination
         if (distance >= distance_goal/2) {
+            // First half of distance
             velocity = atan(distance_goal - distance) * 2 * (max_velocity-min_velocity) / M_PI + min_velocity;
         } else {
+            // Second half of distance
             velocity = atan(stopping_aggression * distance) * 2 * max_velocity / M_PI;
         }
         hw->drivetrain.setVelocity(velocity, vex::velocityUnits::pct);
