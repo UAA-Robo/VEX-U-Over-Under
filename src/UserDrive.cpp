@@ -38,22 +38,25 @@ Drive(hardware, robotConfig, telemetry)
 
     for (int i = 0; i < input_list.size(); ++i) input_list[i]->previous = 0;
 
-    
 
 }
 
 void UserDrive::drive()
 {
 
-    get_inputs();
-    macro_controls();
-    test_print();
-    drivetrain_controls();
+
+    while(true) {
+        get_inputs();
+        macro_controls();
+        test_print();
+        drivetrain_controls();
 
 
-    set_previous_inputs(); // Tracks previous inputs to compare to
-    if (macro_loop_iteration == macro_length) IS_MACRO_RUNNING = false;
-    if (IS_MACRO_RECORDING || IS_MACRO_RUNNING) ++macro_loop_iteration; // Last item
+        set_previous_inputs(); // Tracks previous inputs to compare to
+        if (macro_loop_iteration == macro_length) IS_MACRO_RUNNING = false;
+        if (IS_MACRO_RECORDING || IS_MACRO_RUNNING) ++macro_loop_iteration; // Last item
+        vex::wait(20, vex::msec); 
+    }
 }
 
 void UserDrive::drivetrain_controls()

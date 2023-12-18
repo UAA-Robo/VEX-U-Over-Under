@@ -67,11 +67,11 @@ void autonomous(void) {
 
 void usercontrol(void) {
   //icebot = new Robot();
-  while (true) {
-    icebot->drive();
-    // Sleep the task for a short amount of time to prevent wasted resources.
-    vex::wait(20, vex::msec); 
-  }
+
+  icebot->drive();
+  // Sleep the task for a short amount of time to prevent wasted resources.
+  //vex::wait(20, vex::msec); 
+
 }
 
 
