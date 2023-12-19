@@ -5,9 +5,12 @@ class Region {
     public:
         Region(int id) : ID(id) { }
 
-        bool virtual in_region(std::pair<double, double> position) { }
+        virtual void in_region(std::pair<double, double> position) const = 0 { }
 
         int ID;
+
+        std::pair<double, double> upper_left_corner, bottom_right_corner,
+                                  upper_critical_point, lower_critical_point;
 };
 
 class SimpleRegion : public Region {
@@ -18,11 +21,12 @@ class SimpleRegion : public Region {
             std::pair<double, double> bottom_right_corner,
             std::pair<double, double> upper_critical_point,
             std::pair<double, double> lower_critical_point
-            ) : Region(region_id), 
-                upper_left_corner(upper_left_corner),
-                bottom_right_corner(bottom_right_corner),
-                upper_critical_point(upper_critical_point),
-                lower_critical_point(lower_critical_point) { }
+            ) : Region(region_id) {
+                    this->upper_left_corner = upper_left_corner;
+                    this->bottom_right_corner = bottom_right_corner;
+                    this->upper_critical_point = upper_critical_point;
+                    this->lower_critical_point = lower_critical_point;
+                }
 
         bool in_region(std::pair<double, double> position) override {
             if (position.first >= upper_left_corner.first &&
@@ -32,9 +36,7 @@ class SimpleRegion : public Region {
             else return false;
         }
 
-    private:
-        std::pair<double, double> upper_left_corner, bottom_right_corner,
-                                  upper_critical_point, lower_critical_point;
+        
 };
 
 class CompositeRegion : public Region {
@@ -48,15 +50,21 @@ class CompositeRegion : public Region {
             std::pair<double, double> bottom_right_corner_2,
             std::pair<double, double> upper_critical_point,
             std::pair<double, double> lower_critical_point
-        ) : Region(region_id),
-            upper_left_corner_1(upper_left_corner_1),
-            bottom_right_corner_1(bottom_right_corner_1),
-            upper_left_corner_2(upper_left_corner_2),
-            bottom_right_corner_2(bottom_right_corner_2),
-            upper_critical_point(upper_critical_point),
-            lower_critical_point(lower_critical_point) { }
+        ) : Region(region_id) {
+                this->upper_left_corner_1 = upper_left_corner_1;
+                this->bottom_right_corner_1 = bottom_right_corner_1;
+                this->upper_left_corner_2 = upper_left_corner_2;
+                this->bottom_right_corner_2 = bottom_right_corner_2;
+                this->upper_critical_point = upper_critical_point;
+                this->lower_critical_point = lower_critical_point;
+            }
         
         bool in_region(std::pair<double, double> position) override {
+            std::cout << position.first << " " << position.second << '\n';
+            std::cout << upper_left_corner_1.first << " " << upper_left_corner_1.second << '\n';
+            std::cout << bottom_right_corner_1.first << " " << bottom_right_corner_1.second << '\n';
+            std::cout << upper_left_corner_2.first << " " << upper_left_corner_2.second << '\n';
+            std::cout << bottom_right_corner_2.first << " " << bottom_right_corner_2.second << '\n';
             if (
                 (
                     position.first >= upper_left_corner_1.first &&
@@ -74,8 +82,6 @@ class CompositeRegion : public Region {
             else return false;
         }
 
-    private:
         std::pair<double, double> upper_left_corner_1, bottom_right_corner_1,
-                                  upper_left_corner_2, bottom_right_corner_2,
-                                  upper_critical_point, lower_critical_point;
+                                  upper_left_corner_2, bottom_right_corner_2;
 };

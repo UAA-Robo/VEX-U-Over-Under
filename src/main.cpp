@@ -83,13 +83,13 @@ int main() {
 
   //Competition callbacks
   Competition.autonomous(autonomous);
-  Competition.drivercontrol(usercontrol);
+  Competition.drivercontrol(autonomous);
   
   // Run the pre-autonomous function.
   pre_auton();
 
   //Stops test_driver from interfering with auto (weird bug)
-  if (!Competition.isCompetitionSwitch() and !Competition.isFieldControl()) {
+  if (!Competition.isCompetitionSwitch() && !Competition.isFieldControl()) {
     Competition.test_driver();
   }
 

@@ -203,7 +203,9 @@ class Map {
         /// @param position A coordinate pair for a position
         /// @return The integer ID of the container region, -1 if none
         int in_which_region(std::pair<double, double> position) {
+            std::cout << regions.size() << std::endl;
             for (int i = 0; i < regions.size(); ++i) {
+                std::cout << "HERE " << regions.size() << std::endl;
                 if (regions[i].in_region(position)) return i;
             }
             return -1;
@@ -225,6 +227,6 @@ class Map {
 
         std::vector<Buffer> buffers;
         std::vector<Region> regions;
-        int next_region_id;
+        int next_region_id = -1;
 
 };

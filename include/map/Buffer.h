@@ -4,9 +4,9 @@
 
 class Buffer {
     public:
-        Buffer(std::pair<double, double> upper_left_corner, std::pair<double, double> bottom_right_corner) :
-        upper_left_corner(upper_left_corner), bottom_right_corner(bottom_right_corner) {
-
+        Buffer(std::pair<double, double> upper_left_corner, std::pair<double, double> bottom_right_corner) {
+            this->upper_left_corner = upper_left_corner;
+            this->bottom_right_corner = bottom_right_corner;
         }
 
         bool in_buffer(std::pair<double, double> position) {
