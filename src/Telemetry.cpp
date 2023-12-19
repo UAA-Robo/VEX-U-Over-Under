@@ -35,14 +35,14 @@ int Telemetry::update_position(void* param) {
 
 
         // can use either sin or angle, sin uses straight line, angle uses arc
-        double horizontal_displacement = back_displacement - heading_displacement *  tm->rc->ODOMETRY_BACK_RADIUS; 
+        double horizontal_displacement = back_displacement + heading_displacement *  tm->rc->ODOMETRY_BACK_RADIUS; 
         
         //convert heading into rads for calculations
         double current_heading = std::fmod(tm->odometry_heading * (M_PI / 180.0) + heading_displacement, 2 * M_PI);  
 
         //Easy Math
-        double x_displacement = center_displacement * cos(current_heading) - horizontal_displacement * -sin(current_heading);
-        double y_displacement = center_displacement  * sin(current_heading) + horizontal_displacement * cos(current_heading);
+        double x_displacement = center_displacement * cos(-current_heading) + horizontal_displacement * sin(-current_heading);
+        double y_displacement = center_displacement  * sin(-current_heading) + horizontal_displacement * cos(-current_heading);
 
         // Convert heading back to degrees for storage and make sure it's from 0-360
         double current_heading_degrees = std::fmod(current_heading * (180/ M_PI), 360);

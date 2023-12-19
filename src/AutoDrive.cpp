@@ -7,7 +7,19 @@ void AutoDrive::drive() {
     // Set braking
     hw->left_drivetrain_motors.setStopping(vex::brakeType::brake);
     hw ->right_drivetrain_motors.setStopping(vex::brakeType::brake);
-    move_drivetrain_distance_odometry({-24, 0}, true);
+    //rotate_to_heading_odometry()
+    rotate_to_heading_odometry(90);
+    vex::wait(2, vex::timeUnits::sec);
+    rotate_to_heading_odometry(340);
+
+    // rotate_and_drive_to_position({24, 0});
+    // vex::wait(2, vex::timeUnits::sec);
+    // rotate_and_drive_to_position({12, -12});
+    // vex::wait(2, vex::timeUnits::sec);
+    // rotate_and_drive_to_position({0, 0}, true);
+
+
+    //rotate_and_drive_to_position({0, 0});
     //rotate_and_drive_to_position({24, 60});
     // rotate_and_drive_to_position({0, 0});
     // Assume heading, x and y are all 0
@@ -29,12 +41,12 @@ void AutoDrive::rotate_to_heading_odometry(double heading)
 
     double min_velocity = 10;
     double max_velocity = 50;
-    double stopping_aggression = 0.03; // higher number is higher aggression (steeper slope)
+    double stopping_aggression = 0.01; // higher number is higher aggression (steeper slope)
     double velocity;
     double initial_heading = curr_heading;
     
     // 1 if counterclockwise, -1 if clockwise depending on which direction is shorter to turn
-    double turn_direction = (fabs(heading - tm->get_current_heading()) <= 180) ? 1: -1;
+    double turn_direction = ((fabs(heading - tm->get_current_heading()) > 180) ^ (heading > tm->get_current_heading())) ? 1: -1;
 
 
     // Turn wheels opposite of each other
@@ -46,7 +58,7 @@ void AutoDrive::rotate_to_heading_odometry(double heading)
         curr_heading = tm->get_current_heading();
 
         // Speeds up as leaving initial angle and slows down as approaching destination
-        if (curr_heading <= (initial_heading + heading)/2) {
+        if (fabs(curr_heading - initial_heading) <= fabs(heading - initial_heading)/2) {
             // First half of distance
             velocity = atan(fabs(curr_heading - initial_heading)) * 2 * (max_velocity-min_velocity) / M_PI + min_velocity;
             //std::cout << "Here1: " << velocity << std::endl;
@@ -60,10 +72,11 @@ void AutoDrive::rotate_to_heading_odometry(double heading)
         hw->right_drivetrain_motors.setVelocity(velocity * turn_direction, vex::velocityUnits::pct);
         
         vex::wait(35, vex::timeUnits::msec);
-        std::cout << "Drive: " << curr_heading << ", " << velocity << "," << tm->odometry_x_position << "," << tm->odometry_y_position << "," << tm->odometry_heading << std::endl;
+        std::cout << "Rotate: " << heading << ", " << curr_heading << ", " << velocity << "," << tm->odometry_x_position << "," << tm->odometry_y_position << "," << tm->odometry_heading << std::endl;
     }
 
     hw->drivetrain.stop();                       // TODO: Give a vel value later
+    vex::wait(35, vex::timeUnits::msec);  // Wait for odom wheels to update
 }
 
 
