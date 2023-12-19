@@ -11,7 +11,7 @@ void AutoDrive::drive() {
     //rotate_and_drive_to_position({24, 60});
     // rotate_and_drive_to_position({0, 0});
     // Assume heading, x and y are all 0
-    rotate_to_heading_odometry(180);
+    rotate_to_heading_odometry(270);
 
     //move_drivetrain_distance_odometry({24,0});
     //move_drivetrain_distance_odometry({48,0});
@@ -25,54 +25,42 @@ void AutoDrive::rotate_to_heading_odometry(double heading)
     heading = fmod(heading, 360);
     if (heading < 0) heading += 360;
 
-    double curr_heading = tm->get_current_heading();;
-    double prev_heading = heading; 
+    double curr_heading = tm->get_current_heading();
 
-
-    
     double min_velocity = 10;
-    //double min_velocity = 5;
     double max_velocity = 50;
     double stopping_aggression = 0.03; // higher number is higher aggression (steeper slope)
     double velocity;
     double initial_heading = curr_heading;
+    
+    // 1 if counterclockwise, -1 if clockwise depending on which direction is shorter to turn
+    double turn_direction = (fabs(heading - tm->get_current_heading()) <= 180) ? 1: -1;
 
-    // Determines whether to rotate left or right based on the  shortest distance
-    // Check if spin- is non-blocking
-    // Clockwise
-    // if (fabs(heading - tm->get_current_heading()) > 180) {
-    //     hw->left_drivetrain_motors.spin(vex::directionType::fwd, min_velocity, vex::velocityUnits::pct);
-    //     hw->right_drivetrain_motors.spin(vex::directionType::rev, min_velocity, vex::velocityUnits::pct);
-    // } else { // Counter-clockwise
-    //     hw->left_drivetrain_motors.spin(vex::directionType::rev, min_velocity, vex::velocityUnits::pct);
-    //     hw->right_drivetrain_motors.spin(vex::directionType::fwd, min_velocity, vex::velocityUnits::pct);
 
-    // }
+    // Turn wheels opposite of each other
+    hw->left_drivetrain_motors.spin(vex::directionType::fwd, -min_velocity * turn_direction, vex::velocityUnits::pct);
+    hw->right_drivetrain_motors.spin(vex::directionType::fwd, min_velocity * turn_direction, vex::velocityUnits::pct);
 
-    // Counter-clockwise
-    hw->left_drivetrain_motors.spin(vex::directionType::rev, min_velocity, vex::velocityUnits::pct);
-    hw->right_drivetrain_motors.spin(vex::directionType::fwd, min_velocity, vex::velocityUnits::pct);
-
-    // Takes approx 10 degrees to stop 
-    while (fabs(heading - curr_heading) > 2 ) {
+    // Turn until within 2 degrees of desired heading
+    while (fabs(heading - tm->get_current_heading()) > 1 ) {
         curr_heading = tm->get_current_heading();
 
-
-        // Speeds up as leaving init position lows down as approaching destination
+        // Speeds up as leaving initial angle and slows down as approaching destination
         if (curr_heading <= (initial_heading + heading)/2) {
             // First half of distance
             velocity = atan(fabs(curr_heading - initial_heading)) * 2 * (max_velocity-min_velocity) / M_PI + min_velocity;
-            std::cout << "Drive: " << curr_heading << ", "  << velocity << ", HERE" << std::endl;
+            //std::cout << "Here1: " << velocity << std::endl;
         } else {
             // Second half of distance
             velocity = atan(stopping_aggression * fabs(heading - curr_heading)) * 2 * max_velocity / M_PI;
-            std::cout << "Drive: " << curr_heading << ", "  << velocity << ", HERE2" << std::endl;
+            //std::cout << "Here2: " << velocity << std::endl;
         }
-        hw->left_drivetrain_motors.setVelocity(-velocity, vex::velocityUnits::pct);
-        hw->right_drivetrain_motors.setVelocity(velocity, vex::velocityUnits::pct);
+
+        hw->left_drivetrain_motors.setVelocity(-velocity * turn_direction, vex::velocityUnits::pct);
+        hw->right_drivetrain_motors.setVelocity(velocity * turn_direction, vex::velocityUnits::pct);
         
         vex::wait(35, vex::timeUnits::msec);
-        //std::cout << "Drive: " << curr_heading << ", " << velocity << "," << tm->odometry_x_position << "," << tm->odometry_y_position << "," << tm->odometry_heading << std::endl;
+        std::cout << "Drive: " << curr_heading << ", " << velocity << "," << tm->odometry_x_position << "," << tm->odometry_y_position << "," << tm->odometry_heading << std::endl;
     }
 
     hw->drivetrain.stop();                       // TODO: Give a vel value later

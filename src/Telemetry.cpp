@@ -46,7 +46,7 @@ int Telemetry::update_position(void* param) {
 
         // Convert heading back to degrees for storage and make sure it's from 0-360
         double current_heading_degrees = std::fmod(current_heading * (180/ M_PI), 360);
-        //if (current_heading_degrees < 0) current_heading_degrees += 360;
+        if (current_heading_degrees < 0) current_heading_degrees += 360;
 
         tm -> odometry_heading  = current_heading_degrees;
         tm->odometry_x_position += x_displacement;
