@@ -39,7 +39,6 @@ protected:
     /// @param id ID of game element. This way game elements can be uniquely identified.
     /// @param x X Component of the position
     /// @param y Y component of the position
-    /// @param rotation Rotation of game element
     /// @param teamColor If an element is part of a specific team then this is set to that team's identifier
     /// @param type Used to differentiate elements by type if they are all in one list
     /// @param BackTowardsTarget Used to decide if the back of the robot should be facing the game element
@@ -52,7 +51,6 @@ protected:
         int id,
         double x,
         double y,
-        double rotation,
         char teamColor,
         char type,
         bool BackTowardsTarget = false,

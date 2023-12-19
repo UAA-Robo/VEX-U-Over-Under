@@ -139,6 +139,14 @@ class Map {
         }
 
 
+        /*
+            PLACE HOLDERS!!!                // TODO: Change Later once robot is built
+        */
+            addObject();
+            addObject();
+            addObject();
+            addObject();
+
 
 
 
