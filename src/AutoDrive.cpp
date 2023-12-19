@@ -7,11 +7,11 @@ void AutoDrive::drive() {
     // Set braking
     hw->left_drivetrain_motors.setStopping(vex::brakeType::brake);
     hw ->right_drivetrain_motors.setStopping(vex::brakeType::brake);
-    //rotate_and_drive_to_position({24, 0});
+    move_drivetrain_distance_odometry({-24, 0}, true);
     //rotate_and_drive_to_position({24, 60});
     // rotate_and_drive_to_position({0, 0});
     // Assume heading, x and y are all 0
-    rotate_to_heading_odometry(270);
+    //rotate_to_heading_odometry(360);
 
     //move_drivetrain_distance_odometry({24,0});
     //move_drivetrain_distance_odometry({48,0});
@@ -86,8 +86,7 @@ void AutoDrive::rotate_and_drive_to_position(std::pair<double, double> position,
     // if (IS_USING_GPS_HEADING) tm->set_current_heading(tm->getGPSPosition());
 
     double distance_to_position = tm->get_distance_between_points(tm->get_current_position(), position); // inches
-    if (ISBACKTOPOSITION)
-        distance_to_position = -distance_to_position;
+    if (ISBACKTOPOSITION) distance_to_position = -distance_to_position;
         
     // move_drivetrain_distance({rc->auto_drive_velocity_percent, 0}, distance_to_position); // Drive at auto_drive_velocity_percent% velocity
     //changed to odometry function

@@ -37,37 +37,6 @@ void Drive::move_drivetrain(std::pair<double, double> velocity_percent)
     hw->right_drivetrain_motors.spin(vex::directionType::fwd, velocity.second, vex::velocityUnits::pct);
 }
 
-
-// void Drive::move_drivetrain_distance_odometry(double distance, bool ISBACKTOPOSITION, std::pair<double, double> position)
-// {
-//     //  TODO: Calculate initial distance in function
-//     //  Remove double distance parameter
-
-//     if (ISBACKTOPOSITION)   // Backward
-//     {
-//         hw->left_drivetrain_motors.spin(vex::directionType::rev);
-//         hw->right_drivetrain_motors.spin(vex::directionType::rev);
-//     }
-//     else                    // Forward
-//     {
-//         hw->left_drivetrain_motors.spin(vex::directionType::fwd);
-//         hw->right_drivetrain_motors.spin(vex::directionType::fwd);  
-//     }
-
-//     // Check if reached
-//     // range -1 to 1...for now
-//     while (fabs(distance) > 1) {
-
-//         // update distance from final position (goal)
-//         distance = tm->get_distance_between_points(tm->get_current_position(), position);
-//         std::cout << "Distance: " << distance << std::endl;
-//     }
-//     hw->left_drivetrain_motors.stop();      // stop wheels
-//     hw->right_drivetrain_motors.stop();
-
-// }
-
-
 // new function
 void Drive::move_drivetrain_distance_odometry(std::pair<double, double> position, bool ISBACKTOPOSITION) 
 {
@@ -77,24 +46,17 @@ void Drive::move_drivetrain_distance_odometry(std::pair<double, double> position
     double distance_goal = distance;
     double previous_distance = distance; 
 
-
-    
-    double min_velocity = 5;
-    double max_velocity = 40;
+    double min_velocity = 10;
+    double max_velocity = 80;
     double stopping_aggression = 0.1; // higher number is higher aggression (steeper slope)
     double velocity;
-    if (ISBACKTOPOSITION) {
-        hw->drivetrain.spin(vex::directionType::rev, min_velocity, vex::velocityUnits::pct);
-    } else {
-        hw->drivetrain.spin(vex::directionType::fwd, min_velocity, vex::velocityUnits::pct);
-    }
+
+    // 1 if forward, -1 if backward
+    double drive_direction = ISBACKTOPOSITION ? -1: 1;
+    hw->drivetrain.spin(vex::directionType::fwd, min_velocity * drive_direction, vex::velocityUnits::pct);
 
     double change_in_distance = 0.1;
     while (fabs(distance) > 0.5 && (previous_distance - distance) >= -0.01) {
-        previous_distance = distance; // So don't move overshoot
-        distance = tm->get_distance_between_points(tm->get_current_position(), position);
-
-
         // Slows down as approaching destination
         if (distance >= distance_goal/2) {
             // First half of distance
@@ -103,12 +65,14 @@ void Drive::move_drivetrain_distance_odometry(std::pair<double, double> position
             // Second half of distance
             velocity = atan(stopping_aggression * distance) * 2 * max_velocity / M_PI;
         }
-        hw->drivetrain.setVelocity(velocity, vex::velocityUnits::pct);
+        hw->drivetrain.setVelocity(velocity * drive_direction, vex::velocityUnits::pct);
         std::cout << "Drive: " << distance << ", " << velocity << "," << tm->odometry_x_position << "," << tm->odometry_y_position << "," << tm->odometry_heading << " |"<< distance << std::endl;
         vex::wait(35, vex::timeUnits::msec);
+
+        previous_distance = distance; // So don't move overshoot
+        distance = tm->get_distance_between_points(tm->get_current_position(), position); 
     }
 
-    hw->left_drivetrain_motors.stop();      // stop wheels
-    hw->right_drivetrain_motors.stop();
+    hw->drivetrain.stop();      // stop wheels
     vex::wait(35, vex::timeUnits::msec);  // Wait for odom wheels to update
 }
