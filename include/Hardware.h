@@ -7,13 +7,13 @@ class Hardware {
 public:
     Hardware();
     vex::brain brain;
-    vex::controller controller = vex::controller(vex::primary);
-
+    vex::controller controller = vex::controller(vex::controllerType::primary);
 
     // Drive train
     vex::motor_group drivetrain = vex::motor_group(
         front_left_drivetrain_motor, middle_left_drivetrain_motor, back_left_drivetrain_motor,
         front_right_drivetrain_motor, middle_right_drivetrain_motor, back_right_drivetrain_motor);
+
 
     // Left motors
     vex::motor_group left_drivetrain_motors = vex::motor_group(
@@ -32,4 +32,13 @@ public:
     vex::motor front_right_drivetrain_motor = vex::motor(vex::PORT17, vex::ratio6_1, true);
     vex::motor middle_right_drivetrain_motor = vex::motor(vex::PORT19, vex::ratio6_1, true);
     vex::motor back_right_drivetrain_motor = vex::motor(vex::PORT18, vex::ratio6_1, true);
+
+    // Odometry Wheels
+    vex::rotation left_odometry =  vex::rotation(vex::PORT6, true);
+    vex::rotation right_odometry =  vex::rotation(vex::PORT7);
+    vex::rotation back_odometry =  vex::rotation(vex::PORT8);
+
+    // Distance Sensor
+    vex::distance distanceSensor = vex::distance(vex::PORT21);  // Change port later
+
 };

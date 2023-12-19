@@ -67,11 +67,11 @@ void autonomous(void) {
 
 void usercontrol(void) {
   //icebot = new Robot();
-  while (true) {
-    icebot->drive();
-    // Sleep the task for a short amount of time to prevent wasted resources.
-    vex::wait(20, vex::msec); 
-  }
+
+  icebot->drive();
+  // Sleep the task for a short amount of time to prevent wasted resources.
+  //vex::wait(20, vex::msec); 
+
 }
 
 
@@ -90,7 +90,7 @@ int main() {
 
   //Stops test_driver from interfering with auto (weird bug)
   if (!Competition.isCompetitionSwitch() and !Competition.isFieldControl()) {
-    Competition.test_driver();
+    Competition.test_auton();
   }
 
   // Prevent main from exiting with an infinite loop.

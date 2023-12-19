@@ -4,6 +4,7 @@
 UserDrive::UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry) : 
 Drive(hardware, robotConfig, telemetry) 
 {
+    
     IS_MACRO_RUNNING = false;
     IS_MACRO_RECORDING = false;
     macro_length = -2;
@@ -37,23 +38,24 @@ Drive(hardware, robotConfig, telemetry)
 
     for (int i = 0; i < input_list.size(); ++i) input_list[i]->previous = 0;
 
+
 }
 
 void UserDrive::drive()
 {
-    hw->controller.Screen.clearScreen();
-    hw->controller.Screen.setCursor(1, 1);
-    get_inputs();
-    macro_controls();
-    test_print();
-    drivetrain_controls();
+
+    while(true) {
+        get_inputs();
+        macro_controls();
+        test_print();
+        drivetrain_controls();
 
 
-
-
-    set_previous_inputs(); // Tracks previous inputs to compare to
-    if (macro_loop_iteration == macro_length) IS_MACRO_RUNNING = false;
-    if (IS_MACRO_RECORDING || IS_MACRO_RUNNING) ++macro_loop_iteration; // Last item
+        set_previous_inputs(); // Tracks previous inputs to compare to
+        if (macro_loop_iteration == macro_length) IS_MACRO_RUNNING = false;
+        if (IS_MACRO_RECORDING || IS_MACRO_RUNNING) ++macro_loop_iteration; // Last item
+        vex::wait(20, vex::msec); 
+    }
 }
 
 void UserDrive::drivetrain_controls()
@@ -69,6 +71,7 @@ void UserDrive::drivetrain_controls()
     {
         left_right.value = 0;
     }
+    forward_backward.value = forward_backward.value / (M_PI / 2) * 100;
 
     move_drivetrain({forward_backward.value, left_right.value});
 }

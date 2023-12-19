@@ -6,7 +6,8 @@
 #include "Logger.h"
 
 /// @brief   Parent class for methods and variable shared between UserDrive and AutoDrive.
-class Drive {
+class Drive
+{
 public:
     virtual void drive() {}
 
@@ -17,9 +18,8 @@ protected:
     RobotConfig *rc;
     Telemetry *tm;
 
-
-    /// @brief    Calculates the velocity in RPMs that the left and right drivetrain wheels should 
-    ///           receive based on the horizontal percentage and vertical percentage passed in. 
+    /// @brief    Calculates the velocity in RPMs that the left and right drivetrain wheels should
+    ///           receive based on the horizontal percentage and vertical percentage passed in.
     ///           Automatically scales the velocities for the drivetrain gear inserts.
     /// @param velocity_percent    Pair of doubles from -100% to 100%,
     ///                            {verticalVelocityPercent, horizontalVelocityPercent}.
@@ -28,20 +28,30 @@ protected:
     ///    horizontalVelocityPercent = 50, the drivetrain will rotate to the right at 50% velocity.
     ///    Any combination of non-zero verticalVelocityPercents and horizontalVelocityPercents
     ///    will cause the drivetrain to move in a arc.
-    /// @return     Returns a pair of doubles {leftWheelsVelocity, rightWheelsVelocity} that 
+    /// @return     Returns a pair of doubles {leftWheelsVelocity, rightWheelsVelocity} that
     ///             represents the actual velocities in RPM (scaled to the gear-ratio) that the
     ///             wheels on each drivetrain side need.
     std::pair<double, double> calculate_drivetrain_velocity(std::pair<double, double> velocity_percent);
 
-    /// @brief       Moves the drivetrain based on the horizontal percentage and vertical percentage 
+    /// @brief       Moves the drivetrain based on the horizontal percentage and vertical percentage
     ///              passed in.
     /// @param velocity_percent   Pair of doubles from -100 to 100:
-    ///                           {verticalVelocityPercent, horizontalVelocityPercent} 
+    ///                           {verticalVelocityPercent, horizontalVelocityPercent}
     void move_drivetrain(std::pair<double, double> velocity_percent);
 
-    /// @brief      Moves the drivetrain a certain distance based on the horizontal percentage and 
+    /// @brief      Moves the drivetrain a certain distance based on the horizontal percentage and
     ///             vertical percentage passed in.
     /// @param velocity_percent   Pair of doubles from -100 to 100:
-    ///                           {verticalVelocityPercent, horizontalVelocityPercent} 
+    ///                           {verticalVelocityPercent, horizontalVelocityPercent}
     void move_drivetrain_distance(std::pair<double, double> velocity_percent, double distance);
+
+    /// @brief      Moves the drivetrain until the distance between the final destination and
+    ///             the bot is minimal.
+    /// @param distance             Distance between robot and final destination.
+    /// @param ISBACKTOPOSITION     A bool value that determines the direction
+    ///                             the bot moves.
+    /// @param position             Pair of doubles:
+    ///                             {X, Y}
+    void move_drivetrain_distance_odometry(std::pair<double, double> position, bool ISBACKTOPOSITION = false);
+
 };

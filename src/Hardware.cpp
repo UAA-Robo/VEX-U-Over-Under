@@ -20,4 +20,13 @@ Hardware::Hardware()
 
     // Drivetrain
     drivetrain.setStopping(vex::brakeType::coast);
+    // smartDriveTrain.setStopping(vex::brakeType::brake);
+
+    // Odometry
+    left_odometry.resetPosition();
+    right_odometry.resetPosition();
+    back_odometry.resetPosition();
+
+    // Distance sensor
+    distanceSensor.installed();
 }
