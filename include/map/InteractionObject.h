@@ -1,26 +1,49 @@
 #pragma once
-#include <GameElements.h>
+#include "GameElements.h"
 
-class InteractionObject : private GameElement
+class InteractionObject : public GameElement
 {
+    private:
+        std::pair<double, double> position;
+        char teamColor;
+
     public:
         /// @brief Triball Element Constructor
         /// @param id Unique Identifier for Game Element
         /// @param x X Component Position
         /// @param y Y Component Position
-        /// @param teamColor Side of the field the triball is on
-        InteractionObject(
-            int id,
-            double x,
-            double y,
-            char teamColor,
-            double interactionAngle)
-
-        {
-            this->id = id;
+        /// @param teamColor If an element is part of a specific team then this is set to that team's identifier
+        /// @param interactionAngle The angle required for the bot to interact with the Game Element.
+        InteractionObject(int id, double x, double y, char teamColor, double interactionAngle) : 
+        GameElement(id) {
             this->position = std::pair<double, double>(x, y);
             this->teamColor = teamColor;
-            this->interactionAngle = interactionAngle;
-            this->isBackAligned = false;
-        }
+            this->interactionAngle;
+        };
+
+    // Setters
+
+        //  position
+    void SetPosition(double x, double y) { this->position = std::pair<double, double>(x, y); }
+    void SetPosition(std::pair<double, double> position) { this->position = position; }
+
+        // teamColor
+    void SetTeamColor(char color) { this->teamColor = color; }
+
+    // Getters
+
+        // position
+    std::pair<double, double> GetPosition() { return position; }
+    std::pair<double, double> GetPositionWithMinOffset()
+    {
+        return {position.first + minXInteractableOffset, position.second + minYInteractableOffset};
+    }
+    double GetXPosition() { return position.first; }
+    double GetYPosition() { return position.second; }
+
+    dbpair test() { return position + position; }
+
+        // teamColor
+    char GetTeamColor() { return teamColor; }
+
 };

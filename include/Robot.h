@@ -4,6 +4,7 @@
 #include "Telemetry.h"
 #include "Hardware.h"
 #include "RobotConfig.h"
+#include "map/Map.h"
 
 #include "vex.h"
 
@@ -13,11 +14,15 @@ class Robot {
 public:
     Robot();
 
+    Map* mp(tm, RobotConfig);
+
     /// @brief    Initializes the driver-controlled code.
     void drive();
 
     /// @brief    Initializes the autonomous-period code.
     void driveAuto();
+
+
 
 private:
     Hardware* hw;
