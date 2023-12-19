@@ -17,10 +17,11 @@ RobotConfig::RobotConfig(Hardware* hardware, bool hasSensor)
     }
     else
     {
-        // set dimensions
-        ODOMETRY_LEFT_RIGHT_RADIUS = 6.75/2;
-        ODOMETRY_BACK_RADIUS = 3.5; //4.25;
-        DRIVETRAIN_WIDTH = 11.75; //12;
+         // Distance between left and right odometry wheels over 2. It was measured and then tuned 
+         // to get accurate turning results
+        ODOMETRY_LEFT_RIGHT_RADIUS =  6.45 / 2;
+        ODOMETRY_BACK_RADIUS = 4.25; //3.5;
+        DRIVETRAIN_WIDTH = 11.75; 
     }
 
     hw = hardware;

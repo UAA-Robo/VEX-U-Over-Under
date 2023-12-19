@@ -11,7 +11,7 @@ void AutoDrive::drive() {
     //rotate_and_drive_to_position({24, 60});
     // rotate_and_drive_to_position({0, 0});
     // Assume heading, x and y are all 0
-    rotate_to_heading_odometry(90);
+    rotate_to_heading_odometry(180);
 
     //move_drivetrain_distance_odometry({24,0});
     //move_drivetrain_distance_odometry({48,0});
@@ -30,10 +30,10 @@ void AutoDrive::rotate_to_heading_odometry(double heading)
 
 
     
-    double min_velocity = 3;
+    double min_velocity = 10;
     //double min_velocity = 5;
-    double max_velocity = 10;
-    double stopping_aggression = 0.1; // higher number is higher aggression (steeper slope)
+    double max_velocity = 50;
+    double stopping_aggression = 0.03; // higher number is higher aggression (steeper slope)
     double velocity;
     double initial_heading = curr_heading;
 
@@ -54,23 +54,25 @@ void AutoDrive::rotate_to_heading_odometry(double heading)
     hw->right_drivetrain_motors.spin(vex::directionType::fwd, min_velocity, vex::velocityUnits::pct);
 
     // Takes approx 10 degrees to stop 
-    while (fabs(heading - curr_heading) > 10 ) {
+    while (fabs(heading - curr_heading) > 2 ) {
         curr_heading = tm->get_current_heading();
 
 
         // Speeds up as leaving init position lows down as approaching destination
-        if (curr_heading <= (initial_heading+heading)/2) {
+        if (curr_heading <= (initial_heading + heading)/2) {
             // First half of distance
             velocity = atan(fabs(curr_heading - initial_heading)) * 2 * (max_velocity-min_velocity) / M_PI + min_velocity;
+            std::cout << "Drive: " << curr_heading << ", "  << velocity << ", HERE" << std::endl;
         } else {
             // Second half of distance
             velocity = atan(stopping_aggression * fabs(heading - curr_heading)) * 2 * max_velocity / M_PI;
+            std::cout << "Drive: " << curr_heading << ", "  << velocity << ", HERE2" << std::endl;
         }
         hw->left_drivetrain_motors.setVelocity(-velocity, vex::velocityUnits::pct);
         hw->right_drivetrain_motors.setVelocity(velocity, vex::velocityUnits::pct);
         
         vex::wait(35, vex::timeUnits::msec);
-        std::cout << "Drive: " << curr_heading << ", " << velocity << "," << tm->odometry_x_position << "," << tm->odometry_y_position << "," << tm->odometry_heading << std::endl;
+        //std::cout << "Drive: " << curr_heading << ", " << velocity << "," << tm->odometry_x_position << "," << tm->odometry_y_position << "," << tm->odometry_heading << std::endl;
     }
 
     hw->drivetrain.stop();                       // TODO: Give a vel value later
