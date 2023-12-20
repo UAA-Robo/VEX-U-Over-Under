@@ -225,8 +225,8 @@ class Map {
         double y_adjust = -70.20;    // inches
         double headingAdjust = 90;  // degree
 
-        std::vector<Buffer> buffers;
-        std::vector<Region> regions;
+        std::vector<Buffer*> buffers;
+        std::vector<Region*> regions;
         int next_region_id = -1;
 
 };
