@@ -15,6 +15,9 @@ Robot::Robot()
     
     userDrive = new UserDrive(hw, rc, tm); 
     autoDrive = new AutoDrive(hw, rc, tm);
+
+    // create map
+    mp = new Map(tm, autoDrive);
 }
 
 

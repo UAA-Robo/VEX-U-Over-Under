@@ -14,7 +14,7 @@ class Robot {
 public:
     Robot();
 
-    Map* mp(tm, RobotConfig);
+    Map* mp;
 
     /// @brief    Initializes the driver-controlled code.
     void drive();

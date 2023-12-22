@@ -11,6 +11,9 @@ public:
     /// @brief    Main function that initiates to robot.
     void drive();
 
+    /// @brief Determines whether the current game is Skills or Head-To-Head
+    bool isSkills = false;
+
 private:
     // bool IS_USING_INERTIA_HEADING = false;
     double robot_angle_offset = 0; // For Granny bc she veers left
@@ -42,4 +45,5 @@ private:
     ///                             being the center of the field.
     /// @param ISBACKTOPOSITION     Boolean that if true, rotates the back of the robot to the coordinate instead of the front.
     void rotate_and_drive_to_position(std::pair<double, double> position, bool ISBACKTOPOSITION = false);
+
 };

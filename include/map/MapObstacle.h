@@ -22,19 +22,16 @@ class Obstacle : public GameElement
         /// @param botX The bot's x_odometry position
         /// @param botY The bot's y_odometry position
         /// @return True if bot is in zone, else false
-        bool inZone(
-            double positionX = 0,
-            double positionY = 0
-        )
+        bool inZone(std::pair<double, double> position)
         {
             // adjust values
-            positionX += 70.20;
-            positionY += 70.20;
+            position.first += 70.20;
+            position.second += 70.20;
 
-            if (positionX > ULCorner.first && 
-                positionX < LRCorner.first &&  
-                positionY < ULCorner.second && 
-                positionY > LRCorner.second)
+            if (position.first > ULCorner.first && 
+                position.first < LRCorner.first &&  
+                position.second < ULCorner.second && 
+                position.second > LRCorner.second)
             {
                 return true;
             }
