@@ -32,7 +32,7 @@ class Map {
         ) {
             // next_region_id++;
             std::cout << next_region_id << '\n';
-            SimpleRegion sr( // Yo props to Wa for the ++ thing, very clever
+            SimpleRegion sr = SimpleRegion( // Yo props to Wa for the ++ thing, very clever
                 next_region_id, upper_left_corner, bottom_right_corner,
                 upper_critical_point, lower_critical_point);
             regions.push_back(&sr);
@@ -49,7 +49,7 @@ class Map {
         ) {
             // next_region_id++;
             std::cout << next_region_id << '\n';
-            CompositeRegion cr(
+            CompositeRegion cr = CompositeRegion(
                 next_region_id, upper_left_corner_1, bottom_right_corner_1,
                 upper_left_corner_2, bottom_right_corner_2,
                 upper_critical_point, lower_critical_point);
@@ -66,33 +66,33 @@ class Map {
             ---- REGIONS ---------------------------------------------------------------------------
             */
            /*
-                     .------------------------------. .--------------------------------.
-                     [          BLUE SIDE           ] [            RED SIDE            ]
-                     '------------------------------' '--------------------------------'
-                     __________________________________________________________________
-                    |   Top               |                     |                      |
-                    |   Left         X    |   Top Way Region    |     X       Top      |
-                    |   L-Region          |   3                 |  4          Right    |
-                    |           __________|_____________________|___________  L-Region |
-                    |        2 |          '---------| |---------'           |          |
-                    |          |                    | |                     |          |
-                    |          |     X         1    | |  5            X     |          |
-                    |__________|                    | |                     |__________|
-                    |**********|                    | |                     |**********|
-                    |**********|                    | |                     |**********|
-                    |**********|    Left Offensive  | |    Right Offensive  |**********|
-                    |**********|    Region          | |    Region           |**********|
-                    |**********|                    | |                     |**********|
-                    |**********|                    | |                     |**********|
-                    |__________|                    | |                     |__________|
-                    |          |                    | |                     |          |
-                    |   0      |     X              | |               X     |  6       |
-                    |          |           _________| |__________           |          |
-                    |          |___________'--------'-'---------'___________|          |
-                    |    Lower            |  7                   |          Lower      |
-                    |    Left        X    |   Bottom Way Region  |    X     Right      |
-                    |    L-Region         |                      |          L-Region   |
-                    |_____________________|______________________|_____________________|
+                .------------------------------. .--------------------------------.
+                [          BLUE SIDE           ] [            RED SIDE            ]
+                '------------------------------' '--------------------------------'
+                __________________________________________________________________
+                |   Top               |                     |                      |
+                |   Left         X    |   Top Way Region    |     X       Top      |
+                |   L-Region          |   3                 |  4          Right    |
+                |           __________|_____________________|___________  L-Region |
+                |        2 |          '---------| |---------'           |          |
+                |          |                    | |                     |          |
+                |          |     X         1    | |  5            X     |          |
+                |__________|                    | |                     |__________|
+                |**********|                    | |                     |**********|
+                |**********|                    | |                     |**********|
+                |**********|    Left Offensive  | |    Right Offensive  |**********|
+                |**********|    Region          | |    Region           |**********|
+                |**********|                    | |                     |**********|
+                |**********|                    | |                     |**********|
+                |__________|                    | |                     |__________|
+                |          |                    | |                     |          |
+                |   0      |     X              | |               X     |  6       |
+                |          |           _________| |__________           |          |
+                |          |___________'--------'-'---------'___________|          |
+                |    Lower            |  7                   |          Lower      |
+                |    Left        X    |   Bottom Way Region  |    X     Right      |
+                |    L-Region         |                      |          L-Region   |
+                |_____________________|______________________|_____________________|
            */
 
             add_composite_region( // Lower Left L-Region

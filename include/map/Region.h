@@ -3,7 +3,11 @@
 class Region {
 
     public:
-        Region(int id) : ID(id) { }
+        Region(int id) : ID(id) {
+            std::cout << "Constructor ID" << ID << '\n';
+        }
+
+        bool in_region(std::pair<double, double> position) { return true; }
 
         int ID;
 
