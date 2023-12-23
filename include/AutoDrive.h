@@ -14,6 +14,8 @@ public:
     /// @brief Determines whether the current game is Skills or Head-To-Head
     bool isSkills = false;
 
+    
+
 private:
     // bool IS_USING_INERTIA_HEADING = false;
     double robot_angle_offset = 0; // For Granny bc she veers left

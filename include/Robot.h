@@ -15,6 +15,7 @@ public:
     Robot();
 
     Map* mp;
+    Obstacle* zone;
 
     /// @brief    Initializes the driver-controlled code.
     void drive();

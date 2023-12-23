@@ -18,7 +18,7 @@ class Obstacle : public GameElement
             this->LRCorner = dbpair(LRX, LRY);
         }
 
-        /// @brief This method returns whether the bot is in its starting zone
+        /// @brief This method returns whether the target object is in zone
         /// @param botX The bot's x_odometry position
         /// @param botY The bot's y_odometry position
         /// @return True if bot is in zone, else false

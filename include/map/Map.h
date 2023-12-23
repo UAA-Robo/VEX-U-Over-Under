@@ -18,8 +18,8 @@ class Map {
             mapElements.push_back(new Obstacle(nextElementID++, upperLeftX, upperLeftY, lowerRightX, lowerRightY));
         }
 
-        void addTriball(double x, double y, char teamColor, double interactionAngle) {
-            mapElements.push_back(new InteractionObject(nextElementID++, x, y, teamColor, interactionAngle));
+        void addTriball(double x, double y, char teamColor){
+            mapElements.push_back(new InteractionObject(nextElementID++, x, y, teamColor, triBallInteractionAngle, true));
         }
 
         void addObject(double x, double y, char teamColor, double interactionAngle) {
@@ -53,16 +53,16 @@ class Map {
             if (!autoDrive->isSkills)
             {
                 // red
-                addTriball(46.64 + xAdjust, 70.20 + yAdjust, 'R', tm->odometry_heading + headingAdjust);// element 10
-                addTriball(65.95 + xAdjust, 93.77 + yAdjust, 'R', tm->odometry_heading + headingAdjust);// element 11
-                addTriball(65.95 + xAdjust, 70.20 + yAdjust, 'R', tm->odometry_heading + headingAdjust);// element 12
+                addTriball(46.64 + xAdjust, 70.20 + yAdjust, 'R');                                  // element 10
+                addTriball(65.95 + xAdjust, 93.77 + yAdjust, 'R');                                  // element 11
+                addTriball(65.95 + xAdjust, 70.20 + yAdjust, 'R');                                  // element 12
                     // nuetral
-                addTriball(70.20 + xAdjust, 129.11 + yAdjust, 'N', tm->odometry_heading + headingAdjust);// element 13
-                addTriball(70.20 + xAdjust, 11.30 + yAdjust, 'N', tm->odometry_heading + headingAdjust);// element 14
+                addTriball(70.20 + xAdjust, 129.11 + yAdjust, 'N');                                 // element 13
+                addTriball(70.20 + xAdjust, 11.30 + yAdjust, 'N');                                  // element 14
                     // blue
-                addTriball(74.46 + xAdjust, 70.20 + yAdjust, 'B', tm->odometry_heading + headingAdjust);// element 15
-                addTriball(74.46 + xAdjust, 46.64 + yAdjust, 'B', tm->odometry_heading + headingAdjust);// element 16
-                addTriball(93.77 + xAdjust, 70.20 + yAdjust, 'B', tm->odometry_heading + headingAdjust);// element 17
+                addTriball(74.46 + xAdjust, 70.20 + yAdjust, 'B');                                  // element 15
+                addTriball(74.46 + xAdjust, 46.64 + yAdjust, 'B');                                  // element 16
+                addTriball(93.77 + xAdjust, 70.20 + yAdjust, 'B');                                  // element 17
             }
 
             /*
@@ -71,16 +71,16 @@ class Map {
             else
             {
                     // red
-                addTriball(44.64 + xAdjust, 70.22 + yAdjust, 'R', tm->odometry_heading + headingAdjust);// element 10
-                addTriball(60.22 + xAdjust, 113.17 + yAdjust, 'R', tm->odometry_heading + headingAdjust);// element 11
-                addTriball(60.22 + xAdjust, 93.79 + yAdjust, 'R', tm->odometry_heading + headingAdjust);// element 12
-                addTriball(60.22 + xAdjust, 70.22 + yAdjust, 'R', tm->odometry_heading + headingAdjust);// element 13
-                addTriball(60.22 + xAdjust, 46.66 + yAdjust, 'R', tm->odometry_heading + headingAdjust);// element 14
-                addTriball(60.22 + xAdjust, 27.28 + yAdjust, 'R', tm->odometry_heading + headingAdjust);// element 15
+                addTriball(44.64 + xAdjust, 70.22 + yAdjust, 'R');                                  // element 10
+                addTriball(60.22 + xAdjust, 113.17 + yAdjust, 'R');                                 // element 11
+                addTriball(60.22 + xAdjust, 93.79 + yAdjust, 'R');                                  // element 12
+                addTriball(60.22 + xAdjust, 70.22 + yAdjust, 'R');                                  // element 13
+                addTriball(60.22 + xAdjust, 46.66 + yAdjust, 'R');                                  // element 14
+                addTriball(60.22 + xAdjust, 27.28 + yAdjust, 'R');                                  // element 15
 
                     // nuetral
-                addTriball(70.20 + xAdjust, 129.13 + yAdjust, 'N', tm->odometry_heading + headingAdjust);// element 16
-                addTriball(70.20 + xAdjust, 11.32 + yAdjust, 'N', tm->odometry_heading + headingAdjust);// element 17
+                addTriball(70.20 + xAdjust, 129.13 + yAdjust, 'N');                                 // element 16
+                addTriball(70.20 + xAdjust, 11.32 + yAdjust, 'N');                                  // element 17
             }
 
             /*
@@ -124,12 +124,12 @@ class Map {
             PLACE HOLDERS!!!                // TODO: Change Later once robot is built
         */
             // HighBar
-            addObject(70.20 + xAdjust, 129.11 + yAdjust, 'B', tm->odometry_heading + headingAdjust);// element 36
-            addObject(70.20 + xAdjust, 11.30 + yAdjust, 'R', tm->odometry_heading + headingAdjust); // element 37
+            addObject(70.20 + xAdjust, 129.11 + yAdjust, 'B', triBallInteractionAngle);             // element 36
+            addObject(70.20 + xAdjust, 11.30 + yAdjust, 'R', triBallInteractionAngle);              // element 37
 
             // Elevation Bar
-            addObject(70.20 + xAdjust, 117.33 + yAdjust, 'B', tm->odometry_heading + headingAdjust);// element 38
-            addObject(70.20 + xAdjust, 23.08 + yAdjust, 'R', tm->odometry_heading + headingAdjust); // element 39
+            addObject(70.20 + xAdjust, 117.33 + yAdjust, 'B', triBallInteractionAngle);             // element 38
+            addObject(70.20 + xAdjust, 23.08 + yAdjust, 'R', triBallInteractionAngle);              // element 39
 
         }
 
@@ -139,6 +139,17 @@ class Map {
         double xAdjust = -70.20;    // inches
         double yAdjust = -70.20;    // inches
         double headingAdjust = -90;  // degree
+
+        double* triBallInteractionAngle = &(tm->odometry_heading);
+
+        // for angles
+        const double* twoSeventy = 270 + headingAdjust;
+        const double* oneEighty = 180 + headingAdjust;
+        const double* oneThirtyFive = 135 + headingAdjust;
+        const double* ninety = 90 + headingAdjust;
+        const double* fortyFive = 45 + headingAdjust;
+
+
 
         // Map Elements
         std::vector<GameElement*> mapElements;

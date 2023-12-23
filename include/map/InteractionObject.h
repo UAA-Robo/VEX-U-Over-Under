@@ -6,6 +6,7 @@ class InteractionObject : public GameElement
     private:
         std::pair<double, double> position;
         char teamColor;
+        double* interactionAngle;
 
     public:
         /// @brief Triball Element Constructor
@@ -14,11 +15,11 @@ class InteractionObject : public GameElement
         /// @param y Y Component Position
         /// @param teamColor If an element is part of a specific team then this is set to that team's identifier
         /// @param interactionAngle The angle required for the bot to interact with the Game Element.
-        InteractionObject(int id, double x, double y, char teamColor, double interactionAngle) : 
-        GameElement(id) {
+        InteractionObject(int id, double x, double y, char teamColor, double* interactionAngle, bool isBackTowardsTarget = false) : 
+        GameElement(id, isBackTowardsTarget) {
             this->position = std::pair<double, double>(x, y);
             this->teamColor = teamColor;
-            this->interactionAngle;
+            this->interactionAngle = interactionAngle;
         };
 
     // Setters

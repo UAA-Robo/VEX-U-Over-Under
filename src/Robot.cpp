@@ -18,6 +18,9 @@ Robot::Robot()
 
     // create map
     mp = new Map(tm, autoDrive);
+
+    // set starting zone
+    for (int i = 22; i < 26; ++i) { if (i->inZone(tm->odometry_position)) zone = i; }
 }
 
 

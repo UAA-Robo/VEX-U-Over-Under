@@ -25,12 +25,11 @@ class GameElement
 {
 protected:
     int id;
-    double interactionAngle;
+    bool isBackAligned = false;
     double maxXInteractableOffset;
     double minXInteractableOffset;
     double maxYInteractableOffset;
     double minYInteractableOffset;
-    bool isBackAligned = false;
 
     /// @brief Game Element Constructor. This class is designed to have child classes built off of it. Allowing for easy customization and handling of map elements.
     /// @param id ID of game element. This way game elements can be uniquely identified.
@@ -42,18 +41,18 @@ protected:
 
     GameElement(
         int id,
+        bool BackTowardsTarget = false,
         double minXInterOffset = 0,
         double maxXInterOffset = 0,
         double minYInterOffset = 0,
-        double maxYInterOffset = 0,
-        bool BackTowardsTarget = false)
+        double maxYInterOffset = 0)
     {
         this->id = id;
+        this->isBackAligned = BackTowardsTarget;
         this->minXInteractableOffset = minXInterOffset;
         this->maxXInteractableOffset = maxXInterOffset;
         this->minYInteractableOffset = minYInterOffset;
         this->maxYInteractableOffset = maxYInterOffset;
-        this->isBackAligned = BackTowardsTarget;
     }
 
 public:
