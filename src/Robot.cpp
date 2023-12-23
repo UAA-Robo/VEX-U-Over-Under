@@ -20,7 +20,7 @@ Robot::Robot()
     mp = new Map(tm, autoDrive);
 
     // set starting zone
-    for (int i = 22; i < 26; ++i) { if (i->inZone(tm->odometry_position)) zone = i; }
+    //for (int i = 22; i < 26; ++i) { if (mp->mapElements[i]->inZone(tm->odometry_position)) {zone = mp->mapElements[i]; break;} }
 }
 
 

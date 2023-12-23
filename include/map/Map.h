@@ -5,6 +5,7 @@
 #include "InteractionObject.h"
 #include "GameElements.h"
 #include "MapObstacle.h"
+#include "Telemetry.h"
 
 /*
     Representation of Map
@@ -22,13 +23,15 @@ class Map {
             mapElements.push_back(new InteractionObject(nextElementID++, x, y, teamColor, triBallInteractionAngle, true));
         }
 
-        void addObject(double x, double y, char teamColor, double interactionAngle) {
+        void addObject(double x, double y, char teamColor, double* interactionAngle) {
             mapElements.push_back(new InteractionObject(nextElementID++, x, y, teamColor, interactionAngle));
         }
+        Telemetry* tm;
 
 
     public:
-        Map(Telemetry* tm, AutoDrive* autoDrive) {
+        Map(Telemetry* telemetry, AutoDrive* autoDrive) {
+            tm = telemetry; 
             nextElementID = 0;
 
             // outer walls
@@ -48,7 +51,6 @@ class Map {
             /*
             ----HEAD TO HEAD TRIBALLS --------------------------------------------------------------
             */
-            /////////////////////// Change interaction angle to tm->odometry_heading + headingAdjust
 
             if (!autoDrive->isSkills)
             {
@@ -90,12 +92,12 @@ class Map {
             // load Zones
             
                 // red
-            addObject(22.89 / 2 + xAdjust, 129.11 + yAdjust, 'R', 45 + headingAdjust);              // element 18
-            addObject(22.89 / 2 + xAdjust, 11.30  + yAdjust, 'R', 135 + headingAdjust);             // element 19
+            addObject(22.89 / 2 + xAdjust, 129.11 + yAdjust, 'R', FORTY_FIVE);                      // element 18
+            addObject(22.89 / 2 + xAdjust, 11.30  + yAdjust, 'R', ONE_THIRTY_FIVE);                 // element 19
 
                 // blue
-            addObject(122.76 + xAdjust, 129.11 + yAdjust, 'B', -45 + headingAdjust);                // element 20
-            addObject(122.76 + xAdjust, 11.30 + yAdjust, 'B', -135 + headingAdjust);                // element 21
+            addObject(122.76 + xAdjust, 129.11 + yAdjust, 'B', NEG_FORTY_FIVE);                     // element 20
+            addObject(122.76 + xAdjust, 11.30 + yAdjust, 'B', NEG_ONE_THIRTY_FIVE);                 // element 21
 
 
             // corners-starting zones
@@ -106,18 +108,18 @@ class Map {
 
             // triball goals--interaction point
                 // red
-            addObject(11.66 + xAdjust, 93.77 + yAdjust, 'R', 180 + headingAdjust);                  // element 26
-            addObject(11.66 + xAdjust, 46.64 + yAdjust, 'R', 180 + headingAdjust);                  // element 27
-            addObject(23.32 + xAdjust, 81.985 + yAdjust, 'R', 90 + headingAdjust);                  // element 28
-            addObject(23.32 + xAdjust, 70.20 + yAdjust, 'R', 90 + headingAdjust);                   // element 29
-            addObject(23.32 + xAdjust, 58.41 + yAdjust, 'R', 90 + headingAdjust);                   // element 30
+            addObject(11.66 + xAdjust, 93.77 + yAdjust, 'R', ONE_EIGHTY);                           // element 26
+            addObject(11.66 + xAdjust, 46.64 + yAdjust, 'R', ZERO);                                 // element 27
+            addObject(23.32 + xAdjust, 81.985 + yAdjust, 'R', NINETY);                              // element 28
+            addObject(23.32 + xAdjust, 70.20 + yAdjust, 'R', NINETY);                               // element 29
+            addObject(23.32 + xAdjust, 58.41 + yAdjust, 'R', NINETY);                               // element 30
 
                 //blue
-            addObject(117.09 + xAdjust, 81.985 + yAdjust, 'B', 270 + headingAdjust);                // element 31
-            addObject(117.09 + xAdjust, 70.20 + yAdjust, 'B', 270 + headingAdjust);                 // element 32
-            addObject(117.09 + xAdjust, 58.41 + yAdjust, 'B', 270 + headingAdjust);                 // element 33
-            addObject(128.75 + xAdjust, 93.77 + yAdjust, 'B', 180 + headingAdjust);                 // element 34
-            addObject(128.75 + xAdjust, 46.64 + yAdjust, 'B', 180 + headingAdjust);                 // element 35
+            addObject(117.09 + xAdjust, 81.985 + yAdjust, 'B', TWO_SEVENTY);                        // element 31
+            addObject(117.09 + xAdjust, 70.20 + yAdjust, 'B', TWO_SEVENTY);                         // element 32
+            addObject(117.09 + xAdjust, 58.41 + yAdjust, 'B', TWO_SEVENTY);                         // element 33
+            addObject(128.75 + xAdjust, 93.77 + yAdjust, 'B', ONE_EIGHTY);                          // element 34
+            addObject(128.75 + xAdjust, 46.64 + yAdjust, 'B', ZERO);                                // element 35
 
 
         /*
@@ -138,17 +140,24 @@ class Map {
         // coordinates-angle-readjustment
         double xAdjust = -70.20;    // inches
         double yAdjust = -70.20;    // inches
-        double headingAdjust = -90;  // degree
+        double headingAdjust = 90;  // degree
 
         double* triBallInteractionAngle = &(tm->odometry_heading);
 
         // for angles
-        const double* twoSeventy = 270 + headingAdjust;
-        const double* oneEighty = 180 + headingAdjust;
-        const double* oneThirtyFive = 135 + headingAdjust;
-        const double* ninety = 90 + headingAdjust;
-        const double* fortyFive = 45 + headingAdjust;
+         double* TWO_SEVENTY = new double(270 + headingAdjust);
+         double* ONE_EIGHTY = new double(180 + headingAdjust);
+         double* ONE_THIRTY_FIVE = new double (135 + headingAdjust);
+         double* NINETY = new double (90 + headingAdjust);
+         double* FORTY_FIVE = new double(45 + headingAdjust);
 
+         double* NEG_TWO_SEVENTY = new double(-270 + headingAdjust);
+         double* NEG_ONE_EIGHTY = new double(-180 + headingAdjust);
+         double* NEG_ONE_THIRTY_FIVE = new double(-135 + headingAdjust);
+         double* NEG_NINETY = new double(-90 + headingAdjust);
+         double* NEG_FORTY_FIVE = new double(-45 + headingAdjust);
+
+         double* ZERO = new double(0 + headingAdjust);
 
 
         // Map Elements

@@ -6,8 +6,6 @@
 /// @brief    Contains all the methods for calculation the robots position.
 class Telemetry
 {
-private:
-    //std::pair<double, double> odometry_position;    // removed current_position and current_heading
 
 public:
     Telemetry(Hardware *hardware, RobotConfig *robotConfig);
@@ -28,6 +26,7 @@ public:
     double get_heading_between_points(std::pair<double, double> initial_position, std::pair<double, double> final_position);
     double odometry_x_position = 0;
     double odometry_y_position = 0;
+    std::pair<double, double> odometry_position;
     //in degrees
     double odometry_heading = 0;
 
