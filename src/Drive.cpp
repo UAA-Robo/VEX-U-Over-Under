@@ -46,7 +46,7 @@ void Drive::move_drivetrain_distance_odometry(std::pair<double, double> position
     double distance_goal = distance;
     double previous_distance = distance; 
 
-    double min_velocity = 10;
+    double min_velocity = 20;
     double max_velocity = 80;
     double stopping_aggression = 0.1; // higher number is higher aggression (steeper slope)
     double velocity;
@@ -66,7 +66,7 @@ void Drive::move_drivetrain_distance_odometry(std::pair<double, double> position
             velocity = atan(stopping_aggression * distance) * 2 * max_velocity / M_PI;
         }
         hw->drivetrain.setVelocity(velocity * drive_direction, vex::velocityUnits::pct);
-        std::cout << "Straight: " << distance << ", " << velocity << "," << tm->odometry_x_position << "," << tm->odometry_y_position << "," << tm->odometry_heading << std::endl;
+        std::cout << "Straight: " << distance_goal << ", " << distance << ", " << velocity << "," << tm->odometry_x_position << "," << tm->odometry_y_position << "," << tm->odometry_heading << std::endl;
         vex::wait(35, vex::timeUnits::msec);
 
         previous_distance = distance; // So don't move overshoot
