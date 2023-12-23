@@ -9,7 +9,6 @@ AutoDrive::AutoDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *te
 
 void AutoDrive::drive() {
 
-    // std::cout << "drive" << '\n';
     std::pair<double, double> current_pos = {-20.1, 0.00};
     std::pair<double, double> new_target_pos = {20.05, 52.34};
     std::vector<std::pair<double, double>> path;

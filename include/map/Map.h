@@ -20,7 +20,8 @@ class Map {
         void add_buffer(
         std::pair<double, double> upper_left_corner,
         std::pair<double, double> bottom_right_corner) {
-            buffers.push_back(Buffer(upper_left_corner, bottom_right_corner));
+            Buffer bf(upper_left_corner, bottom_right_corner);
+            buffers.push_back(&bf);
         }
 
         void add_simple_region(
@@ -29,9 +30,13 @@ class Map {
         std::pair<double, double> upper_critical_point,
         std::pair<double, double> lower_critical_point
         ) {
-            regions.push_back(SimpleRegion( // Yo props to Wa for the ++ thing, very clever
-                next_region_id++, upper_left_corner, bottom_right_corner,
-                upper_critical_point, lower_critical_point));
+            // next_region_id++;
+            std::cout << next_region_id << '\n';
+            SimpleRegion sr( // Yo props to Wa for the ++ thing, very clever
+                next_region_id, upper_left_corner, bottom_right_corner,
+                upper_critical_point, lower_critical_point);
+            regions.push_back(&sr);
+            ++next_region_id;
         }
 
         void add_composite_region(
@@ -42,10 +47,14 @@ class Map {
         std::pair<double, double> upper_critical_point,
         std::pair<double, double> lower_critical_point
         ) {
-            regions.push_back(CompositeRegion(
-                next_region_id++, upper_left_corner_1, bottom_right_corner_1,
+            // next_region_id++;
+            std::cout << next_region_id << '\n';
+            CompositeRegion cr(
+                next_region_id, upper_left_corner_1, bottom_right_corner_1,
                 upper_left_corner_2, bottom_right_corner_2,
-                upper_critical_point, lower_critical_point));
+                upper_critical_point, lower_critical_point);
+            regions.push_back(&cr);
+            ++next_region_id;
         }
 
     public:
@@ -205,9 +214,10 @@ class Map {
         int in_which_region(std::pair<double, double> position) {
             std::cout << regions.size() << std::endl;
             for (int i = 0; i < regions.size(); ++i) {
-                std::cout << "HERE " << regions.size() << std::endl;
-                if (regions[i].in_region(position)) return i;
+                std::cout << i << " ID" << regions[i]->ID << std::endl;
+                if (regions[i]->in_region(position)) return i;
             }
+            std::cout << "HEllo!" << std::endl;
             return -1;
         }
 
@@ -216,8 +226,8 @@ class Map {
         /// @param IS_UPPER Whether the critical point must be an upper or lower point
         /// @return A pair of coordinates
         std::pair<double, double> get_critical_point(int region, bool IS_UPPER) {
-            if (IS_UPPER) return regions[region].upper_critical_point;
-            else if (!IS_UPPER) return regions[region].lower_critical_point;
+            if (IS_UPPER) return regions[region]->upper_critical_point;
+            else if (!IS_UPPER) return regions[region]->lower_critical_point;
         }
 
         // coordinates-angle-readjustment - Wa did this it's so cool!
@@ -227,6 +237,6 @@ class Map {
 
         std::vector<Buffer*> buffers;
         std::vector<Region*> regions;
-        int next_region_id = -1;
+        int next_region_id = 0;
 
 };

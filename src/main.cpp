@@ -50,6 +50,7 @@ void pre_auton(void) {
 
 void autonomous(void) {
   //if(!isControlled){
+    std::cout << "START__________________" << '\n';
     icebot->driveAuto();
   //}
 }
@@ -82,7 +83,7 @@ int main() {
   
 
   //Competition callbacks
-  Competition.autonomous(autonomous);
+  // Competition.autonomous(autonomous);
   Competition.drivercontrol(autonomous);
   
   // Run the pre-autonomous function.

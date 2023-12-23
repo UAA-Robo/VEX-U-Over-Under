@@ -5,8 +5,6 @@ class Region {
     public:
         Region(int id) : ID(id) { }
 
-        virtual void in_region(std::pair<double, double> position) const = 0 { }
-
         int ID;
 
         std::pair<double, double> upper_left_corner, bottom_right_corner,
@@ -28,13 +26,20 @@ class SimpleRegion : public Region {
                     this->lower_critical_point = lower_critical_point;
                 }
 
-        bool in_region(std::pair<double, double> position) override {
+        bool in_region(std::pair<double, double> position) {
+            std::cout << "ran" << '\n';
+            std::cout << (position.first >= upper_left_corner.first) << '\n';
             if (position.first >= upper_left_corner.first &&
             position.first <= bottom_right_corner.first &&
             position.second <= upper_left_corner.second &&
-            position.second >= bottom_right_corner.second) return true;
+            position.second >= bottom_right_corner.second) {return true;
+            std::cout << "id" + ID << '\n';}
             else return false;
         }
+
+        // int ID;
+    private:
+        
 
         
 };
@@ -59,7 +64,7 @@ class CompositeRegion : public Region {
                 this->lower_critical_point = lower_critical_point;
             }
         
-        bool in_region(std::pair<double, double> position) override {
+        bool in_region(std::pair<double, double> position) {
             std::cout << position.first << " " << position.second << '\n';
             std::cout << upper_left_corner_1.first << " " << upper_left_corner_1.second << '\n';
             std::cout << bottom_right_corner_1.first << " " << bottom_right_corner_1.second << '\n';
@@ -82,6 +87,8 @@ class CompositeRegion : public Region {
             else return false;
         }
 
+        // int ID;
+    private:
         std::pair<double, double> upper_left_corner_1, bottom_right_corner_1,
                                   upper_left_corner_2, bottom_right_corner_2;
 };
