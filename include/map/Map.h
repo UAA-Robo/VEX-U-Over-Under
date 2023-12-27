@@ -31,12 +31,12 @@ class Map {
         std::pair<double, double> lower_critical_point
         ) {
             // next_region_id++;
-            std::cout << next_region_id << '\n';
-            SimpleRegion sr = SimpleRegion( // Yo props to Wa for the ++ thing, very clever
-                next_region_id, upper_left_corner, bottom_right_corner,
+            // std::cout << next_region_id << '\n';
+            SimpleRegion* sr = new SimpleRegion( // Yo props to Wa for the ++ thing, very clever
+                next_region_id++, upper_left_corner, bottom_right_corner,
                 upper_critical_point, lower_critical_point);
-            regions.push_back(&sr);
-            ++next_region_id;
+            regions.push_back(sr);
+            // ++next_region_id;
         }
 
         void add_composite_region(
@@ -48,13 +48,13 @@ class Map {
         std::pair<double, double> lower_critical_point
         ) {
             // next_region_id++;
-            std::cout << next_region_id << '\n';
-            CompositeRegion cr = CompositeRegion(
-                next_region_id, upper_left_corner_1, bottom_right_corner_1,
+            // std::cout << next_region_id << '\n';
+            CompositeRegion* cr = new CompositeRegion(
+                next_region_id++, upper_left_corner_1, bottom_right_corner_1,
                 upper_left_corner_2, bottom_right_corner_2,
                 upper_critical_point, lower_critical_point);
-            regions.push_back(&cr);
-            ++next_region_id;
+            regions.push_back(cr);
+            // ++next_region_id;
         }
 
     public:
@@ -211,15 +211,26 @@ class Map {
         /// @brief Retrieves the ID of the region for the given position
         /// @param position A coordinate pair for a position
         /// @return The integer ID of the container region, -1 if none
-        int in_which_region(std::pair<double, double> position) {
-            std::cout << regions.size() << std::endl;
+        int in_which_region(std::pair<double, double> position, int last_region, int direction) {
+            // std::cout << regions.size() << std::endl;
             for (int i = 0; i < regions.size(); ++i) {
-                std::cout << i << " ID" << regions[i]->ID << std::endl;
+                // std::cout << i << " ID" << regions[i]->getID() << std::endl;
+                if (regions[i]->is_critical_point(position)) {
+                    if (last_region == regions[i]->ID) {
+                        // std::cout << "same" << '\n';
+                        int result = i + direction;
+                        if (i + direction == -1) result = 7;
+                        else if (i + direction == 8) result = 0;
+                        return result;
+                    }
+                }
                 if (regions[i]->in_region(position)) return i;
             }
             std::cout << "HEllo!" << std::endl;
             return -1;
         }
+
+
 
         /// @brief Retrieves the critical point for a region
         /// @param region The ID of the region
@@ -227,7 +238,7 @@ class Map {
         /// @return A pair of coordinates
         std::pair<double, double> get_critical_point(int region, bool IS_UPPER) {
             if (IS_UPPER) return regions[region]->upper_critical_point;
-            else if (!IS_UPPER) return regions[region]->lower_critical_point;
+            else return regions[region]->lower_critical_point;
         }
 
         // coordinates-angle-readjustment - Wa did this it's so cool!

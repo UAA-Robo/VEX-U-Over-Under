@@ -13,7 +13,7 @@ void AutoDrive::drive() {
     std::pair<double, double> new_target_pos = {20.05, 52.34};
     std::vector<std::pair<double, double>> path;
     pg->generate_path(path, current_pos, new_target_pos);
-    // for (int i = 0; i < path.size(); ++i) {
-    //     std::cout << path[i].first << " " << path[i].second << '\n';
-    // }
+    for (int i = 0; i < path.size(); ++i) {
+        std::cout << path[i].first << " " << path[i].second << '\n';
+    }
 }

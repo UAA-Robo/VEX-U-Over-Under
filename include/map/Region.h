@@ -4,15 +4,20 @@ class Region {
 
     public:
         Region(int id) : ID(id) {
-            std::cout << "Constructor ID" << ID << '\n';
+            // std::cout << "Constructor ID" << ID << '\n';
         }
 
-        bool in_region(std::pair<double, double> position) { return true; }
+        virtual bool in_region(std::pair<double, double> position) { return true; }
 
         int ID;
 
         std::pair<double, double> upper_left_corner, bottom_right_corner,
                                   upper_critical_point, lower_critical_point;
+        bool is_critical_point(std::pair<double, double> position) {
+            if (position == upper_critical_point ||
+                position == lower_critical_point) return true;
+            else return false;
+        }
 };
 
 class SimpleRegion : public Region {
@@ -31,13 +36,12 @@ class SimpleRegion : public Region {
                 }
 
         bool in_region(std::pair<double, double> position) {
-            std::cout << "ran" << '\n';
-            std::cout << (position.first >= upper_left_corner.first) << '\n';
+            // std::cout << "ran" << '\n';
+            // std::cout << (position.first >= upper_left_corner.first) << '\n';
             if (position.first >= upper_left_corner.first &&
             position.first <= bottom_right_corner.first &&
             position.second <= upper_left_corner.second &&
-            position.second >= bottom_right_corner.second) {return true;
-            std::cout << "id" + ID << '\n';}
+            position.second >= bottom_right_corner.second) return true;
             else return false;
         }
 
@@ -69,11 +73,11 @@ class CompositeRegion : public Region {
             }
         
         bool in_region(std::pair<double, double> position) {
-            std::cout << position.first << " " << position.second << '\n';
-            std::cout << upper_left_corner_1.first << " " << upper_left_corner_1.second << '\n';
-            std::cout << bottom_right_corner_1.first << " " << bottom_right_corner_1.second << '\n';
-            std::cout << upper_left_corner_2.first << " " << upper_left_corner_2.second << '\n';
-            std::cout << bottom_right_corner_2.first << " " << bottom_right_corner_2.second << '\n';
+            // std::cout << position.first << " " << position.second << '\n';
+            // std::cout << upper_left_corner_1.first << " " << upper_left_corner_1.second << '\n';
+            // std::cout << bottom_right_corner_1.first << " " << bottom_right_corner_1.second << '\n';
+            // std::cout << upper_left_corner_2.first << " " << upper_left_corner_2.second << '\n';
+            // std::cout << bottom_right_corner_2.first << " " << bottom_right_corner_2.second << '\n';
             if (
                 (
                     position.first >= upper_left_corner_1.first &&
