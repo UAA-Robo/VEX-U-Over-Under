@@ -1,10 +1,13 @@
 #include "Drive.h"
 #include <iostream>
 
+//TODO: Remove PID from this branch
+
 Drive::Drive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry) {
     hw = hardware;
     rc = robotConfig;
     tm = telemetry;
+    pid = new PID(rc, tm);
 }
 
 
@@ -38,6 +41,8 @@ void Drive::move_drivetrain(std::pair<double, double> velocity_percent) {
                                     vex::velocityUnits::pct);
     hw->right_drivetrain_motors.spin(vex::directionType::fwd, velocity.second, 
                                     vex::velocityUnits::pct);
+    
+    if (rc->USE_PID_IN_USERDRIVE) pid->correct_drive();
 }
 
 
@@ -63,3 +68,8 @@ void Drive::move_drivetrain_distance(std::pair<double, double> velocity_percent,
     hw->front_right_drivetrain_motor.spinFor(number_wheel_revolutions, vex::rotationUnits::rev, 
                                             velocity.second, vex::velocityUnits::pct);
 }
+
+// In move_drivetrain_distance_odometry(), put this here
+// while (fabs(distance) > 0.5) {
+
+//         if (rc->USE_PID_IN_AUTODRIVE) pid.correct_drive();
