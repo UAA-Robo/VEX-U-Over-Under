@@ -53,7 +53,9 @@ int Telemetry::update_position(void* param) {
         tm->odometry_y_position += y_displacement;
 
         // Print to command line
-        std::cout << tm->odometry_x_position << "," << tm->odometry_y_position << "," << tm->odometry_heading << " |"<< left_odometry_revolutions << "|" << right_odometry_revolutions << "|" <<back_odometry_revolutions << std::endl; //already in deg
+        std::cout << tm->odometry_x_position << "," << tm->odometry_y_position << "," 
+        << tm->odometry_heading << " |"<< left_odometry_revolutions << "|"
+         << right_odometry_revolutions << "|" << back_odometry_revolutions << std::endl; 
 
         // Rotation sensor is updated every 20ms so 30ms wait should be fine 
         // https://www.vexforum.com/t/rotation-sensor-update-rate-optical-shaft-encoder-vs-rotation-sensor/106917
@@ -61,40 +63,28 @@ int Telemetry::update_position(void* param) {
     }
 }
 
-double Telemetry::get_distance_between_points(std::pair<double, double> initial_position, std::pair<double, double> final_position)
+double Telemetry::get_distance_between_points(std::pair<double, double> initial_position, 
+    std::pair<double, double> final_position)
 {
-    double distance_to_final_position = sqrt(pow((final_position.first - initial_position.first), 2) + pow((final_position.second - initial_position.second), 2));
+    double distance_to_final_position = sqrt(pow((final_position.first - initial_position.first), 2) 
+    + pow((final_position.second - initial_position.second), 2));
     return distance_to_final_position;
-
-    std::cout << "Distance() called successful!" << std::endl;  // TDOD: remove later
 }
 
-double Telemetry ::get_heading_between_points(std::pair<double, double> initial_position, std::pair<double, double> final_position)
+double Telemetry ::get_heading_between_points(std::pair<double, double> initial_position, 
+    std::pair<double, double> final_position)
 {
-    double angle_to_final_position = (atan2((final_position.second - initial_position.second), (final_position.first - initial_position.first)) * (180 / (M_PI)));
+    double angle_to_final_position = (atan2((final_position.second - initial_position.second), 
+        (final_position.first - initial_position.first)) * (180 / (M_PI)));
     return angle_to_final_position;
 }
 
-std::pair<double, double> Telemetry::get_current_position() // Revised for odometry
+std::pair<double, double> Telemetry::get_current_position() 
 {
     return std::make_pair(this->odometry_x_position, this->odometry_y_position);
 }
 
-double Telemetry::get_current_heading() // Revised for odometry
+double Telemetry::get_current_heading() 
 {
     return this->odometry_heading; 
 }
-
-
-// May use later (if GPS)
-
-// void Telemetry::set_current_heading(double current_heading)
-// {
-//     this->current_heading = current_heading;
-// }
-
-// void Telemetry::set_current_heading(std::pair<double, double> current_position)
-// {
-//     this->current_position = current_position;
-//         vex::wait(50, vex::timeUnits::msec);
-// }
