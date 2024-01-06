@@ -17,6 +17,9 @@ class Map {
 
         RobotConfig *rc;
 
+        /// @brief Adds a buffer to the map.
+        /// @param upper_left_corner The upper left corner coordinates.
+        /// @param bottom_right_corner The bottom right corner coordinates.
         void add_buffer(
         std::pair<double, double> upper_left_corner,
         std::pair<double, double> bottom_right_corner) {
@@ -24,21 +27,34 @@ class Map {
             buffers.push_back(&bf);
         }
 
+        /// @brief Adds a rectangular region to the map.
+        /// @param upper_left_corner The upper left corner coordinates.
+        /// @param bottom_right_corner The bottom right corner coordinates.
+        /// @param upper_critical_point The next critical point in a clockwise direction.
+        /// @param lower_critical_point The current critical point in a clockwise direction.
         void add_simple_region(
         std::pair<double, double> upper_left_corner,
         std::pair<double, double> bottom_right_corner,
         std::pair<double, double> upper_critical_point,
         std::pair<double, double> lower_critical_point
         ) {
-            // next_region_id++;
-            // std::cout << next_region_id << '\n';
             SimpleRegion* sr = new SimpleRegion( // Yo props to Wa for the ++ thing, very clever
                 next_region_id++, upper_left_corner, bottom_right_corner,
                 upper_critical_point, lower_critical_point);
             regions.push_back(sr);
-            // ++next_region_id;
         }
 
+        /// @brief Adds an L-shaped region to the map.
+        /// @param upper_left_corner_1 The upper left corner coordinates of the first rectangle that
+        ///                            makes up the L-shape.
+        /// @param bottom_right_corner_1 The bottom right corner coordinates of the first rectangle
+        ///                              that makes up the L-shape.
+        /// @param upper_left_corner_2 The upper left corner coordinates of the second rectangle
+        ///                            that makes up the L-shape.
+        /// @param bottom_right_corner_2 The bottom right corner coordinates of the second rectangle
+        ///                              that makes up the L-shape.
+        /// @param upper_critical_point The next critical point in a clockwise direction.
+        /// @param lower_critical_point The current critical point in a clockwise direction.
         void add_composite_region(
         std::pair<double, double> upper_left_corner_1,
         std::pair<double, double> bottom_right_corner_1,
@@ -209,12 +225,9 @@ class Map {
         /// @param position A coordinate pair for a position
         /// @return The integer ID of the container region, -1 if none
         int in_which_region(std::pair<double, double> position, int last_region, int direction) {
-            // std::cout << regions.size() << std::endl;
             for (int i = 0; i < regions.size(); ++i) {
-                // std::cout << i << " ID" << regions[i]->getID() << std::endl;
                 if (regions[i]->is_critical_point(position)) {
                     if (last_region == regions[i]->ID) {
-                        // std::cout << "same" << '\n';
                         int result = i + direction;
                         if (i + direction == -1) result = 7;
                         else if (i + direction == 8) result = 0;
@@ -223,7 +236,6 @@ class Map {
                 }
                 if (regions[i]->in_region(position)) return i;
             }
-            std::cout << "HEllo!" << std::endl;
             return -1;
         }
 

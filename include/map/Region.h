@@ -7,12 +7,18 @@ class Region {
             // std::cout << "Constructor ID" << ID << '\n';
         }
 
+        /// @brief Checks whether the given position is inside the region.
+        /// @param position The coordinates of the given position.
+        /// @return True or false whether the position is inside the region.
         virtual bool in_region(std::pair<double, double> position) { return true; }
 
         int ID;
 
         std::pair<double, double> upper_left_corner, bottom_right_corner,
                                   upper_critical_point, lower_critical_point;
+        /// @brief Checks whether the given position is a critical point of the region.
+        /// @param position The coordinates of the given position.
+        /// @return True or false whether the position is a critical point of the region.
         bool is_critical_point(std::pair<double, double> position) {
             if (position == upper_critical_point ||
                 position == lower_critical_point) return true;
@@ -35,21 +41,16 @@ class SimpleRegion : public Region {
                     this->lower_critical_point = lower_critical_point;
                 }
 
-        bool in_region(std::pair<double, double> position) {
-            // std::cout << "ran" << '\n';
-            // std::cout << (position.first >= upper_left_corner.first) << '\n';
+        /// @brief Checks whether the given position is inside the region.
+        /// @param position The coordinates of the given position.
+        /// @return True or false whether the position is inside the region.
+        bool in_region(std::pair<double, double> position) override {
             if (position.first >= upper_left_corner.first &&
             position.first <= bottom_right_corner.first &&
             position.second <= upper_left_corner.second &&
             position.second >= bottom_right_corner.second) return true;
             else return false;
-        }
-
-        // int ID;
-    private:
-        
-
-        
+        }       
 };
 
 class CompositeRegion : public Region {
@@ -72,12 +73,10 @@ class CompositeRegion : public Region {
                 this->lower_critical_point = lower_critical_point;
             }
         
-        bool in_region(std::pair<double, double> position) {
-            // std::cout << position.first << " " << position.second << '\n';
-            // std::cout << upper_left_corner_1.first << " " << upper_left_corner_1.second << '\n';
-            // std::cout << bottom_right_corner_1.first << " " << bottom_right_corner_1.second << '\n';
-            // std::cout << upper_left_corner_2.first << " " << upper_left_corner_2.second << '\n';
-            // std::cout << bottom_right_corner_2.first << " " << bottom_right_corner_2.second << '\n';
+        /// @brief Checks whether the given position is inside the region.
+        /// @param position The coordinates of the given position.
+        /// @return True or false whether the position is inside the region.
+        bool in_region(std::pair<double, double> position) override {
             if (
                 (
                     position.first >= upper_left_corner_1.first &&
@@ -95,7 +94,6 @@ class CompositeRegion : public Region {
             else return false;
         }
 
-        // int ID;
     private:
         std::pair<double, double> upper_left_corner_1, bottom_right_corner_1,
                                   upper_left_corner_2, bottom_right_corner_2;
