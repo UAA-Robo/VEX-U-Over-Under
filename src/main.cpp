@@ -82,10 +82,6 @@ int main() {
   Competition.drivercontrol(usercontrol);
   Competition.autonomous(autonomous);
 
-  
-
-  std::cout <<"HERE2" << std::endl;
-
   // Prevent main from exiting with an infinite loop.
   while (true) {
     wait(100, msec);
