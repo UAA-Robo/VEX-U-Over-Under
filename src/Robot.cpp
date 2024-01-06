@@ -5,6 +5,7 @@ Robot::Robot()
 
     hw = new Hardware();
 
+
     // check if robot has sensor
     bool hasSensor;
     

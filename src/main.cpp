@@ -66,7 +66,6 @@ void autonomous(void) {
 
 
 void usercontrol(void) {
-  //icebot = new Robot();
 
   icebot->drive();
   // Sleep the task for a short amount of time to prevent wasted resources.

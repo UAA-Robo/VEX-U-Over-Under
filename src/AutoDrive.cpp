@@ -5,6 +5,9 @@ AutoDrive::AutoDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *te
     : Drive(hardware, robotConfig, telemetry) {}
 
 void AutoDrive::drive() {
+    //hw->controller.Screen.clearScreen();
+    hw->controller.Screen.setCursor(1,1);
+    hw->controller.Screen.print("Here Auto");
     // Set braking
     hw->left_drivetrain_motors.setStopping(vex::brakeType::brake);
     hw ->right_drivetrain_motors.setStopping(vex::brakeType::brake);
@@ -15,6 +18,7 @@ void AutoDrive::drive() {
     rotate_and_drive_to_position({12, -12});
     vex::wait(2, vex::timeUnits::sec);
     rotate_and_drive_to_position({0, 0}, true);
+    rotate_to_position({10, 0});
 
 }
 

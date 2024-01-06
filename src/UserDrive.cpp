@@ -7,8 +7,7 @@ UserDrive::UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *te
     IS_MACRO_RECORDING = false;
     macro_length = -2;
     
-    vex::task run_catapult_task = vex::task(run_catapult, this, 1); // Start catapult. TODO: fix so this goes in drive()
-
+    
     if (input_list.size() == 0) // Setup vector
     {
         input_list.reserve(14);
@@ -43,11 +42,15 @@ UserDrive::UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *te
 
 void UserDrive::drive()
 {
+    
+    //hw->controller.Screen.setCursor(1,1);
+    //hw->controller.Screen.print("Here user drive");
+    vex::task run_catapult_task = vex::task(run_catapult, this, 1); // Start catapult thread
+
 
     while(true) {
         get_inputs();
         macro_controls();
-        test_print();
         drivetrain_controls();
         snowplow_in();
         snowplow_out();
