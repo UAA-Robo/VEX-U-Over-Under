@@ -50,6 +50,7 @@ void pre_auton(void) {
 
 void autonomous(void) {
   //if(!isControlled){
+    std::cout << "START__________________" << '\n';
     icebot->driveAuto();
   //}
 }
@@ -89,8 +90,8 @@ int main() {
   pre_auton();
 
   //Stops test_driver from interfering with auto (weird bug)
-  if (!Competition.isCompetitionSwitch() and !Competition.isFieldControl()) {
-    Competition.test_driver();
+  if (!Competition.isCompetitionSwitch() && !Competition.isFieldControl()) {
+    Competition.test_auton();
   }
 
   // Prevent main from exiting with an infinite loop.
