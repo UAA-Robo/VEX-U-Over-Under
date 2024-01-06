@@ -6,10 +6,7 @@ class RobotConfig {
 public:
     RobotConfig(Hardware* hw);
 
-    int DRIVETRAINWIDTH = 10.0; //! Temporary!
-
-    bool USE_PID_IN_USERDRIVE = false;
-    bool USE_PID_IN_AUTODRIVE = false; //TODO: Change to true later
+    int DRIVETRAINWIDTH = 14.0; //! Temporary, configure actual values later
 
 private:
     Hardware* hw;

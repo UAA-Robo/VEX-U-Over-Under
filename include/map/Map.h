@@ -47,14 +47,11 @@ class Map {
         std::pair<double, double> upper_critical_point,
         std::pair<double, double> lower_critical_point
         ) {
-            // next_region_id++;
-            // std::cout << next_region_id << '\n';
             CompositeRegion* cr = new CompositeRegion(
                 next_region_id++, upper_left_corner_1, bottom_right_corner_1,
                 upper_left_corner_2, bottom_right_corner_2,
                 upper_critical_point, lower_critical_point);
             regions.push_back(cr);
-            // ++next_region_id;
         }
 
     public:
@@ -63,13 +60,13 @@ class Map {
             double drive_train_adjustment = rc->DRIVETRAINWIDTH * sqrt(2) / 2;
 
             /*
-            ---- REGIONS ---------------------------------------------------------------------------
+            ----- REGIONS --------------------------------------------------------------------------
             */
-           /*
+            /*
                 .------------------------------. .--------------------------------.
                 [          BLUE SIDE           ] [            RED SIDE            ]
                 '------------------------------' '--------------------------------'
-                __________________________________________________________________
+                 __________________________________________________________________
                 |   Top               |                     |                      |
                 |   Left         X    |   Top Way Region    |     X       Top      |
                 |   L-Region          |   3                 |  4          Right    |
@@ -93,7 +90,7 @@ class Map {
                 |    Left        X    |   Bottom Way Region  |    X     Right      |
                 |    L-Region         |                      |          L-Region   |
                 |_____________________|______________________|_____________________|
-           */
+            */
 
             add_composite_region( // Lower Left L-Region
                 {0.0 + x_adjust, 46.64 + y_adjust},

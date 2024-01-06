@@ -7,7 +7,7 @@ Drive::Drive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry)
     hw = hardware;
     rc = robotConfig;
     tm = telemetry;
-    pid = new PID(rc, tm);
+    // pid = new PID(rc, tm);
 }
 
 
@@ -42,7 +42,7 @@ void Drive::move_drivetrain(std::pair<double, double> velocity_percent) {
     hw->right_drivetrain_motors.spin(vex::directionType::fwd, velocity.second, 
                                     vex::velocityUnits::pct);
     
-    if (rc->USE_PID_IN_USERDRIVE) pid->correct_drive();
+    // if (rc->USE_PID_IN_USERDRIVE) pid->correct_drive();
 }
 
 

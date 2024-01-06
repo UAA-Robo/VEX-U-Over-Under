@@ -3,7 +3,6 @@
 #include "Hardware.h"
 #include "Telemetry.h"
 #include "RobotConfig.h"
-#include "PID.h"
 #include "Logger.h"
 
 /// @brief   Parent class for methods and variable shared between UserDrive and AutoDrive.
@@ -17,7 +16,7 @@ protected:
     Hardware *hw;
     RobotConfig *rc;
     Telemetry *tm;
-    PID *pid;
+    // PID *pid;
 
 
     /// @brief    Calculates the velocity in RPMs that the left and right drivetrain wheels should 
