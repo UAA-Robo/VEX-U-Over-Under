@@ -47,7 +47,7 @@ private:
 
     /// @brief Spins the catapult motors until limit switch is hit. Loops forever because it is on,
     ///     it's own thread.
-    static int run_catapult(void* param);
+    //static int run_catapult(void* param);
 
     /// @brief Pushes air out when X button is pressed to expand snowplow.
     void snowplow_out();

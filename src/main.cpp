@@ -31,7 +31,6 @@ bool isControlled;
 
 void pre_auton(void) {
 
-  
   vex::wait(20, vex::msec);
   
   return;
@@ -73,7 +72,6 @@ void usercontrol(void) {
 
 }
 
-
 //
 // Main will set up the competition functions and callbacks.
 //
@@ -81,17 +79,10 @@ int main() {
   
 
   //Competition callbacks
-  Competition.autonomous(autonomous);
+
   Competition.drivercontrol(usercontrol);
+  Competition.autonomous(autonomous);
   
-  // Run the pre-autonomous function.
-  pre_auton();
-
-  //Stops test_driver from interfering with auto (weird bug)
-  if (!Competition.isCompetitionSwitch() and !Competition.isFieldControl()) {
-    Competition.test_auton();
-  }
-
   // Prevent main from exiting with an infinite loop.
   while (true) {
     wait(100, msec);

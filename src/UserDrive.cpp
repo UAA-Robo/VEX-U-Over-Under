@@ -42,11 +42,6 @@ UserDrive::UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *te
 
 void UserDrive::drive()
 {
-    
-    //hw->controller.Screen.setCursor(1,1);
-    //hw->controller.Screen.print("Here user drive");
-    vex::task run_catapult_task = vex::task(run_catapult, this, 1); // Start catapult thread
-
 
     while(true) {
         get_inputs();
@@ -177,24 +172,24 @@ void UserDrive::snowplow_in() {
 
 }
 
-int UserDrive::run_catapult(void* param)
-{
-    // WARNING: DON'T print in this thread or it will take too long and miss the catapult press
-    UserDrive* ud = static_cast<UserDrive*>(param);
+// int UserDrive::run_catapult(void* param)
+// {
+//     // WARNING: DON'T print in this thread or it will take too long and miss the catapult press
+//     UserDrive* ud = static_cast<UserDrive*>(param);
     
-    while(1) {
+//     while(1) {
         
-        if (ud->hw->catapult_limit_switch.value() == 0) {
-            ud->hw->catapult.stop();
-            ud->CATAPULT_STOPPED = true; // if limit switch touched, stop catapult
-        }
-        if (ud->button_R1.value == 1) ud->CATAPULT_STOPPED = false;
-        if (!ud->CATAPULT_STOPPED) {
-            ud->hw->catapult.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
-        }
-        vex::wait(10, vex::timeUnits::msec);
-    }
-}
+//         if (ud->hw->catapult_limit_switch.value() == 0) {
+//             ud->hw->catapult.stop();
+//             ud->CATAPULT_STOPPED = true; // if limit switch touched, stop catapult
+//         }
+//         if (ud->button_R1.value == 1) ud->CATAPULT_STOPPED = false;
+//         if (!ud->CATAPULT_STOPPED) {
+//             ud->hw->catapult.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
+//         }
+//         vex::wait(10, vex::timeUnits::msec);
+//     }
+// }
 
 void UserDrive::activate_intake()
 {

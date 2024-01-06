@@ -53,9 +53,9 @@ int Telemetry::update_position(void* param) {
         tm->odometry_y_position += y_displacement;
 
         // Print to command line
-        std::cout << tm->odometry_x_position << "," << tm->odometry_y_position << "," 
-        << tm->odometry_heading << " |"<< left_odometry_revolutions << "|"
-         << right_odometry_revolutions << "|" << back_odometry_revolutions << std::endl; 
+        //std::cout << tm->odometry_x_position << "," << tm->odometry_y_position << "," 
+        //  << tm->odometry_heading << " |"<< left_odometry_revolutions << "|"
+        //  << right_odometry_revolutions << "|" << back_odometry_revolutions << std::endl; 
 
         // Rotation sensor is updated every 20ms so 30ms wait should be fine 
         // https://www.vexforum.com/t/rotation-sensor-update-rate-optical-shaft-encoder-vs-rotation-sensor/106917
