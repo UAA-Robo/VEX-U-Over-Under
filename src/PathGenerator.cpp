@@ -17,6 +17,10 @@ void PathGenerator::generate_path(
             std::cout << curr_region << " " << target_region << '\n';
             path.push_back(source_pos);
             int direction = 0;
+            if (curr_region == target_region) {
+                path.push_back(target_pos);
+                return;
+            }
             // while (curr_region != target_region && path[path.size() - 1] != target_pos) {
             // for (int i = 0; i < 4; ++i) {
                 if (((target_region - curr_region <= 3 && target_region - curr_region > 0) ||
