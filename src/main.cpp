@@ -30,9 +30,7 @@ bool isControlled;
 /*---------------------------------------------------------------------------*/
 
 void pre_auton(void) {
-
   vex::wait(20, vex::msec);
-  
   return;
 }
 
@@ -72,6 +70,7 @@ void usercontrol(void) {
 
 }
 
+
 //
 // Main will set up the competition functions and callbacks.
 //
@@ -82,7 +81,11 @@ int main() {
 
   Competition.drivercontrol(usercontrol);
   Competition.autonomous(autonomous);
+
   
+
+  std::cout <<"HERE2" << std::endl;
+
   // Prevent main from exiting with an infinite loop.
   while (true) {
     wait(100, msec);
