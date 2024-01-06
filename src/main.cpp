@@ -32,7 +32,7 @@ bool isControlled;
 void pre_auton(void) {
 
   
-  vex::wait(3000, vex::msec);
+  vex::wait(20, vex::msec);
   
   return;
 }
@@ -50,6 +50,7 @@ void pre_auton(void) {
 
 void autonomous(void) {
   //if(!isControlled){
+    std::cout << "START__________________" << '\n';
     icebot->driveAuto();
   //}
 }
@@ -89,7 +90,7 @@ int main() {
   pre_auton();
 
   //Stops test_driver from interfering with auto (weird bug)
-  if (!Competition.isCompetitionSwitch() and !Competition.isFieldControl()) {
+  if (!Competition.isCompetitionSwitch() && !Competition.isFieldControl()) {
     Competition.test_auton();
   }
 

@@ -2,23 +2,20 @@
 
 Hardware::Hardware()
 {
-    // Individual Motors
+    // Motor breaking
 
-    // Left
+    // Drivetrain
     front_left_drivetrain_motor.setBrake(vex::brakeType::coast);
     middle_left_drivetrain_motor.setBrake(vex::brakeType::coast);
     back_left_drivetrain_motor.setBrake(vex::brakeType::coast);
 
-    // Right
     front_right_drivetrain_motor.setBrake(vex::brakeType::coast);
     middle_left_drivetrain_motor.setBrake(vex::brakeType::coast);
     back_right_drivetrain_motor.setBrake(vex::brakeType::coast);
-
-    // Motor Groups
+    
     left_drivetrain_motors.setStopping(vex::brakeType::coast);
     right_drivetrain_motors.setStopping(vex::brakeType::coast);
 
-    // Drivetrain
     drivetrain.setStopping(vex::brakeType::coast);
     // smartDriveTrain.setStopping(vex::brakeType::brake);
 
@@ -29,4 +26,17 @@ Hardware::Hardware()
 
     // Distance sensor
     distanceSensor.installed();
+
+    // Intake
+    right_intake_motor.setStopping(vex::brakeType::hold);
+    left_catapult_motor.setStopping(vex::brakeType::hold);    
+
+    // Catapult
+    right_catapult_motor.setStopping(vex::brakeType::brake);
+    left_catapult_motor.setStopping(vex::brakeType::brake);
+    catapult.setStopping(vex::brakeType::brake);
+
+    // Retract plows initially
+    right_plow.set(true);
+    left_plow.set(true);
 }

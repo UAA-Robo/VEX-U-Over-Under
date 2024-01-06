@@ -1,7 +1,7 @@
 #pragma once
 #include "Hardware.h"
 
-/// @brief    Stores any data specific to each robot.
+/// @brief Stores any data specific to each robot.
 class RobotConfig {
 public:
     RobotConfig(Hardware* hw, bool hasSensor);
@@ -14,7 +14,11 @@ public:
     double DRIVETRAIN_WIDTH; // distance (in inch) between left and right side of the drivetrain (measured from the center of the wheels)
 
     // for MAP offsets (test)
+    double DRIVETRAIN_LENGTH;
+
     double ODOMETRY_DIAMETER;
+
+    int DRIVETRAINWIDTH = 14.0; //! Temporary, configure actual values later
 
 private:
     Hardware* hw;

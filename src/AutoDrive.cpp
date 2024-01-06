@@ -1,22 +1,37 @@
 #include "AutoDrive.h"
 
 
-AutoDrive::AutoDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry) : Drive(hardware, robotConfig, telemetry) {}
+AutoDrive::AutoDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry) : Drive(hardware, robotConfig, telemetry) {
+        mp = new Map(telemetry, robotConfig, isSkills);
+        pg = new PathGenerator(robotConfig, mp);
+        double drivetrain_offset = 2 * robotConfig->DRIVETRAIN_LENGTH;
+
+        // set starting zone
+        for (int i = 22; i < 26; i++)
+        {
+            Obstacle* newZone =  static_cast<Obstacle*>(mp->mapElements[i]);
+            if (newZone->inZone(tm->odometry_position))
+            {
+                zone = newZone;
+                break;
+            }
+        }
+    }
 
 void AutoDrive::drive() {
     // Set braking
     hw->left_drivetrain_motors.setStopping(vex::brakeType::brake);
     hw ->right_drivetrain_motors.setStopping(vex::brakeType::brake);
     move_drivetrain_distance_odometry({-24, 0}, true);
-    //rotate_and_drive_to_position({24, 60});
-    // rotate_and_drive_to_position({0, 0});
-    // Assume heading, x and y are all 0
-    //rotate_to_heading_odometry(360);
 
-    //move_drivetrain_distance_odometry({24,0});
-    //move_drivetrain_distance_odometry({48,0});
 
-    //rotate_to_relative_angle(115);
+    std::pair<double, double> current_pos = {58.0, -58.0};
+    std::pair<double, double> new_target_pos = {-25.0, 25.0};
+    std::vector<std::pair<double, double>> path;
+    pg->generate_path(path, current_pos, new_target_pos);
+    for (int i = 0; i < path.size(); ++i) {
+        std::cout << path[i].first << " " << path[i].second << '\n';
+    }
 }
 
 void AutoDrive::rotate_to_heading_odometry(double heading)
@@ -93,3 +108,30 @@ void AutoDrive::rotate_and_drive_to_position(std::pair<double, double> position,
     move_drivetrain_distance_odometry(position, ISBACKTOPOSITION);
 }
 
+void AutoDrive::rotate_and_drive_to_position(GameElement* element)
+{
+    InteractionObject* object = static_cast<InteractionObject*>(element); 
+    std::pair<double, double> position = object->GetPosition();
+
+    if (*(object->GetInteractionAngle()) == tm->get_current_heading()) // if can interact head on
+    {
+        rotate_to_position(position, object->GetAlignment());
+        move_drivetrain_distance_odometry(position, object->GetAlignment());
+    }
+    else
+    {
+        double interactionAngle = *(object->GetInteractionAngle());
+        std::pair<double, double> original_position = position;
+        if (interactionAngle == 0) { position.second -= drivetrain_offset; }
+        else if (interactionAngle == 45) { position.first += 1.4 * drivetrain_offset; position.second -= 1.4 * drivetrain_offset; }
+        else if (interactionAngle == 90) { position.first += drivetrain_offset; }
+        else if (interactionAngle == 135) { position.first += 1.4 * drivetrain_offset; position.second -= 1.4 * drivetrain_offset; }
+        else if (interactionAngle == 180) { position.second += drivetrain_offset; }
+        else if (interactionAngle == 270) { position.first -= drivetrain_offset; }
+        else if (interactionAngle == -45) { position.first -= 1.4 * drivetrain_offset; position.second -= 1.4 * drivetrain_offset; }
+        else if (interactionAngle == -135) { position.first -= 1.4 * drivetrain_offset; position.second += 1.4 * drivetrain_offset; }
+
+        rotate_to_position(original_position, object->GetAlignment());
+        move_drivetrain_distance_odometry(original_position, object->GetAlignment());
+    }
+}

@@ -1,7 +1,7 @@
 #pragma once
 #include "Drive.h"
 
-/// @brief   Contains the methods for the robot to be controlled by drivers.
+/// @brief Contains the methods for the robot to be controlled by drivers.
 class UserDrive : public Drive {
 public:
     UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry);
@@ -12,7 +12,13 @@ private:
     struct input {
     int value;
     int previous;
+
     };
+
+    int tick;
+
+    bool CATAPULT_RUNNING = false;
+    bool CATAPULT_STOPPED = false;
 
     std::vector<input*> input_list;
     std::vector<int32_t> controller_values;
@@ -39,6 +45,20 @@ private:
     //          Left/right on the right joystick is turning.
     void drivetrain_controls();
 
-    /// @brief Test action function TO BE REMOVED LATER
-    void test_print();
+    /// @brief Spins the catapult motors until limit switch is hit. Loops forever because it is on,
+    ///     it's own thread.
+    static int run_catapult(void* param);
+
+    /// @brief Pushes air out when X button is pressed to expand snowplow.
+    void snowplow_out();
+
+    /// @brief Sucks air in when Y button is pressed to retract snowplow.
+    void snowplow_in();
+
+    /// @brief Activates intake motor while L1 is pressed.
+    void activate_intake();
+
+    /// @brief Expand intake motor while A is pressed. Retracts intake motor while B is pressed.
+    void adjust_intake();
+
 };

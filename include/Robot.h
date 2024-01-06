@@ -5,7 +5,6 @@
 #include "Hardware.h"
 #include "RobotConfig.h"
 #include "map/Map.h"
-
 #include "vex.h"
 
 /// @brief   Holds all the classes needed to run the robot.
@@ -15,7 +14,6 @@ public:
     Robot();
 
     Map* mp;
-    Obstacle* zone;
 
     /// @brief    Initializes the driver-controlled code.
     void drive();

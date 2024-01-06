@@ -23,17 +23,12 @@ class InteractionObject : public GameElement
         };
 
     // Setters
-
-        //  position
     void SetPosition(double x, double y) { this->position = std::pair<double, double>(x, y); }
     void SetPosition(std::pair<double, double> position) { this->position = position; }
-
-        // teamColor
     void SetTeamColor(char color) { this->teamColor = color; }
 
     // Getters
 
-        // position
     std::pair<double, double> GetPosition() { return position; }
     std::pair<double, double> GetPositionWithMinOffset()
     {
@@ -43,8 +38,7 @@ class InteractionObject : public GameElement
     double GetYPosition() { return position.second; }
 
     dbpair test() { return position + position; }
-
-        // teamColor
     char GetTeamColor() { return teamColor; }
+    double* GetInteractionAngle() { return interactionAngle; }
 
 };

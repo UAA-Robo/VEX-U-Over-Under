@@ -3,10 +3,8 @@
 #include "Hardware.h"
 #include "RobotConfig.h"
 
-/// @brief    Contains all the methods for calculation the robots position.
-class Telemetry
-{
-
+/// @brief Contains all the methods for calculation the robots position.
+class Telemetry {
 public:
     Telemetry(Hardware *hardware, RobotConfig *robotConfig);
 

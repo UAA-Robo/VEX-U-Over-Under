@@ -1,5 +1,6 @@
 #pragma once
 #include "Drive.h"
+#include "PathGenerator.h"
 #include "vex.h"
 
 /// @brief   Contains the methods for the robot to autonomously navigate.
@@ -13,7 +14,6 @@ public:
 
     /// @brief Determines whether the current game is Skills or Head-To-Head
     bool isSkills = false;
-
     
 
 private:
@@ -48,4 +48,11 @@ private:
     /// @param ISBACKTOPOSITION     Boolean that if true, rotates the back of the robot to the coordinate instead of the front.
     void rotate_and_drive_to_position(std::pair<double, double> position, bool ISBACKTOPOSITION = false);
 
+    // test
+    void rotate_and_drive_to_position(GameElement* element);
+
+    PathGenerator *pg;
+    Map *mp;
+    Obstacle* zone;
+    double drivetrain_offset;
 };
