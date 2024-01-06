@@ -41,4 +41,28 @@ public:
     // Distance Sensor
     vex::distance distanceSensor = vex::distance(vex::PORT21);  // Change port later
 
+
+    // Pneumatic test
+    vex::digital_out right_plow = vex::digital_out(brain.ThreeWirePort.B); //right
+    vex::digital_out left_plow = vex::digital_out(brain.ThreeWirePort.C); //left
+
+    // Catapult
+    vex::motor left_catapult_motor = vex::motor(vex::PORT14, vex::ratio18_1, true);
+    vex::motor right_catapult_motor = vex::motor(vex::PORT15, vex::ratio18_1, false);
+    vex::motor_group catapult = vex::motor_group(left_catapult_motor, right_catapult_motor);
+
+    // Intake
+    vex::motor left_intake_motor = vex::motor(vex::PORT10, vex::ratio18_1, false);
+    vex::motor right_intake_motor = vex::motor(vex::PORT3, vex::ratio18_1, true);
+    vex::motor_group intake = vex::motor_group(left_intake_motor, right_intake_motor);
+
+    vex::motor left_intake_expansion_motor = vex::motor(vex::PORT4, vex::ratio18_1, true);
+    vex::motor right_intake_expansion_motor = vex::motor(vex::PORT5, vex::ratio18_1, false);
+    vex::motor_group intake_expansion = vex::motor_group(left_intake_expansion_motor, right_intake_expansion_motor);
+
+
+    // Limit switches
+    vex::digital_in catapult_limit_switch = vex::digital_in(brain.ThreeWirePort.A);
+    
+
 };
