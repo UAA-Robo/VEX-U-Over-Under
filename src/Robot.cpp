@@ -2,8 +2,15 @@
 
 Robot::Robot()
 {
+
     hw = new Hardware();
-    rc = new RobotConfig(hw);
+
+
+    // check if robot has sensor
+    bool hasSensor;
+    
+    hasSensor = hw->distanceSensor.installed(); 
+    rc = new RobotConfig(hw, hasSensor);
     tm = new Telemetry(hw, rc);
     
     
@@ -20,4 +27,3 @@ void Robot::drive() {
 void Robot::driveAuto() {
     autoDrive->drive();
 }
-

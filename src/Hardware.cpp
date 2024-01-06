@@ -30,4 +30,13 @@ Hardware::Hardware()
     // Retract plows initially
     right_plow.set(true);
     left_plow.set(true);
+
+
+    // Odometry
+    left_odometry.resetPosition();
+    right_odometry.resetPosition();
+    back_odometry.resetPosition();
+
+    // Distance sensor
+    distanceSensor.installed();
 }
