@@ -46,7 +46,7 @@ void pre_auton(void) {
 
 
 void autonomous(void) {
-  //if(!isControlled){
+	//if(!isControlled){
     icebot->driveAuto();
   //}
 }
@@ -63,10 +63,9 @@ void autonomous(void) {
 
 
 void usercontrol(void) {
-
-  icebot->drive();
-  // Sleep the task for a short amount of time to prevent wasted resources.
-  //vex::wait(20, vex::msec); 
+	icebot->drive();
+	// Sleep the task for a short amount of time to prevent wasted resources.
+	//vex::wait(20, vex::msec); 
 
 }
 
@@ -77,13 +76,15 @@ void usercontrol(void) {
 int main() {
   
 
-  //Competition callbacks
+	//Competition callbacks
+	Competition.autonomous(autonomous);
+	Competition.drivercontrol(usercontrol);
+  
+	// Run the pre-autonomous function.
+	pre_auton();
 
-  Competition.drivercontrol(usercontrol);
-  Competition.autonomous(autonomous);
-
-  // Prevent main from exiting with an infinite loop.
-  while (true) {
-    wait(100, msec);
-  }
+	// Prevent main from exiting with an infinite loop.
+	while (true) {
+		wait(100, msec);
+	}
 }
