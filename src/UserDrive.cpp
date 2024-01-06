@@ -195,26 +195,26 @@ int UserDrive::run_catapult(void* param)
 void UserDrive::activate_intake()
 {
     if (button_L1.value == 1) {
-        hw->intake.spin(vex::directionType::fwd, 12, vex::voltageUnits::volt);
-        hw->controller.Screen.setCursor(1, 1);
-        hw->controller.Screen.print("Activating Intake!");
+        activate_intake();
     } else {
-        hw->intake.stop();
+        stop_intake();
     }
 }
 
 
+// Adjust intake expansion
 void UserDrive::adjust_intake()
 {
-    if (button_A.value == 1) {
-        hw->intake_expansion.spin(vex::directionType::rev, 6, vex::voltageUnits::volt);
-        hw->controller.Screen.setCursor(1, 1);
-        hw->controller.Screen.print("Expanding Intake!");
-    } else if (button_B.value == 1) {
-        hw->intake_expansion.spin(vex::directionType::fwd, 6, vex::voltageUnits::volt);
-        hw->controller.Screen.setCursor(1, 1);
-        hw->controller.Screen.print("Retracting Intake!");
-    } else {
-        hw->intake_expansion.stop();
+    if (button_A.value == 1)
+    {
+        expand_intake();
+    }
+    else if (button_B.value == 1) 
+    {
+        retract_intake();
+    }
+    else
+    {
+        stop_intake_expansion();
     }
 }

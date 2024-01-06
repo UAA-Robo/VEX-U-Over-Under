@@ -45,4 +45,19 @@ protected:
     /// @param velocity_percent   Pair of doubles from -100 to 100:
     ///                           {verticalVelocityPercent, horizontalVelocityPercent} 
     void move_drivetrain_distance(std::pair<double, double> velocity_percent, double distance);
+
+    /// @brief Activates the intake
+    void Drive::activate_intake();
+
+    /// @brief Stops the intake
+    void Drive::stop_intake();
+
+    /// @brief Expands the intake
+    void Drive::expand_intake();
+
+    /// @brief Retracts the intake
+    void Drive::retract_intake();
+
+    /// @brief stops the intake
+    void Drive::stop_intake_expansion();
 };

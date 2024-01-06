@@ -69,6 +69,42 @@ void Drive::move_drivetrain_distance(std::pair<double, double> velocity_percent,
                                             velocity.second, vex::velocityUnits::pct);
 }
 
+
+void Drive::activate_intake()
+{
+    hw->intake.spin(vex::directionType::fwd, 12, vex::voltageUnits::volt);
+    hw->controller.Screen.setCursor(1, 1);
+    hw->controller.Screen.print("Activating Intake!");
+}
+
+
+void Drive::stop_intake()
+{
+    hw->intake.stop();
+}
+
+
+void Drive::expand_intake()
+{
+    hw->intake_expansion.spin(vex::directionType::rev, 6, vex::voltageUnits::volt);
+    hw->controller.Screen.setCursor(1, 1);
+    hw->controller.Screen.print("Expanding Intake!");
+}
+
+
+void Drive::retract_intake()
+{
+    hw->intake_expansion.spin(vex::directionType::fwd, 6, vex::voltageUnits::volt);
+    hw->controller.Screen.setCursor(1, 1);
+    hw->controller.Screen.print("Retracting Intake!");
+}
+
+
+void Drive::stop_intake_expansion()
+{
+    hw->intake_expansion.stop();
+}
+
 // In move_drivetrain_distance_odometry(), put this here
 // while (fabs(distance) > 0.5) {
 
