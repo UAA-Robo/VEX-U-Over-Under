@@ -4,7 +4,6 @@
 #include "Telemetry.h"
 #include "Hardware.h"
 #include "RobotConfig.h"
-
 #include "vex.h"
 
 /// @brief   Holds all the classes needed to run the robot.

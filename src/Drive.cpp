@@ -5,6 +5,7 @@ Drive::Drive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry)
     hw = hardware;
     rc = robotConfig;
     tm = telemetry;
+    // pid = new PID(rc, tm);
 }
 
 std::pair<double, double> Drive::calculate_drivetrain_velocity(std::pair<double, double> velocity_percent)
@@ -33,6 +34,10 @@ void Drive::move_drivetrain(std::pair<double, double> velocity_percent)
 {
     std::pair<double, double> velocity = calculate_drivetrain_velocity(velocity_percent);
 
-    hw->left_drivetrain_motors.spin(vex::directionType::fwd, velocity.first, vex::velocityUnits::pct);
-    hw->right_drivetrain_motors.spin(vex::directionType::fwd, velocity.second, vex::velocityUnits::pct);
+    hw->left_drivetrain_motors.spin(vex::directionType::fwd, velocity.first, 
+                                    vex::velocityUnits::pct);
+    hw->right_drivetrain_motors.spin(vex::directionType::fwd, velocity.second, 
+                                    vex::velocityUnits::pct);
+    
+    // if (rc->USE_PID_IN_USERDRIVE) pid->correct_drive();
 }

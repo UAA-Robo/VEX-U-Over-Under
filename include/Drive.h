@@ -17,6 +17,7 @@ protected:
     Hardware *hw;
     RobotConfig *rc;
     Telemetry *tm;
+    // PID *pid;
 
     /// @brief Calculates the velocity in RPMs that the left and right drivetrain wheels should
     /// receive based on the horizontal percentage and vertical percentage passed in.

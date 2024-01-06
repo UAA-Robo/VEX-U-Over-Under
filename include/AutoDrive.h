@@ -1,5 +1,6 @@
 #pragma once
 #include "Drive.h"
+#include "PathGenerator.h"
 #include "vex.h"
 
 /// @brief   Contains the methods for the robot to autonomously navigate.
@@ -12,6 +13,9 @@ public:
     void drive();
 
 private:
+    PathGenerator *pg;
+    Map *mp;
+
     double robot_angle_offset = 0; // For Granny bc she veers left
 
     /// @brief Uses drivetrain ENCODERS to rotate to a relativ angle

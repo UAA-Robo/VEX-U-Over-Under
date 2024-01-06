@@ -1,7 +1,7 @@
 #pragma once
 #include "Drive.h"
 
-/// @brief   Contains the methods for the robot to be controlled by drivers.
+/// @brief Contains the methods for the robot to be controlled by drivers.
 class UserDrive : public Drive {
 public:
     UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry);
