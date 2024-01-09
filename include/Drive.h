@@ -47,17 +47,17 @@ protected:
     void move_drivetrain_distance(std::pair<double, double> velocity_percent, double distance);
 
     /// @brief Activates the intake
-    void Drive::activate_intake();
+    void activate_intake();
 
     /// @brief Stops the intake
-    void Drive::stop_intake();
+    void stop_intake();
 
     /// @brief Expands the intake
-    void Drive::expand_intake();
+    void expand_intake();
 
     /// @brief Retracts the intake
-    void Drive::retract_intake();
+    void retract_intake();
 
     /// @brief stops the intake
-    void Drive::stop_intake_expansion();
+    void stop_intake_expansion();
 };

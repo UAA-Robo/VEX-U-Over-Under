@@ -56,9 +56,9 @@ private:
     void snowplow_in();
 
     /// @brief Activates intake motor while L1 is pressed.
-    void activate_intake();
+    // void activate_intake();
 
     /// @brief Expand intake motor while A is pressed. Retracts intake motor while B is pressed.
-    void adjust_intake();
+    // void adjust_intake();
 
 };
