@@ -7,6 +7,9 @@ Telemetry::Telemetry(Hardware* hardware, RobotConfig* robotConfig)
 {
     hw = hardware;
     rc = robotConfig;
+    odometry_x_position = rc->starting_pos.first;
+    odometry_y_position = rc->starting_pos.second;
+    odometry_heading = rc->starting_heading;
     vex::task logTask = vex::task(update_position, this, 1);
 }
 

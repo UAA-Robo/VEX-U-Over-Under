@@ -15,6 +15,10 @@ public:
 
     int DRIVETRAINWIDTH = 14.0; //! Temporary, configure actual values later
 
+    // Starting position
+    std::pair<double, double> starting_pos = {-12.0, 0.0};
+    double starting_heading = 0.0;
+
 private:
     Hardware* hw;
 };
