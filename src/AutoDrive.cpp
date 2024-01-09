@@ -20,9 +20,9 @@ AutoDrive::AutoDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *te
 
 void AutoDrive::drive() {
     // Set braking
-    hw->left_drivetrain_motors.setStopping(vex::brakeType::brake);
-    hw ->right_drivetrain_motors.setStopping(vex::brakeType::brake);
-    move_drivetrain_distance_odometry({-24, 0}, true);
+    // hw->left_drivetrain_motors.setStopping(vex::brakeType::brake);
+    // hw ->right_drivetrain_motors.setStopping(vex::brakeType::brake);
+    // move_drivetrain_distance_odometry({-24, 0}, true);
 
 
     std::pair<double, double> current_pos = {58.0, -58.0};
@@ -120,18 +120,23 @@ void AutoDrive::rotate_and_drive_to_position(GameElement* element)
     }
     else
     {
-        double interactionAngle = *(object->GetInteractionAngle());
+        double interactionAngle = *(object->GetInteractionAngle()); // adjusted for 'headingAdust'
         std::pair<double, double> original_position = position;
-        if (interactionAngle == 0) { position.second -= drivetrain_offset; }
-        else if (interactionAngle == 45) { position.first += 1.4 * drivetrain_offset; position.second -= 1.4 * drivetrain_offset; }
-        else if (interactionAngle == 90) { position.first += drivetrain_offset; }
+        if (interactionAngle == 90) { position.second -= drivetrain_offset; }
         else if (interactionAngle == 135) { position.first += 1.4 * drivetrain_offset; position.second -= 1.4 * drivetrain_offset; }
-        else if (interactionAngle == 180) { position.second += drivetrain_offset; }
-        else if (interactionAngle == 270) { position.first -= drivetrain_offset; }
-        else if (interactionAngle == -45) { position.first -= 1.4 * drivetrain_offset; position.second -= 1.4 * drivetrain_offset; }
-        else if (interactionAngle == -135) { position.first -= 1.4 * drivetrain_offset; position.second += 1.4 * drivetrain_offset; }
+        else if (interactionAngle == 180) { position.first += drivetrain_offset; }
+        else if (interactionAngle == 225) { position.first += 1.4 * drivetrain_offset; position.second -= 1.4 * drivetrain_offset; }
+        else if (interactionAngle == 270) { position.second += drivetrain_offset; }
+        else if (interactionAngle == 360) { position.first -= drivetrain_offset; }
+        else if (interactionAngle == 45) { position.first -= 1.4 * drivetrain_offset; position.second -= 1.4 * drivetrain_offset; }
+        else if (interactionAngle == -45) { position.first -= 1.4 * drivetrain_offset; position.second += 1.4 * drivetrain_offset; }
 
         rotate_to_position(original_position, object->GetAlignment());
         move_drivetrain_distance_odometry(original_position, object->GetAlignment());
     }
 }
+
+
+
+
+
