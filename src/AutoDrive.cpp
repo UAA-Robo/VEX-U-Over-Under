@@ -17,20 +17,24 @@ void AutoDrive::drive() {
     // Test code
     std::vector<std::pair<double, double>> path;
     std::pair<double, double> curr_position = rc->starting_pos;
-    std::pair<double, double> targ_position = {-36, -35.0};
-    pg->generate_path(path, curr_position, targ_position);
-    for (int i = 0; i < path.size() - 1; ++i) {
-        std::cout << "Before move" << '\n';
-        std::cout << "Path: (" << path.at(i).first << ", " << path.at(i).second << ") Next: ("<< path.at(i+1).first << ", " << path.at(i+1).second << ")" << std::endl;
-        std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
-        rotate_and_drive_to_position(path.at(i+1), false);
-        std::cout << "After move" << '\n';
-        std::cout << "Path: (" << path.at(i+1).first << ", " << path.at(i+1).second << std::endl;
-        std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
-        vex::wait(30, vex::timeUnits::msec);
-    }
-    // std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
-
+    std::pair<double, double> targ_position = {-12.0, 12.0};
+    // pg->generate_path(path, curr_position, targ_position);
+    path.push_back(curr_position);
+    path.push_back(targ_position);
+    // rotate_to_heading(180.0);
+    // for (int i = 0; i < path.size() - 1; ++i) {
+    //     std::cout << "Before move" << '\n';
+    //     std::cout << "Path: (" << path.at(i).first << ", " << path.at(i).second << ") Next: ("<< path.at(i+1).first << ", " << path.at(i+1).second << ")" << std::endl;
+    //     std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
+    //     rotate_and_drive_to_position(path.at(i+1), false);
+    //     std::cout << "After move" << '\n';
+    //     std::cout << "Path: (" << path.at(i+1).first << ", " << path.at(i+1).second << std::endl;
+    //     std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
+    //     vex::wait(30, vex::timeUnits::msec);
+    // }
+    while (true) {
+    std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
+}
 }
 
 void AutoDrive::rotate_to_heading(double heading)
@@ -59,12 +63,14 @@ void AutoDrive::rotate_to_heading(double heading)
         min_velocity = 10;
         max_velocity = 14;
     }
+    std::cout << "Angle to travel: " << angle_to_travel << std::endl;
 
     // Turn wheels opposite of each other
     hw->left_drivetrain_motors.spin(vex::directionType::fwd, -min_velocity * turn_direction, 
         vex::velocityUnits::pct);
     hw->right_drivetrain_motors.spin(vex::directionType::fwd, min_velocity * turn_direction, 
     vex::velocityUnits::pct);
+    
     
 
     // Turn until within 1 degrees of desired heading or until it overshoots
@@ -102,7 +108,7 @@ void AutoDrive::rotate_to_heading(double heading)
 void AutoDrive::rotate_to_position(std::pair<double, double> final_position, bool ISBACKROTATION)
 {
     // if (IS_USING_GPS_POSITION) tm->set_current_heading(tm->getGPSPosition());
-    double heading = tm->get_heading_between_points(tm->get_current_position(), final_position);
+    double heading = tm->get_heading_between_points(tm->get_current_position(), final_position); // Gets absolute angle
     std::cout << "Intended Heading: " << heading << '\n';
     if (ISBACKROTATION)
         heading -= 180;
@@ -149,7 +155,7 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
     // (change in distance starts majorly increasing instead of decreasing)
     while (fabs(current_distance) > 0.5 && (previous_distance - current_distance) >= -0.01) {
         // Speeds up as leaving initial position and slows down as approaching destination
-        std::cout << "      Current Distance: " << current_distance << std::endl;
+        std::cout << "      Current Distance: " << current_distance << " Current Heading: " << tm->get_current_heading() << std::endl;
         if (current_distance >= distance/2) {
             // First half of distance
             velocity = atan(distance - current_distance) * 2 * (max_velocity-min_velocity) / M_PI 
@@ -165,7 +171,7 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
         previous_distance = current_distance; // So don't overshoot
         current_distance = tm->get_distance_between_points(tm->get_current_position(), position); 
     }
-    std::cout << "      Current Distance: " << current_distance << '\n';
+        std::cout << "      Current Distance: " << current_distance << " Current Heading: " << tm->get_current_heading() << std::endl;
 
     hw->drivetrain.stop();  // Stop wheels
     vex::wait(35, vex::timeUnits::msec);  // Wait for odometry wheels to update
