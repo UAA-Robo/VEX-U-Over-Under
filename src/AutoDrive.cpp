@@ -9,6 +9,7 @@ AutoDrive::AutoDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *te
 
 void AutoDrive::drive() {
     // Set braking
+    std::cout << "HHERE" << std::endl;
     hw->left_drivetrain_motors.setStopping(vex::brakeType::brake);
     hw ->right_drivetrain_motors.setStopping(vex::brakeType::brake);
     hw->left_intake_expansion_motor.setStopping(vex::brakeType::hold);
@@ -34,7 +35,13 @@ void AutoDrive::drive() {
     // }
     while (true) {
     std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
-}
+    hw->controller.Screen.clearScreen();
+    hw->controller.Screen.setCursor(1,1);
+    hw->controller.Screen.print("%.1lf, %.1lf", tm->get_current_position().first, tm->get_current_position().second);
+    hw->controller.Screen.setCursor(2,1);
+    hw->controller.Screen.print("%.1lf deg", tm->get_current_heading());
+    
+    }
 }
 
 void AutoDrive::rotate_to_heading(double heading)
@@ -136,7 +143,7 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
 {
 
     double current_distance = tm->get_distance_between_points(tm->get_current_position(), position);
-    double distance = current_distance; // Distance goal
+    double distance = current_distance; // Distance goal    
     double previous_distance = current_distance; 
 
     const double min_velocity = 20;
