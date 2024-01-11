@@ -16,32 +16,31 @@ void AutoDrive::drive() {
     hw->right_intake_expansion_motor.setStopping(vex::brakeType::hold);
 
     // Test code
-
-    rotate_and_drive_to_position({-36, 35});
-    rotate_and_drive_to_position({-37, 58});
+    // rotate_and_drive_to_position({-36, 35});
+    // rotate_and_drive_to_position({-37, 58});
     
-    // std::vector<std::pair<double, double>> path;
-    // std::pair<double, double> curr_position = rc->starting_pos;
-    // std::pair<double, double> targ_position = {-36.0, -58.0};
-    // // pg->generate_path(path, curr_position, targ_position);
+    std::vector<std::pair<double, double>> path;
+    std::pair<double, double> curr_position = rc->starting_pos;
+    std::pair<double, double> targ_position = {-36.0, -58.0};
+    pg->generate_path(path, curr_position, targ_position);
     // path.push_back(curr_position);
     // path.push_back({-36.0, 35.0});
     // path.push_back({-37.0, 58.0});
     
-    // for (const std::pair<double, double> &pair : path) {
-    //     std::cout << pair.first << " " << pair.second << '\n';
-    // }
+    for (const std::pair<double, double> &pair : path) {
+        std::cout << pair.first << " " << pair.second << '\n';
+    }
 
-    // for (int i = 0; i < path.size() - 1; ++i) {
-    //     std::cout << "Before move" << '\n';
-    //     std::cout << "Path: (" << path.at(i).first << ", " << path.at(i).second << ") Next: ("<< path.at(i+1).first << ", " << path.at(i+1).second << ")" << std::endl;
-    //     std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
-    //     rotate_and_drive_to_position(path.at(i+1), false);
-    //     std::cout << "After move" << '\n';
-    //     std::cout << "Path: (" << path.at(i+1).first << ", " << path.at(i+1).second << std::endl;
-    //     std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
-    //     vex::wait(30, vex::timeUnits::msec);
-    // }
+    for (int i = 0; i < path.size() - 1; ++i) {
+        std::cout << "Before move" << '\n';
+        std::cout << "Path: (" << path.at(i).first << ", " << path.at(i).second << ") Next: ("<< path.at(i+1).first << ", " << path.at(i+1).second << ")" << std::endl;
+        std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
+        rotate_and_drive_to_position(path.at(i+1), false);
+        std::cout << "After move" << '\n';
+        std::cout << "Path: (" << path.at(i+1).first << ", " << path.at(i+1).second << std::endl;
+        std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
+        vex::wait(30, vex::timeUnits::msec);
+    }
 }
 
 void AutoDrive::rotate_to_heading(double heading)
@@ -50,7 +49,7 @@ void AutoDrive::rotate_to_heading(double heading)
     // Corrects heading to be from 0-360 from the x axis counterclockwise if applicable
     heading = fmod(heading, 360);
     if (heading < 0) heading += 360;
-    double min_velocity = 15;
+    double min_velocity = 20;
     double max_velocity = 50;
     const double stopping_aggression = 0.01; // Lower number is higher aggression (steeper slope)
     double velocity;
