@@ -19,7 +19,13 @@ void AutoDrive::drive() {
     std::vector<std::pair<double, double>> path;
     std::pair<double, double> curr_position = rc->starting_pos;
     std::pair<double, double> targ_position = {-36.0, -58.0};
-    pg->generate_path(path, curr_position, targ_position);
+    // pg->generate_path(path, curr_position, targ_position);
+    path.push_back(curr_position);
+    path.push_back({-36.0, 35.0});
+    path.push_back({-37.0, 58.0});
+    for (const std::pair<double, double> &pair : path) {
+        std::cout << pair.first << " " << pair.second << '\n';
+    }
 
     for (int i = 0; i < path.size() - 1; ++i) {
         std::cout << "Before move" << '\n';
@@ -72,8 +78,9 @@ void AutoDrive::rotate_to_heading(double heading)
 
     // Turn until within 1 degrees of desired heading or until it overshoots
     // (change in angle starts majorly increasing instead of decreasing)
-    // while (angle_to_travel > 1 && (previous_angle_to_travel - angle_to_travel) >= -0.05) { //TODO: Something isn't working here
-    while (fabs(tm->get_current_heading() - heading) > 1.0) { //! REMOVE OR REFACTOR
+    while (angle_to_travel > 1 && (previous_angle_to_travel - angle_to_travel) >= -0.05) { //TODO: Something isn't working here
+    // while (fabs(tm->get_current_heading() - heading) > 1.0) { //! REMOVE OR REFACTOR
+    std::cout << "    V: " << velocity << " Angle to Travel: " << angle_to_travel << '\n';
         // Speeds up as leaving initial angle and slows down as approaching destination
         //std::cout << "      Curr heading: " << tm->get_current_heading() << std::endl;
         if (angle_to_travel > total_angle_to_travel/2) {
@@ -154,6 +161,7 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
         // Speeds up as leaving initial position and slows down as approaching destination
         //std::cout << "      Current Distance: " << current_distance << " Current Heading: " << tm->get_current_heading() << std::endl;
         //std::cout << "      Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
+        std::cout << "    V: " << velocity << " Current Distance: " << current_distance << '\n';
         if (current_distance >= distance/2) {
             // First half of distance
             velocity = atan(distance - current_distance) * 2 * (max_velocity-min_velocity) / M_PI 
