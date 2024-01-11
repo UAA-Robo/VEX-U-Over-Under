@@ -23,6 +23,7 @@ void AutoDrive::drive() {
     path.push_back(curr_position);
     path.push_back({-36.0, 35.0});
     path.push_back({-37.0, 58.0});
+    
     for (const std::pair<double, double> &pair : path) {
         std::cout << pair.first << " " << pair.second << '\n';
     }
@@ -37,7 +38,6 @@ void AutoDrive::drive() {
         std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
         vex::wait(30, vex::timeUnits::msec);
     }
-
 }
 
 void AutoDrive::rotate_to_heading(double heading)
@@ -73,8 +73,8 @@ void AutoDrive::rotate_to_heading(double heading)
         vex::velocityUnits::pct);
     hw->right_drivetrain_motors.spin(vex::directionType::fwd, min_velocity * turn_direction, 
     vex::velocityUnits::pct);
-    
-    
+    std::cout << "Left velocity: " << hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct) << " Right velocity: " << hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct);
+    vex::wait(30, vex::timeUnits::msec);    
 
     // Turn until within 1 degrees of desired heading or until it overshoots
     // (change in angle starts majorly increasing instead of decreasing)
@@ -95,7 +95,7 @@ void AutoDrive::rotate_to_heading(double heading)
         hw->left_drivetrain_motors.setVelocity(-velocity * turn_direction, vex::velocityUnits::pct);
         hw->right_drivetrain_motors.setVelocity(velocity * turn_direction, vex::velocityUnits::pct);
         
-        vex::wait(30, vex::timeUnits::msec);  // Wait for odometry to update
+        vex::wait(50, vex::timeUnits::msec);  // Wait for odometry to update
        
         previous_angle_to_travel = angle_to_travel;  // For stopping if overshoots
         angle_to_travel = fabs(heading - tm->get_current_heading());
@@ -152,6 +152,8 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
     double drive_direction = ISBACKTOPOSITION ? -1: 1;
     hw->drivetrain.spin(vex::directionType::fwd, min_velocity * drive_direction, 
         vex::velocityUnits::pct);
+    std::cout << "Left velocity: " << hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct) << " Right velocity: " << hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct);
+    vex::wait(30, vex::timeUnits::msec);
     
     std::cout << "Driving " << distance << " inches to (" << position.first << ", " << position.second << ")" << std::endl;
 
@@ -172,7 +174,7 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
         }
         hw->drivetrain.setVelocity(velocity * drive_direction, vex::velocityUnits::pct);
       
-        vex::wait(35, vex::timeUnits::msec);  // Wait for odometry wheels to update
+        vex::wait(50, vex::timeUnits::msec);  // Wait for odometry wheels to update
 
         previous_distance = current_distance; // So don't overshoot
         current_distance = tm->get_distance_between_points(tm->get_current_position(), position); 
