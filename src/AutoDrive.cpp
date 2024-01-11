@@ -19,6 +19,7 @@ void AutoDrive::drive() {
     std::vector<std::pair<double, double>> path;
     std::pair<double, double> curr_position = rc->starting_pos;
     std::pair<double, double> targ_position = {-12.0, 12.0};
+    drive_to_position({36,0});
     // pg->generate_path(path, curr_position, targ_position);
     path.push_back(curr_position);
     path.push_back(targ_position);
@@ -33,15 +34,15 @@ void AutoDrive::drive() {
     //     std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
     //     vex::wait(30, vex::timeUnits::msec);
     // }
-    while (true) {
-    std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
-    hw->controller.Screen.clearScreen();
-    hw->controller.Screen.setCursor(1,1);
-    hw->controller.Screen.print("%.1lf, %.1lf", tm->get_current_position().first, tm->get_current_position().second);
-    hw->controller.Screen.setCursor(2,1);
-    hw->controller.Screen.print("%.1lf deg", tm->get_current_heading());
+    // while (true) {
+    // std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
+    // hw->controller.Screen.clearScreen();
+    // hw->controller.Screen.setCursor(1,1);
+    // hw->controller.Screen.print("%.1lf, %.1lf", tm->get_current_position().first, tm->get_current_position().second);
+    // hw->controller.Screen.setCursor(2,1);
+    // hw->controller.Screen.print("%.1lf deg", tm->get_current_heading());
     
-    }
+    // }
 }
 
 void AutoDrive::rotate_to_heading(double heading)
@@ -108,7 +109,7 @@ void AutoDrive::rotate_to_heading(double heading)
     }
 
     hw->drivetrain.stop();                  
-    vex::wait(35, vex::timeUnits::msec);  // Wait for odometry wheels to update
+    vex::wait(50, vex::timeUnits::msec);  // Wait for odometry wheels to update
 }
 
 
@@ -163,6 +164,7 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
     while (fabs(current_distance) > 0.5 && (previous_distance - current_distance) >= -0.01) {
         // Speeds up as leaving initial position and slows down as approaching destination
         std::cout << "      Current Distance: " << current_distance << " Current Heading: " << tm->get_current_heading() << std::endl;
+        std::cout << "      Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
         if (current_distance >= distance/2) {
             // First half of distance
             velocity = atan(distance - current_distance) * 2 * (max_velocity-min_velocity) / M_PI 
@@ -181,7 +183,7 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
         std::cout << "      Current Distance: " << current_distance << " Current Heading: " << tm->get_current_heading() << std::endl;
 
     hw->drivetrain.stop();  // Stop wheels
-    vex::wait(35, vex::timeUnits::msec);  // Wait for odometry wheels to update
+    vex::wait(50, vex::timeUnits::msec);  // Wait for odometry wheels to update
 }
 
 
