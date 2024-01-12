@@ -13,7 +13,7 @@ public:
     void drive();
 
     /// @brief Determines whether the current game is Skills or Head-To-Head
-    bool isSkills = false;
+    bool IS_SKILLS = false;
     
 
 private:

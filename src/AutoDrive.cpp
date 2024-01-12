@@ -2,17 +2,17 @@
 
 
 AutoDrive::AutoDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry) : Drive(hardware, robotConfig, telemetry) {
-        mp = new Map(telemetry, robotConfig, isSkills);
+        mp = new Map(telemetry, robotConfig, IS_SKILLS);
         pg = new PathGenerator(robotConfig, mp);
         double drivetrain_offset = 2 * robotConfig->DRIVETRAIN_LENGTH;
 
-        // set starting zone
-        for (int i = 22; i < 26; i++)
+        for (auto zone : mp->startzones)
         {
-            Obstacle* newZone =  static_cast<Obstacle*>(mp->mapElements[i]);
-            if (newZone->inZone(tm->odometry_position))
+            Obstacle* new_zone = static_cast<Obstacle*>(zone);
+
+            if (new_zone->in_zone(tm->odometry_position))
             {
-                zone = newZone;
+                this->zone = new_zone;
                 break;
             }
         }
@@ -111,28 +111,28 @@ void AutoDrive::rotate_and_drive_to_position(std::pair<double, double> position,
 void AutoDrive::rotate_and_drive_to_position(GameElement* element)
 {
     InteractionObject* object = static_cast<InteractionObject*>(element); 
-    std::pair<double, double> position = object->GetPosition();
+    std::pair<double, double> position = object->get_position();
 
-    if (*(object->GetInteractionAngle()) == tm->get_current_heading()) // if can interact head on
+    if (*(object->get_interaction_angle()) == tm->get_current_heading()) // if can interact head on
     {
-        rotate_to_position(position, object->GetAlignment());
-        move_drivetrain_distance_odometry(position, object->GetAlignment());
+        rotate_to_position(position, object->get_alignment());
+        move_drivetrain_distance_odometry(position, object->get_alignment());
     }
     else
     {
-        double interactionAngle = *(object->GetInteractionAngle()); // adjusted for 'headingAdust'
+        double interaction_angle = *(object->get_interaction_angle()); // adjusted for 'headingAdust'
         std::pair<double, double> original_position = position;
-        if (interactionAngle == 90) { position.second -= drivetrain_offset; }
-        else if (interactionAngle == 135) { position.first += 1.4 * drivetrain_offset; position.second -= 1.4 * drivetrain_offset; }
-        else if (interactionAngle == 180) { position.first += drivetrain_offset; }
-        else if (interactionAngle == 225) { position.first += 1.4 * drivetrain_offset; position.second -= 1.4 * drivetrain_offset; }
-        else if (interactionAngle == 270) { position.second += drivetrain_offset; }
-        else if (interactionAngle == 360) { position.first -= drivetrain_offset; }
-        else if (interactionAngle == 45) { position.first -= 1.4 * drivetrain_offset; position.second -= 1.4 * drivetrain_offset; }
-        else if (interactionAngle == -45) { position.first -= 1.4 * drivetrain_offset; position.second += 1.4 * drivetrain_offset; }
+        if (interaction_angle == 90) { position.second -= drivetrain_offset; }
+        else if (interaction_angle == 135) { position.first += 1.4 * drivetrain_offset; position.second -= 1.4 * drivetrain_offset; }
+        else if (interaction_angle == 180) { position.first += drivetrain_offset; }
+        else if (interaction_angle == 225) { position.first += 1.4 * drivetrain_offset; position.second -= 1.4 * drivetrain_offset; }
+        else if (interaction_angle == 270) { position.second += drivetrain_offset; }
+        else if (interaction_angle == 360) { position.first -= drivetrain_offset; }
+        else if (interaction_angle == 45) { position.first -= 1.4 * drivetrain_offset; position.second -= 1.4 * drivetrain_offset; }
+        else if (interaction_angle == -45) { position.first -= 1.4 * drivetrain_offset; position.second += 1.4 * drivetrain_offset; }
 
-        rotate_to_position(original_position, object->GetAlignment());
-        move_drivetrain_distance_odometry(original_position, object->GetAlignment());
+        rotate_to_position(original_position, object->get_alignment());
+        move_drivetrain_distance_odometry(original_position, object->get_alignment());
     }
 }
 
