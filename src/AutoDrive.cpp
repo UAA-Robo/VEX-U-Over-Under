@@ -15,32 +15,30 @@ void AutoDrive::drive() {
     hw->left_intake_expansion_motor.setStopping(vex::brakeType::hold);
     hw->right_intake_expansion_motor.setStopping(vex::brakeType::hold);
 
-    // Test code
-    // rotate_and_drive_to_position({-36, 35});
-    // rotate_and_drive_to_position({-37, 58});
+    rotate_to_heading(25);
     
-    std::vector<std::pair<double, double>> path;
-    std::pair<double, double> curr_position = rc->starting_pos;
-    std::pair<double, double> targ_position = {-36.0, -58.0};
-    pg->generate_path(path, curr_position, targ_position);
-    // path.push_back(curr_position);
-    // path.push_back({-36.0, 35.0});
-    // path.push_back({-37.0, 58.0});
+    // std::vector<std::pair<double, double>> path;
+    // std::pair<double, double> curr_position = rc->starting_pos;
+    // std::pair<double, double> targ_position = {-36.0, -58.0};
+    // pg->generate_path(path, curr_position, targ_position);
+    // // path.push_back(curr_position);
+    // // path.push_back({-36.0, 35.0});
+    // // path.push_back({-37.0, 58.0});
     
-    for (const std::pair<double, double> &pair : path) {
-        std::cout << pair.first << " " << pair.second << '\n';
-    }
+    // for (const std::pair<double, double> &pair : path) {
+    //     std::cout << pair.first << " " << pair.second << '\n';
+    // }
 
-    for (int i = 0; i < path.size() - 1; ++i) {
-        std::cout << "Before move" << '\n';
-        std::cout << "Path: (" << path.at(i).first << ", " << path.at(i).second << ") Next: ("<< path.at(i+1).first << ", " << path.at(i+1).second << ")" << std::endl;
-        std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
-        rotate_and_drive_to_position(path.at(i+1), false);
-        std::cout << "After move" << '\n';
-        std::cout << "Path: (" << path.at(i+1).first << ", " << path.at(i+1).second << std::endl;
-        std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
-        vex::wait(30, vex::timeUnits::msec);
-    }
+    // for (int i = 0; i < path.size() - 1; ++i) {
+    //     std::cout << "Before move" << '\n';
+    //     std::cout << "Path: (" << path.at(i).first << ", " << path.at(i).second << ") Next: ("<< path.at(i+1).first << ", " << path.at(i+1).second << ")" << std::endl;
+    //     std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
+    //     rotate_and_drive_to_position(path.at(i+1), false);
+    //     std::cout << "After move" << '\n';
+    //     std::cout << "Path: (" << path.at(i+1).first << ", " << path.at(i+1).second << std::endl;
+    //     std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
+    //     vex::wait(30, vex::timeUnits::msec);
+    // }
 }
 
 void AutoDrive::rotate_to_heading(double heading)
@@ -66,8 +64,8 @@ void AutoDrive::rotate_to_heading(double heading)
 
     // Slow for small angles bc function doesn't slow things down enough.
     if (angle_to_travel < 30) {
-        min_velocity = 10;
-        max_velocity = 14;
+        min_velocity = 20;
+        max_velocity = 25;
     }
     std::cout << "Angle to travel: " << angle_to_travel << std::endl;
 
@@ -95,6 +93,7 @@ void AutoDrive::rotate_to_heading(double heading)
             velocity = atan(stopping_aggression * angle_to_travel) * 2 * max_velocity / M_PI;
         }
 
+
         hw->left_drivetrain_motors.setVelocity(-velocity * turn_direction, vex::velocityUnits::pct);
         hw->right_drivetrain_motors.setVelocity(velocity * turn_direction, vex::velocityUnits::pct);
         
@@ -106,6 +105,9 @@ void AutoDrive::rotate_to_heading(double heading)
         if (angle_to_travel > 180) angle_to_travel = 360 - angle_to_travel; 
 
     }
+        std::cout << "    V: " << velocity << ", Angle to Travel: " << angle_to_travel << std::endl;
+        std::cout << "    Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
+
 
     hw->drivetrain.stop();                  
     vex::wait(1000, vex::timeUnits::msec);  // Wait for odometry wheels to update
@@ -185,6 +187,8 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
         current_distance = tm->get_distance_between_points(tm->get_current_position(), position); 
     }
         //std::cout << "      Current Distance: " << current_distance << " Current Heading: " << tm->get_current_heading() << std::endl;
+    std::cout << "    Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
+    std::cout << "    V: " << velocity << " Current Distance: " << current_distance << std::endl;
 
     hw->drivetrain.stop();  // Stop wheels
     vex::wait(1000, vex::timeUnits::msec);  // Wait for odometry wheels to update
