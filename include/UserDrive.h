@@ -49,16 +49,14 @@ private:
     ///     it's own thread.
     static int run_catapult(void* param);
 
-    /// @brief Pushes air out when X button is pressed to expand snowplow.
-    void snowplow_out();
+    /// @brief Controls the snowplow. X button expands the plows out and Y retracts them in.
+    void snowplow_controls();
 
-    /// @brief Sucks air in when Y button is pressed to retract snowplow.
-    void snowplow_in();
+    /// @brief Controls the intake. A button expands the intake out and Y retracts them in.
+    void intake_controls();
 
-    /// @brief Activates intake motor while L1 is pressed.
-    // void activate_intake();
+    bool INTAKE_EXPANDED = false;
 
-    /// @brief Expand intake motor while A is pressed. Retracts intake motor while B is pressed.
-    // void adjust_intake();
+
 
 };

@@ -48,14 +48,9 @@ void UserDrive::drive() {
     get_inputs();
     macro_controls();
     drivetrain_controls();
-    snowplow_in();
-    snowplow_out();
-    if (button_L1.value == 1) activate_intake();
-    // adjust_intake();
-    if (button_A.value == 1) expand_intake();
-    if (button_B.value == 1) retract_intake();
-    if (button_A.value != 1 && button_B.value != 1) stop_intake_expansion();
 
+    intake_controls();
+    snowplow_controls();
     ++tick;
 
     set_previous_inputs(); // Tracks previous inputs to compare to
@@ -159,21 +154,12 @@ void UserDrive::macro_controls()
 }
 
 
-void UserDrive::snowplow_out() {
-    if (button_X.value) {
-        hw->right_plow.set(false);
-        hw->left_plow.set(false);
+void UserDrive::snowplow_controls() {
+    if (button_X.value == 1) {
+        snowplow_out();
+    }else if (button_Y.value == 1) {
+        snowplow_in();
     }
-
-}
-
-void UserDrive::snowplow_in() {
-
-    if (button_Y.value) {
-        hw->right_plow.set(true);
-        hw->left_plow.set(true);
-    }
-
 }
 
 int UserDrive::run_catapult(void* param)
@@ -195,29 +181,25 @@ int UserDrive::run_catapult(void* param)
     }
 }
 
-// void UserDrive::activate_intake()
-// {
-//     if (button_L1.value == 1) {
-//         activate_intake();
-//     } else {
-//         stop_intake();
-//     }
-// }
 
 
 // Adjust intake expansion
-void UserDrive::adjust_intake()
+void UserDrive::intake_controls()
 {
-    if (button_A.value == 1)
-    {
+    if (button_A.value == 1){
         expand_intake();
-    }
-    else if (button_B.value == 1) 
-    {
+        INTAKE_EXPANDED = true;
+    } else if (button_B.value == 1) {
         retract_intake();
-    }
-    else
-    {
+        INTAKE_EXPANDED = false;
+    } else {
         stop_intake_expansion();
+    }
+
+    // Activate intake when expanded
+    if (INTAKE_EXPANDED && button_A.value == 0) {
+        activate_intake();
+    }else {
+        stop_intake();
     }
 }

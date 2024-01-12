@@ -105,7 +105,12 @@ void Drive::stop_intake_expansion()
     hw->intake_expansion.stop();
 }
 
-// In move_drivetrain_distance_odometry(), put this here
-// while (fabs(distance) > 0.5) {
+void Drive::snowplow_out() {
+    hw->right_plow.set(false);
+    hw->left_plow.set(false);
+}
 
-//         if (rc->USE_PID_IN_AUTODRIVE) pid.correct_drive();
+void Drive::snowplow_in() {
+    hw->right_plow.set(true);
+    hw->left_plow.set(true);
+}

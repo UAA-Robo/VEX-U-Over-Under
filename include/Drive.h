@@ -60,4 +60,10 @@ protected:
 
     /// @brief stops the intake
     void stop_intake_expansion();
+
+    /// @brief Pushes air out when X button is pressed to expand snowplow.
+    void snowplow_out();
+
+    /// @brief Sucks air in when Y button is pressed to retract snowplow.
+    void snowplow_in();
 };
