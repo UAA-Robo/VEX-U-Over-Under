@@ -22,7 +22,7 @@ public:
 private:
     PathGenerator *pg;
     Map *mp;
-    //RobotConfig *rc;
+    RobotConfig *rc;
 
     std::vector<std::pair<double, double>> path;
 
