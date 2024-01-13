@@ -10,6 +10,7 @@ RobotConfig::RobotConfig(Hardware* hardware, bool hasSensor)
     
     if (hasSensor)
     {
+        ROBOT = SCRATETTE;
         // set dimensions  
         ODOMETRY_LEFT_RIGHT_RADIUS =  7.0 / 2; //6.75/2; // Distance between left and right odometry wheels over 2
         ODOMETRY_BACK_RADIUS = 4.25; //3.5;
@@ -17,6 +18,7 @@ RobotConfig::RobotConfig(Hardware* hardware, bool hasSensor)
     }
     else
     {
+        ROBOT = SCRAT;
          // Distance between left and right odometry wheels over 2. It was measured and then tuned 
          // to get accurate turning results
         ODOMETRY_LEFT_RIGHT_RADIUS =  6.45 / 2;

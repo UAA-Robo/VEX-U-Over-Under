@@ -14,9 +14,11 @@ public:
     double DRIVETRAIN_WIDTH; // distance (in inch) between left and right side of the drivetrain (measured from the center of the wheels)
     
     // for MAP offsets (test)
-    double DRIVETRAIN_RADIUS; //! Temporary, configure actual values later
+    double DRIVETRAIN_RADIUS = DRIVETRAIN_WIDTH * sqrt(2) / 2.0; //! Temporary, configure actual values later
 
     double ODOMETRY_DIAMETER;
+
+    robot_name ROBOT;
 
     // Starting position
     std::pair<double, double> starting_pos = {-12.0, 0.0};

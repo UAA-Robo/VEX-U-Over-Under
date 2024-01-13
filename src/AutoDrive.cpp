@@ -39,6 +39,19 @@ void AutoDrive::drive() {
     }
 }
 
+void AutoDrive::execute_skills_plan() {
+
+    if (rc->ROBOT == SCRAT) {
+
+        // Launch match loads
+        for (int i = 0; i < 4; ++i) run_plow_strategy(); // Until end of match
+    }
+
+    else {
+        // SCRATETTE auto skills plan
+    }
+}
+
 void AutoDrive::drive_along_path() {
     for (int i = 0; i < path.size() - 1; ++i) {
         rotate_and_drive_to_position(path.at(i+1), false);
@@ -241,13 +254,104 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
 
 
 //     return new_position;
-// }void AutoDrive::plow_strategy() {
+// }
 
-    // Prepare to ram at top of red goal
-    std::pair<double, double> top_goal_position = mp->goals[3]->get_position();
-    std::pair<double, double> top_goal_prep_position = top_goal_position;
-    top_goal_prep_position.second += 12.43; // Offset from goal by ~1 foot
-    pg->generate_path(path, tm->get_current_position(), top_goal_prep_position);
+void AutoDrive::run_plow_strategy() {
 
+    std::pair<double, double> prep_pos;
+    std::pair<double, double> target_pos;
+
+    // Ram at top of red goal
+    snowplow_out();
+    target_pos = mp->goals[3]->get_position();
+    prep_pos = target_pos;
+    prep_pos.second += 18.0; // Offset from goal by 1.5 feet
+    target_pos.second += rc->DRIVETRAIN_RADIUS;
+    pg->generate_path(this->path, tm->get_current_position(), prep_pos);
+    this->rotate_to_heading(-90.0);
+    drive_to_position(target_pos, false);
+    vex::wait(500, vex::timeUnits::msec);
+    snowplow_in();
+    drive_to_position(prep_pos, true);
+
+    // Ram at side-top of red goal
+    snowplow_out();
+    target_pos = mp->goals[0]->get_position();
+    prep_pos = target_pos;
+    prep_pos.first += 18.0;
+    target_pos.first += rc->DRIVETRAIN_RADIUS;
+    pg->generate_path(this->path, tm->get_current_position(), prep_pos);
+    this->rotate_to_heading(0.0);
+    drive_to_position(target_pos, false);
+    vex::wait(500, vex::timeUnits::msec);
+    snowplow_in();
+    drive_to_position(prep_pos, true);
+
+    // Ram at side-bottom of red goal
+    snowplow_out();
+    target_pos = mp->goals[2]->get_position();
+    prep_pos = target_pos;
+    prep_pos.first += 18.0;
+    target_pos.first += rc->DRIVETRAIN_RADIUS;
+    pg->generate_path(this->path, tm->get_current_position(), prep_pos);
+    this->rotate_to_heading(0.0);
+    drive_to_position(target_pos, false);
+    vex::wait(500, vex::timeUnits::msec);
+    snowplow_in();
+    drive_to_position(prep_pos, true);
+
+    // Ram at bottom of red goal
+    snowplow_out();
+    target_pos = mp->goals[4]->get_position();
+    prep_pos = target_pos;
+    prep_pos.second -= 18.0; // Offset from goal by 1.5 feet
+    target_pos.second -= rc->DRIVETRAIN_RADIUS;
+    pg->generate_path(this->path, tm->get_current_position(), prep_pos);
+    this->rotate_to_heading(90.0);
+    drive_to_position(target_pos, false);
+    vex::wait(500, vex::timeUnits::msec);
+    snowplow_in();
+    drive_to_position(prep_pos, true);
+
+    // Returning direction -------------------------------------------------------------------------
+
+    // Ram at side-bottom of red goal
+    snowplow_out();
+    target_pos = mp->goals[2]->get_position();
+    prep_pos = target_pos;
+    prep_pos.first += 18.0;
+    target_pos.first += rc->DRIVETRAIN_RADIUS;
+    pg->generate_path(this->path, tm->get_current_position(), prep_pos);
+    this->rotate_to_heading(0.0);
+    drive_to_position(target_pos, false);
+    vex::wait(500, vex::timeUnits::msec);
+    snowplow_in();
+    drive_to_position(prep_pos, true);
+
+    // Ram at side-top of red goal
+    snowplow_out();
+    target_pos = mp->goals[0]->get_position();
+    prep_pos = target_pos;
+    prep_pos.first += 18.0;
+    target_pos.first += rc->DRIVETRAIN_RADIUS;
+    pg->generate_path(this->path, tm->get_current_position(), prep_pos);
+    this->rotate_to_heading(0.0);
+    drive_to_position(target_pos, false);
+    vex::wait(500, vex::timeUnits::msec);
+    snowplow_in();
+    drive_to_position(prep_pos, true);
+
+    // Ram at top of red goal
+    snowplow_out();
+    target_pos = mp->goals[3]->get_position();
+    prep_pos = target_pos;
+    prep_pos.second += 18.0; // Offset from goal by 1.5 feet
+    target_pos.second += rc->DRIVETRAIN_RADIUS;
+    pg->generate_path(this->path, tm->get_current_position(), prep_pos);
+    this->rotate_to_heading(-90.0);
+    drive_to_position(target_pos, false);
+    vex::wait(500, vex::timeUnits::msec);
+    snowplow_in();
+    drive_to_position(prep_pos, true);
 }
 
