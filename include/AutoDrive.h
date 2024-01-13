@@ -23,7 +23,12 @@ private:
     PathGenerator *pg;
     Map *mp;
 
+    std::vector<std::pair<double, double>> path;
+
     double robot_angle_offset = 0; // For Granny bc she veers left
+
+    /// @brief Drives to all coordinates stored in the local path vector.
+    void drive_along_path();
 
     /// @brief Uses drivetrain ENCODERS to rotate to a relativ angle
     /// @param angle Angle in degrees (-360 to 360) where positive angle is counterclockwise rotation
@@ -70,4 +75,7 @@ private:
     /// @param position Pair of doubles: {X, Y}
     /// @param ISBACKTOPOSITION A bool value that determines the direction the bot moves.
     void drive_to_position(std::pair<double, double> position, bool ISBACKTOPOSITION = false);
+
+    /// @brief Executes the plow strategy in the game.
+    void plow_strategy();
 };

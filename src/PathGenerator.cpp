@@ -12,6 +12,7 @@ void PathGenerator::generate_path(
             std::pair<double, double> source_pos,
             std::pair<double, double> target_pos
         ) {
+            path.clear();
             int curr_region = mp->in_which_region(source_pos, -1, 1);
             int target_region = mp->in_which_region(target_pos, -1, 1);
             std::cout << curr_region << " " << target_region << '\n';

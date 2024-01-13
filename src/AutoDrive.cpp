@@ -39,6 +39,13 @@ void AutoDrive::drive() {
     }
 }
 
+void AutoDrive::drive_along_path() {
+    for (int i = 0; i < path.size() - 1; ++i) {
+        rotate_and_drive_to_position(path.at(i+1), false);
+        vex::wait(30, vex::timeUnits::msec);
+    }
+}
+
 void AutoDrive::rotate_to_heading(double heading)
 {
     std::cout << "Rotating to " << heading << std::endl;
@@ -191,4 +198,12 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
     vex::wait(1000, vex::timeUnits::msec);  // Wait for odometry wheels to update
 }
 
+void AutoDrive::plow_strategy() {
 
+    // Prepare to ram at top of red goal
+    std::pair<double, double> top_goal_position = mp->goals[3];
+    std::pair<double, double> top_goal_prep_position = top_goal_position;
+    top_goal_prep_position.second += 12.43; // Offset from goal by ~1 foot
+    pg->generate_path(path, tm->get_current_position(), top_goal_prep_position);
+
+}
