@@ -14,7 +14,7 @@ public:
     double DRIVETRAIN_WIDTH; // distance (in inch) between left and right side of the drivetrain (measured from the center of the wheels)
     
     // for MAP offsets (test)
-    double DRIVETRAIN_LENGTH; //! Temporary, configure actual values later
+    double DRIVETRAIN_RADIUS; //! Temporary, configure actual values later
 
     double ODOMETRY_DIAMETER;
 
