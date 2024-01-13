@@ -123,21 +123,40 @@ void AutoDrive::rotate_to_position(std::pair<double, double> final_position, boo
 
 }
 
+void AutoDrive::rotate_to_position(InteractionObject *element, bool IS_BACK_POSITION, 
+    bool IS_OFFSET, bool IS_OFFSET_EXTRA)
+{
+    std::pair<double, double> position = {};
+    if (IS_OFFSET) position = {0,0}; // TODO: sub in function when done
+    else if (IS_OFFSET_EXTRA) position = {0,0}; // TODO: sub in function when done
+    else position = element->get_position();
+
+    rotate_to_position(position, IS_BACK_POSITION);
+}
+
 void AutoDrive::rotate_and_drive_to_position(std::pair<double, double> position, 
     bool ISBACKTOPOSITION)
 {
 
     rotate_to_position(position, ISBACKTOPOSITION);
-    //vex::wait(1000,vex::timeUnits::msec); // TODO: TAKE THIS OUT
-
-    // if (IS_USING_GPS_HEADING) tm->set_current_heading(tm->getGPSPosition());
 
     double distance_to_position = tm->get_distance_between_points(tm->get_current_position(), 
         position); // inches
     if (ISBACKTOPOSITION) distance_to_position = -distance_to_position;
         
     drive_to_position(position, ISBACKTOPOSITION);
-    //vex::wait(1000,vex::timeUnits::msec); // TODO: TAKE THIS OUT
+
+}
+
+void AutoDrive::rotate_and_drive_to_position(InteractionObject *element, bool IS_BACK_POSITION, 
+    bool IS_OFFSET, bool IS_OFFSET_EXTRA) {
+    
+    std::pair<double, double> position = {};
+    if (IS_OFFSET) position = {0,0}; // TODO: sub in function when done
+    else if (IS_OFFSET_EXTRA) position = {0,0}; // TODO: sub in function when done
+    else position = element->get_position();
+
+    rotate_and_drive_to_position(position, IS_BACK_POSITION);
 }
 
 void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBACKTOPOSITION) 
@@ -190,5 +209,7 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
     hw->drivetrain.stop();  // Stop wheels
     vex::wait(1000, vex::timeUnits::msec);  // Wait for odometry wheels to update
 }
+
+
 
 
