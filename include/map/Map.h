@@ -181,18 +181,18 @@ class Map {
 
             // triball goals--interaction point
                 // red
-            add_goal(11.66 + x_adjust, 93.77 + y_adjust, 'R', ONE_EIGHTY);                          // goal 0
-            add_goal(11.66 + x_adjust, 46.64 + y_adjust, 'R', ZERO);                                // goal 1
-            add_goal(23.32 + x_adjust, 81.985 + y_adjust, 'R', NINETY);                             // goal 2
-            add_goal(23.32 + x_adjust, 70.20 + y_adjust, 'R', NINETY);                              // goal 3
-            add_goal(23.32 + x_adjust, 58.41 + y_adjust, 'R', NINETY);                              // goal 4
+            add_goal(117.09 + x_adjust, 81.985 + y_adjust, 'R', ONE_EIGHTY);                          // goal 0
+            add_goal(117.09 + x_adjust, 70.20 + y_adjust, 'R', ZERO);                                // goal 1
+            add_goal(117.09 + x_adjust, 58.41 + y_adjust, 'R', NINETY);                             // goal 2
+            add_goal(128.75 + x_adjust, 93.77 + y_adjust, 'R', NINETY);                              // goal 3
+            add_goal(128.75 + x_adjust, 46.64 + y_adjust, 'R', NINETY);                              // goal 4
 
                 //blue
-            add_goal(117.09 + x_adjust, 81.985 + y_adjust, 'B', TWO_SEVENTY);                       // goal 5
-            add_goal(117.09 + x_adjust, 70.20 + y_adjust, 'B', TWO_SEVENTY);                        // goal 6
-            add_goal(117.09 + x_adjust, 58.41 + y_adjust, 'B', TWO_SEVENTY);                        // goal 7
-            add_goal(128.75 + x_adjust, 93.77 + y_adjust, 'B', ONE_EIGHTY);                         // goal 8
-            add_goal(128.75 + x_adjust, 46.64 + y_adjust, 'B', ZERO);                               // goal 9
+            add_goal(11.66 + x_adjust, 93.77 + y_adjust, 'B', TWO_SEVENTY);                       // goal 5
+            add_goal(11.66 + x_adjust, 46.64 + y_adjust, 'B', TWO_SEVENTY);                        // goal 6
+            add_goal(23.32 + x_adjust, 81.985 + y_adjust, 'B', TWO_SEVENTY);                        // goal 7
+            add_goal(23.32 + x_adjust, 70.20 + y_adjust, 'B', ONE_EIGHTY);                         // goal 8
+            add_goal(23.32 + x_adjust, 58.41 + y_adjust, 'B', ZERO);                               // goal 9
 
 
         /*
@@ -402,12 +402,12 @@ class Map {
         double* ZERO = new double(0 + heading_adjust);
 
         // Map Elements
-        std::vector<GameElement*> loadzones;
-        std::vector<GameElement*> startzones;
-        std::vector<GameElement*> goals;
-        std::vector<GameElement*> triballs;
-        std::vector<GameElement*> walls;
-        std::vector<GameElement*> bars;
+        std::vector<InteractionObject*> loadzones;
+        std::vector<Obstacle*> startzones;
+        std::vector<InteractionObject*> goals;
+        std::vector<InteractionObject*> triballs;
+        std::vector<Obstacle*> walls;
+        std::vector<InteractionObject*> bars;
         std::vector<Buffer*> buffers;
         std::vector<Region*> regions;
         int next_region_id = 0;
