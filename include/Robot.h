@@ -4,6 +4,7 @@
 #include "Telemetry.h"
 #include "Hardware.h"
 #include "RobotConfig.h"
+#include "map/Map.h"
 #include "vex.h"
 
 /// @brief   Holds all the classes needed to run the robot.
@@ -12,11 +13,15 @@ class Robot {
 public:
     Robot();
 
+    Map* mp;
+
     /// @brief    Initializes the driver-controlled code.
     void drive();
 
     /// @brief    Initializes the autonomous-period code.
     void driveAuto();
+
+
 
 private:
     Hardware* hw;

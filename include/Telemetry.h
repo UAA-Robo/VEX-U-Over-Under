@@ -41,13 +41,14 @@ public:
     /// @return Returns heading in degree
     double get_current_heading();
     
-   
+    /// public so map can access address
+    double odometry_heading = 0;  //In degrees
 
 private:
     Hardware *hw;
     RobotConfig *rc;
 
-    double odometry_x_position = 0;  // In inches
-    double odometry_y_position = 0;  // In inches
-    double odometry_heading = 0;  //In degrees
+    double odometry_x_position;  // In inches
+    double odometry_y_position;  // In inches
+    double odometry_heading;  //In degrees
 };

@@ -7,6 +7,9 @@ Telemetry::Telemetry(Hardware* hardware, RobotConfig* robotConfig)
 {
     hw = hardware;
     rc = robotConfig;
+    odometry_x_position = rc->starting_pos.first;
+    odometry_y_position = rc->starting_pos.second;
+    odometry_heading = rc->starting_heading;
     vex::task logTask = vex::task(update_position, this, 1);
 }
 
@@ -40,7 +43,6 @@ int Telemetry::update_position(void* param) {
         //convert heading into rads for calculations
         double current_heading = std::fmod(tm->odometry_heading * (M_PI / 180.0) + heading_displacement, 2 * M_PI);  
 
-
         double x_displacement = center_displacement * cos(current_heading) - horizontal_displacement * sin(current_heading);
         double y_displacement = center_displacement  * sin(current_heading) + horizontal_displacement * cos(current_heading);
 
@@ -59,7 +61,7 @@ int Telemetry::update_position(void* param) {
 
         // Rotation sensor is updated every 20ms so 30ms wait should be fine 
         // https://www.vexforum.com/t/rotation-sensor-update-rate-optical-shaft-encoder-vs-rotation-sensor/106917
-        vex::wait(30, vex::timeUnits::msec); 
+        vex::wait(45, vex::timeUnits::msec); 
     }
 }
 

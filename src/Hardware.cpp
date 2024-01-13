@@ -31,7 +31,6 @@ Hardware::Hardware()
     right_plow.set(true);
     left_plow.set(true);
 
-
     // Odometry
     left_odometry.resetPosition();
     right_odometry.resetPosition();
