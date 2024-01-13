@@ -48,7 +48,7 @@ private:
     Hardware *hw;
     RobotConfig *rc;
 
-    double odometry_x_position = 0;  // In inches
-    double odometry_y_position = 0;  // In inches
-
+    double odometry_x_position;  // In inches
+    double odometry_y_position;  // In inches
+    double odometry_heading;  //In degrees
 };

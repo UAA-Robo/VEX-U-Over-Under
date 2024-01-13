@@ -25,28 +25,41 @@ void PathGenerator::generate_path(
             // for (int i = 0; i < 4; ++i) {
                 if (((target_region - curr_region <= 3 && target_region - curr_region > 0) ||
                     (target_region - curr_region <= -5)) &&
-                     (target_region != 1 && curr_region != 5 &&
-                      curr_region != 1 && target_region != 5)
+                     ((target_region != 1 || curr_region != 5) &&
+                      (curr_region != 1 || target_region != 5))
                     ) direction = 1;
                 else if (((target_region - curr_region > 3 && target_region - curr_region < 5) ||
                         (target_region - curr_region < 0 && target_region - curr_region > -5) ||
                         (target_region - curr_region) >= 5)  &&
-                     (target_region != 1 && curr_region != 5 &&
-                      curr_region != 1 && target_region != 5)
+                     ((target_region != 1 || curr_region != 5) &&
+                      (curr_region != 1 || target_region != 5))
                     ) direction = -1;
-                else if ( target_pos.second >= 0 && source_pos.second >= 0 &&
+                else if (target_pos.second > 0.0 && source_pos.second > 0.0 &&
                      ((target_region == 1 && curr_region == 5) ||
                      (curr_region == 1 && target_region == 5))
                     ) {
                         if (target_region == 1 && curr_region == 5) direction = -1;
                         else direction = 1;
                     }
-                else if ( target_pos.second <= 0 && source_pos.second <= 0 &&
+                else if (target_pos.second < 0.0 && source_pos.second < 0.0 &&
                      ((target_region == 1 && curr_region == 5) ||
                      (curr_region == 1 && target_region == 5))
                     ) {
                         if (target_region == 1 && curr_region == 5) direction = 1;
                         else direction = -1;
+                    }
+                else if ((target_pos.second == 0.0 || source_pos.second == 0.0) &&
+                     ((target_region == 1 && curr_region == 5) ||
+                     (curr_region == 1 && target_region == 5))
+                    ) {
+                        if (target_region == 1 && curr_region == 5) {
+                            if (target_pos.second > 0.0 || source_pos.second > 0.0) direction = -1;
+                            if (target_pos.second < 0.0 || source_pos.second < 0.0) direction = 1;
+                        }
+                        else {
+                            if (target_pos.second > 0.0 || source_pos.second > 0.0) direction = 1;
+                            if (target_pos.second < 0.0 || source_pos.second < 0.0) direction = -1;
+                        }
                     }
                 
                 else {
