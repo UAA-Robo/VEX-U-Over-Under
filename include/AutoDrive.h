@@ -22,6 +22,7 @@ public:
 private:
     PathGenerator *pg;
     Map *mp;
+    //RobotConfig *rc;
 
     double robot_angle_offset = 0; // For Granny bc she veers left
 
@@ -70,4 +71,9 @@ private:
     /// @param position Pair of doubles: {X, Y}
     /// @param ISBACKTOPOSITION A bool value that determines the direction the bot moves.
     void drive_to_position(std::pair<double, double> position, bool ISBACKTOPOSITION = false);
+
+    /// @brief Provides the position of interaction for a game element based off its interaction_angle
+    /// @param element GameElement passed in to recieve new value
+    /// @return GameElement position with offset
+    std::pair<double, double> get_point_with_offset(GameElement* element);
 };
