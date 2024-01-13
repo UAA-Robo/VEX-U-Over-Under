@@ -17,12 +17,12 @@ void AutoDrive::drive() {
 
     std::vector<std::pair<double, double>> path;
     std::pair<double, double> curr_position = rc->starting_pos;
-    std::pair<double, double> targ_position = {-36.0, -58.0};
+    std::pair<double, double> targ_position = {-36.0, -60.0};
     pg->generate_path(path, curr_position, targ_position);
     // path.push_back(curr_position);
     // path.push_back({-36.0, 35.0});
     // path.push_back({-37.0, 58.0});
-    
+
     for (const std::pair<double, double> &pair : path) {
         std::cout << pair.first << " " << pair.second << '\n';
     }

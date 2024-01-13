@@ -13,8 +13,6 @@ public:
     double auto_rotate_velocity_percent;
     double DRIVETRAIN_WIDTH; // distance (in inch) between left and right side of the drivetrain (measured from the center of the wheels)
 
-    int DRIVETRAINWIDTH = 14.0; //! Temporary, configure actual values later
-
     // Starting position
     std::pair<double, double> starting_pos = {-12.0, 0.0};
     double starting_heading = 0.0;

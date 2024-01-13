@@ -73,7 +73,7 @@ class Map {
     public:
         Map(RobotConfig *robotConfig) {
             rc = robotConfig;
-            double drive_train_adjustment = rc->DRIVETRAINWIDTH * sqrt(2) / 2;
+            double drive_train_adjustment = rc->DRIVETRAIN_WIDTH * sqrt(2) / 2;
 
             /*
             ----- REGIONS --------------------------------------------------------------------------
