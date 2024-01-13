@@ -80,8 +80,8 @@ void AutoDrive::rotate_to_heading(double heading)
     while (angle_to_travel > 1 && (previous_angle_to_travel - angle_to_travel) >= -0.05) { //TODO: Something isn't working here
     // while (fabs(tm->get_current_heading() - heading) > 1.0) { //! REMOVE OR REFACTOR
         std::cout << "    V: " << velocity << ", Angle to Travel: " << angle_to_travel << std::endl;
-        // Speeds up as leaving initial angle and slows down as approaching destination
         std::cout << "    Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
+        // Speeds up as leaving initial angle and slows down as approaching destination
         if (angle_to_travel > total_angle_to_travel/2) {
             // First half of distance
             velocity = atan(fabs(total_angle_to_travel - angle_to_travel)) * 2 
@@ -167,8 +167,8 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
     while (fabs(current_distance) > 0.5 && (previous_distance - current_distance) >= -0.01) {
         // Speeds up as leaving initial position and slows down as approaching destination
         //std::cout << "      Current Distance: " << current_distance << " Current Heading: " << tm->get_current_heading() << std::endl;
-        std::cout << "    Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
-        std::cout << "    V: " << velocity << " Current Distance: " << current_distance << std::endl;
+        //std::cout << "    Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
+        //std::cout << "    V: " << velocity << " Current Distance: " << current_distance << std::endl;
         if (current_distance >= distance/2) {
             // First half of distance
             velocity = atan(distance - current_distance) * 2 * (max_velocity-min_velocity) / M_PI 
