@@ -42,13 +42,12 @@ public:
     double get_current_heading();
     
     /// public so map can access address
-    double odometry_heading = 0;  //In degrees
+    double odometry_heading = rc->starting_heading;  //In degrees
 
 private:
     Hardware *hw;
     RobotConfig *rc;
 
-    double odometry_x_position;  // In inches
-    double odometry_y_position;  // In inches
-    double odometry_heading;  //In degrees
+    double odometry_x_position = rc->starting_pos.first;  // In inches
+    double odometry_y_position = rc->starting_pos.second;  // In inches
 };
