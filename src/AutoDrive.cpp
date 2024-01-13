@@ -4,7 +4,7 @@
 AutoDrive::AutoDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry) : Drive(hardware, robotConfig, telemetry) {
         mp = new Map(telemetry, robotConfig, IS_SKILLS);
         pg = new PathGenerator(robotConfig, mp);
-        //rc = RobotConfig;
+        rc = robotConfig;
     }
 
 void AutoDrive::drive() {
@@ -36,6 +36,19 @@ void AutoDrive::drive() {
         std::cout << "Path: (" << path.at(i+1).first << ", " << path.at(i+1).second << std::endl;
         std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
         vex::wait(30, vex::timeUnits::msec);
+    }
+}
+
+void AutoDrive::execute_skills_plan() {
+
+    if (rc->ROBOT == SCRAT) {
+
+        // Launch match loads
+        for (int i = 0; i < 4; ++i) run_plow_strategy(); // Until end of match
+    }
+
+    else {
+        // SCRATETTE auto skills plan
     }
 }
 
@@ -217,16 +230,44 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
     vex::wait(1000, vex::timeUnits::msec);  // Wait for odometry wheels to update
 }
 
-// AutoDrive::get_point_with_offset(GameElement* element)
-// {
-//     InteractionObject* object = static_cast<InteractionObject*>(element);
-//     std::pair<double, double> new_position = element->get_position();
+std::pair<double, double> AutoDrive::get_point_with_offset(InteractionObject* element)
+{
+    std::pair<double, double> new_position = element->get_position();
 
-//     if (object->get_interaction_angle == tm->get_current_heading())
-//     {
-//         return new_position;
-//     }
+    if (*(element->get_interaction_angle()) == tm->get_current_heading())
+    {
+        return new_position;
+    }
     
+    // adjusted for heading_adjust, original get_interaction_angle = ...
+    // ZERO
+    if (*(element->get_interaction_angle()) == 90) {
+        new_position.second -= rc->DRIVETRAIN_RADIUS;
+    }
+    // FORTY_FIVE
+    else if (*(element->get_interaction_angle()) == 135) {
+        new_position.first += rc->DRIVETRAIN_RADIUS / sqrt(2);
+        new_position.second -= rc->DRIVETRAIN_RADIUS / sqrt(2);
+    }
+    // NINETY
+    else if (*(element->get_interaction_angle()) == 180) {
+        new_position.first += rc->DRIVETRAIN_RADIUS;
+    }
+    // ONE_THIRTY_FIVE
+    else if (*(element->get_interaction_angle()) == 225) {
+        new_position.first += rc->DRIVETRAIN_RADIUS / sqrt(2);
+        new_position.second += rc->DRIVETRAIN_RADIUS / sqrt(2);
+    }
+    // ONE_EIGHTY
+    //else if (element->get_interaction_angle == 0)
+    // TWO_SEVENTY
+    // NEG_FORTY_FIVE
+    // NEG_NINETY
+
+
+    return new_position;
+}
+
 //     // adjusted for heading_adjust, original interaction_angle = ...
 //     // 0
 //     if (object->interaction_angle == 90) { new_position.second - }
@@ -241,13 +282,103 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
 
 
 //     return new_position;
-// }void AutoDrive::plow_strategy() {
+// }
 
-    // Prepare to ram at top of red goal
-    std::pair<double, double> top_goal_position = mp->goals[3]->get_position();
-    std::pair<double, double> top_goal_prep_position = top_goal_position;
-    top_goal_prep_position.second += 12.43; // Offset from goal by ~1 foot
-    pg->generate_path(path, tm->get_current_position(), top_goal_prep_position);
+void AutoDrive::run_plow_strategy() {
 
+    std::pair<double, double> prep_pos;
+    std::pair<double, double> target_pos;
+
+    // Ram at top of red goal
+    snowplow_out();
+    target_pos = mp->goals[3]->get_position();
+    prep_pos = target_pos;
+    prep_pos.second += 18.0; // Offset from goal by 1.5 feet
+    target_pos.second += rc->DRIVETRAIN_RADIUS;
+    pg->generate_path(this->path, tm->get_current_position(), prep_pos);
+    this->rotate_to_heading(-90.0);
+    drive_to_position(target_pos, false);
+    vex::wait(500, vex::timeUnits::msec);
+    snowplow_in();
+    drive_to_position(prep_pos, true);
+
+    // Ram at side-top of red goal
+    snowplow_out();
+    target_pos = mp->goals[0]->get_position();
+    prep_pos = target_pos;
+    prep_pos.first += 18.0;
+    target_pos.first += rc->DRIVETRAIN_RADIUS;
+    pg->generate_path(this->path, tm->get_current_position(), prep_pos);
+    this->rotate_to_heading(0.0);
+    drive_to_position(target_pos, false);
+    vex::wait(500, vex::timeUnits::msec);
+    snowplow_in();
+    drive_to_position(prep_pos, true);
+
+    // Ram at side-bottom of red goal
+    snowplow_out();
+    target_pos = mp->goals[2]->get_position();
+    prep_pos = target_pos;
+    prep_pos.first += 18.0;
+    target_pos.first += rc->DRIVETRAIN_RADIUS;
+    pg->generate_path(this->path, tm->get_current_position(), prep_pos);
+    this->rotate_to_heading(0.0);
+    drive_to_position(target_pos, false);
+    vex::wait(500, vex::timeUnits::msec);
+    snowplow_in();
+    drive_to_position(prep_pos, true);
+
+    // Ram at bottom of red goal
+    snowplow_out();
+    target_pos = mp->goals[4]->get_position();
+    prep_pos = target_pos;
+    prep_pos.second -= 18.0; // Offset from goal by 1.5 feet
+    target_pos.second -= rc->DRIVETRAIN_RADIUS;
+    pg->generate_path(this->path, tm->get_current_position(), prep_pos);
+    this->rotate_to_heading(90.0);
+    drive_to_position(target_pos, false);
+    vex::wait(500, vex::timeUnits::msec);
+    snowplow_in();
+    drive_to_position(prep_pos, true);
+
+    // Returning direction -------------------------------------------------------------------------
+
+    // Ram at side-bottom of red goal
+    snowplow_out();
+    target_pos = mp->goals[2]->get_position();
+    prep_pos = target_pos;
+    prep_pos.first += 18.0;
+    target_pos.first += rc->DRIVETRAIN_RADIUS;
+    pg->generate_path(this->path, tm->get_current_position(), prep_pos);
+    this->rotate_to_heading(0.0);
+    drive_to_position(target_pos, false);
+    vex::wait(500, vex::timeUnits::msec);
+    snowplow_in();
+    drive_to_position(prep_pos, true);
+
+    // Ram at side-top of red goal
+    snowplow_out();
+    target_pos = mp->goals[0]->get_position();
+    prep_pos = target_pos;
+    prep_pos.first += 18.0;
+    target_pos.first += rc->DRIVETRAIN_RADIUS;
+    pg->generate_path(this->path, tm->get_current_position(), prep_pos);
+    this->rotate_to_heading(0.0);
+    drive_to_position(target_pos, false);
+    vex::wait(500, vex::timeUnits::msec);
+    snowplow_in();
+    drive_to_position(prep_pos, true);
+
+    // Ram at top of red goal
+    snowplow_out();
+    target_pos = mp->goals[3]->get_position();
+    prep_pos = target_pos;
+    prep_pos.second += 18.0; // Offset from goal by 1.5 feet
+    target_pos.second += rc->DRIVETRAIN_RADIUS;
+    pg->generate_path(this->path, tm->get_current_position(), prep_pos);
+    this->rotate_to_heading(-90.0);
+    drive_to_position(target_pos, false);
+    vex::wait(500, vex::timeUnits::msec);
+    snowplow_in();
+    drive_to_position(prep_pos, true);
 }
-
