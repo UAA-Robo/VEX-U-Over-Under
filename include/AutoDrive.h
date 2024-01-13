@@ -24,7 +24,12 @@ private:
     Map *mp;
     //RobotConfig *rc;
 
+    std::vector<std::pair<double, double>> path;
+
     double robot_angle_offset = 0; // For Granny bc she veers left
+
+    /// @brief Drives to all coordinates stored in the local path vector.
+    void drive_along_path();
 
     /// @brief Uses drivetrain ENCODERS to rotate to a relativ angle
     /// @param angle Angle in degrees (-360 to 360) where positive angle is counterclockwise rotation
@@ -72,8 +77,13 @@ private:
     /// @param ISBACKTOPOSITION A bool value that determines the direction the bot moves.
     void drive_to_position(std::pair<double, double> position, bool ISBACKTOPOSITION = false);
 
+<<<<<<< HEAD
     /// @brief Provides the position of interaction for a game element based off its interaction_angle
     /// @param element GameElement passed in to recieve new value
     /// @return GameElement position with offset
     std::pair<double, double> get_point_with_offset(GameElement* element);
+=======
+    /// @brief Executes the plow strategy in the game.
+    void plow_strategy();
+>>>>>>> 6c5ddb88f88f86827378e34be0b16edfe60a23db
 };
