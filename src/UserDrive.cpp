@@ -7,8 +7,7 @@ UserDrive::UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *te
     IS_MACRO_RECORDING = false;
     macro_length = -2;
     
-    vex::task run_catapult_task = vex::task(run_catapult_thread, this, 1); // Start catapult. TODO: fix so this goes in drive()
-
+    
     if (input_list.size() == 0) // Setup vector
     {
         input_list.reserve(14);
@@ -36,28 +35,28 @@ UserDrive::UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *te
     input_list[12] = &button_left;
     input_list[13] = &button_right;
 
-    for (int i = 0; i < input_list.size(); ++i)
-        input_list[i]->previous = 0;
-    
+    for (int i = 0; i < input_list.size(); ++i) input_list[i]->previous = 0;
+
+
 }
 
-void UserDrive::drive() {
-    hw->controller.Screen.clearScreen();
-    hw->controller.Screen.setCursor(1, 1);
+void UserDrive::drive()
+{
+    vex::task catapult_task = vex::task(run_catapult_thread, this, 1);
 
-    get_inputs();
-    macro_controls();
-    drivetrain_controls();
-    catapult_controls();
-    intake_controls();
-    snowplow_controls();
-    ++tick;
+    while(true) {
+        get_inputs();
+        macro_controls();
+        drivetrain_controls();
+        catapult_controls();
+        intake_controls();
+        snowplow_controls();
 
-    set_previous_inputs(); // Tracks previous inputs to compare to
-    if (macro_loop_iteration == macro_length)
-        IS_MACRO_RUNNING = false;
-    if (IS_MACRO_RECORDING || IS_MACRO_RUNNING)
-        ++macro_loop_iteration; // Last item
+        set_previous_inputs(); // Tracks previous inputs to compare to
+        if (macro_loop_iteration == macro_length) IS_MACRO_RUNNING = false;
+        if (IS_MACRO_RECORDING || IS_MACRO_RUNNING) ++macro_loop_iteration; // Last item
+        vex::wait(20, vex::msec); 
+    }
 }
 
 void UserDrive::drivetrain_controls() {
@@ -70,6 +69,7 @@ void UserDrive::drivetrain_controls() {
     if (std::abs(left_right.value) < DEADZONE) {
         left_right.value = 0;
     }
+    forward_backward.value = forward_backward.value / (M_PI / 2) * 100;
 
     move_drivetrain({forward_backward.value, left_right.value});
 }
