@@ -40,4 +40,45 @@ protected:
     ///  {verticalVelocityPercent, horizontalVelocityPercent}
     void move_drivetrain(std::pair<double, double> velocity_percent);
 
+    /// @brief      Moves the drivetrain a certain distance based on the horizontal percentage and 
+    ///             vertical percentage passed in.
+    /// @param velocity_percent   Pair of doubles from -100 to 100:
+    ///                           {verticalVelocityPercent, horizontalVelocityPercent} 
+    void move_drivetrain_distance(std::pair<double, double> velocity_percent, double distance);
+
+    /// @brief Activates the intake
+    void activate_intake();
+
+    /// @brief Stops the intake
+    void stop_intake();
+
+    /// @brief Expands the intake
+    void expand_intake();
+
+    /// @brief Retracts the intake
+    void retract_intake();
+
+    /// @brief stops the intake
+    void stop_intake_expansion();
+
+    /// @brief Pushes air out when X button is pressed to expand snowplow.
+    void snowplow_out();
+
+    /// @brief Sucks air in when Y button is pressed to retract snowplow.
+    void snowplow_in();
+
+    /// @brief Spins the catapult motors until limit switch is hit or launch/stop_catapult is 
+    ///     called. Loops forever because it is on it's own thread.
+    /// @param param For passing the telemetry class (this)
+    /// @return Does not return anything but VEX requires type int return.
+    static int run_catapult_thread(void* param);
+
+    /// @brief Trigger the catapult motors to start turning to launch
+    void launch_catapult();
+
+    /// @brief Trigger the catapult to stop and reset at the limit swiitch.
+    void stop_catapult();
+
+    bool START_CATAPULT_LAUNCH = false;
+    bool CATAPULT_STOPPED = false;
 };

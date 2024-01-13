@@ -42,17 +42,15 @@ UserDrive::UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *te
 
 void UserDrive::drive()
 {
-    vex::task catapult_task = vex::task(run_catapult, this, 1);
+    vex::task catapult_task = vex::task(run_catapult_thread, this, 1);
 
     while(true) {
         get_inputs();
         macro_controls();
         drivetrain_controls();
-        snowplow_in();
-        snowplow_out();
-        activate_intake();
-        adjust_intake();
-
+        catapult_controls();
+        intake_controls();
+        snowplow_controls();
 
         set_previous_inputs(); // Tracks previous inputs to compare to
         if (macro_loop_iteration == macro_length) IS_MACRO_RUNNING = false;
@@ -156,65 +154,38 @@ void UserDrive::macro_controls()
 }
 
 
-void UserDrive::snowplow_out() {
-    if (button_X.value) {
-        hw->right_plow.set(false);
-        hw->left_plow.set(false);
+void UserDrive::snowplow_controls() {
+    if (button_X.value == 1) {
+        snowplow_out();
+    }else if (button_Y.value == 1) {
+        snowplow_in();
     }
-
 }
 
-void UserDrive::snowplow_in() {
 
-    if (button_Y.value) {
-        hw->right_plow.set(true);
-        hw->left_plow.set(true);
-    }
-
-}
-
-int UserDrive::run_catapult(void* param)
+void UserDrive::catapult_controls()
 {
-    // WARNING: DON'T print in this thread or it will take too long and miss the catapult press
-    UserDrive* ud = static_cast<UserDrive*>(param);
-    
-    while(1) {
-        
-        if (ud->hw->catapult_limit_switch.value() == 0) {
-            ud->hw->catapult.stop();
-            ud->CATAPULT_STOPPED = true; // if limit switch touched, stop catapult
-        }
-        if (ud->button_R1.value == 1) ud->CATAPULT_STOPPED = false;
-        if (!ud->CATAPULT_STOPPED) {
-            ud->hw->catapult.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
-        }
-        vex::wait(10, vex::timeUnits::msec);
-    }
-}
-
-void UserDrive::activate_intake()
-{
-    if (button_L1.value == 1) {
-        hw->intake.spin(vex::directionType::fwd, 12, vex::voltageUnits::volt);
-        hw->controller.Screen.setCursor(1, 1);
-        hw->controller.Screen.print("Activating Intake!");
-    } else {
-        hw->intake.stop();
-    }
+    if (button_R1.value == 1) launch_catapult();
+    else stop_catapult();
 }
 
 
-void UserDrive::adjust_intake()
+void UserDrive::intake_controls()
 {
-    if (button_A.value == 1) {
-        hw->intake_expansion.spin(vex::directionType::rev, 6, vex::voltageUnits::volt);
-        hw->controller.Screen.setCursor(1, 1);
-        hw->controller.Screen.print("Expanding Intake!");
+    if (button_A.value == 1){
+        expand_intake();
+        INTAKE_EXPANDED = true;
     } else if (button_B.value == 1) {
-        hw->intake_expansion.spin(vex::directionType::fwd, 6, vex::voltageUnits::volt);
-        hw->controller.Screen.setCursor(1, 1);
-        hw->controller.Screen.print("Retracting Intake!");
+        retract_intake();
+        INTAKE_EXPANDED = false;
     } else {
-        hw->intake_expansion.stop();
+        stop_intake_expansion();
+    }
+
+    // Activate intake when expanded
+    if (INTAKE_EXPANDED && button_A.value == 0) {
+        activate_intake();
+    }else {
+        stop_intake();
     }
 }

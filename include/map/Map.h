@@ -103,13 +103,9 @@ class Map {
         Map(Telemetry* telemetry, RobotConfig *robotConfig, bool IS_SKILLS) {
             tm = telemetry;
             rc = robotConfig;
-<<<<<<< HEAD
-            double drive_train_adjustment = rc->DRIVETRAIN_WIDTH * sqrt(2) / 2;
-=======
             next_element_id = 0;
             this->IS_SKILLS = IS_SKILLS;
-            double drive_train_adjustment = rc->DRIVETRAINWIDTH * sqrt(2) / 2;
->>>>>>> origin/main
+            double drive_train_adjustment = rc->DRIVETRAIN_WIDTH * sqrt(2) / 2;
 
             // outer walls
             add_wall(0 + x_adjust, 140.40 + y_adjust, 0 + x_adjust, 0 + y_adjust);                  // wall 0                                                  

@@ -41,3 +41,80 @@ void Drive::move_drivetrain(std::pair<double, double> velocity_percent)
     
     // if (rc->USE_PID_IN_USERDRIVE) pid->correct_drive();
 }
+
+
+
+
+
+void Drive::activate_intake()
+{
+    hw->intake.spin(vex::directionType::fwd, 12, vex::voltageUnits::volt);
+    hw->controller.Screen.setCursor(1, 1);
+    hw->controller.Screen.print("Activating Intake!");
+}
+
+
+void Drive::stop_intake()
+{
+    hw->intake.stop();
+}
+
+
+void Drive::expand_intake()
+{
+    hw->intake_expansion.spin(vex::directionType::rev, 6, vex::voltageUnits::volt);
+    hw->controller.Screen.setCursor(1, 1);
+    hw->controller.Screen.print("Expanding Intake!");
+}
+
+
+void Drive::retract_intake()
+{
+    hw->intake_expansion.spin(vex::directionType::fwd, 6, vex::voltageUnits::volt);
+    hw->controller.Screen.setCursor(1, 1);
+    hw->controller.Screen.print("Retracting Intake!");
+}
+
+
+void Drive::stop_intake_expansion()
+{
+    hw->intake_expansion.stop();
+}
+
+void Drive::snowplow_out() {
+    hw->right_plow.set(false);
+    hw->left_plow.set(false);
+}
+
+void Drive::snowplow_in() {
+    hw->right_plow.set(true);
+    hw->left_plow.set(true);
+}
+
+int Drive::run_catapult_thread(void* param)
+{
+    // WARNING: DON'T print in this thread or it will take too long and miss the catapult press
+    Drive* dr = static_cast<Drive*>(param);
+    
+    while(true) {
+        // If limit switch touched, stop catapult
+        if (dr->hw->catapult_limit_switch.value() == 1) {
+            dr->hw->catapult.stop();
+            dr->CATAPULT_STOPPED = true; 
+        }
+        // If told to launch, start catapult
+        if (dr->START_CATAPULT_LAUNCH) dr->CATAPULT_STOPPED = false;
+        if (!dr->CATAPULT_STOPPED) {
+            dr->hw->catapult.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
+        }
+        vex::wait(10, vex::timeUnits::msec);
+    }
+}
+
+void Drive::launch_catapult() {
+    START_CATAPULT_LAUNCH = true;
+}
+
+void Drive::stop_catapult() {
+    START_CATAPULT_LAUNCH = false;
+}
