@@ -17,15 +17,6 @@ Hardware::Hardware()
     right_drivetrain_motors.setStopping(vex::brakeType::coast);
 
     drivetrain.setStopping(vex::brakeType::coast);
-    // smartDriveTrain.setStopping(vex::brakeType::brake);
-
-    // Odometry
-    left_odometry.resetPosition();
-    right_odometry.resetPosition();
-    back_odometry.resetPosition();
-
-    // Distance sensor
-    distanceSensor.installed();
 
     // Intake
     right_intake_motor.setStopping(vex::brakeType::hold);
@@ -39,4 +30,12 @@ Hardware::Hardware()
     // Retract plows initially
     right_plow.set(true);
     left_plow.set(true);
+
+    // Odometry
+    left_odometry.resetPosition();
+    right_odometry.resetPosition();
+    back_odometry.resetPosition();
+
+    // Distance sensor
+    distanceSensor.installed();
 }

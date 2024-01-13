@@ -83,7 +83,7 @@ class Map {
         }
 
         void add_triball(double x, double y, char team_color){
-            triballs.push_back(new InteractionObject(next_element_id++, x, y, team_color, triBallinteraction_angle, true));
+            triballs.push_back(new InteractionObject(next_element_id++, x, y, team_color, triball_interaction_angle, true));
         }
 
         void add_loadzone(double x, double y, char team_color, double* interaction_angle) {
@@ -199,12 +199,12 @@ class Map {
             PLACE HOLDERS!!!                // TODO: Change Later once robot is built
         */
             // HighBar
-            add_bar(70.20 + x_adjust, 129.11 + y_adjust, 'B', triBallinteraction_angle);             // bar 0
-            add_bar(70.20 + x_adjust, 11.30 + y_adjust, 'R', triBallinteraction_angle);              // bar 2
+            add_bar(70.20 + x_adjust, 129.11 + y_adjust, 'B', triball_interaction_angle);           // bar 0
+            add_bar(70.20 + x_adjust, 11.30 + y_adjust, 'R', triball_interaction_angle);            // bar 2
 
             // Elevation Bar
-            add_bar(70.20 + x_adjust, 117.33 + y_adjust, 'B', triBallinteraction_angle);             // bar 3
-            add_bar(70.20 + x_adjust, 23.08 + y_adjust, 'R', triBallinteraction_angle);              // bar 4
+            add_bar(70.20 + x_adjust, 117.33 + y_adjust, 'B', triball_interaction_angle);           // bar 3
+            add_bar(70.20 + x_adjust, 23.08 + y_adjust, 'R', triball_interaction_angle);            // bar 4
 
         
 
@@ -387,7 +387,7 @@ class Map {
         double y_adjust = -70.20;    // inches
         double heading_adjust = 90;  // degree
 
-        double* triBallinteraction_angle = &(tm->odometry_heading);
+        double* triball_interaction_angle = &(tm->odometry_heading);
 
         // for angles
         double* TWO_SEVENTY = new double(270 + heading_adjust);

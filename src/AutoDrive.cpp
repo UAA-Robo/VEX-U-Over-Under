@@ -4,81 +4,84 @@
 AutoDrive::AutoDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry) : Drive(hardware, robotConfig, telemetry) {
         mp = new Map(telemetry, robotConfig, IS_SKILLS);
         pg = new PathGenerator(robotConfig, mp);
-        double drivetrain_offset = 2 * robotConfig->DRIVETRAIN_LENGTH;
 
-        for (auto zone : mp->startzones)
-        {
-            Obstacle* new_zone = static_cast<Obstacle*>(zone);
-
-            if (new_zone->in_zone(tm->odometry_position))
-            {
-                this->zone = new_zone;
-                break;
-            }
-        }
     }
 
 void AutoDrive::drive() {
     // Set braking
-    // hw->left_drivetrain_motors.setStopping(vex::brakeType::brake);
-    // hw ->right_drivetrain_motors.setStopping(vex::brakeType::brake);
-    // move_drivetrain_distance_odometry({-24, 0}, true);
+    hw->left_drivetrain_motors.setStopping(vex::brakeType::brake);
+    hw ->right_drivetrain_motors.setStopping(vex::brakeType::brake);
 
+    // Test code
+    rotate_and_drive_to_position({24, 0});
+    vex::wait(2, vex::timeUnits::sec);
+    rotate_and_drive_to_position({12, -12});
+    vex::wait(2, vex::timeUnits::sec);
+    rotate_and_drive_to_position({0, 0}, true);
+    rotate_to_position({10, 0});
 
-    std::pair<double, double> current_pos = {58.0, -58.0};
-    std::pair<double, double> new_target_pos = {-25.0, 25.0};
-    std::vector<std::pair<double, double>> path;
-    pg->generate_path(path, current_pos, new_target_pos);
-    for (int i = 0; i < path.size(); ++i) {
-        std::cout << path[i].first << " " << path[i].second << '\n';
-    }
 }
 
-void AutoDrive::rotate_to_heading_odometry(double heading)
+void AutoDrive::rotate_to_heading(double heading)
 {
     // Corrects heading to be from 0-360 from the x axis counterclockwise if applicable
     heading = fmod(heading, 360);
     if (heading < 0) heading += 360;
-
-    double curr_heading = tm->get_current_heading();
-
     double min_velocity = 10;
     double max_velocity = 50;
-    double stopping_aggression = 0.03; // higher number is higher aggression (steeper slope)
+    const double stopping_aggression = 0.01; // Lower number is higher aggression (steeper slope)
     double velocity;
-    double initial_heading = curr_heading;
-    
-    // 1 if counterclockwise, -1 if clockwise depending on which direction is shorter to turn
-    double turn_direction = (fabs(heading - tm->get_current_heading()) <= 180) ? 1: -1;
 
+    // 1 if counterclockwise, -1 if clockwise depending on which direction is shorter to turn
+    double turn_direction = ((fabs(heading - tm->get_current_heading()) > 180) 
+        ^ (heading > tm->get_current_heading())) ? 1: -1;
+
+    double angle_to_travel = fabs(heading - tm->get_current_heading());
+    // Makes sure total angle to travel is shorter distance
+    if (angle_to_travel > 180) angle_to_travel = 360 - angle_to_travel;
+    double total_angle_to_travel = angle_to_travel;
+    double previous_angle_to_travel = angle_to_travel + 1; // For not overshooting
+
+    // Slow for small angles bc function doesn't slow things down enough.
+    if (angle_to_travel < 30) {
+        min_velocity = 10;
+        max_velocity = 14;
+    }
 
     // Turn wheels opposite of each other
-    hw->left_drivetrain_motors.spin(vex::directionType::fwd, -min_velocity * turn_direction, vex::velocityUnits::pct);
-    hw->right_drivetrain_motors.spin(vex::directionType::fwd, min_velocity * turn_direction, vex::velocityUnits::pct);
+    hw->left_drivetrain_motors.spin(vex::directionType::fwd, -min_velocity * turn_direction, 
+        vex::velocityUnits::pct);
+    hw->right_drivetrain_motors.spin(vex::directionType::fwd, min_velocity * turn_direction, 
+    vex::velocityUnits::pct);
+    
 
-    // Turn until within 2 degrees of desired heading
-    while (fabs(heading - tm->get_current_heading()) > 1 ) {
-        curr_heading = tm->get_current_heading();
-
+    // Turn until within 1 degrees of desired heading or until it overshoots
+    // (change in angle starts majorly increasing instead of decreasing)
+    while (angle_to_travel > 1 && (previous_angle_to_travel - angle_to_travel) >= -0.05) {
         // Speeds up as leaving initial angle and slows down as approaching destination
-        if (curr_heading <= (initial_heading + heading)/2) {
+        if (angle_to_travel > total_angle_to_travel/2) {
             // First half of distance
-            velocity = atan(fabs(curr_heading - initial_heading)) * 2 * (max_velocity-min_velocity) / M_PI + min_velocity;
-            //std::cout << "Here1: " << velocity << std::endl;
+            velocity = atan(fabs(total_angle_to_travel - angle_to_travel)) * 2 
+                * (max_velocity-min_velocity) / M_PI + min_velocity;
         } else {
             // Second half of distance
-            velocity = atan(stopping_aggression * fabs(heading - curr_heading)) * 2 * max_velocity / M_PI;
-            //std::cout << "Here2: " << velocity << std::endl;
+            velocity = atan(stopping_aggression * angle_to_travel) * 2 * max_velocity / M_PI;
         }
 
         hw->left_drivetrain_motors.setVelocity(-velocity * turn_direction, vex::velocityUnits::pct);
         hw->right_drivetrain_motors.setVelocity(velocity * turn_direction, vex::velocityUnits::pct);
         
-        vex::wait(35, vex::timeUnits::msec);
-        std::cout << "Drive: " << curr_heading << ", " << velocity << "," << tm->odometry_x_position << "," << tm->odometry_y_position << "," << tm->odometry_heading << std::endl;
+        vex::wait(30, vex::timeUnits::msec);  // Wait for odometry to update
+       
+        previous_angle_to_travel = angle_to_travel;  // For stopping if overshoots
+        angle_to_travel = fabs(heading - tm->get_current_heading());
+        // Make sure to keep shortest angle to travel (just incase it passes 0/360)
+        if (angle_to_travel > 180) angle_to_travel = 360 - angle_to_travel; 
+
     }
 
-    hw->drivetrain.stop();                       // TODO: Give a vel value later
+    hw->drivetrain.stop();                  
+    vex::wait(35, vex::timeUnits::msec);  // Wait for odometry wheels to update
 }
 
 
@@ -89,54 +92,64 @@ void AutoDrive::rotate_to_position(std::pair<double, double> final_position, boo
 
     if (ISBACKROTATION)
         heading -= 180;
-    rotate_to_heading_odometry(heading); //changed to odometry function
+    rotate_to_heading(heading); 
 
 }
 
-void AutoDrive::rotate_and_drive_to_position(std::pair<double, double> position, bool ISBACKTOPOSITION)
+void AutoDrive::rotate_and_drive_to_position(std::pair<double, double> position, 
+    bool ISBACKTOPOSITION)
 {
 
     rotate_to_position(position, ISBACKTOPOSITION);
 
     // if (IS_USING_GPS_HEADING) tm->set_current_heading(tm->getGPSPosition());
 
-    double distance_to_position = tm->get_distance_between_points(tm->get_current_position(), position); // inches
+    double distance_to_position = tm->get_distance_between_points(tm->get_current_position(), 
+        position); // inches
     if (ISBACKTOPOSITION) distance_to_position = -distance_to_position;
         
-    // move_drivetrain_distance({rc->auto_drive_velocity_percent, 0}, distance_to_position); // Drive at auto_drive_velocity_percent% velocity
-    //changed to odometry function
-    move_drivetrain_distance_odometry(position, ISBACKTOPOSITION);
+    drive_to_position(position, ISBACKTOPOSITION);
 }
 
-void AutoDrive::rotate_and_drive_to_position(GameElement* element)
+void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBACKTOPOSITION) 
 {
-    InteractionObject* object = static_cast<InteractionObject*>(element); 
-    std::pair<double, double> position = object->get_position();
 
-    if (*(object->get_interaction_angle()) == tm->get_current_heading()) // if can interact head on
-    {
-        rotate_to_position(position, object->get_alignment());
-        move_drivetrain_distance_odometry(position, object->get_alignment());
-    }
-    else
-    {
-        double interaction_angle = *(object->get_interaction_angle()); // adjusted for 'headingAdust'
-        std::pair<double, double> original_position = position;
-        if (interaction_angle == 90) { position.second -= drivetrain_offset; }
-        else if (interaction_angle == 135) { position.first += 1.4 * drivetrain_offset; position.second -= 1.4 * drivetrain_offset; }
-        else if (interaction_angle == 180) { position.first += drivetrain_offset; }
-        else if (interaction_angle == 225) { position.first += 1.4 * drivetrain_offset; position.second -= 1.4 * drivetrain_offset; }
-        else if (interaction_angle == 270) { position.second += drivetrain_offset; }
-        else if (interaction_angle == 360) { position.first -= drivetrain_offset; }
-        else if (interaction_angle == 45) { position.first -= 1.4 * drivetrain_offset; position.second -= 1.4 * drivetrain_offset; }
-        else if (interaction_angle == -45) { position.first -= 1.4 * drivetrain_offset; position.second += 1.4 * drivetrain_offset; }
+    double current_distance = tm->get_distance_between_points(tm->get_current_position(), position);
+    double distance = current_distance; // Distance goal
+    double previous_distance = current_distance; 
 
-        rotate_to_position(original_position, object->get_alignment());
-        move_drivetrain_distance_odometry(original_position, object->get_alignment());
+    const double min_velocity = 20;
+    const double max_velocity = 80;
+    const double stopping_aggression = 0.1; // Lower number is higher aggression (steeper slope)
+    double velocity;
+
+    // 1 if forward, -1 if backward
+    double drive_direction = ISBACKTOPOSITION ? -1: 1;
+    hw->drivetrain.spin(vex::directionType::fwd, min_velocity * drive_direction, 
+        vex::velocityUnits::pct);
+
+    // Turn until within 0.5 inches of desired distance or until it overshoots 
+    // (change in distance starts majorly increasing instead of decreasing)
+    while (fabs(current_distance) > 0.5 && (previous_distance - current_distance) >= -0.01) {
+        // Speeds up as leaving initial position and slows down as approaching destination
+        if (current_distance >= distance/2) {
+            // First half of distance
+            velocity = atan(distance - current_distance) * 2 * (max_velocity-min_velocity) / M_PI 
+                + min_velocity;
+        } else {
+            // Second half of distance
+            velocity = atan(stopping_aggression * current_distance) * 2 * max_velocity / M_PI;
+        }
+        hw->drivetrain.setVelocity(velocity * drive_direction, vex::velocityUnits::pct);
+      
+        vex::wait(35, vex::timeUnits::msec);  // Wait for odometry wheels to update
+
+        previous_distance = current_distance; // So don't overshoot
+        current_distance = tm->get_distance_between_points(tm->get_current_position(), position); 
     }
+
+    hw->drivetrain.stop();  // Stop wheels
+    vex::wait(35, vex::timeUnits::msec);  // Wait for odometry wheels to update
 }
-
-
-
 
 

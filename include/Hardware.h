@@ -39,10 +39,7 @@ public:
     vex::rotation back_odometry =  vex::rotation(vex::PORT8);
 
     // Distance Sensor
-    vex::distance distanceSensor = vex::distance(vex::PORT21);  // Change port later
-
-    // GPS Sensor 
-    vex::gps gpsSensor = vex::gps(vex::PORT22, /*originx*/ 0, /*originy*/ -4.5, /*dist unit*/ vex::distanceUnits::in, /*head offset*/ 180, /*direction turntype*/ vex::turnType::right); //Currently granny caliibration... Sid -3.3 origin y?
+    vex::distance distanceSensor = vex::distance(vex::PORT20);  // Change port later
 
     // Pneumatic test
     vex::digital_out right_plow = vex::digital_out(brain.ThreeWirePort.B); //right

@@ -30,10 +30,7 @@ bool isControlled;
 /*---------------------------------------------------------------------------*/
 
 void pre_auton(void) {
-
-  
   vex::wait(20, vex::msec);
-  
   return;
 }
 
@@ -49,8 +46,7 @@ void pre_auton(void) {
 
 
 void autonomous(void) {
-  //if(!isControlled){
-    std::cout << "START__________________" << '\n';
+	//if(!isControlled){
     icebot->driveAuto();
   //}
 }
@@ -67,11 +63,9 @@ void autonomous(void) {
 
 
 void usercontrol(void) {
-  //icebot = new Robot();
-
-  icebot->drive();
-  // Sleep the task for a short amount of time to prevent wasted resources.
-  //vex::wait(20, vex::msec); 
+	icebot->drive();
+	// Sleep the task for a short amount of time to prevent wasted resources.
+	//vex::wait(20, vex::msec); 
 
 }
 
@@ -82,20 +76,15 @@ void usercontrol(void) {
 int main() {
   
 
-  //Competition callbacks
-  Competition.autonomous(autonomous);
-  Competition.drivercontrol(usercontrol);
+	//Competition callbacks
+	Competition.autonomous(autonomous);
+	Competition.drivercontrol(usercontrol);
   
-  // Run the pre-autonomous function.
-  pre_auton();
+	// Run the pre-autonomous function.
+	pre_auton();
 
-  //Stops test_driver from interfering with auto (weird bug)
-  if (!Competition.isCompetitionSwitch() && !Competition.isFieldControl()) {
-    Competition.test_auton();
-  }
-
-  // Prevent main from exiting with an infinite loop.
-  while (true) {
-    wait(100, msec);
-  }
+	// Prevent main from exiting with an infinite loop.
+	while (true) {
+		wait(100, msec);
+	}
 }
