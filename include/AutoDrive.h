@@ -39,10 +39,6 @@ private:
     /// @param heading Double that is the counterclockwise angle in degrees from the x asis.
     void rotate_to_heading(double heading);
 
-    // /// @brief   Rotates the robot to align with the element on the field. Assumes the inertia sensor is set so 0 is at the positive x axis.
-    // /// @param gameElement  GameElement that is the object to rotate to.
-    // void rotate_to_position(GameElement *gameElement);
-
     /// @brief Rotates the robot to align with a coordinate on the field.  Assumes 0 degrees is at 
     /// the positive x axis.
     /// @param final_position Pair of doubles {x,y} of the coordinate in inches to align with 
@@ -51,10 +47,17 @@ private:
     /// coordinate instead of the front
     void rotate_to_position(std::pair<double, double> final_position, bool ISBACKROTATION = false);
 
-    // /// @brief  Rotates the robot to align with a GameElement on the field. Assumes the 
-    // /// inertia sensor is set so 0 is at the positive x axis.
-    // /// @param gameElement  GameElement that is the object to rotate and drive to.
-    void rotate_and_drive_to_position(GameElement *element);
+    /// @brief   Rotates the robot to align with the element on the field. Assumes the inertia 
+    ///     sensor is set so 0 is at the positive x axis.
+    /// @param element  InteractionObject that is the object to rotate and drive to.
+    /// @param IS_BACK_POSITION Rotates so the back is aligned toward the object.
+    /// @param IS_OFFSET If true, rotates so that the element is aligned with the front (or back)
+    ///      of the bot instead of at the center.
+    /// @param IS_OFFSET_EXTRA If true, rotates so that the element is aligned with the front 
+    ///     (or back) of the bot instead of at the center with extra room to turn.
+    void rotate_to_position(InteractionObject *element, bool IS_BACK_POSITION = false, 
+        bool IS_OFFSET = false, bool IS_OFFSET_EXTRA = false);
+
 
     /// @brief Rotates the robot to align with a coordinate on the feild and drives to that 
     /// position. Assumes 0 degrees is at the positive x axis.
@@ -63,14 +66,20 @@ private:
     /// @param ISBACKTOPOSITION Boolean that if true, rotates the back of the robot to the 
     /// coordinate instead of the front.
     void rotate_and_drive_to_position(std::pair<double, double> position, 
-    bool ISBACKTOPOSITION = false);
+        bool ISBACKTOPOSITION = false);
 
-    /// @brief Moves the drivetrain STRAIGHT until the distance between the current position add
-    ///  (goal) position is almost 0.
-    /// @param position Pair of doubles: {X, Y}
-    /// @param ISBACKTOPOSITION A bool value that determines the direction the bot moves.
-    /// void drive_to_position(std::pair<double, double> position, bool ISBACKTOPOSITION = false);
-    
+    /// @brief  Rotates the robot to align with a InteractionObject on the field. Assumes the 
+    /// inertia sensor is set so 0 is at the positive x axis.
+    /// @param element  InteractionObject that is the object to rotate and drive to.
+    /// @param IS_BACK_POSITION Drives backward toward the object.
+    /// @param IS_OFFSET If true, drives so that the element is at the front (or back) of the bot
+    ///     instead of at the center.
+    /// @param IS_OFFSET_EXTRA If true, drives so that the element is at the front (or back) of the bot
+    ///     instead of at the center with extra room to turn.
+    void rotate_and_drive_to_position(InteractionObject *element, bool IS_BACK_POSITION= false, 
+        bool IS_OFFSET=false, bool IS_OFFSET_EXTRA=false);
+
+
     /// @brief Moves the drivetrain STRAIGHT until the distance between the current position add
     ///  (goal) position is almost 0.
     /// @param position Pair of doubles: {X, Y}

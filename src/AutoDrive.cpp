@@ -130,21 +130,40 @@ void AutoDrive::rotate_to_position(std::pair<double, double> final_position, boo
 
 }
 
+void AutoDrive::rotate_to_position(InteractionObject *element, bool IS_BACK_POSITION, 
+    bool IS_OFFSET, bool IS_OFFSET_EXTRA)
+{
+    std::pair<double, double> position = {};
+    if (IS_OFFSET) position = {0,0}; // TODO: sub in function when done
+    else if (IS_OFFSET_EXTRA) position = {0,0}; // TODO: sub in function when done
+    else position = element->get_position();
+
+    rotate_to_position(position, IS_BACK_POSITION);
+}
+
 void AutoDrive::rotate_and_drive_to_position(std::pair<double, double> position, 
     bool ISBACKTOPOSITION)
 {
 
     rotate_to_position(position, ISBACKTOPOSITION);
-    //vex::wait(1000,vex::timeUnits::msec); // TODO: TAKE THIS OUT
-
-    // if (IS_USING_GPS_HEADING) tm->set_current_heading(tm->getGPSPosition());
 
     double distance_to_position = tm->get_distance_between_points(tm->get_current_position(), 
         position); // inches
     if (ISBACKTOPOSITION) distance_to_position = -distance_to_position;
         
     drive_to_position(position, ISBACKTOPOSITION);
-    //vex::wait(1000,vex::timeUnits::msec); // TODO: TAKE THIS OUT
+
+}
+
+void AutoDrive::rotate_and_drive_to_position(InteractionObject *element, bool IS_BACK_POSITION, 
+    bool IS_OFFSET, bool IS_OFFSET_EXTRA) {
+    
+    std::pair<double, double> position = {};
+    if (IS_OFFSET) position = {0,0}; // TODO: sub in function when done
+    else if (IS_OFFSET_EXTRA) position = {0,0}; // TODO: sub in function when done
+    else position = element->get_position();
+
+    rotate_and_drive_to_position(position, IS_BACK_POSITION);
 }
 
 void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBACKTOPOSITION) 
@@ -239,7 +258,7 @@ std::pair<double, double> AutoDrive::get_point_with_offset(InteractionObject* el
 void AutoDrive::plow_strategy() {
 
     // Prepare to ram at top of red goal
-    std::pair<double, double> top_goal_position = mp->goals[3];
+    std::pair<double, double> top_goal_position = mp->goals[3]->get_position();
     std::pair<double, double> top_goal_prep_position = top_goal_position;
     top_goal_prep_position.second += 12.43; // Offset from goal by ~1 foot
     pg->generate_path(path, tm->get_current_position(), top_goal_prep_position);

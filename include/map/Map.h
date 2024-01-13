@@ -402,12 +402,12 @@ class Map {
         double* ZERO = new double(0 + heading_adjust);
 
         // Map Elements
-        std::vector<GameElement*> loadzones;
-        std::vector<GameElement*> startzones;
-        std::vector<GameElement*> goals;
-        std::vector<GameElement*> triballs;
-        std::vector<GameElement*> walls;
-        std::vector<GameElement*> bars;
+        std::vector<InteractionObject*> loadzones;
+        std::vector<Obstacle*> startzones;
+        std::vector<InteractionObject*> goals;
+        std::vector<InteractionObject*> triballs;
+        std::vector<Obstacle*> walls;
+        std::vector<InteractionObject*> bars;
         std::vector<Buffer*> buffers;
         std::vector<Region*> regions;
         int next_region_id = 0;
