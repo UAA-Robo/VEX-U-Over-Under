@@ -95,11 +95,11 @@ int Drive::run_catapult_thread(void* param)
 {
     // WARNING: DON'T print in this thread or it will take too long and miss the catapult press
     Drive* dr = static_cast<Drive*>(param);
-    
     while(true) {
-        // If limit switch touched, stop catapult
+        // STOP catapult
         if (dr->hw->catapult_limit_switch.value() == 1) {
-            dr->hw->catapult.stop();
+            //dr->hw->catapult.stop();
+            dr->hw->catapult.spin(vex::directionType::rev, 0.5, vex::voltageUnits::volt); // STOP
             dr->CATAPULT_STOPPED = true; 
         }
         // If told to launch, start catapult
