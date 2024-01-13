@@ -22,7 +22,7 @@ public:
 private:
     PathGenerator *pg;
     Map *mp;
-    //RobotConfig *rc;
+    RobotConfig *rc;
 
     std::vector<std::pair<double, double>> path;
 
@@ -92,8 +92,7 @@ private:
     /// @brief Provides the position of interaction for a game element based off its interaction_angle
     /// @param element GameElement passed in to recieve new value
     /// @return GameElement position with offset
-    std::pair<double, double> get_point_with_offset(GameElement* element);
-    
+    std::pair<double, double> get_point_with_offset(InteractionObject* element);
     /// @brief Executes the plow strategy in the game.
     void run_plow_strategy();
 };

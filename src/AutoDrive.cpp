@@ -4,7 +4,7 @@
 AutoDrive::AutoDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry) : Drive(hardware, robotConfig, telemetry) {
         mp = new Map(telemetry, robotConfig, IS_SKILLS);
         pg = new PathGenerator(robotConfig, mp);
-        //rc = RobotConfig;
+        rc = robotConfig;
     }
 
 void AutoDrive::drive() {
@@ -230,16 +230,44 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
     vex::wait(1000, vex::timeUnits::msec);  // Wait for odometry wheels to update
 }
 
-// AutoDrive::get_point_with_offset(GameElement* element)
-// {
-//     InteractionObject* object = static_cast<InteractionObject*>(element);
-//     std::pair<double, double> new_position = element->get_position();
+std::pair<double, double> AutoDrive::get_point_with_offset(InteractionObject* element)
+{
+    std::pair<double, double> new_position = element->get_position();
 
-//     if (object->get_interaction_angle == tm->get_current_heading())
-//     {
-//         return new_position;
-//     }
+    if (*(element->get_interaction_angle()) == tm->get_current_heading())
+    {
+        return new_position;
+    }
     
+    // adjusted for heading_adjust, original get_interaction_angle = ...
+    // ZERO
+    if (*(element->get_interaction_angle()) == 90) {
+        new_position.second -= rc->DRIVETRAIN_RADIUS;
+    }
+    // FORTY_FIVE
+    else if (*(element->get_interaction_angle()) == 135) {
+        new_position.first += rc->DRIVETRAIN_RADIUS / sqrt(2);
+        new_position.second -= rc->DRIVETRAIN_RADIUS / sqrt(2);
+    }
+    // NINETY
+    else if (*(element->get_interaction_angle()) == 180) {
+        new_position.first += rc->DRIVETRAIN_RADIUS;
+    }
+    // ONE_THIRTY_FIVE
+    else if (*(element->get_interaction_angle()) == 225) {
+        new_position.first += rc->DRIVETRAIN_RADIUS / sqrt(2);
+        new_position.second += rc->DRIVETRAIN_RADIUS / sqrt(2);
+    }
+    // ONE_EIGHTY
+    //else if (element->get_interaction_angle == 0)
+    // TWO_SEVENTY
+    // NEG_FORTY_FIVE
+    // NEG_NINETY
+
+
+    return new_position;
+}
+
 //     // adjusted for heading_adjust, original interaction_angle = ...
 //     // 0
 //     if (object->interaction_angle == 90) { new_position.second - }
@@ -354,4 +382,3 @@ void AutoDrive::run_plow_strategy() {
     snowplow_in();
     drive_to_position(prep_pos, true);
 }
-
