@@ -7,7 +7,7 @@ UserDrive::UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *te
     IS_MACRO_RECORDING = false;
     macro_length = -2;
     
-    vex::task run_catapult_task = vex::task(run_catapult, this, 1); // Start catapult. TODO: fix so this goes in drive()
+    vex::task run_catapult_task = vex::task(run_catapult_thread, this, 1); // Start catapult. TODO: fix so this goes in drive()
 
     if (input_list.size() == 0) // Setup vector
     {
@@ -48,7 +48,7 @@ void UserDrive::drive() {
     get_inputs();
     macro_controls();
     drivetrain_controls();
-
+    catapult_controls();
     intake_controls();
     snowplow_controls();
     ++tick;
@@ -162,28 +162,14 @@ void UserDrive::snowplow_controls() {
     }
 }
 
-int UserDrive::run_catapult(void* param)
+
+void UserDrive::catapult_controls()
 {
-    // WARNING: DON'T print in this thread or it will take too long and miss the catapult press
-    UserDrive* ud = static_cast<UserDrive*>(param);
-    
-    while(1) {
-        
-        if (ud->hw->catapult_limit_switch.value() == 0) {
-            ud->hw->catapult.stop();
-            ud->CATAPULT_STOPPED = true; // if limit switch touched, stop catapult
-        }
-        if (ud->button_R1.value == 1) ud->CATAPULT_STOPPED = false;
-        if (!ud->CATAPULT_STOPPED) {
-            ud->hw->catapult.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
-        }
-        vex::wait(10, vex::timeUnits::msec);
-    }
+    if (button_R1.value == 1) launch_catapult();
+    else stop_catapult();
 }
 
 
-
-// Adjust intake expansion
 void UserDrive::intake_controls()
 {
     if (button_A.value == 1){

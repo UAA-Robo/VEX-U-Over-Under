@@ -114,3 +114,31 @@ void Drive::snowplow_in() {
     hw->right_plow.set(true);
     hw->left_plow.set(true);
 }
+
+int Drive::run_catapult_thread(void* param)
+{
+    // WARNING: DON'T print in this thread or it will take too long and miss the catapult press
+    Drive* dr = static_cast<Drive*>(param);
+    
+    while(true) {
+        // If limit switch touched, stop catapult
+        if (dr->hw->catapult_limit_switch.value() == 1) {
+            dr->hw->catapult.stop();
+            dr->CATAPULT_STOPPED = true; 
+        }
+        // If told to launch, start catapult
+        if (dr->START_CATAPULT_LAUNCH) dr->CATAPULT_STOPPED = false;
+        if (!dr->CATAPULT_STOPPED) {
+            dr->hw->catapult.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
+        }
+        vex::wait(10, vex::timeUnits::msec);
+    }
+}
+
+void Drive::launch_catapult() {
+    START_CATAPULT_LAUNCH = true;
+}
+
+void Drive::stop_catapult() {
+    START_CATAPULT_LAUNCH = false;
+}

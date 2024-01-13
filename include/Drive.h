@@ -66,4 +66,19 @@ protected:
 
     /// @brief Sucks air in when Y button is pressed to retract snowplow.
     void snowplow_in();
+
+    /// @brief Spins the catapult motors until limit switch is hit or launch/stop_catapult is 
+    ///     called. Loops forever because it is on it's own thread.
+    /// @param param For passing the telemetry class (this)
+    /// @return Does not return anything but VEX requires type int return.
+    static int run_catapult_thread(void* param);
+
+    /// @brief Trigger the catapult motors to start turning to launch
+    void launch_catapult();
+
+    /// @brief Trigger the catapult to stop and reset at the limit swiitch.
+    void stop_catapult();
+
+    bool START_CATAPULT_LAUNCH = false;
+    bool CATAPULT_STOPPED = false;
 };

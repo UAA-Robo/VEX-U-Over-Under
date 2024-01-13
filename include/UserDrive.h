@@ -8,6 +8,8 @@ public:
     void drive();
     
 
+    
+
 private:
     struct input {
     int value;
@@ -45,9 +47,8 @@ private:
     //          Left/right on the right joystick is turning.
     void drivetrain_controls();
 
-    /// @brief Spins the catapult motors until limit switch is hit. Loops forever because it is on,
-    ///     it's own thread.
-    static int run_catapult(void* param);
+    /// @brief Launches the catapult when R1 is pressed. Resets to down (limit switch otherwise)
+    void catapult_controls();
 
     /// @brief Controls the snowplow. X button expands the plows out and Y retracts them in.
     void snowplow_controls();
