@@ -41,7 +41,8 @@ public:
     /// @return Returns heading in degree
     double get_current_heading();
     
-   
+    /// public so map can access address
+    double odometry_heading = 0;  //In degrees
 
 private:
     Hardware *hw;

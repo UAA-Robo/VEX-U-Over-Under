@@ -12,6 +12,11 @@ public:
     double auto_drive_velocity_percent;
     double auto_rotate_velocity_percent;
     double DRIVETRAIN_WIDTH; // distance (in inch) between left and right side of the drivetrain (measured from the center of the wheels)
+    
+    // for MAP offsets (test)
+    double DRIVETRAIN_LENGTH; //! Temporary, configure actual values later
+
+    double ODOMETRY_DIAMETER;
 
     // Starting position
     std::pair<double, double> starting_pos = {-12.0, 0.0};

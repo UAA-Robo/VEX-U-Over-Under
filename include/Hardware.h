@@ -39,8 +39,7 @@ public:
     vex::rotation back_odometry =  vex::rotation(vex::PORT8);
 
     // Distance Sensor
-    vex::distance distanceSensor = vex::distance(vex::PORT21);  // Change port later
-
+    vex::distance distanceSensor = vex::distance(vex::PORT20);  // Change port later
 
     // Pneumatic test
     vex::digital_out right_plow = vex::digital_out(brain.ThreeWirePort.B); //right

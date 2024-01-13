@@ -12,11 +12,7 @@
                 "${fileDirname}\\${fileBasenameNoExtension}.exe"
             ],
             "options": {
-<<<<<<< HEAD
                 "cwd": "C:\\MinGW\\bin"
-=======
-                "cwd": "${fileDirname}"
->>>>>>> 3707fd61a5c121a9f81938c5832f70b2fb258cee
             },
             "problemMatcher": [
                 "$gcc"

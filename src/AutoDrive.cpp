@@ -1,10 +1,10 @@
 #include "AutoDrive.h"
 
 
-AutoDrive::AutoDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry)
-    : Drive(hardware, robotConfig, telemetry) {
-        mp = new Map(robotConfig);
+AutoDrive::AutoDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry) : Drive(hardware, robotConfig, telemetry) {
+        mp = new Map(telemetry, robotConfig, IS_SKILLS);
         pg = new PathGenerator(robotConfig, mp);
+
     }
 
 void AutoDrive::drive() {
@@ -139,7 +139,6 @@ void AutoDrive::rotate_and_drive_to_position(std::pair<double, double> position,
     drive_to_position(position, ISBACKTOPOSITION);
     //vex::wait(1000,vex::timeUnits::msec); // TODO: TAKE THIS OUT
 }
-
 
 void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBACKTOPOSITION) 
 {

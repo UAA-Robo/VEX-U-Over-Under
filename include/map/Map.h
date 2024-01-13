@@ -2,6 +2,10 @@
 #include <vector>
 #include <string>
 
+#include "InteractionObject.h"
+#include "GameElements.h"
+#include "MapObstacle.h"
+#include "Telemetry.h"
 #include "RobotConfig.h"
 #include "Buffer.h"
 #include "Region.h"
@@ -10,12 +14,12 @@
     Representation of Map
 */
 
-
-
 class Map {
     private:
-
+        int next_element_id;
         RobotConfig *rc;
+        Telemetry* tm;
+        bool IS_SKILLS;
 
         /// @brief Adds a buffer to the map.
         /// @param upper_left_corner The upper left corner coordinates.
@@ -70,10 +74,144 @@ class Map {
             regions.push_back(cr);
         }
 
+        void add_wall(double upper_left_x, double upper_left_y, double lower_right_x, double lower_right_y) {
+            walls.push_back(new Obstacle(next_element_id++, upper_left_x, upper_left_y, lower_right_x, lower_right_y));
+        }
+
+        void add_startzone(double upper_left_x, double upper_left_y, double lower_right_x, double lower_right_y) {
+            startzones.push_back(new Obstacle(next_element_id++, upper_left_x, upper_left_y, lower_right_x, lower_right_y));
+        }
+
+        void add_triball(double x, double y, char team_color){
+            triballs.push_back(new InteractionObject(next_element_id++, x, y, team_color, triball_interaction_angle, true));
+        }
+
+        void add_loadzone(double x, double y, char team_color, double* interaction_angle) {
+            loadzones.push_back(new InteractionObject(next_element_id++, x, y, team_color, interaction_angle));
+        }
+
+        void add_goal(double x, double y, char team_color, double* interaction_angle) {
+            goals.push_back(new InteractionObject(next_element_id++, x, y, team_color, interaction_angle));
+        }
+
+        void add_bar(double x, double y, char team_color, double* interaction_angle) {
+            bars.push_back(new InteractionObject(next_element_id++, x, y, team_color, interaction_angle));
+        }
+
+
     public:
-        Map(RobotConfig *robotConfig) {
+        Map(Telemetry* telemetry, RobotConfig *robotConfig, bool IS_SKILLS) {
+            tm = telemetry;
             rc = robotConfig;
+<<<<<<< HEAD
             double drive_train_adjustment = rc->DRIVETRAIN_WIDTH * sqrt(2) / 2;
+=======
+            next_element_id = 0;
+            this->IS_SKILLS = IS_SKILLS;
+            double drive_train_adjustment = rc->DRIVETRAINWIDTH * sqrt(2) / 2;
+>>>>>>> origin/main
+
+            // outer walls
+            add_wall(0 + x_adjust, 140.40 + y_adjust, 0 + x_adjust, 0 + y_adjust);                  // wall 0                                                  
+            add_wall(0 + x_adjust, 140.40 + y_adjust, 140.40 + x_adjust, 140.40 + y_adjust);        // wall 1
+            add_wall(0 + x_adjust, 0 + y_adjust, 140.40 + x_adjust, 0 + y_adjust);                  // wall 2
+            add_wall(140.40 + x_adjust, 140.40 + y_adjust, 0 + x_adjust, 140.40 + y_adjust);        // wall 3
+
+            // inner walls
+            add_wall(45.61 + x_adjust, 118.51 + y_adjust, 94.79 + x_adjust, 118.51 + y_adjust);     // wall 4
+            add_wall(45.61 + x_adjust, 118.51 + y_adjust, 94.79 + x_adjust, 118.51 + y_adjust);     // wall 5
+            add_wall(69.01 + x_adjust, 118.51 + y_adjust, 69.01 + x_adjust, 21.89 + y_adjust);      // wall 6
+            add_wall(71.39 + x_adjust, 118.51 + y_adjust, 71.39 + x_adjust, 21.89 + y_adjust);      // wall 7
+            add_wall(45.61 + x_adjust, 24.26 + y_adjust, 94.79 + x_adjust, 24.26 + y_adjust);       // wall 8
+            add_wall(45.61 + x_adjust, 21.89 + y_adjust, 94.79 + x_adjust, 21.89 + y_adjust);       // wall 9
+
+            /*
+            ----HEAD TO HEAD TRIBALLS --------------------------------------------------------------
+            */
+
+            if (!IS_SKILLS)
+            {
+                // red
+                add_triball(46.64 + x_adjust, 70.20 + y_adjust, 'R');                               // triball 0
+                add_triball(65.95 + x_adjust, 93.77 + y_adjust, 'R');                               // triball 1
+                add_triball(65.95 + x_adjust, 70.20 + y_adjust, 'R');                               // triball 2
+                    // nuetral
+                add_triball(70.20 + x_adjust, 129.11 + y_adjust, 'N');                              // triball 3
+                add_triball(70.20 + x_adjust, 11.30 + y_adjust, 'N');                               // triball 4
+                    // blue
+                add_triball(74.46 + x_adjust, 70.20 + y_adjust, 'B');                               // triball 5
+                add_triball(74.46 + x_adjust, 46.64 + y_adjust, 'B');                               // triball 6
+                add_triball(93.77 + x_adjust, 70.20 + y_adjust, 'B');                               // triball 7
+            }
+
+            /*
+            ----SKILLS TRIBALLS --------------------------------------------------------------------
+            */
+            else
+            {
+                    // red
+                add_triball(44.64 + x_adjust, 70.22 + y_adjust, 'R');                               // triball 0
+                add_triball(60.22 + x_adjust, 113.17 + y_adjust, 'R');                              // triball 1
+                add_triball(60.22 + x_adjust, 93.79 + y_adjust, 'R');                               // triball 2
+                add_triball(60.22 + x_adjust, 70.22 + y_adjust, 'R');                               // triball 3
+                add_triball(60.22 + x_adjust, 46.66 + y_adjust, 'R');                               // triball 4
+                add_triball(60.22 + x_adjust, 27.28 + y_adjust, 'R');                               // triball 5
+
+                    // nuetral
+                add_triball(70.20 + x_adjust, 129.13 + y_adjust, 'N');                              // triball 6
+                add_triball(70.20 + x_adjust, 11.32 + y_adjust, 'N');                               // triball 7
+            }
+
+            /*
+            ----------------------------------------------------------------------------------------
+            */
+
+            // load Zones
+            
+                // red
+            add_loadzone(22.89 / 2 + x_adjust, 129.11 + y_adjust, 'R', FORTY_FIVE);                 // loadzone 0
+            add_loadzone(22.89 / 2 + x_adjust, 11.30  + y_adjust, 'R', ONE_THIRTY_FIVE);            // loadzone 1
+
+                // blue
+            add_loadzone(122.76 + x_adjust, 129.11 + y_adjust, 'B', NEG_FORTY_FIVE);                // loadzone 2
+            add_loadzone(122.76 + x_adjust, 11.30 + y_adjust, 'B', NEG_ONE_THIRTY_FIVE);            // loadzone 3
+
+
+            // corners-starting zones
+            add_startzone(0 + x_adjust, 140.41 + y_adjust, 70.20 + x_adjust, 58.42 + y_adjust);     // startzone 0
+            add_startzone(0 + x_adjust, 70.20 + y_adjust, 70.20 + x_adjust, 0 + y_adjust);          // startzone 1
+            add_startzone(70.20 + x_adjust, 140.41 + y_adjust, 140.41 + x_adjust, 70.20 + y_adjust);// startzone 2
+            add_startzone(70.20 + x_adjust, 81.985 +y_adjust, 140.41 + x_adjust, 0 + y_adjust);     // startzone 3
+
+            // triball goals--interaction point
+                // red
+            add_goal(11.66 + x_adjust, 93.77 + y_adjust, 'R', ONE_EIGHTY);                          // goal 0
+            add_goal(11.66 + x_adjust, 46.64 + y_adjust, 'R', ZERO);                                // goal 1
+            add_goal(23.32 + x_adjust, 81.985 + y_adjust, 'R', NINETY);                             // goal 2
+            add_goal(23.32 + x_adjust, 70.20 + y_adjust, 'R', NINETY);                              // goal 3
+            add_goal(23.32 + x_adjust, 58.41 + y_adjust, 'R', NINETY);                              // goal 4
+
+                //blue
+            add_goal(117.09 + x_adjust, 81.985 + y_adjust, 'B', TWO_SEVENTY);                       // goal 5
+            add_goal(117.09 + x_adjust, 70.20 + y_adjust, 'B', TWO_SEVENTY);                        // goal 6
+            add_goal(117.09 + x_adjust, 58.41 + y_adjust, 'B', TWO_SEVENTY);                        // goal 7
+            add_goal(128.75 + x_adjust, 93.77 + y_adjust, 'B', ONE_EIGHTY);                         // goal 8
+            add_goal(128.75 + x_adjust, 46.64 + y_adjust, 'B', ZERO);                               // goal 9
+
+
+        /*
+            PLACE HOLDERS!!!                // TODO: Change Later once robot is built
+        */
+            // HighBar
+            add_bar(70.20 + x_adjust, 129.11 + y_adjust, 'B', triball_interaction_angle);           // bar 0
+            add_bar(70.20 + x_adjust, 11.30 + y_adjust, 'R', triball_interaction_angle);            // bar 2
+
+            // Elevation Bar
+            add_bar(70.20 + x_adjust, 117.33 + y_adjust, 'B', triball_interaction_angle);           // bar 3
+            add_bar(70.20 + x_adjust, 23.08 + y_adjust, 'R', triball_interaction_angle);            // bar 4
+
+        
+
 
             /*
             ----- REGIONS --------------------------------------------------------------------------
@@ -239,8 +377,6 @@ class Map {
             return -1;
         }
 
-
-
         /// @brief Retrieves the critical point for a region
         /// @param region The ID of the region
         /// @param IS_UPPER Whether the critical point must be an upper or lower point
@@ -253,8 +389,29 @@ class Map {
         // coordinates-angle-readjustment - Wa did this it's so cool!
         double x_adjust = -70.20;    // inches
         double y_adjust = -70.20;    // inches
-        double headingAdjust = 90;  // degree
+        double heading_adjust = 90;  // degree
 
+        double* triball_interaction_angle = &(tm->odometry_heading);
+
+        // for angles
+        double* TWO_SEVENTY = new double(270 + heading_adjust);
+        double* ONE_EIGHTY = new double(180 + heading_adjust);
+        double* ONE_THIRTY_FIVE = new double (135 + heading_adjust);
+        double* NINETY = new double (90 + heading_adjust);
+        double* FORTY_FIVE = new double(45 + heading_adjust);
+
+        double* NEG_ONE_THIRTY_FIVE = new double(-135 + heading_adjust);
+        double* NEG_FORTY_FIVE = new double(-45 + heading_adjust);
+
+        double* ZERO = new double(0 + heading_adjust);
+
+        // Map Elements
+        std::vector<GameElement*> loadzones;
+        std::vector<GameElement*> startzones;
+        std::vector<GameElement*> goals;
+        std::vector<GameElement*> triballs;
+        std::vector<GameElement*> walls;
+        std::vector<GameElement*> bars;
         std::vector<Buffer*> buffers;
         std::vector<Region*> regions;
         int next_region_id = 0;
