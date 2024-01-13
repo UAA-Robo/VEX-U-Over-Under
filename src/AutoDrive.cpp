@@ -1,10 +1,10 @@
 #include "AutoDrive.h"
 
 
-AutoDrive::AutoDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry)
-    : Drive(hardware, robotConfig, telemetry) {
-        mp = new Map(robotConfig);
+AutoDrive::AutoDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry) : Drive(hardware, robotConfig, telemetry) {
+        mp = new Map(telemetry, robotConfig, IS_SKILLS);
         pg = new PathGenerator(robotConfig, mp);
+
     }
 
 void AutoDrive::drive() {
@@ -110,7 +110,6 @@ void AutoDrive::rotate_and_drive_to_position(std::pair<double, double> position,
         
     drive_to_position(position, ISBACKTOPOSITION);
 }
-
 
 void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBACKTOPOSITION) 
 {

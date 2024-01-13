@@ -12,6 +12,13 @@ public:
     /// @brief Main function that initiates to robot.
     void drive();
 
+    /// @brief Determines whether the current game is Skills or Head-To-Head
+    bool IS_SKILLS = false;
+
+    /// @brief Offset
+    double drivetrain_offset;
+    
+
 private:
     PathGenerator *pg;
     Map *mp;
@@ -41,7 +48,7 @@ private:
     // /// @brief  Rotates the robot to align with a GameElement on the field. Assumes the 
     // /// inertia sensor is set so 0 is at the positive x axis.
     // /// @param gameElement  GameElement that is the object to rotate and drive to.
-    // void rotate_and_drive_to_position(GameElement *gameElement);
+    void rotate_and_drive_to_position(GameElement *element);
 
     /// @brief Rotates the robot to align with a coordinate on the feild and drives to that 
     /// position. Assumes 0 degrees is at the positive x axis.
@@ -52,6 +59,12 @@ private:
     void rotate_and_drive_to_position(std::pair<double, double> position, 
     bool ISBACKTOPOSITION = false);
 
+    /// @brief Moves the drivetrain STRAIGHT until the distance between the current position add
+    ///  (goal) position is almost 0.
+    /// @param position Pair of doubles: {X, Y}
+    /// @param ISBACKTOPOSITION A bool value that determines the direction the bot moves.
+    /// void drive_to_position(std::pair<double, double> position, bool ISBACKTOPOSITION = false);
+    
     /// @brief Moves the drivetrain STRAIGHT until the distance between the current position add
     ///  (goal) position is almost 0.
     /// @param position Pair of doubles: {X, Y}

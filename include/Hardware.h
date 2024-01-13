@@ -41,7 +41,6 @@ public:
     // Distance Sensor
     vex::distance distanceSensor = vex::distance(vex::PORT20);  // Change port later
 
-
     // Pneumatic test
     vex::digital_out right_plow = vex::digital_out(brain.ThreeWirePort.B); //right
     vex::digital_out left_plow = vex::digital_out(brain.ThreeWirePort.C); //left

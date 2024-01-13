@@ -13,6 +13,11 @@ public:
     double auto_rotate_velocity_percent;
     double DRIVETRAIN_WIDTH; // distance (in inch) between left and right side of the drivetrain (measured from the center of the wheels)
 
+    // for MAP offsets (test)
+    double DRIVETRAIN_LENGTH; //! Temporary, configure actual values later
+
+    double ODOMETRY_DIAMETER;
+
     int DRIVETRAINWIDTH = 14.0; //! Temporary, configure actual values later
 
 private:
