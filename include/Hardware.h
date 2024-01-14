@@ -4,7 +4,7 @@
 enum robot_name {
     SCRAT = 0,
     SCRATETTE = 1
-}
+};
 
 /// @brief    Stores the electronics (controller, sensors, motors, etc.) used by the other classes.
 class Hardware {
