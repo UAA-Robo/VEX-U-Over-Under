@@ -238,56 +238,42 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
 std::pair<double, double> AutoDrive::get_point_with_offset(InteractionObject* element)
 {
     std::pair<double, double> new_position = element->get_position();
+    double element_interaction_angle = *(element->get_interaction_angle());
 
-    if (*(element->get_interaction_angle()) == tm->get_current_heading())
-    {
-        return new_position;
-    }
-    
     // adjusted for heading_adjust, original get_interaction_angle = ...
-    // ZERO
-    if (*(element->get_interaction_angle()) == 90) {
+    if (element_interaction_angle == tm->get_current_heading()) { /* Any angle */}
+    else if (element_interaction_angle == 90) {     // ZERO
         new_position.second -= rc->DRIVETRAIN_RADIUS;
     }
-    // FORTY_FIVE
-    else if (*(element->get_interaction_angle()) == 135) {
+    else if (element_interaction_angle == 135) {    // FORTY_FIVE
         new_position.first += rc->DRIVETRAIN_RADIUS / sqrt(2);
         new_position.second -= rc->DRIVETRAIN_RADIUS / sqrt(2);
     }
-    // NINETY
-    else if (*(element->get_interaction_angle()) == 180) {
+    else if (element_interaction_angle == 180) {    // NINETY
         new_position.first += rc->DRIVETRAIN_RADIUS;
     }
-    // ONE_THIRTY_FIVE
-    else if (*(element->get_interaction_angle()) == 225) {
+    else if (element_interaction_angle == 225) {    // ONE_THIRTY_FIVE
         new_position.first += rc->DRIVETRAIN_RADIUS / sqrt(2);
         new_position.second += rc->DRIVETRAIN_RADIUS / sqrt(2);
     }
-    // ONE_EIGHTY
-    //else if (element->get_interaction_angle == 0)
-    // TWO_SEVENTY
-    // NEG_FORTY_FIVE
-    // NEG_NINETY
-
+    else if (element_interaction_angle == 270) {    // ONE_EIGHTY
+        new_position.second += rc->DRIVETRAIN_RADIUS;
+    }
+    else if (element_interaction_angle == 360) {    // TWO_SEVENTY
+        new_position.first -= rc->DRIVETRAIN_RADIUS;
+    }
+    else if (element_interaction_angle == 45) {    // NEG_FORTY_FIVE
+        new_position.first += rc->DRIVETRAIN_RADIUS / sqrt(2);
+        new_position.second -= rc->DRIVETRAIN_RADIUS / sqrt(2);
+    }
+    else if (element_interaction_angle == -45) {    // NEG_ONE_THIRTY_FIVE
+        new_position.first -= rc->DRIVETRAIN_RADIUS / sqrt(2);
+        new_position.second -= rc->DRIVETRAIN_RADIUS / sqrt(2);
+    }
 
     return new_position;
 }
 
-//     // adjusted for heading_adjust, original interaction_angle = ...
-//     // 0
-//     if (object->interaction_angle == 90) { new_position.second - }
-//     // 45
-//     // 90
-//     // 135
-//     // 180
-//     // 270
-//     // -45
-//     // -90
-
-
-
-//     return new_position;
-// }
 
 void AutoDrive::run_plow_strategy() {
 

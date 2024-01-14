@@ -4,7 +4,7 @@
 /// @brief Stores any data specific to each robot.
 class RobotConfig {
 public:
-    RobotConfig(Hardware* hw, bool hasSensor);
+    RobotConfig(Hardware* hw);
     float ODOMETRY_LEFT_RIGHT_RADIUS;
     float ODOMETRY_BACK_RADIUS;
     float ODOMETRY_CIRCUMFERENCE;

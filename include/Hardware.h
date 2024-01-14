@@ -56,8 +56,8 @@ public:
     vex::motor_group catapult = vex::motor_group(left_catapult_motor, right_catapult_motor);
 
     // Intake
-    vex::motor left_intake_motor = vex::motor(vex::PORT10, vex::ratio18_1, false);
-    vex::motor right_intake_motor = vex::motor(vex::PORT3, vex::ratio18_1, true);
+    vex::motor left_intake_motor = vex::motor(vex::PORT3, vex::ratio18_1, true);
+    vex::motor right_intake_motor = vex::motor(vex::PORT10, vex::ratio18_1, false);
     vex::motor_group intake = vex::motor_group(left_intake_motor, right_intake_motor);
 
     vex::motor left_intake_expansion_motor = vex::motor(vex::PORT5, vex::ratio18_1, true);
@@ -65,7 +65,7 @@ public:
     vex::motor_group intake_expansion = vex::motor_group(left_intake_expansion_motor, right_intake_expansion_motor);
 
     // Limit switches
-    vex::digital_in catapult_limit_switch = vex::digital_in(brain.ThreeWirePort.A);
+    vex::digital_in catapult_limit_switch = vex::digital_in(brain.ThreeWirePort.H);
     
 
 };
