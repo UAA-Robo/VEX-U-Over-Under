@@ -15,45 +15,57 @@ void AutoDrive::drive() {
     hw->left_intake_expansion_motor.setStopping(vex::brakeType::hold);
     hw->right_intake_expansion_motor.setStopping(vex::brakeType::hold);
 
-    std::vector<std::pair<double, double>> path;
-    std::pair<double, double> curr_position = rc->starting_pos;
-    std::pair<double, double> targ_position = {-36.0, -60.0};
-    pg->generate_path(path, curr_position, targ_position);
-    // path.push_back(curr_position);
-    // path.push_back({-36.0, 35.0});
-    // path.push_back({-37.0, 58.0});
+    execute_skills_plan(); //! ELIMINATE OPPONENTS
+    // std::vector<std::pair<double, double>> path;
+    // std::pair<double, double> curr_position = rc->starting_pos;
+    // std::pair<double, double> targ_position = {-36.0, -60.0};
+    // pg->generate_path(path, curr_position, targ_position);
+    // // path.push_back(curr_position);
+    // // path.push_back({-36.0, 35.0});
+    // // path.push_back({-37.0, 58.0});
 
-    for (const std::pair<double, double> &pair : path) {
-        std::cout << pair.first << " " << pair.second << '\n';
-    }
+    // for (const std::pair<double, double> &pair : path) {
+    //     std::cout << pair.first << " " << pair.second << '\n';
+    // }
 
-    for (int i = 0; i < path.size() - 1; ++i) {
-        std::cout << "Before move" << '\n';
-        std::cout << "Path: (" << path.at(i).first << ", " << path.at(i).second << ") Next: ("<< path.at(i+1).first << ", " << path.at(i+1).second << ")" << std::endl;
-        std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
-        rotate_and_drive_to_position(path.at(i+1), false);
-        std::cout << "After move" << '\n';
-        std::cout << "Path: (" << path.at(i+1).first << ", " << path.at(i+1).second << std::endl;
-        std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
-        vex::wait(30, vex::timeUnits::msec);
-    }
+    // for (int i = 0; i < path.size() - 1; ++i) {
+    //     std::cout << "Before move" << '\n';
+    //     std::cout << "Path: (" << path.at(i).first << ", " << path.at(i).second << ") Next: ("<< path.at(i+1).first << ", " << path.at(i+1).second << ")" << std::endl;
+    //     std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
+    //     rotate_and_drive_to_position(path.at(i+1), false);
+    //     std::cout << "After move" << '\n';
+    //     std::cout << "Path: (" << path.at(i+1).first << ", " << path.at(i+1).second << std::endl;
+    //     std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
+    //     vex::wait(30, vex::timeUnits::msec);
+    // }
 }
 
 void AutoDrive::execute_skills_plan() {
 
-    drive_to_position(
-        {
-
-        }
-    );
     if (rc->ROBOT == SCRAT) {
 
         // Launch match loads
+
+        // So robot can turn
+        drive_to_position(
+            {
+                rc->starting_pos.first + (rc->ACTUAL_WIDTH / 2.0),
+                rc->starting_pos.second - (rc->ACTUAL_WIDTH / 2.0)
+            },
+            true
+        );
         for (int i = 0; i < 4; ++i) run_plow_strategy(); // Until end of match
     }
 
     else {
         // SCRATETTE auto skills plan
+        drive_to_position(
+            {
+                rc->starting_pos.first + (rc->ACTUAL_WIDTH / 2.0),
+                rc->starting_pos.second + (rc->ACTUAL_WIDTH / 2.0)
+            },
+            true
+        );
     }
 }
 
@@ -287,6 +299,7 @@ void AutoDrive::run_plow_strategy() {
     prep_pos.second += 18.0; // Offset from goal by 1.5 feet
     target_pos.second += rc->DRIVETRAIN_RADIUS;
     pg->generate_path(this->path, tm->get_current_position(), prep_pos);
+    drive_along_path();
     this->rotate_to_heading(-90.0);
     drive_to_position(target_pos, false);
     vex::wait(500, vex::timeUnits::msec);
@@ -300,6 +313,7 @@ void AutoDrive::run_plow_strategy() {
     prep_pos.first += 18.0;
     target_pos.first += rc->DRIVETRAIN_RADIUS;
     pg->generate_path(this->path, tm->get_current_position(), prep_pos);
+    drive_along_path();
     this->rotate_to_heading(0.0);
     drive_to_position(target_pos, false);
     vex::wait(500, vex::timeUnits::msec);
@@ -313,6 +327,7 @@ void AutoDrive::run_plow_strategy() {
     prep_pos.first += 18.0;
     target_pos.first += rc->DRIVETRAIN_RADIUS;
     pg->generate_path(this->path, tm->get_current_position(), prep_pos);
+    drive_along_path();
     this->rotate_to_heading(0.0);
     drive_to_position(target_pos, false);
     vex::wait(500, vex::timeUnits::msec);
@@ -326,7 +341,8 @@ void AutoDrive::run_plow_strategy() {
     prep_pos.second -= 18.0; // Offset from goal by 1.5 feet
     target_pos.second -= rc->DRIVETRAIN_RADIUS;
     pg->generate_path(this->path, tm->get_current_position(), prep_pos);
-    this->rotate_to_heading(90.0);
+    drive_along_path();
+    rotate_to_heading(90.0);
     drive_to_position(target_pos, false);
     vex::wait(500, vex::timeUnits::msec);
     snowplow_in();
@@ -341,7 +357,8 @@ void AutoDrive::run_plow_strategy() {
     prep_pos.first += 18.0;
     target_pos.first += rc->DRIVETRAIN_RADIUS;
     pg->generate_path(this->path, tm->get_current_position(), prep_pos);
-    this->rotate_to_heading(0.0);
+    drive_along_path();
+    rotate_to_heading(0.0);
     drive_to_position(target_pos, false);
     vex::wait(500, vex::timeUnits::msec);
     snowplow_in();
@@ -354,7 +371,8 @@ void AutoDrive::run_plow_strategy() {
     prep_pos.first += 18.0;
     target_pos.first += rc->DRIVETRAIN_RADIUS;
     pg->generate_path(this->path, tm->get_current_position(), prep_pos);
-    this->rotate_to_heading(0.0);
+    drive_along_path();
+    rotate_to_heading(0.0);
     drive_to_position(target_pos, false);
     vex::wait(500, vex::timeUnits::msec);
     snowplow_in();
@@ -367,7 +385,8 @@ void AutoDrive::run_plow_strategy() {
     prep_pos.second += 18.0; // Offset from goal by 1.5 feet
     target_pos.second += rc->DRIVETRAIN_RADIUS;
     pg->generate_path(this->path, tm->get_current_position(), prep_pos);
-    this->rotate_to_heading(-90.0);
+    drive_along_path();
+    rotate_to_heading(-90.0);
     drive_to_position(target_pos, false);
     vex::wait(500, vex::timeUnits::msec);
     snowplow_in();
