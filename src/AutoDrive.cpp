@@ -43,9 +43,9 @@ void AutoDrive::execute_skills_plan() {
 
     drive_to_position(
         {
-            
+
         }
-    )
+    );
     if (rc->ROBOT == SCRAT) {
 
         // Launch match loads

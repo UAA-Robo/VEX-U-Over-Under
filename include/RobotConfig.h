@@ -19,10 +19,11 @@ public:
     double ODOMETRY_DIAMETER;
 
     robot_name ROBOT;
+    
 
     // Starting position
-    std::pair<double, double> starting_pos = {-12.0, 0.0};
-    double starting_heading = 0.0;
+    std::pair<double, double> starting_pos = {-53.23, 53.23};
+    double starting_heading = 315.0;
 
 private:
     Hardware* hw;
