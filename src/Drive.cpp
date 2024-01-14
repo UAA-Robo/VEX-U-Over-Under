@@ -48,7 +48,7 @@ void Drive::move_drivetrain(std::pair<double, double> velocity_percent)
 
 void Drive::activate_intake()
 {
-    hw->intake.spin(vex::directionType::fwd, 12, vex::voltageUnits::volt);
+    hw->intake.spin(vex::directionType::rev, 8, vex::voltageUnits::volt);
     hw->controller.Screen.setCursor(1, 1);
     hw->controller.Screen.print("Activating Intake!");
 }
@@ -62,7 +62,7 @@ void Drive::stop_intake()
 
 void Drive::expand_intake()
 {
-    hw->intake_expansion.spin(vex::directionType::rev, 6, vex::voltageUnits::volt);
+    hw->intake_expansion.spin(vex::directionType::fwd, 6, vex::voltageUnits::volt);
     hw->controller.Screen.setCursor(1, 1);
     hw->controller.Screen.print("Expanding Intake!");
 }
@@ -70,7 +70,7 @@ void Drive::expand_intake()
 
 void Drive::retract_intake()
 {
-    hw->intake_expansion.spin(vex::directionType::fwd, 6, vex::voltageUnits::volt);
+    hw->intake_expansion.spin(vex::directionType::rev, 6, vex::voltageUnits::volt);
     hw->controller.Screen.setCursor(1, 1);
     hw->controller.Screen.print("Retracting Intake!");
 }
@@ -95,17 +95,21 @@ int Drive::run_catapult_thread(void* param)
 {
     // WARNING: DON'T print in this thread or it will take too long and miss the catapult press
     Drive* dr = static_cast<Drive*>(param);
+    bool CATAPULT_STOPPED = false;
     while(true) {
-        // STOP catapult
-        if (dr->hw->catapult_limit_switch.value() == 1) {
-            //dr->hw->catapult.stop();
-            dr->hw->catapult.spin(vex::directionType::rev, 0.5, vex::voltageUnits::volt); // STOP
-            dr->CATAPULT_STOPPED = true; 
+        //STOP catapult
+        // Prevents catapult/limit switch from bouncing
+        if (dr->hw->catapult_limit_switch.value() == 1 && !dr->START_CATAPULT_LAUNCH) {
+            CATAPULT_STOPPED = true;
         }
-        // If told to launch, start catapult
-        if (dr->START_CATAPULT_LAUNCH) dr->CATAPULT_STOPPED = false;
-        if (!dr->CATAPULT_STOPPED) {
+
+        if (dr->START_CATAPULT_LAUNCH) CATAPULT_STOPPED = false;
+
+        if (CATAPULT_STOPPED) {
+            dr->hw->catapult.stop();
+        } else  {
             dr->hw->catapult.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
+            CATAPULT_STOPPED = false;
         }
         vex::wait(10, vex::timeUnits::msec);
     }
