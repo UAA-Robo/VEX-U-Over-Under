@@ -1,14 +1,15 @@
 #include "RobotConfig.h"
 
-RobotConfig::RobotConfig(Hardware* hardware, bool hasSensor)
+RobotConfig::RobotConfig(Hardware* hardware)
 {
+    hw = hardware;
     ODOMETRY_CIRCUMFERENCE  = 2.75 * M_PI; // Odometry wheel circumference
     //WHEELCIRC = 3.25 * M_PI; // Drive train wheel circumference in inches --> CHECK: might be 3 inches!
 
     auto_drive_velocity_percent = 20;
     auto_rotate_velocity_percent = 20;
     
-    if (hasSensor)
+    if (hw->distanceSensor.installed()) // ONLY Scrattete has distance sensor
     {
         ROBOT = SCRATETTE;
         // set dimensions  
@@ -24,6 +25,7 @@ RobotConfig::RobotConfig(Hardware* hardware, bool hasSensor)
         ODOMETRY_LEFT_RIGHT_RADIUS =  6.45 / 2;
         ODOMETRY_BACK_RADIUS = 4.25; //3.5;
         DRIVETRAIN_WIDTH = 11.75; 
+
     }
 
     hw = hardware;
