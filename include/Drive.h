@@ -80,5 +80,5 @@ protected:
     void stop_catapult();
 
     bool START_CATAPULT_LAUNCH = false;
-    bool CATAPULT_STOPPED = false;
+    bool CATAPULT_STOPPED = true;
 };

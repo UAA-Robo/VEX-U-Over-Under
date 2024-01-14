@@ -60,7 +60,7 @@ public:
     vex::motor_group intake_expansion = vex::motor_group(left_intake_expansion_motor, right_intake_expansion_motor);
 
     // Limit switches
-    vex::digital_in catapult_limit_switch = vex::digital_in(brain.ThreeWirePort.A);
+    vex::digital_in catapult_limit_switch = vex::digital_in(brain.ThreeWirePort.H);
     
 
 };
