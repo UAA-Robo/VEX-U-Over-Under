@@ -320,7 +320,7 @@ void AutoDrive::run_plow_strategy() {
     snowplow_out();
     target_pos = mp->goals[0]->get_position();
     prep_pos = target_pos;
-    prep_pos.first += 18.0;
+    prep_pos.first -= 18.0;
     target_pos.first += rc->DRIVETRAIN_RADIUS;
     pg->generate_path(this->path, tm->get_current_position(), prep_pos);
     drive_along_path();
@@ -334,7 +334,7 @@ void AutoDrive::run_plow_strategy() {
     snowplow_out();
     target_pos = mp->goals[2]->get_position();
     prep_pos = target_pos;
-    prep_pos.first += 18.0;
+    prep_pos.first -= 18.0;
     target_pos.first += rc->DRIVETRAIN_RADIUS;
     pg->generate_path(this->path, tm->get_current_position(), prep_pos);
     drive_along_path();
@@ -364,7 +364,7 @@ void AutoDrive::run_plow_strategy() {
     snowplow_out();
     target_pos = mp->goals[2]->get_position();
     prep_pos = target_pos;
-    prep_pos.first += 18.0;
+    prep_pos.first -= 18.0;
     target_pos.first += rc->DRIVETRAIN_RADIUS;
     pg->generate_path(this->path, tm->get_current_position(), prep_pos);
     drive_along_path();
@@ -378,7 +378,7 @@ void AutoDrive::run_plow_strategy() {
     snowplow_out();
     target_pos = mp->goals[0]->get_position();
     prep_pos = target_pos;
-    prep_pos.first += 18.0;
+    prep_pos.first -= 18.0;
     target_pos.first += rc->DRIVETRAIN_RADIUS;
     pg->generate_path(this->path, tm->get_current_position(), prep_pos);
     drive_along_path();
