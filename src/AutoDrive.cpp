@@ -40,6 +40,11 @@ void AutoDrive::drive() {
     // }
 }
 
+void AutoDrive::test_odometry() {
+    
+
+}
+
 void AutoDrive::execute_skills_plan() {
 
     if (rc->ROBOT == SCRAT) {

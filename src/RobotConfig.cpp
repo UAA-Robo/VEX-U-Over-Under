@@ -9,7 +9,7 @@ RobotConfig::RobotConfig(Hardware* hardware)
     auto_drive_velocity_percent = 20;
     auto_rotate_velocity_percent = 20;
     
-    if (hw->distanceSensor.installed()) // ONLY Scrattete has distance sensor
+    if (hw->distanceSensor.installed()) // ONLY Scratette has distance sensor
     {
         ROBOT = SCRATETTE;
         // Set dimensions (inches)
