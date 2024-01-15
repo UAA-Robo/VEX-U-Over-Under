@@ -40,6 +40,13 @@ public:
     /// @brief Gets the current odometry heading
     /// @return Returns heading in degree
     double get_current_heading();
+
+    /// @brief Sets the current heading that odometry updates
+    void set_heading(double heading);
+
+
+    /// @brief Sets the current position that odometry updates
+    void set_position(std::pair<double, double> position);
     
     /// public so map can access address
     double odometry_heading = rc->starting_heading;  //In degrees

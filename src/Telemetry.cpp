@@ -3,8 +3,7 @@
 
 
 
-Telemetry::Telemetry(Hardware* hardware, RobotConfig* robotConfig)
-{
+Telemetry::Telemetry(Hardware* hardware, RobotConfig* robotConfig) {
     hw = hardware;
     rc = robotConfig;
     odometry_x_position = rc->starting_pos.first;
@@ -66,27 +65,33 @@ int Telemetry::update_position(void* param) {
 }
 
 double Telemetry::get_distance_between_points(std::pair<double, double> initial_position, 
-    std::pair<double, double> final_position)
-{
+    std::pair<double, double> final_position) {
     double distance_to_final_position = sqrt(pow((final_position.first - initial_position.first), 2) 
     + pow((final_position.second - initial_position.second), 2));
     return distance_to_final_position;
 }
 
 double Telemetry ::get_heading_between_points(std::pair<double, double> initial_position, 
-    std::pair<double, double> final_position)
-{
+    std::pair<double, double> final_position) {
     double angle_to_final_position = (atan2((final_position.second - initial_position.second), 
         (final_position.first - initial_position.first)) * (180 / (M_PI)));
     return angle_to_final_position;
 }
 
-std::pair<double, double> Telemetry::get_current_position() 
-{
+std::pair<double, double> Telemetry::get_current_position() {
     return std::make_pair(this->odometry_x_position, this->odometry_y_position);
 }
 
-double Telemetry::get_current_heading() 
-{
+double Telemetry::get_current_heading() {
     return this->odometry_heading; 
+}
+
+
+void Telemetry::set_heading(double heading) {
+    this->odometry_heading = heading; 
+}
+
+void Telemetry::set_position(std::pair<double, double> position) {
+    this->odometry_x_position = position.first; 
+    this->odometry_y_position = position.second; 
 }

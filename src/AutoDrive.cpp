@@ -41,7 +41,12 @@ void AutoDrive::drive() {
 }
 
 void AutoDrive::test_odometry() {
-    
+
+    // Set initial heading/position
+    tm->set_heading(0);
+    tm->set_position({0,0});
+
+    drive_to_position({12,0});
 
 }
 
