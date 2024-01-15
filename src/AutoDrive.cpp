@@ -46,6 +46,11 @@ void AutoDrive::test_odometry() {
     // Set initial heading/position
     tm->set_heading(0);
     tm->set_position({0,0});
+
+    while(true) {
+        std::cout << "Odom: (" << tm->get_current_position().first << ", "  << tm->get_current_position().second << "),  " << tm->get_current_heading() << " deg" << std::endl;
+        vex::wait(50, vex::timeUnits::msec);
+    }
    
     std::pair<double, double> position = {12,0};
     std::cout << "Moving to ("<< position.first << ", "  << position.second << "). Currently at " << tm->get_current_position().first << ", "  << tm->get_current_position().second << "),  " << tm->get_current_heading() << " deg" << std::endl;

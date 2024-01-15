@@ -12,8 +12,15 @@ RobotConfig::RobotConfig(Hardware* hardware)
     if (hw->distanceSensor.installed()) // ONLY Scratette has distance sensor
     {
         ROBOT = SCRATETTE;
-        // Set dimensions (inches)
 
+        // Odometry wheel are flipped from Scrat
+        hw->left_odometry.setReversed(false);
+        hw->left_odometry.setReversed(false);
+        hw->back_odometry.setReversed(true);
+
+        /*
+        ----SET DIMENSIONS (in) --------------------------------------------------------------
+        */
         // Distance between left and right odometry wheels over 2
         // (measured from the center of the wheels)
         ODOMETRY_LEFT_RIGHT_RADIUS =  3.75 / 2; 
@@ -32,6 +39,10 @@ RobotConfig::RobotConfig(Hardware* hardware)
     {
         std::cout << "Robot is SCRAT\n";
         ROBOT = SCRAT;
+
+        /*
+        ----SET DIMENSIONS (in) --------------------------------------------------------------
+        */
          // Distance between left and right odometry wheels over 2. It was measured and then tuned 
          // to get accurate turning results
         ODOMETRY_LEFT_RIGHT_RADIUS =  6.45 / 2;
