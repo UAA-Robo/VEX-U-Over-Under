@@ -15,8 +15,7 @@ void AutoDrive::drive() {
     hw->left_intake_expansion_motor.setStopping(vex::brakeType::hold);
     hw->right_intake_expansion_motor.setStopping(vex::brakeType::hold);
 
-    test_odometry();
-    //execute_skills_plan(); //! ELIMINATE OPPONENTS
+    execute_skills_plan(); //! ELIMINATE OPPONENTS
     // std::vector<std::pair<double, double>> path;
     // std::pair<double, double> curr_position = rc->starting_pos;
     // std::pair<double, double> targ_position = {-36.0, -60.0};
@@ -39,25 +38,6 @@ void AutoDrive::drive() {
     //     std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
     //     vex::wait(30, vex::timeUnits::msec);
     // }
-}
-
-void AutoDrive::test_odometry() {
-
-    // Set initial heading/position
-    tm->set_heading(0);
-    tm->set_position({0,0});
-
-    while(true) {
-        std::cout << "Odom: (" << tm->get_current_position().first << ", "  << tm->get_current_position().second << "),  " << tm->get_current_heading() << " deg" << std::endl;
-        vex::wait(50, vex::timeUnits::msec);
-    }
-   
-    std::pair<double, double> position = {12,0};
-    std::cout << "Moving to ("<< position.first << ", "  << position.second << "). Currently at " << tm->get_current_position().first << ", "  << tm->get_current_position().second << "),  " << tm->get_current_heading() << " deg" << std::endl;
-    drive_to_position({12,0});
-
-    std::cout << "Ending at (" << tm->get_current_position().first << ", "  << tm->get_current_position().second << "),  " << tm->get_current_heading() << " deg" << std::endl;
-
 }
 
 void AutoDrive::execute_skills_plan() {
@@ -98,7 +78,7 @@ void AutoDrive::drive_along_path() {
         std::cout << "After move" << '\n';
         std::cout << "Path: (" << path.at(i+1).first << ", " << path.at(i+1).second << std::endl;
         std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
-        vex::wait(50, vex::timeUnits::msec);
+        vex::wait(3000, vex::timeUnits::msec);
     }
 }
 
@@ -128,7 +108,7 @@ void AutoDrive::rotate_to_heading(double heading)
         min_velocity = 20;
         max_velocity = 25;
     }
-    // std::cout << "Angle to travel: " << angle_to_travel << std::endl;
+    std::cout << "Angle to travel: " << angle_to_travel << std::endl;
 
     // Turn wheels opposite of each other
     hw->left_drivetrain_motors.spin(vex::directionType::fwd, -min_velocity * turn_direction, 
@@ -142,8 +122,8 @@ void AutoDrive::rotate_to_heading(double heading)
     // (change in angle starts majorly increasing instead of decreasing)
     while (angle_to_travel > 1 && (previous_angle_to_travel - angle_to_travel) >= -0.05) { //TODO: Something isn't working here
     // while (fabs(tm->get_current_heading() - heading) > 1.0) { //! REMOVE OR REFACTOR
-        // std::cout << "    V: " << velocity << ", Angle to Travel: " << angle_to_travel << std::endl;
-        // std::cout << "    Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
+        std::cout << "    V: " << velocity << ", Angle to Travel: " << angle_to_travel << std::endl;
+        std::cout << "    Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
         // Speeds up as leaving initial angle and slows down as approaching destination
         if (angle_to_travel > total_angle_to_travel/2) {
             // First half of distance
@@ -241,15 +221,15 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
     // std::cout << "Left velocity: " << hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct) << " Right velocity: " << hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct) << std::endl;
     vex::wait(30, vex::timeUnits::msec);
     
-    // std::cout << "Driving " << distance << " inches to (" << position.first << ", " << position.second << ")" << std::endl;
+    std::cout << "Driving " << distance << " inches to (" << position.first << ", " << position.second << ")" << std::endl;
 
     // Turn until within 0.5 inches of desired distance or until it overshoots 
     // (change in distance starts majorly increasing instead of decreasing)
     while (fabs(current_distance) > 0.5 && (previous_distance - current_distance) >= -0.01) {
         // Speeds up as leaving initial position and slows down as approaching destination
-        //std::cout << "      Current Distance: " << current_distance << " Current Heading: " << tm->get_current_heading() << std::endl;
-        //std::cout << "    Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
-        //std::cout << "    V: " << velocity << " Current Distance: " << current_distance << std::endl;
+        std::cout << "      Current Distance: " << current_distance << " Current Heading: " << tm->get_current_heading() << std::endl;
+        std::cout << "    Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
+        std::cout << "    V: " << velocity << " Current Distance: " << current_distance << std::endl;
         if (current_distance >= distance/2) {
             // First half of distance
             velocity = atan(distance - current_distance) * 2 * (max_velocity-min_velocity) / M_PI 
@@ -328,6 +308,8 @@ void AutoDrive::run_plow_strategy() {
     target_pos.second += rc->DRIVETRAIN_RADIUS;
     pg->generate_path(this->path, tm->get_current_position(), prep_pos);
     drive_along_path();
+
+
     this->rotate_to_heading(-90.0);
     drive_to_position(target_pos, false);
     vex::wait(500, vex::timeUnits::msec);
@@ -340,7 +322,7 @@ void AutoDrive::run_plow_strategy() {
     target_pos = mp->goals[0]->get_position();
     prep_pos = target_pos;
     std::cout << "2" << '\n';
-    prep_pos.first -= 21.0;
+    prep_pos.first += 21.0;
     target_pos.first += rc->DRIVETRAIN_RADIUS;
     std::cout << "3" << '\n';
     pg->generate_path(this->path, tm->get_current_position(), prep_pos);
@@ -355,7 +337,7 @@ void AutoDrive::run_plow_strategy() {
     // snowplow_out();
     target_pos = mp->goals[2]->get_position();
     prep_pos = target_pos;
-    prep_pos.first -= 21.0;
+    prep_pos.first += 21.0;
     target_pos.first += rc->DRIVETRAIN_RADIUS;
     pg->generate_path(this->path, tm->get_current_position(), prep_pos);
     drive_along_path();
@@ -385,7 +367,7 @@ void AutoDrive::run_plow_strategy() {
     // snowplow_out();
     target_pos = mp->goals[2]->get_position();
     prep_pos = target_pos;
-    prep_pos.first -= 21.0;
+    prep_pos.first += 21.0;
     target_pos.first += rc->DRIVETRAIN_RADIUS;
     pg->generate_path(this->path, tm->get_current_position(), prep_pos);
     drive_along_path();
@@ -399,7 +381,7 @@ void AutoDrive::run_plow_strategy() {
     // snowplow_out();
     target_pos = mp->goals[0]->get_position();
     prep_pos = target_pos;
-    prep_pos.first -= 21.0;
+    prep_pos.first += 21.0;
     target_pos.first += rc->DRIVETRAIN_RADIUS;
     pg->generate_path(this->path, tm->get_current_position(), prep_pos);
     drive_along_path();
