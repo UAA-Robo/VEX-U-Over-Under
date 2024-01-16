@@ -9,25 +9,53 @@ RobotConfig::RobotConfig(Hardware* hardware)
     auto_drive_velocity_percent = 20;
     auto_rotate_velocity_percent = 20;
     
-    if (hw->distanceSensor.installed()) // ONLY Scrattete has distance sensor
+    if (hw->distanceSensor.installed()) // ONLY Scratette has distance sensor
     {
         ROBOT = SCRATETTE;
-        // set dimensions  
-        ODOMETRY_LEFT_RIGHT_RADIUS =  7.0 / 2; //6.75/2; // Distance between left and right odometry wheels over 2
-        ODOMETRY_BACK_RADIUS = 4.25; //3.5;
-        DRIVETRAIN_WIDTH = 11.75; //12; // distance (in inch) between left and right side of the drivetrain (measured from the center of the wheels)
-        ACTUAL_WIDTH = 999999999999999999999.9; //TODO: <<<
+
+        // Odometry wheel are flipped from Scrat
+        hw->left_odometry.setReversed(false);
+        hw->left_odometry.setReversed(false);
+        hw->back_odometry.setReversed(true);
+
+        /*
+        ----SET DIMENSIONS (in) --------------------------------------------------------------
+        */
+        // Distance between left and right odometry wheels over 2
+        // (measured from the center of the wheels)
+        ODOMETRY_LEFT_RIGHT_RADIUS =  3.75 / 2; 
+
+        // Distance between horizontal odometry wheels and horizontal center line
+        ODOMETRY_BACK_RADIUS = 3.25; 
+
+        // Distance (in inch) between left and right side of the drivetrain 
+        // (measured from the center of the wheels)
+        DRIVETRAIN_WIDTH = 13.25; 
+
+        // Max width
+        ACTUAL_WIDTH = 17.6;  
     }
     else
     {
         std::cout << "Robot is SCRAT\n";
         ROBOT = SCRAT;
+
+        /*
+        ----SET DIMENSIONS (in) --------------------------------------------------------------
+        */
          // Distance between left and right odometry wheels over 2. It was measured and then tuned 
          // to get accurate turning results
         ODOMETRY_LEFT_RIGHT_RADIUS =  6.45 / 2;
-        ODOMETRY_BACK_RADIUS = 4.25; //3.5;
+
+        // Distance between horizontal odometry wheels and horizontal center line
+        ODOMETRY_BACK_RADIUS = 4.25; 
+
+        // Distance (in inch) between left and right side of the drivetrain 
+        // (measured from the center of the wheels)
         DRIVETRAIN_WIDTH = 11.75;
-        ACTUAL_WIDTH = 14.50; // inches
+
+        // Max width
+        ACTUAL_WIDTH = 14.50; 
 
     }
     DRIVETRAIN_RADIUS = DRIVETRAIN_WIDTH * sqrt(2) / 2.0;

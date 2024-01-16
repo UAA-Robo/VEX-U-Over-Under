@@ -15,7 +15,8 @@ void AutoDrive::drive() {
     hw->left_intake_expansion_motor.setStopping(vex::brakeType::hold);
     hw->right_intake_expansion_motor.setStopping(vex::brakeType::hold);
 
-    execute_skills_plan(); //! ELIMINATE OPPONENTS
+    test_odometry();
+    //execute_skills_plan(); //! ELIMINATE OPPONENTS
     // std::vector<std::pair<double, double>> path;
     // std::pair<double, double> curr_position = rc->starting_pos;
     // std::pair<double, double> targ_position = {-36.0, -60.0};
@@ -38,6 +39,25 @@ void AutoDrive::drive() {
     //     std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
     //     vex::wait(30, vex::timeUnits::msec);
     // }
+}
+
+void AutoDrive::test_odometry() {
+
+    // Set initial heading/position
+    tm->set_heading(0);
+    tm->set_position({0,0});
+
+    while(true) {
+        std::cout << "Odom: (" << tm->get_current_position().first << ", "  << tm->get_current_position().second << "),  " << tm->get_current_heading() << " deg" << std::endl;
+        vex::wait(50, vex::timeUnits::msec);
+    }
+   
+    std::pair<double, double> position = {12,0};
+    std::cout << "Moving to ("<< position.first << ", "  << position.second << "). Currently at " << tm->get_current_position().first << ", "  << tm->get_current_position().second << "),  " << tm->get_current_heading() << " deg" << std::endl;
+    drive_to_position({12,0});
+
+    std::cout << "Ending at (" << tm->get_current_position().first << ", "  << tm->get_current_position().second << "),  " << tm->get_current_heading() << " deg" << std::endl;
+
 }
 
 void AutoDrive::execute_skills_plan() {
@@ -320,7 +340,7 @@ void AutoDrive::run_plow_strategy() {
     target_pos = mp->goals[0]->get_position();
     prep_pos = target_pos;
     std::cout << "2" << '\n';
-    prep_pos.first += 21.0;
+    prep_pos.first -= 21.0;
     target_pos.first += rc->DRIVETRAIN_RADIUS;
     std::cout << "3" << '\n';
     pg->generate_path(this->path, tm->get_current_position(), prep_pos);
@@ -335,7 +355,7 @@ void AutoDrive::run_plow_strategy() {
     // snowplow_out();
     target_pos = mp->goals[2]->get_position();
     prep_pos = target_pos;
-    prep_pos.first += 21.0;
+    prep_pos.first -= 21.0;
     target_pos.first += rc->DRIVETRAIN_RADIUS;
     pg->generate_path(this->path, tm->get_current_position(), prep_pos);
     drive_along_path();
@@ -365,7 +385,7 @@ void AutoDrive::run_plow_strategy() {
     // snowplow_out();
     target_pos = mp->goals[2]->get_position();
     prep_pos = target_pos;
-    prep_pos.first += 21.0;
+    prep_pos.first -= 21.0;
     target_pos.first += rc->DRIVETRAIN_RADIUS;
     pg->generate_path(this->path, tm->get_current_position(), prep_pos);
     drive_along_path();
@@ -379,7 +399,7 @@ void AutoDrive::run_plow_strategy() {
     // snowplow_out();
     target_pos = mp->goals[0]->get_position();
     prep_pos = target_pos;
-    prep_pos.first += 21.0;
+    prep_pos.first -= 21.0;
     target_pos.first += rc->DRIVETRAIN_RADIUS;
     pg->generate_path(this->path, tm->get_current_position(), prep_pos);
     drive_along_path();
