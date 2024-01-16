@@ -94,8 +94,10 @@ private:
 
     /// @brief Provides the position of interaction for a game element based off its interaction_angle
     /// @param element GameElement passed in to recieve new value
+    /// @param CAN_TURN_AROUND Determines if the bot should have enough room to rotate
     /// @return GameElement position with offset
-    std::pair<double, double> get_point_with_offset(InteractionObject* element);
+    std::pair<double, double> get_point_with_offset(InteractionObject* element, bool CAN_TURN_AROUND);
+
     /// @brief Executes the plow strategy in the game.
     void run_plow_strategy();
 };
