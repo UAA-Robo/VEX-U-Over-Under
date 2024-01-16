@@ -15,8 +15,9 @@ void AutoDrive::drive() {
     hw->left_intake_expansion_motor.setStopping(vex::brakeType::hold);
     hw->right_intake_expansion_motor.setStopping(vex::brakeType::hold);
 
+    test_turbo();
     // test_odometry();
-    execute_skills_plan(); //! ELIMINATE OPPONENTS
+    // execute_skills_plan(); //! ELIMINATE OPPONENTS
     // std::vector<std::pair<double, double>> path;
     // std::pair<double, double> curr_position = rc->starting_pos;
     // std::pair<double, double> targ_position = {-36.0, -60.0};
@@ -58,6 +59,20 @@ void AutoDrive::test_odometry() {
 
     std::cout << "Ending at (" << tm->get_current_position().first << ", "  << tm->get_current_position().second << "),  " << tm->get_current_heading() << " deg" << std::endl;
 
+}
+
+void AutoDrive::test_turbo() {
+
+    turbo_drive_distance(
+        tm->get_distance_between_points(
+            tm->get_current_position(),
+            mp->get_point_with_offset(
+                mp->goals[0],
+                false
+            )
+        ),
+        false
+    );
 }
 
 void AutoDrive::execute_skills_plan() {
@@ -105,6 +120,28 @@ void AutoDrive::drive_along_path() {
 void AutoDrive::pathfind_and_drive_to_position(std::pair<double, double> target_position) {
     pg->generate_path(path, tm->get_current_position(), target_position);
     drive_along_path();
+}
+
+
+void AutoDrive::turbo_drive_distance(double distance, bool ISBACKTOPOSITION) {
+
+    double num_wheel_revolutions = distance / rc->WHEEL_CIRCUMFERENCE;
+    
+    // std::pair<double, double> vel = calculateDriveTrainVel(velPercent);
+
+    if (ISBACKTOPOSITION) {
+        hw->left_drivetrain_motors.spinTo(-num_wheel_revolutions, vex::rotationUnits::rev, 80.0, vex::velocityUnits::pct, false);
+        hw->right_drivetrain_motors.spinTo(-num_wheel_revolutions, vex::rotationUnits::rev, 80.0, vex::velocityUnits::pct, false);
+    }
+    else {
+        hw->left_drivetrain_motors.spinTo(num_wheel_revolutions, vex::rotationUnits::rev, 80.0, vex::velocityUnits::pct, false);
+        hw->right_drivetrain_motors.spinTo(num_wheel_revolutions, vex::rotationUnits::rev, 80.0, vex::velocityUnits::pct, false);
+    }
+    vex::wait(50, vex::timeUnits::msec);
+    while(fabs(hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0.0 || fabs(hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0.0); //Blocks other tasks from starting 
+
+    std::cout << "Turbo done\n";
+
 }
 
 void AutoDrive::rotate_to_heading(double heading, bool IS_TURBO)
@@ -238,7 +275,7 @@ void AutoDrive::rotate_and_drive_to_position(std::pair<double, double> position,
 }
 
 void AutoDrive::rotate_and_drive_to_position(InteractionObject *element, bool IS_BACK_POSITION, 
-    bool IS_OFFSET, bool IS_OFFSET_EXTRA) {
+    bool IS_TURBO, bool IS_OFFSET, bool IS_OFFSET_EXTRA) {
     
     std::pair<double, double> position = {};
     if (IS_OFFSET) position = {0,0}; // TODO: sub in function when done
@@ -325,14 +362,14 @@ void AutoDrive::turbo_turn(double heading)
 
     double velocity = 80;
 
-    hw->leftWheels.spinFor(-revolutions, vex::rotationUnits::rev, velocity, 
+    hw->left_drivetrain_motors.spinFor(-revolutions, vex::rotationUnits::rev, velocity, 
         vex::velocityUnits::pct, false);
-    hw->rightWheels.spinFor(revolutions, vex::rotationUnits::rev, velocity, 
+    hw->right_drivetrain_motors.spinFor(revolutions, vex::rotationUnits::rev, velocity, 
         vex::velocityUnits::pct);
 
     // Blocks other tasks from starting
-    while (fabs(hw->leftWheels.velocity(vex::velocityUnits::pct)) > 0 
-        || fabs(hw->rightWheels.velocity(vex::velocityUnits::pct)) > 0); 
+    while (fabs(hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0 
+        || fabs(hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0); 
 
 }
 

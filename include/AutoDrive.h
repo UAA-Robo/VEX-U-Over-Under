@@ -32,6 +32,9 @@ private:
     /// @brief Starts the odometry testing.
     void test_odometry();
 
+    /// @brief Starts turbo drive testing.
+    void test_turbo();
+
     double robot_angle_offset = 0; // For Granny bc she veers left
 
     /// @brief Drives to all coordinates stored in the local path vector.
@@ -40,6 +43,12 @@ private:
     /// @brief Pathfinds to a target position and drives to it.
     /// @param target_position The position to drive to.
     void pathfind_and_drive_to_position(std::pair<double, double> target_position);
+
+    /// @brief Drive a specified distance at high speed.
+    /// @param distance The distance to drive.
+    /// @param ISBACKTOPOSITION True if driving backwards, false otherwise.
+    void turbo_drive_distance(double distance, bool ISBACKTOPOSITION);
+
 
     /// @brief Rotates the shortest distance by turning left or right to the heading. Uses odometry sensors.
     /// @param heading Double that is the counterclockwise angle in degrees from the x asis.
@@ -73,7 +82,7 @@ private:
     /// @param ISBACKTOPOSITION Boolean that if true, rotates the back of the robot to the 
     /// coordinate instead of the front.
     void rotate_and_drive_to_position(std::pair<double, double> position, 
-        bool ISBACKTOPOSITION = false);
+        bool ISBACKTOPOSITION = false, bool IS_TURBO = false);
 
     /// @brief  Rotates the robot to align with a InteractionObject on the field. Assumes the 
     /// inertia sensor is set so 0 is at the positive x axis.
@@ -84,7 +93,7 @@ private:
     /// @param IS_OFFSET_EXTRA If true, drives so that the element is at the front (or back) of the bot
     ///     instead of at the center with extra room to turn.
     void rotate_and_drive_to_position(InteractionObject *element, bool IS_BACK_POSITION= false, 
-        bool IS_OFFSET=false, bool IS_OFFSET_EXTRA=false);
+        bool IS_TURBO=false, bool IS_OFFSET=false, bool IS_OFFSET_EXTRA=false);
 
 
     /// @brief Moves the drivetrain STRAIGHT until the distance between the current position add
