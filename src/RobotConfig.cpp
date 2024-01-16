@@ -21,12 +21,14 @@ RobotConfig::RobotConfig(Hardware* hardware)
         /*
         ----SET DIMENSIONS (in) --------------------------------------------------------------
         */
-        // Distance between left and right odometry wheels over 2
-        // (measured from the center of the wheels)
-        ODOMETRY_LEFT_RIGHT_RADIUS =  3.75 / 2; 
+        // Distance between left and right odometry wheels over 2. It was measured and then tuned 
+        // to get accurate turning results. (measured from the center of the wheels)
+        ODOMETRY_LEFT_RIGHT_RADIUS =  4.0 / 2; 
 
-        // Distance between horizontal odometry wheels and horizontal center line
+        // Distance between horizontal odometry wheel and horizontal center line
         ODOMETRY_BACK_RADIUS = 3.25; 
+
+        ODOMETRY_BACK_OFFSET = 3.4;
 
         // Distance (in inch) between left and right side of the drivetrain 
         // (measured from the center of the wheels)
@@ -47,8 +49,9 @@ RobotConfig::RobotConfig(Hardware* hardware)
          // to get accurate turning results
         ODOMETRY_LEFT_RIGHT_RADIUS =  6.45 / 2;
 
-        // Distance between horizontal odometry wheels and horizontal center line
+        // Distance between horizontal odometry wheel and horizontal center line
         ODOMETRY_BACK_RADIUS = 4.25; 
+        ODOMETRY_BACK_OFFSET = 0;
 
         // Distance (in inch) between left and right side of the drivetrain 
         // (measured from the center of the wheels)

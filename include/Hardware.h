@@ -29,14 +29,14 @@ public:
         front_right_drivetrain_motor, middle_right_drivetrain_motor, back_right_drivetrain_motor);
 
     // Left drivetrain side
-    vex::motor front_left_drivetrain_motor = vex::motor(vex::PORT11, vex::ratio6_1, false);
-    vex::motor middle_left_drivetrain_motor = vex::motor(vex::PORT12, vex::ratio6_1, false);
-    vex::motor back_left_drivetrain_motor = vex::motor(vex::PORT13, vex::ratio6_1, false);
+    vex::motor front_left_drivetrain_motor = vex::motor(vex::PORT11, vex::ratio18_1, false);
+    vex::motor middle_left_drivetrain_motor = vex::motor(vex::PORT12, vex::ratio18_1, false);
+    vex::motor back_left_drivetrain_motor = vex::motor(vex::PORT13, vex::ratio18_1, false);
 
     // Right drivetrain side
-    vex::motor front_right_drivetrain_motor = vex::motor(vex::PORT17, vex::ratio6_1, true);
-    vex::motor middle_right_drivetrain_motor = vex::motor(vex::PORT19, vex::ratio6_1, true);
-    vex::motor back_right_drivetrain_motor = vex::motor(vex::PORT18, vex::ratio6_1, true);
+    vex::motor front_right_drivetrain_motor = vex::motor(vex::PORT17, vex::ratio18_1, true);
+    vex::motor middle_right_drivetrain_motor = vex::motor(vex::PORT19, vex::ratio18_1, true);
+    vex::motor back_right_drivetrain_motor = vex::motor(vex::PORT18, vex::ratio18_1, true);
 
     // Odometry Wheels
     vex::rotation left_odometry =  vex::rotation(vex::PORT6, true);
