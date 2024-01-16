@@ -15,8 +15,8 @@ void AutoDrive::drive() {
     hw->left_intake_expansion_motor.setStopping(vex::brakeType::hold);
     hw->right_intake_expansion_motor.setStopping(vex::brakeType::hold);
 
-    test_odometry();
-    //execute_skills_plan(); //! ELIMINATE OPPONENTS
+    // test_odometry();
+    execute_skills_plan(); //! ELIMINATE OPPONENTS
     // std::vector<std::pair<double, double>> path;
     // std::pair<double, double> curr_position = rc->starting_pos;
     // std::pair<double, double> targ_position = {-36.0, -60.0};
@@ -173,7 +173,7 @@ void AutoDrive::rotate_to_heading(double heading)
         hw->left_drivetrain_motors.setVelocity(-velocity * turn_direction, vex::velocityUnits::pct);
         hw->right_drivetrain_motors.setVelocity(velocity * turn_direction, vex::velocityUnits::pct);
         
-        vex::wait(35, vex::timeUnits::msec);  // Wait for odometry to update
+        vex::wait(50, vex::timeUnits::msec);  // Wait for odometry to update
        
         previous_angle_to_travel = angle_to_travel;  // For stopping if overshoots
         angle_to_travel = fabs(heading - tm->get_current_heading());
@@ -183,7 +183,7 @@ void AutoDrive::rotate_to_heading(double heading)
     }
         // std::cout << "    V: " << velocity << ", Angle to Travel: " << angle_to_travel << std::endl;
         // std::cout << "    Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
-
+    std::cout << "Done turning\n";
 
     hw->drivetrain.stop();                  
     vex::wait(1000, vex::timeUnits::msec);  // Wait for odometry wheels to update
@@ -194,7 +194,7 @@ void AutoDrive::rotate_to_position(std::pair<double, double> final_position, boo
 {
     // if (IS_USING_GPS_POSITION) tm->set_current_heading(tm->getGPSPosition());
     double heading = tm->get_heading_between_points(tm->get_current_position(), final_position); // Gets absolute angle
-    // std::cout << "Intended Heading: " << heading << '\n';
+    std::cout << "Intended Heading: " << heading << '\n';
     if (ISBACKROTATION)
         heading -= 180;
     rotate_to_heading(heading); 
@@ -239,6 +239,7 @@ void AutoDrive::rotate_and_drive_to_position(InteractionObject *element, bool IS
 
 void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBACKTOPOSITION) 
 {
+    std::cout << "Driving. . ." << '\n';
 
     double current_distance = tm->get_distance_between_points(tm->get_current_position(), position);
     double distance = current_distance; // Distance goal    
@@ -280,7 +281,7 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
         }
         hw->drivetrain.setVelocity(velocity * drive_direction, vex::velocityUnits::pct);
       
-        vex::wait(35, vex::timeUnits::msec);  // Wait for odometry wheels to update
+        vex::wait(50, vex::timeUnits::msec);  // Wait for odometry wheels to update
 
         previous_distance = current_distance; // So don't overshoot
         current_distance = tm->get_distance_between_points(tm->get_current_position(), position); 
