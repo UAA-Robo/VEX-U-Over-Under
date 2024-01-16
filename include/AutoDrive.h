@@ -104,6 +104,10 @@ private:
     /// @param ISBACKTOPOSITION A bool value that determines the direction the bot moves.
     void drive_to_position(std::pair<double, double> position, bool ISBACKTOPOSITION = false);
 
+    /// @brief  Rotates the shortest distance by turning left or right to the heading. Assumes the inertia sensor is set so 0 is at the positive x axis.
+    /// @param heading  Double that is the counterclockwise angle in degrees from the x asis.
+    void turbo_spin(double heading);
+
     /// @brief Executes the plow strategy in the game.
     void run_plow_strategy();
 };

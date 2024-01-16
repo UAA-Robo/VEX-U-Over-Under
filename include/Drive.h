@@ -64,8 +64,20 @@ protected:
     /// @brief Pushes air out when X button is pressed to expand snowplow.
     void snowplow_out();
 
+    /// @brief Pushes air into right_snowplow independently
+    void right_snowplow_out();
+
+    /// @brief Pushes air into left_snowplow independently
+    void left_snowplow_out();
+
     /// @brief Sucks air in when Y button is pressed to retract snowplow.
     void snowplow_in();
+
+    /// @brief Sucks air into the right_plow independently
+    void right_snowplow_in();
+
+    /// @brief Sucks air into the left_plow independently
+    void left_snowplow_in();
 
     /// @brief Spins the catapult motors until limit switch is hit or launch/stop_catapult is 
     ///     called. Loops forever because it is on it's own thread.
