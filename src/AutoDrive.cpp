@@ -122,10 +122,15 @@ void AutoDrive::pathfind_and_drive_to_position(std::pair<double, double> target_
     drive_along_path();
 }
 
-void AutoDrive::rotate_to_heading(double heading)
+void AutoDrive::rotate_to_heading(double heading, bool IS_TURBO)
 {
     // std::cout << "Rotating to " << heading << std::endl;
     // Corrects heading to be from 0-360 from the x axis counterclockwise if applicable
+    if (IS_TURBO) {
+        turbo_turn(heading);
+        return;
+    }
+
     heading = fmod(heading, 360);
     if (heading < 0) heading += 360;
     double min_velocity = 20;
@@ -210,18 +215,19 @@ void AutoDrive::rotate_to_heading(double heading)
 }
 
 
-void AutoDrive::rotate_to_position(std::pair<double, double> final_position, bool ISBACKROTATION)
+void AutoDrive::rotate_to_position(std::pair<double, double> final_position, bool ISBACKROTATION, 
+    bool IS_TURBO)
 {
     // if (IS_USING_GPS_POSITION) tm->set_current_heading(tm->getGPSPosition());
     double heading = tm->get_heading_between_points(tm->get_current_position(), final_position); // Gets absolute angle
     std::cout << "Intended Heading: " << heading << '\n';
     if (ISBACKROTATION)
         heading -= 180;
-    rotate_to_heading(heading); 
+    rotate_to_heading(heading, IS_TURBO); 
 
 }
 
-void AutoDrive::rotate_to_position(InteractionObject *element, bool IS_BACK_POSITION, 
+void AutoDrive::rotate_to_position(InteractionObject *element, bool IS_BACK_POSITION, bool IS_TURBO,
     bool IS_OFFSET, bool IS_OFFSET_EXTRA)
 {
     std::pair<double, double> position = {};
@@ -229,14 +235,14 @@ void AutoDrive::rotate_to_position(InteractionObject *element, bool IS_BACK_POSI
     else if (IS_OFFSET_EXTRA) position = {0,0}; // TODO: sub in function when done
     else position = element->get_position();
 
-    rotate_to_position(position, IS_BACK_POSITION);
+    rotate_to_position(position, IS_BACK_POSITION, IS_TURBO);
 }
 
 void AutoDrive::rotate_and_drive_to_position(std::pair<double, double> position, 
-    bool ISBACKTOPOSITION)
+    bool ISBACKTOPOSITION, bool IS_TURBO)
 {
 
-    rotate_to_position(position, ISBACKTOPOSITION);
+    rotate_to_position(position, ISBACKTOPOSITION, IS_TURBO);
 
     double distance_to_position = tm->get_distance_between_points(tm->get_current_position(), 
         position); // inches
@@ -247,7 +253,7 @@ void AutoDrive::rotate_and_drive_to_position(std::pair<double, double> position,
 }
 
 void AutoDrive::rotate_and_drive_to_position(InteractionObject *element, bool IS_BACK_POSITION, 
-    bool IS_OFFSET, bool IS_OFFSET_EXTRA) {
+    bool IS_TURBO, bool IS_OFFSET, bool IS_OFFSET_EXTRA) {
     
     std::pair<double, double> position = {};
     if (IS_OFFSET) position = {0,0}; // TODO: sub in function when done
@@ -335,35 +341,36 @@ void AutoDrive::turbo_drive_distance(double distance, bool IS_REVERSE) {
 
 }
 
-// void AutoDrive::turbo_spin(double heading)
-// {
-//     // Corrects heading to be from 0-360 from the x axis counterclockwise if applicable
-//     heading = fmod(heading, 360);
-//     if (heading < 0)
-//         heading += 360;
+void AutoDrive::turbo_turn(double heading)
+{
+    // Corrects heading to be from 0-360 from the x axis counterclockwise if applicable
+    heading = fmod(heading, 360);
+    if (heading < 0)
+        heading += 360;
 
-//     if (IS_USING_INERTIA_HEADING)
-//     {
-//         // turns heading from counterclockwise to clockwise bc smartDriveTrain.turnToHeading is measured clockwisee
-//         int clockwiseHeading = fmod(360.0 - heading, 360.0);
-//         clockwiseHeading = (heading >= 0 ? heading : heading + 360.0);
+    double angle_to_rotate = heading - tm->get_current_heading();
+    angle_to_rotate = fmod(angle_to_rotate, 360); // make sure the angle to rotate is -360 to 360
 
-//         hw->smartDriveTrain.turnToHeading(clockwiseHeading, vex::degrees, rc->autoRotateVelPercent, vex::velocityUnits::pct);
-//     }
-//     else // checks encoder heading with gps
-//     {
-//         double angleToRotate = heading - tm->getCurrHeading();
-//         angleToRotate = fmod(angleToRotate, 360); // make sure the angle to rotate is -360 to 360
+    // Determines whether to rotate left or right based on the  shortest distance
+    if (360 - fabs(angle_to_rotate) < angle_to_rotate)
+        angle_to_rotate = angle_to_rotate - 360;
+    
+    double revolutions = angle_to_rotate  * (rc->DRIVETRAIN_WIDTH) * M_PI 
+        / (360 * rc->WHEEL_CIRCUMFERENCE);
 
-//         // Determines whether to rotate left or right based on the  shortest distance
-//         if (360 - fabs(angleToRotate) < angleToRotate)
-//             angleToRotate = angleToRotate - 360;
-//         rotateToRelativeAngle(angleToRotate + robotAngleOffset);
-//     }
-//     tm->setCurrHeading(heading);
-//     tm->headingErrorCorrection();
-//     tm->positionErrorCorrection();
-// }
+
+    double velocity = 80;
+
+    hw->left_drivetrain_motors.spinFor(-revolutions, vex::rotationUnits::rev, velocity, 
+        vex::velocityUnits::pct, false);
+    hw->right_drivetrain_motors.spinFor(revolutions, vex::rotationUnits::rev, velocity, 
+        vex::velocityUnits::pct);
+
+    // Blocks other tasks from starting
+    while (fabs(hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0 
+        || fabs(hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0); 
+
+}
 
 
 
