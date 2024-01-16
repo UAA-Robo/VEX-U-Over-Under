@@ -104,6 +104,16 @@ void Drive::snowplow_out() {
     SNOWPLOW_OUT = true;
 }
 
+void Drive::right_snowplow_out() {
+    hw->right_plow.set(false);
+    SNOWPLOW_OUT = true;
+}
+
+void Drive::left_snowplow_out() {
+    hw->left_plow.set(false);
+    SNOWPLOW_OUT = true;
+}
+
 void Drive::snowplow_in() {
     hw->right_plow.set(true);
     hw->left_plow.set(true);
