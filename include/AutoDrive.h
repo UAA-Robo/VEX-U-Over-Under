@@ -41,13 +41,9 @@ private:
     /// @param target_position The position to drive to.
     void pathfind_and_drive_to_position(std::pair<double, double> target_position);
 
-    /// @brief Uses drivetrain ENCODERS to rotate to a relativ angle
-    /// @param angle Angle in degrees (-360 to 360) where positive angle is counterclockwise rotation
-    void rotate_to_relative_angle(double angle);
-
     /// @brief Rotates the shortest distance by turning left or right to the heading. Uses odometry sensors.
     /// @param heading Double that is the counterclockwise angle in degrees from the x asis.
-    void rotate_to_heading(double heading);
+    void rotate_to_heading(double heading, bool IS_TURBO = false);
 
     /// @brief Rotates the robot to align with a coordinate on the field.  Assumes 0 degrees is at 
     /// the positive x axis.
@@ -55,7 +51,8 @@ private:
     /// {0,0} being the center of the field
     /// @param ISBACKROTATION Boolean that if true, rotates the back of the robot to the 
     /// coordinate instead of the front
-    void rotate_to_position(std::pair<double, double> final_position, bool ISBACKROTATION = false);
+    void rotate_to_position(std::pair<double, double> final_position, bool ISBACKROTATION = false, 
+        bool IS_TURBO = false);
 
     /// @brief   Rotates the robot to align with the element on the field. Assumes the inertia 
     ///     sensor is set so 0 is at the positive x axis.
@@ -66,7 +63,7 @@ private:
     /// @param IS_OFFSET_EXTRA If true, rotates so that the element is aligned with the front 
     ///     (or back) of the bot instead of at the center with extra room to turn.
     void rotate_to_position(InteractionObject *element, bool IS_BACK_POSITION = false, 
-        bool IS_OFFSET = false, bool IS_OFFSET_EXTRA = false);
+        bool IS_TURBO = false, bool IS_OFFSET = false, bool IS_OFFSET_EXTRA = false);
 
 
     /// @brief Rotates the robot to align with a coordinate on the feild and drives to that 
@@ -96,9 +93,10 @@ private:
     /// @param ISBACKTOPOSITION A bool value that determines the direction the bot moves.
     void drive_to_position(std::pair<double, double> position, bool ISBACKTOPOSITION = false);
 
-    /// @brief  Rotates the shortest distance by turning left or right to the heading. Assumes the inertia sensor is set so 0 is at the positive x axis.
+    /// @brief  Rotates the shortest distance ONLY using encoders on wheels (no odometry).
+    ///     Good for turning that needs to be fast and might never get to position (ramming). 
     /// @param heading  Double that is the counterclockwise angle in degrees from the x asis.
-    void turbo_spin(double heading);
+    void turbo_turn(double heading);
 
     /// @brief Executes the plow strategy in the game.
     void run_plow_strategy();
