@@ -75,6 +75,12 @@ protected:
     /// @brief Sucks air in when Y button is pressed to retract snowplow.
     void snowplow_in();
 
+    /// @brief Sucks air into the right_plow independently
+    void right_snowplow_in();
+
+    /// @brief Sucks air into the left_plow independently
+    void left_snowplow_in();
+
     /// @brief Spins the catapult motors until limit switch is hit or launch/stop_catapult is 
     ///     called. Loops forever because it is on it's own thread.
     /// @param param For passing the telemetry class (this)

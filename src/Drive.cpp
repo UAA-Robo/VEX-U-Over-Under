@@ -121,6 +121,26 @@ void Drive::snowplow_in() {
     SNOWPLOW_OUT = false;
 }
 
+void Drive::right_snowplow_in() {
+    hw->right_plow.set(true);
+    if (!hw->right_plow.value() || !hw->left_plow.value()) {
+        SNOWPLOW_OUT = true;
+    }
+    else {
+        SNOWPLOW_OUT = false;
+    }
+}
+
+void Drive::left_snowplow_in() {
+    hw->left_plow.set(true);
+    if (!hw->right_plow.value() || !hw->left_plow.value()) {
+        SNOWPLOW_OUT = true;
+    }
+    else {
+        SNOWPLOW_OUT = false;
+    }
+}
+
 int Drive::run_catapult_thread(void* param)
 {
     // WARNING: DON'T print in this thread or it will take too long and miss the catapult press
