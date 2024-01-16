@@ -84,11 +84,13 @@ void Drive::stop_intake_expansion()
 void Drive::snowplow_out() {
     hw->right_plow.set(false);
     hw->left_plow.set(false);
+    SNOWPLOW_OUT = true;
 }
 
 void Drive::snowplow_in() {
     hw->right_plow.set(true);
     hw->left_plow.set(true);
+    SNOWPLOW_OUT = false;
 }
 
 int Drive::run_catapult_thread(void* param)
