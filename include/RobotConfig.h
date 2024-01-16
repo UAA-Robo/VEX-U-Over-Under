@@ -19,6 +19,8 @@ public:
     double DRIVETRAIN_RADIUS; //! Temporary, configure actual values later
     double ACTUAL_RADIUS;
 
+    double WHEEL_CIRCUMFERENCE;
+
     double ODOMETRY_DIAMETER;
 
     robot_name ROBOT;

@@ -37,6 +37,10 @@ private:
     /// @brief Drives to all coordinates stored in the local path vector.
     void drive_along_path();
 
+    /// @brief Pathfinds to a target position and drives to it.
+    /// @param target_position The position to drive to.
+    void pathfind_and_drive_to_position(std::pair<double, double> target_position);
+
     /// @brief Uses drivetrain ENCODERS to rotate to a relativ angle
     /// @param angle Angle in degrees (-360 to 360) where positive angle is counterclockwise rotation
     void rotate_to_relative_angle(double angle);

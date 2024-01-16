@@ -102,6 +102,11 @@ void AutoDrive::drive_along_path() {
     }
 }
 
+void AutoDrive::pathfind_and_drive_to_position(std::pair<double, double> target_position) {
+    pg->generate_path(path, tm->get_current_position(), target_position);
+    drive_along_path();
+}
+
 void AutoDrive::rotate_to_heading(double heading)
 {
     // std::cout << "Rotating to " << heading << std::endl;
@@ -110,7 +115,7 @@ void AutoDrive::rotate_to_heading(double heading)
     if (heading < 0) heading += 360;
     double min_velocity = 20;
     double max_velocity = 50;
-    double stopping_aggression = 0.01; // Lower number is higher aggression (steeper slope)
+    double stopping_aggression = 0.015; // Lower number is higher aggression (steeper slope)
 
     // Scratette will go faster bc she has bigger wheels
     if (rc->ROBOT == SCRATETTE) {
@@ -158,7 +163,7 @@ void AutoDrive::rotate_to_heading(double heading)
     while (angle_to_travel > 1 && (previous_angle_to_travel - angle_to_travel) >= -0.05) { 
     // while (fabs(tm->get_current_heading() - heading) > 1.0) { //! REMOVE OR REFACTOR
         // std::cout << "    V: " << velocity << ", Angle to Travel: " << angle_to_travel << std::endl;
-        // std::cout << "    Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
+        std::cout << "    Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
         // Speeds up as leaving initial angle and slows down as approaching destination
         if (angle_to_travel > total_angle_to_travel/2) {
             // First half of distance
@@ -354,14 +359,15 @@ void AutoDrive::run_plow_strategy() {
     target_pos = mp->goals[3]->get_position();
     prep_pos.first = 70.02 - 14.0;
     prep_pos.second = target_pos.second + 21.0; // Offset from goal by almost 2 feet
-    target_pos.second += rc->DRIVETRAIN_RADIUS;
-    pg->generate_path(this->path, tm->get_current_position(), prep_pos);
-    drive_along_path();
-    this->rotate_to_heading(-90.0);
-    drive_to_position(target_pos, false);
+    target_pos.second += rc->DRIVETRAIN_RADIUS - 2;
+    pathfind_and_drive_to_position(prep_pos);
+    this->rotate_to_heading(90.0);
+    // drive_to_position(target_pos, true);
+    turbo_drive_distance(tm->get_distance_between_points(tm->get_current_position()), true);
     vex::wait(500, vex::timeUnits::msec);
     // snowplow_in();
-    drive_to_position(prep_pos, true);
+    // drive_to_position(prep_pos, true);
+    turbo_drive_distance(21.0, false);
 
     // Ram at side-top of red goal
     // snowplow_out();
@@ -369,44 +375,47 @@ void AutoDrive::run_plow_strategy() {
     target_pos = mp->goals[0]->get_position();
     prep_pos = target_pos;
     std::cout << "2" << '\n';
-    prep_pos.first -= 21.0;
-    target_pos.first += rc->DRIVETRAIN_RADIUS;
+    prep_pos.first -= 31.0;
+    target_pos.first += rc->DRIVETRAIN_RADIUS - 2;
     std::cout << "3" << '\n';
-    pg->generate_path(this->path, tm->get_current_position(), prep_pos);
-    drive_along_path();
-    this->rotate_to_heading(0.0);
-    drive_to_position(target_pos, false);
+    pathfind_and_drive_to_position(prep_pos);
+    this->rotate_to_heading(180.0);
+    // drive_to_position(target_pos, true);
+    turbo_drive_distance(31.0, true);
     vex::wait(500, vex::timeUnits::msec);
     // snowplow_in();
-    drive_to_position(prep_pos, true);
+    // drive_to_position(prep_pos, true);
+    turbo_drive_distance(31.0, false);
 
     // Ram at side-bottom of red goal
     // snowplow_out();
     target_pos = mp->goals[2]->get_position();
     prep_pos = target_pos;
-    prep_pos.first -= 21.0;
-    target_pos.first += rc->DRIVETRAIN_RADIUS;
-    pg->generate_path(this->path, tm->get_current_position(), prep_pos);
-    drive_along_path();
-    this->rotate_to_heading(0.0);
-    drive_to_position(target_pos, false);
+    prep_pos.first -= 31.0;
+    target_pos.first += rc->DRIVETRAIN_RADIUS - 2;
+    pathfind_and_drive_to_position(prep_pos);
+    this->rotate_to_heading(180.0);
+    // drive_to_position(target_pos, true);
+    turbo_drive_distance(31.0, true);
     vex::wait(500, vex::timeUnits::msec);
     // snowplow_in();
-    drive_to_position(prep_pos, true);
+    // drive_to_position(prep_pos, true);
+    turbo_drive_distance(31.0, false);
 
     // Ram at bottom of red goal
     // snowplow_out();
     target_pos = mp->goals[4]->get_position();
     prep_pos.first = 70.02 - 14.0;
     prep_pos.second = target_pos.second - 21.0; // Offset from goal by almost 2 feet
-    target_pos.second -= rc->DRIVETRAIN_RADIUS;
-    pg->generate_path(this->path, tm->get_current_position(), prep_pos);
-    drive_along_path();
-    rotate_to_heading(90.0);
-    drive_to_position(target_pos, false);
+    target_pos.second -= rc->DRIVETRAIN_RADIUS - 2;
+    pathfind_and_drive_to_position(prep_pos);
+    rotate_to_heading(-90.0);
+    // drive_to_position(target_pos, true);
+    turbo_drive_distance(21.0, true);
     vex::wait(500, vex::timeUnits::msec);
     // snowplow_in();
-    drive_to_position(prep_pos, true);
+    // drive_to_position(prep_pos, true);
+    turbo_drive_distance(21.0, false);
 
     // Returning direction -------------------------------------------------------------------------
 
@@ -414,29 +423,31 @@ void AutoDrive::run_plow_strategy() {
     // snowplow_out();
     target_pos = mp->goals[2]->get_position();
     prep_pos = target_pos;
-    prep_pos.first -= 21.0;
-    target_pos.first += rc->DRIVETRAIN_RADIUS;
-    pg->generate_path(this->path, tm->get_current_position(), prep_pos);
-    drive_along_path();
+    prep_pos.first -= 31.0;
+    target_pos.first += rc->DRIVETRAIN_RADIUS - 2 ;
+    pathfind_and_drive_to_position(prep_pos);
     rotate_to_heading(0.0);
-    drive_to_position(target_pos, false);
+    // drive_to_position(target_pos, false);
+    turbo_drive_distance(31.0, true);
     vex::wait(500, vex::timeUnits::msec);
     // snowplow_in();
-    drive_to_position(prep_pos, true);
+    // drive_to_position(prep_pos, true);
+    turbo_drive_distance(31.0, false);
 
     // Ram at side-top of red goal
     // snowplow_out();
     target_pos = mp->goals[0]->get_position();
     prep_pos = target_pos;
-    prep_pos.first -= 21.0;
+    prep_pos.first -= 31.0;
     target_pos.first += rc->DRIVETRAIN_RADIUS;
-    pg->generate_path(this->path, tm->get_current_position(), prep_pos);
-    drive_along_path();
+    pathfind_and_drive_to_position(prep_pos);
     rotate_to_heading(0.0);
-    drive_to_position(target_pos, false);
+    // drive_to_position(target_pos, false);
+    turbo_drive_distance(31.0, true);
     vex::wait(500, vex::timeUnits::msec);
     // snowplow_in();
-    drive_to_position(prep_pos, true);
+    // drive_to_position(prep_pos, true);
+    turbo_drive_distance(31.0, false);
 
     //? May be covered already
     // Ram at top of red goal

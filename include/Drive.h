@@ -46,6 +46,8 @@ protected:
     ///                           {verticalVelocityPercent, horizontalVelocityPercent} 
     void move_drivetrain_distance(std::pair<double, double> velocity_percent, double distance);
 
+    void turbo_drive_distance(double distance, bool ISBACKTOPOSITION);
+
     /// @brief Activates the intake
     void activate_intake();
 
