@@ -44,11 +44,6 @@ private:
     /// @param target_position The position to drive to.
     void pathfind_and_drive_to_position(std::pair<double, double> target_position);
 
-    /// @brief Drive a specified distance at high speed.
-    /// @param distance The distance to drive.
-    /// @param ISBACKTOPOSITION True if driving backwards, false otherwise.
-    void turbo_drive_distance(double distance, bool ISBACKTOPOSITION);
-
     /// @brief Uses drivetrain ENCODERS to rotate to a relativ angle
     /// @param angle Angle in degrees (-360 to 360) where positive angle is counterclockwise rotation
     void rotate_to_relative_angle(double angle);
@@ -103,6 +98,11 @@ private:
     /// @param position Pair of doubles: {X, Y}
     /// @param ISBACKTOPOSITION A bool value that determines the direction the bot moves.
     void drive_to_position(std::pair<double, double> position, bool ISBACKTOPOSITION = false);
+
+    /// @brief Drive a specified distance at high speed.
+    /// @param distance The distance to drive.
+    /// @param IS_REVERSE True if driving backwards, false otherwise.
+    void turbo_drive_distance(double distance, bool IS_REVERSE);
 
     /// @brief  Rotates the shortest distance by turning left or right to the heading. Assumes the inertia sensor is set so 0 is at the positive x axis.
     /// @param heading  Double that is the counterclockwise angle in degrees from the x asis.
