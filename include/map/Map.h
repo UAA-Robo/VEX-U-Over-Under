@@ -382,6 +382,26 @@ class Map {
             else return regions[region]->lower_critical_point;
         }
 
+
+
+        /// @brief Provides the position of interaction for a game element based off its interaction_angle
+        /// @param element GameElement passed in to recieve new value
+        /// @param CAN_TURN_AROUND Determines if the bot should have enough room to rotate
+        /// @return GameElement position with offset
+        std::pair<double, double> get_point_with_offset(InteractionObject* element, bool CAN_TURN_AROUND)
+        {
+            double offset_distance = rc->ACTUAL_WIDTH / 2;
+            std::pair<double, double> new_position = element->get_position();
+
+            // If the robot should be able to rotate, add more offset
+            if (CAN_TURN_AROUND) { offset_distance = rc->ACTUAL_RADIUS + 1; } // change later
+
+            new_position.first += -1 * offset_distance * cos(*(element->get_interaction_angle()));
+            new_position.second += -1 * offset_distance * sin(*(element->get_interaction_angle()));
+
+            return new_position;
+        }
+
         // coordinates-angle-readjustment - Wa did this it's so cool!
         double x_adjust = -70.20;    // inches
         double y_adjust = -70.20;    // inches
