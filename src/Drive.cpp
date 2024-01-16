@@ -49,15 +49,18 @@ void Drive::turbo_drive_distance(double distance, bool ISBACKTOPOSITION) {
     // std::pair<double, double> vel = calculateDriveTrainVel(velPercent);
 
     if (ISBACKTOPOSITION) {
+        hw->left_drivetrain_motors.spinTo(-num_wheel_revolutions, vex::rotationUnits::rev, 80.0, vex::velocityUnits::pct, false);
+        hw->right_drivetrain_motors.spinTo(-num_wheel_revolutions, vex::rotationUnits::rev, 80.0, vex::velocityUnits::pct, false);
+    }
+    else {
         hw->left_drivetrain_motors.spinTo(num_wheel_revolutions, vex::rotationUnits::rev, 80.0, vex::velocityUnits::pct, false);
         hw->right_drivetrain_motors.spinTo(num_wheel_revolutions, vex::rotationUnits::rev, 80.0, vex::velocityUnits::pct, false);
     }
-    else {
-        hw->left_drivetrain_motors.spinTo(num_wheel_revolutions, vex::rotationUnits::rev, -80.0, vex::velocityUnits::pct, false);
-        hw->right_drivetrain_motors.spinTo(num_wheel_revolutions, vex::rotationUnits::rev, -80.0, vex::velocityUnits::pct, false);
-    }
     vex::wait(50, vex::timeUnits::msec);
     while(fabs(hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0.0 || fabs(hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0.0); //Blocks other tasks from starting 
+
+    std::cout << "Turbo done\n";
+
 }
 
 

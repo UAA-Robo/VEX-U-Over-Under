@@ -15,8 +15,9 @@ void AutoDrive::drive() {
     hw->left_intake_expansion_motor.setStopping(vex::brakeType::hold);
     hw->right_intake_expansion_motor.setStopping(vex::brakeType::hold);
 
+    test_turbo();
     // test_odometry();
-    execute_skills_plan(); //! ELIMINATE OPPONENTS
+    // execute_skills_plan(); //! ELIMINATE OPPONENTS
     // std::vector<std::pair<double, double>> path;
     // std::pair<double, double> curr_position = rc->starting_pos;
     // std::pair<double, double> targ_position = {-36.0, -60.0};
@@ -58,6 +59,20 @@ void AutoDrive::test_odometry() {
 
     std::cout << "Ending at (" << tm->get_current_position().first << ", "  << tm->get_current_position().second << "),  " << tm->get_current_heading() << " deg" << std::endl;
 
+}
+
+void AutoDrive::test_turbo() {
+
+    turbo_drive_distance(
+        tm->get_distance_between_points(
+            tm->get_current_position(),
+            mp->get_point_with_offset(
+                mp->goals[0],
+                false
+            )
+        ),
+        false
+    );
 }
 
 void AutoDrive::execute_skills_plan() {
