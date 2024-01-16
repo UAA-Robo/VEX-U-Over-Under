@@ -294,40 +294,48 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
     vex::wait(1000, vex::timeUnits::msec);  // Wait for odometry wheels to update
 }
 
-std::pair<double, double> AutoDrive::get_point_with_offset(InteractionObject* element)
+
+
+//   Declared here instead of InteractionObject.h for now...
+
+std::pair<double, double> AutoDrive::get_point_with_offset(InteractionObject* element, bool CAN_TURN_AROUND)
 {
+    double offset_distance = rc->ACTUAL_RADIUS;
     std::pair<double, double> new_position = element->get_position();
     double element_interaction_angle = *(element->get_interaction_angle());
+
+    // If the robot should be able to rotate, add more offset
+    if (CAN_TURN_AROUND) { offset_distance += 2.0 ; } // change 2.0 later
 
     // adjusted for heading_adjust, original get_interaction_angle = ...
     if (element_interaction_angle == tm->get_current_heading()) { /* Any angle */}
     else if (element_interaction_angle == 90) {     // ZERO
-        new_position.second -= rc->DRIVETRAIN_RADIUS;
+        new_position.second -= offset_distance;
     }
     else if (element_interaction_angle == 135) {    // FORTY_FIVE
-        new_position.first += rc->DRIVETRAIN_RADIUS / sqrt(2);
-        new_position.second -= rc->DRIVETRAIN_RADIUS / sqrt(2);
+        new_position.first += offset_distance;
+        new_position.second -= offset_distance;
     }
     else if (element_interaction_angle == 180) {    // NINETY
-        new_position.first += rc->DRIVETRAIN_RADIUS;
+        new_position.first += offset_distance;
     }
     else if (element_interaction_angle == 225) {    // ONE_THIRTY_FIVE
-        new_position.first += rc->DRIVETRAIN_RADIUS / sqrt(2);
-        new_position.second += rc->DRIVETRAIN_RADIUS / sqrt(2);
+        new_position.first += offset_distance;
+        new_position.second += offset_distance;
     }
     else if (element_interaction_angle == 270) {    // ONE_EIGHTY
-        new_position.second += rc->DRIVETRAIN_RADIUS;
+        new_position.second += offset_distance;
     }
     else if (element_interaction_angle == 360) {    // TWO_SEVENTY
-        new_position.first -= rc->DRIVETRAIN_RADIUS;
+        new_position.first -= offset_distance;
     }
     else if (element_interaction_angle == 45) {    // NEG_FORTY_FIVE
-        new_position.first += rc->DRIVETRAIN_RADIUS / sqrt(2);
-        new_position.second -= rc->DRIVETRAIN_RADIUS / sqrt(2);
+        new_position.first += offset_distance;
+        new_position.second -= offset_distance;
     }
     else if (element_interaction_angle == -45) {    // NEG_ONE_THIRTY_FIVE
-        new_position.first -= rc->DRIVETRAIN_RADIUS / sqrt(2);
-        new_position.second -= rc->DRIVETRAIN_RADIUS / sqrt(2);
+        new_position.first -= offset_distance;
+        new_position.second -= offset_distance;
     }
 
     return new_position;
