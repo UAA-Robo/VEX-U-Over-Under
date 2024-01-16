@@ -299,6 +299,37 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
     vex::wait(1000, vex::timeUnits::msec);  // Wait for odometry wheels to update
 }
 
+void AutoDrive::turbo_spin(double heading)
+{
+    // Corrects heading to be from 0-360 from the x axis counterclockwise if applicable
+    heading = fmod(heading, 360);
+    if (heading < 0)
+        heading += 360;
+
+    if (IS_USING_INERTIA_HEADING)
+    {
+        // turns heading from counterclockwise to clockwise bc smartDriveTrain.turnToHeading is measured clockwisee
+        int clockwiseHeading = fmod(360.0 - heading, 360.0);
+        clockwiseHeading = (heading >= 0 ? heading : heading + 360.0);
+
+        hw->smartDriveTrain.turnToHeading(clockwiseHeading, vex::degrees, rc->autoRotateVelPercent, vex::velocityUnits::pct);
+    }
+    else // checks encoder heading with gps
+    {
+        double angleToRotate = heading - tm->getCurrHeading();
+        angleToRotate = fmod(angleToRotate, 360); // make sure the angle to rotate is -360 to 360
+
+        // Determines whether to rotate left or right based on the  shortest distance
+        if (360 - fabs(angleToRotate) < angleToRotate)
+            angleToRotate = angleToRotate - 360;
+        rotateToRelativeAngle(angleToRotate + robotAngleOffset);
+    }
+    tm->setCurrHeading(heading);
+    tm->headingErrorCorrection();
+    tm->positionErrorCorrection();
+}
+
+
 
 void AutoDrive::run_plow_strategy() {
 

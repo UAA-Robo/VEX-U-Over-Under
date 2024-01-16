@@ -62,6 +62,7 @@ void Drive::turbo_drive_distance(double distance, bool ISBACKTOPOSITION) {
 
 
 
+
 void Drive::activate_intake()
 {
     if (rc->ROBOT == SCRAT) hw->intake.spin(vex::directionType::rev, 8.0, vex::voltageUnits::volt);
