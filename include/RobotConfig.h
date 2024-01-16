@@ -7,6 +7,7 @@ public:
     RobotConfig(Hardware* hw);
     float ODOMETRY_LEFT_RIGHT_RADIUS;
     float ODOMETRY_BACK_RADIUS;
+    float ODOMETRY_BACK_OFFSET;
     float ODOMETRY_CIRCUMFERENCE;
     //double WHEELCIRC;
     double auto_drive_velocity_percent;

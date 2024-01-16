@@ -47,14 +47,14 @@ void AutoDrive::test_odometry() {
     tm->set_heading(0);
     tm->set_position({0,0});
 
-    while(true) {
-        std::cout << "Odom: (" << tm->get_current_position().first << ", "  << tm->get_current_position().second << "),  " << tm->get_current_heading() << " deg" << std::endl;
-        vex::wait(50, vex::timeUnits::msec);
-    }
+    // while(true) {
+    //     std::cout << "Odom: (" << tm->get_current_position().first << ", "  << tm->get_current_position().second << "),  " << tm->get_current_heading() << " deg" << std::endl;
+    //     vex::wait(50, vex::timeUnits::msec);
+    // }
    
     std::pair<double, double> position = {12,0};
     std::cout << "Moving to ("<< position.first << ", "  << position.second << "). Currently at " << tm->get_current_position().first << ", "  << tm->get_current_position().second << "),  " << tm->get_current_heading() << " deg" << std::endl;
-    drive_to_position({12,0});
+    rotate_to_heading(90);
 
     std::cout << "Ending at (" << tm->get_current_position().first << ", "  << tm->get_current_position().second << "),  " << tm->get_current_heading() << " deg" << std::endl;
 
@@ -110,7 +110,15 @@ void AutoDrive::rotate_to_heading(double heading)
     if (heading < 0) heading += 360;
     double min_velocity = 20;
     double max_velocity = 50;
-    const double stopping_aggression = 0.01; // Lower number is higher aggression (steeper slope)
+    double stopping_aggression = 0.01; // Lower number is higher aggression (steeper slope)
+
+    // Scratette will go faster bc she has bigger wheels
+    if (rc->ROBOT == SCRATETTE) {
+        min_velocity = 10;
+        max_velocity = 30;
+        stopping_aggression = 0.03;
+    }
+
     double velocity;
 
     // 1 if counterclockwise, -1 if clockwise depending on which direction is shorter to turn
@@ -124,9 +132,16 @@ void AutoDrive::rotate_to_heading(double heading)
     double previous_angle_to_travel = angle_to_travel + 1; // For not overshooting
 
     // Slow for small angles bc function doesn't slow things down enough.
-    if (angle_to_travel < 30) {
+    if (angle_to_travel < 35) {
         min_velocity = 20;
         max_velocity = 25;
+        
+        // Scratette will go faster bc she has bigger wheels
+        if (rc->ROBOT == SCRATETTE) {
+            min_velocity = 10;
+            max_velocity = 15;
+            stopping_aggression = 0.2;
+        }
     }
     // std::cout << "Angle to travel: " << angle_to_travel << std::endl;
 
@@ -140,7 +155,7 @@ void AutoDrive::rotate_to_heading(double heading)
 
     // Turn until within 1 degrees of desired heading or until it overshoots
     // (change in angle starts majorly increasing instead of decreasing)
-    while (angle_to_travel > 1 && (previous_angle_to_travel - angle_to_travel) >= -0.05) { //TODO: Something isn't working here
+    while (angle_to_travel > 1 && (previous_angle_to_travel - angle_to_travel) >= -0.05) { 
     // while (fabs(tm->get_current_heading() - heading) > 1.0) { //! REMOVE OR REFACTOR
         // std::cout << "    V: " << velocity << ", Angle to Travel: " << angle_to_travel << std::endl;
         // std::cout << "    Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
@@ -158,7 +173,7 @@ void AutoDrive::rotate_to_heading(double heading)
         hw->left_drivetrain_motors.setVelocity(-velocity * turn_direction, vex::velocityUnits::pct);
         hw->right_drivetrain_motors.setVelocity(velocity * turn_direction, vex::velocityUnits::pct);
         
-        vex::wait(50, vex::timeUnits::msec);  // Wait for odometry to update
+        vex::wait(35, vex::timeUnits::msec);  // Wait for odometry to update
        
         previous_angle_to_travel = angle_to_travel;  // For stopping if overshoots
         angle_to_travel = fabs(heading - tm->get_current_heading());
@@ -229,8 +244,14 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
     double distance = current_distance; // Distance goal    
     double previous_distance = current_distance; 
 
-    const double min_velocity = 20;
-    const double max_velocity = 80;
+    double min_velocity = 20;
+    double max_velocity = 80;
+
+    // Scratette will go faster bc she has bigger wheels
+    if (rc->ROBOT == SCRATETTE) {
+        min_velocity = 10;
+        max_velocity = 50;
+    }
     const double stopping_aggression = 0.1; // Lower number is higher aggression (steeper slope)
     double velocity;
 
@@ -247,9 +268,8 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
     // (change in distance starts majorly increasing instead of decreasing)
     while (fabs(current_distance) > 0.5 && (previous_distance - current_distance) >= -0.01) {
         // Speeds up as leaving initial position and slows down as approaching destination
-        //std::cout << "      Current Distance: " << current_distance << " Current Heading: " << tm->get_current_heading() << std::endl;
-        //std::cout << "    Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
-        //std::cout << "    V: " << velocity << " Current Distance: " << current_distance << std::endl;
+        std::cout << "    Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
+        std::cout << "    V: " << velocity << " Current Distance: " << current_distance << std::endl;
         if (current_distance >= distance/2) {
             // First half of distance
             velocity = atan(distance - current_distance) * 2 * (max_velocity-min_velocity) / M_PI 
@@ -260,7 +280,7 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
         }
         hw->drivetrain.setVelocity(velocity * drive_direction, vex::velocityUnits::pct);
       
-        vex::wait(50, vex::timeUnits::msec);  // Wait for odometry wheels to update
+        vex::wait(35, vex::timeUnits::msec);  // Wait for odometry wheels to update
 
         previous_distance = current_distance; // So don't overshoot
         current_distance = tm->get_distance_between_points(tm->get_current_position(), position); 
