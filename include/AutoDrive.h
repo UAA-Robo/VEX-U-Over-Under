@@ -44,6 +44,11 @@ private:
     /// @param target_position The position to drive to.
     void pathfind_and_drive_to_position(std::pair<double, double> target_position);
 
+    /// @brief Drive a specified distance at high speed.
+    /// @param distance The distance to drive.
+    /// @param ISBACKTOPOSITION True if driving backwards, false otherwise.
+    void turbo_drive_distance(double distance, bool ISBACKTOPOSITION);
+
     /// @brief Uses drivetrain ENCODERS to rotate to a relativ angle
     /// @param angle Angle in degrees (-360 to 360) where positive angle is counterclockwise rotation
     void rotate_to_relative_angle(double angle);
