@@ -28,8 +28,8 @@ public:
     
 
     // Starting position
-    std::pair<double, double> starting_pos = {117.09 - 70.20 - 31, 81.985 - 70.20}; // old is -53.23, 53.23
-    double starting_heading = 180.0;
+    std::pair<double, double> starting_pos = {-53.23, 53.23}; // old is -53.23, 53.23
+    double starting_heading = 135.0;
 
 private:
     Hardware* hw;
