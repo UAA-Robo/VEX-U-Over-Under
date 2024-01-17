@@ -381,12 +381,12 @@ void AutoDrive::turbo_turn(double heading)
 }
 
 void AutoDrive::climb_distance(double height) {
-    double height_climbed = 0;
-    while (height_climbed < height) {
-        /// climb
+    double climb_wheel_circumference = rc->CLIMB_WHEEL_DIAMETER * M_PI;
+    double climb_wheel_revolution = height / climb_wheel_circumference;
+    double velocity = 100;  // TODO: change later
 
-       /// height_climbed = distanceSensor.ObjectDistance();
-    }
+    hw->climb_motors.spinFor(climb_wheel_revolution, vex::rotationUnits::rev, velocity,
+        vex::velocityUnits::pct);
 }
 
 
