@@ -60,8 +60,8 @@ public:
     vex::motor right_intake_motor = vex::motor(vex::PORT10, vex::ratio18_1, false);
     vex::motor_group intake = vex::motor_group(left_intake_motor, right_intake_motor);
 
-    vex::motor left_intake_expansion_motor = vex::motor(vex::PORT5, vex::ratio18_1, true);
-    vex::motor right_intake_expansion_motor = vex::motor(vex::PORT4, vex::ratio18_1, false);
+    vex::motor left_intake_expansion_motor = vex::motor(vex::PORT5, vex::ratio18_1, false);
+    vex::motor right_intake_expansion_motor = vex::motor(vex::PORT4, vex::ratio18_1, true);
     vex::motor_group intake_expansion = vex::motor_group(left_intake_expansion_motor, right_intake_expansion_motor);
 
     // Limit switches

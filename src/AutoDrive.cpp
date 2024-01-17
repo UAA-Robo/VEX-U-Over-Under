@@ -593,13 +593,14 @@ void AutoDrive::run_catapult_catapult_strategy() {
         expand_intake();
         vex::wait(2, vex::timeUnits::sec);
         stop_intake_expansion();
-        activate_intake();
+        //activate_intake(); // TODO uncomment
+        while(1);
 
         for (int i = 0; i < NUMBER_TRIBALLS; i++) {
             // Lower red offset
             rotate_and_drive_to_position(mp->loadzones[1], true, false, true, true); 
             rotate_to_position(mp->goals[2], true, false, false, true);
-            launch_catapult();
+            //launch_catapult();
             rotate_and_drive_to_position(mp->loadzones[1], false, true, false, true); 
         }
 

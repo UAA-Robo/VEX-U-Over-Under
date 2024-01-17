@@ -116,12 +116,12 @@ private:
     /// @brief Executes the plow strategy in the game.
     void run_plow_strategy();
 
-<<<<<<< HEAD
+
     /// @brief Executes catapult strategy
     void run_catapult_catapult_strategy();
-=======
+
     /// @brief Prompts the robot to climb up a certain distance
     /// @param height The height the robot has to climb
     void climb_distance(double height);
->>>>>>> 2151356994481f4ab3abd64c899042606b7cea75
+
 };
