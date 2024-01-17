@@ -18,7 +18,7 @@ void AutoDrive::drive() {
     tm->set_position({0,0});
     tm->set_heading(0);
 
-    turbo_drive_distance(24, false);
+    run_catapult_catapult_strategy();
     //test_turbo();
     // test_odometry();
     // execute_skills_plan(); //! ELIMINATE OPPONENTS
