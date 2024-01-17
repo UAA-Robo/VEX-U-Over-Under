@@ -25,7 +25,7 @@ RobotConfig::RobotConfig(Hardware* hardware)
         // to get accurate turning results. (measured from the center of the wheels)
         ODOMETRY_LEFT_RIGHT_RADIUS =  4.0 / 2; 
 
-        WHEEL_CIRCUMFERENCE = 9999.999;
+        WHEEL_CIRCUMFERENCE = 4.25 * M_PI;
 
         // Distance between horizontal odometry wheel and horizontal center line
         ODOMETRY_BACK_RADIUS = 3.25; 
@@ -55,7 +55,7 @@ RobotConfig::RobotConfig(Hardware* hardware)
         ODOMETRY_BACK_RADIUS = 4.25; 
         ODOMETRY_BACK_OFFSET = 0;
 
-        WHEEL_CIRCUMFERENCE = 3.25;
+        WHEEL_CIRCUMFERENCE = 3.25 * M_PI;
 
         // Distance (in inch) between left and right side of the drivetrain 
         // (measured from the center of the wheels)

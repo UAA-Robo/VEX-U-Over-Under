@@ -20,6 +20,7 @@ public:
     double ACTUAL_RADIUS;
 
     double WHEEL_CIRCUMFERENCE;
+    double CLIMB_WHEEL_DIAMETER = 3.0;
 
     double ODOMETRY_DIAMETER;
 
