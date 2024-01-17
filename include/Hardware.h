@@ -67,5 +67,4 @@ public:
     // Limit switches
     vex::digital_in catapult_limit_switch = vex::digital_in(brain.ThreeWirePort.H);
     
-
 };

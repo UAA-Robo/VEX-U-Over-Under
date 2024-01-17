@@ -380,6 +380,15 @@ void AutoDrive::turbo_turn(double heading)
 
 }
 
+void AutoDrive::climb_distance(double height) {
+    double height_climbed = 0;
+    while (height_climbed < height) {
+        /// climb
+
+       /// height_climbed = distanceSensor.ObjectDistance();
+    }
+}
+
 
 
 void AutoDrive::run_plow_strategy() {
