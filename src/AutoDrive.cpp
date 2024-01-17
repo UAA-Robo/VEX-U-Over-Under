@@ -15,7 +15,11 @@ void AutoDrive::drive() {
     hw->left_intake_expansion_motor.setStopping(vex::brakeType::hold);
     hw->right_intake_expansion_motor.setStopping(vex::brakeType::hold);
 
-    test_turbo();
+    tm->set_position({0,0});
+    tm->set_heading(0);
+
+    turbo_drive_distance(24, false);
+    //test_turbo();
     // test_odometry();
     // execute_skills_plan(); //! ELIMINATE OPPONENTS
     // std::vector<std::pair<double, double>> path;
