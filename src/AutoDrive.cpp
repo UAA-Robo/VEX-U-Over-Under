@@ -181,7 +181,7 @@ void AutoDrive::rotate_to_heading(double heading, bool IS_TURBO)
     while (angle_to_travel > 1 && (previous_angle_to_travel - angle_to_travel) >= -0.05) { 
     // while (fabs(tm->get_current_heading() - heading) > 1.0) { //! REMOVE OR REFACTOR
         // std::cout << "    V: " << velocity << ", Angle to Travel: " << angle_to_travel << std::endl;
-        std::cout << "    Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
+        //std::cout << "    Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
         // Speeds up as leaving initial angle and slows down as approaching destination
         if (angle_to_travel > total_angle_to_travel/2) {
             // First half of distance
@@ -229,9 +229,9 @@ void AutoDrive::rotate_to_position(InteractionObject *element, bool IS_BACK_POSI
     bool IS_OFFSET, bool IS_OFFSET_EXTRA, bool IS_TURBO)
 {
     std::pair<double, double> position = {};
-    if (IS_OFFSET) position = {0,0}; // TODO: sub in function when done
-    else if (IS_OFFSET_EXTRA) position = {0,0}; // TODO: sub in function when done
-    else position = element->get_position();
+    if (IS_OFFSET || IS_OFFSET_EXTRA) {
+        position = mp->get_point_with_offset(element, IS_OFFSET_EXTRA);
+    } else position = element->get_position();
 
     rotate_to_position(position, IS_BACK_POSITION, IS_TURBO);
 }
@@ -254,10 +254,9 @@ void AutoDrive::rotate_and_drive_to_position(InteractionObject *element, bool IS
     bool IS_OFFSET, bool IS_OFFSET_EXTRA, bool IS_TURBO) {
     
     std::pair<double, double> position = {};
-    if (IS_OFFSET) position = {0,0}; // TODO: sub in function when done
-    else if (IS_OFFSET_EXTRA) position = {0,0}; // TODO: sub in function when done
-    else position = element->get_position();
-
+    if (IS_OFFSET || IS_OFFSET_EXTRA) {
+        position = mp->get_point_with_offset(element, IS_OFFSET_EXTRA);
+    } else position = element->get_position();
     rotate_and_drive_to_position(position, IS_BACK_POSITION, IS_TURBO);
 }
 
@@ -299,8 +298,8 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
     // (change in distance starts majorly increasing instead of decreasing)
     while (fabs(current_distance) > 0.5 && (previous_distance - current_distance) >= -0.01) {
         // Speeds up as leaving initial position and slows down as approaching destination
-        std::cout << "    Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
-        std::cout << "    V: " << velocity << " Current Distance: " << current_distance << std::endl;
+        //std::cout << "    Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
+        //std::cout << "    V: " << velocity << " Current Distance: " << current_distance << std::endl;
         if (current_distance >= distance/2) {
             // First half of distance
             velocity = atan(distance - current_distance) * 2 * (max_velocity-min_velocity) / M_PI 
@@ -587,18 +586,22 @@ void AutoDrive::run_catapult_catapult_strategy() {
         //TODO modify this
         goal_heading = mp->loadzones[1]->get_interaction_angle();
         tm->set_heading(goal_heading);
+
+        std::cout << "Heading: " << tm->get_current_heading() << std::endl;
         goal_position = mp->get_point_with_offset(mp->loadzones[1], false);
         tm->set_position(goal_position);
+        std::cout << "Position: " << tm->get_current_position().first << "," << tm->get_current_position().second << std::endl;
 
         expand_intake();
         vex::wait(2, vex::timeUnits::sec);
         stop_intake_expansion();
-        //activate_intake(); // TODO uncomment
-        while(1);
+        activate_intake(); // TODO uncomment
+        //while(1);
 
         for (int i = 0; i < NUMBER_TRIBALLS; i++) {
             // Lower red offset
             rotate_and_drive_to_position(mp->loadzones[1], true, false, true, true); 
+            while(1);
             rotate_to_position(mp->goals[2], true, false, false, true);
             //launch_catapult();
             rotate_and_drive_to_position(mp->loadzones[1], false, true, false, true); 

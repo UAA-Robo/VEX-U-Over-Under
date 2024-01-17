@@ -390,14 +390,20 @@ class Map {
         /// @return GameElement position with offset
         std::pair<double, double> get_point_with_offset(InteractionObject* element, bool CAN_TURN_AROUND)
         {
-            double offset_distance = rc->ACTUAL_WIDTH / 2;
+            double offset_distance = rc->ACTUAL_WIDTH / 2.0;
             std::pair<double, double> new_position = element->get_position();
 
-            // If the robot should be able to rotate, add more offset
-            if (CAN_TURN_AROUND) { offset_distance = rc->ACTUAL_RADIUS + 1; } // change later
+            std::cout << "MAP ORIGINAL POS: " << new_position.first << ", " << new_position.second << std::endl;
 
-            new_position.first += -1 * offset_distance * cos((element->get_interaction_angle()));
-            new_position.second += -1 * offset_distance * sin((element->get_interaction_angle()));
+            // If the robot should be able to rotate, add more offset
+            if (CAN_TURN_AROUND) { offset_distance = rc->ACTUAL_WIDTH * sqrt(2) / 2.0 + 1; } // change later
+
+            std::cout << "MAP POINT OFFSET DISTANCE: " << offset_distance << std::endl;
+            new_position.first += -1 * offset_distance 
+                * cos(element->get_interaction_angle() * M_PI/180);
+            new_position.second += -1 * offset_distance 
+                * sin(element->get_interaction_angle() * M_PI/180);
+            std::cout << "MAP OFFSET POS: " << new_position.first << ", " << new_position.second << std::endl;
 
             return new_position;
         }
