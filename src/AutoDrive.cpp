@@ -63,16 +63,7 @@ void AutoDrive::test_odometry() {
 
 void AutoDrive::test_turbo() {
 
-    turbo_drive_distance(
-        tm->get_distance_between_points(
-            tm->get_current_position(),
-            mp->get_point_with_offset(
-                mp->goals[0],
-                false
-            )
-        ),
-        false
-    );
+    drive_to_position(mp->get_point_with_offset(mp->goals[0], false), true, true);
 }
 
 void AutoDrive::execute_skills_plan() {
@@ -227,8 +218,8 @@ void AutoDrive::rotate_to_position(std::pair<double, double> final_position, boo
 
 }
 
-void AutoDrive::rotate_to_position(InteractionObject *element, bool IS_BACK_POSITION, bool IS_TURBO,
-    bool IS_OFFSET, bool IS_OFFSET_EXTRA)
+void AutoDrive::rotate_to_position(InteractionObject *element, bool IS_BACK_POSITION,
+    bool IS_OFFSET, bool IS_OFFSET_EXTRA, bool IS_TURBO)
 {
     std::pair<double, double> position = {};
     if (IS_OFFSET) position = {0,0}; // TODO: sub in function when done
@@ -253,23 +244,29 @@ void AutoDrive::rotate_and_drive_to_position(std::pair<double, double> position,
 }
 
 void AutoDrive::rotate_and_drive_to_position(InteractionObject *element, bool IS_BACK_POSITION, 
-    bool IS_TURBO, bool IS_OFFSET, bool IS_OFFSET_EXTRA) {
+    bool IS_OFFSET, bool IS_OFFSET_EXTRA, bool IS_TURBO) {
     
     std::pair<double, double> position = {};
     if (IS_OFFSET) position = {0,0}; // TODO: sub in function when done
     else if (IS_OFFSET_EXTRA) position = {0,0}; // TODO: sub in function when done
     else position = element->get_position();
 
-    rotate_and_drive_to_position(position, IS_BACK_POSITION);
+    rotate_and_drive_to_position(position, IS_BACK_POSITION, IS_TURBO);
 }
 
-void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBACKTOPOSITION) 
+void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBACKTOPOSITION,
+    bool IS_TURBO) 
 {
     std::cout << "Driving. . ." << '\n';
 
     double current_distance = tm->get_distance_between_points(tm->get_current_position(), position);
     double distance = current_distance; // Distance goal    
     double previous_distance = current_distance; 
+
+    if (IS_TURBO) {
+        turbo_drive_distance(distance, ISBACKTOPOSITION);
+        return;
+    }
 
     double min_velocity = 20;
     double max_velocity = 80;
@@ -319,7 +316,6 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
     hw->drivetrain.stop();  // Stop wheels
     vex::wait(1000, vex::timeUnits::msec);  // Wait for odometry wheels to update
 }
-
 void AutoDrive::turbo_drive_distance(double distance, bool IS_REVERSE) {
 
     double num_wheel_revolutions = distance / rc->WHEEL_CIRCUMFERENCE;
@@ -388,17 +384,18 @@ void AutoDrive::run_plow_strategy() {
     this->rotate_to_heading(90.0);
 
     if (!SNOWPLOW_OUT) snowplow_out();
-
+    
     // drive_to_position(target_pos, true);
-    turbo_drive_distance(tm->get_distance_between_points(
-        tm->get_current_position(),
-        mp->get_point_with_offset(mp->goals[3], false)
-    ), true);
+    // turbo_drive_distance(tm->get_distance_between_points(
+    //     tm->get_current_position(),
+    //     mp->get_point_with_offset(mp->goals[3], false)
+    // ), true);
+    drive_to_position(mp->get_point_with_offset(mp->goals[3], false), true, true);
     vex::wait(500, vex::timeUnits::msec);
     // snowplow_in();
     // drive_to_position(prep_pos, true);
-    turbo_drive_distance(21.0, false);
-
+    // turbo_drive_distance(21.0, false);
+    drive_to_position(prep_pos, false, true);
     // Ram at side-top of red goal
     // snowplow_out();
     std::cout << "1" << '\n';
