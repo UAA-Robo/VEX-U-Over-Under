@@ -396,8 +396,8 @@ class Map {
             // If the robot should be able to rotate, add more offset
             if (CAN_TURN_AROUND) { offset_distance = rc->ACTUAL_RADIUS + 1; } // change later
 
-            new_position.first += -1 * offset_distance * cos(*(element->get_interaction_angle()));
-            new_position.second += -1 * offset_distance * sin(*(element->get_interaction_angle()));
+            new_position.first += -1 * offset_distance * cos((element->get_interaction_angle()));
+            new_position.second += -1 * offset_distance * sin((element->get_interaction_angle()));
 
             return new_position;
         }

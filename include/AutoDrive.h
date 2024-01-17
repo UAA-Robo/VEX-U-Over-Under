@@ -115,4 +115,7 @@ private:
 
     /// @brief Executes the plow strategy in the game.
     void run_plow_strategy();
+
+    /// @brief Executes catapult strategy
+    void run_catapult_catapult_strategy();
 };

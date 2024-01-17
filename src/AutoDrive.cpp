@@ -498,3 +498,40 @@ void AutoDrive::run_plow_strategy() {
     //// snowplow_in();
     // drive_to_position(prep_pos, true);
 }
+
+void AutoDrive::run_catapult_catapult_strategy() {
+    // TODO change initial location?
+    std::pair<double, double> goal_position;
+    double goal_heading;
+
+    const int NUMBER_TRIBALLS = 5;
+    if (rc->ROBOT == SCRAT) {
+
+    } else { // SCRATETTE
+
+        //TODO modify this
+        goal_heading = mp->loadzones[1]->get_interaction_angle();
+        tm->set_heading(goal_heading);
+        goal_position = mp->get_point_with_offset(mp->loadzones[1], false);
+        tm->set_position(goal_position);
+
+        expand_intake();
+        vex::wait(2, vex::timeUnits::sec);
+        stop_intake_expansion();
+        activate_intake();
+
+        for (int i = 0; i < NUMBER_TRIBALLS; i++) {
+            // Lower red offset
+            rotate_and_drive_to_position(mp->loadzones[1], true, false, true, true); 
+            rotate_to_position(mp->goals[2], true, false, false, true);
+            launch_catapult();
+            rotate_and_drive_to_position(mp->loadzones[1], false, true, false, true); 
+        }
+
+        stop_intake();
+        retract_intake();
+        vex::wait(2, vex::timeUnits::sec);
+        stop_intake_expansion();
+    }
+
+}

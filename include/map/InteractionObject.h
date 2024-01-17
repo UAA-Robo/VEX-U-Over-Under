@@ -24,7 +24,7 @@ class InteractionObject : public GameElement
 
 
     // Getters
-    double* get_interaction_angle() { return interaction_angle; }
+    double get_interaction_angle() { return *interaction_angle; }
     std::pair<double, double> get_position() { return position; }
 
 };
