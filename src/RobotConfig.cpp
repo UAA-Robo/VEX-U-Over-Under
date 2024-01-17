@@ -52,10 +52,10 @@ RobotConfig::RobotConfig(Hardware* hardware)
         ODOMETRY_LEFT_RIGHT_RADIUS =  6.45 / 2;
 
         // Distance between horizontal odometry wheel and horizontal center line
-        ODOMETRY_BACK_RADIUS = 4.25; 
+        ODOMETRY_BACK_RADIUS = 4.125; 
         ODOMETRY_BACK_OFFSET = 0;
 
-        WHEEL_CIRCUMFERENCE = 3.25 * M_PI;
+        WHEEL_CIRCUMFERENCE = 3.125 * M_PI;
 
         // Distance (in inch) between left and right side of the drivetrain 
         // (measured from the center of the wheels)
