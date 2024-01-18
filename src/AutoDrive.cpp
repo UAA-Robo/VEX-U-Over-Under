@@ -580,7 +580,7 @@ void AutoDrive::run_catapult_catapult_strategy() {
     std::pair<double, double> goal_position;
     double goal_heading;
 
-    const int NUMBER_TRIBALLS = 5;
+    const int NUMBER_TRIBALLS = 3;
     if (rc->ROBOT == SCRAT) {
 
     } else { // SCRATETTE
@@ -597,16 +597,26 @@ void AutoDrive::run_catapult_catapult_strategy() {
         expand_intake();
         vex::wait(2, vex::timeUnits::sec);
         stop_intake_expansion();
-        activate_intake(); // TODO uncomment
+        //activate_intake(); // TODO uncomment
         //while(1);
 
         for (int i = 0; i < NUMBER_TRIBALLS; i++) {
+            std::cout << i << std::endl;
+            std::cout << "  Heading: " << tm->get_current_heading() << std::endl;
+            std::cout << "  Position: " << tm->get_current_position().first << "," << tm->get_current_position().second << std::endl;
             // Lower red offset
             rotate_and_drive_to_position(mp->loadzones[1], true, false, true, true); 
-            while(1);
+            //while(1);
+            std::cout << "  Heading: " << tm->get_current_heading() << std::endl;
+            std::cout << "  Position: " << tm->get_current_position().first << "," << tm->get_current_position().second << std::endl;
             rotate_to_position(mp->goals[2], true, false, false, true);
+            vex::wait(1, vex::timeUnits::sec);
             //launch_catapult();
+            std::cout << "  Heading: " << tm->get_current_heading() << std::endl;
+            std::cout << "  Position: " << tm->get_current_position().first << "," << tm->get_current_position().second << std::endl;
             rotate_and_drive_to_position(mp->loadzones[1], false, true, false, true); 
+            std::cout << "  Heading: " << tm->get_current_heading() << std::endl;
+            std::cout << "  Position: " << tm->get_current_position().first << "," << tm->get_current_position().second << std::endl;
         }
 
         stop_intake();

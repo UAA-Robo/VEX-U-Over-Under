@@ -138,7 +138,7 @@ int Drive::run_catapult_thread(void* param)
             if (dr->rc->ROBOT == SCRAT) {
                 dr->hw->catapult.stop();
             } else {  // Scrattete needs force down to stop catapult since no rachette
-                dr->hw->catapult.spin(vex::directionType::rev, 0.5, vex::voltageUnits::volt);
+                dr->hw->catapult.spin(vex::directionType::rev, 1, vex::voltageUnits::volt);
             };
             
         } else  {
