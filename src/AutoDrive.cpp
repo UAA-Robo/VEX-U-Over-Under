@@ -218,9 +218,11 @@ void AutoDrive::rotate_to_position(std::pair<double, double> final_position, boo
 {
     // if (IS_USING_GPS_POSITION) tm->set_current_heading(tm->getGPSPosition());
     double heading = tm->get_heading_between_points(tm->get_current_position(), final_position); // Gets absolute angle
-    std::cout << "Intended Heading: " << heading << '\n';
+    
     if (ISBACKROTATION)
         heading -= 180;
+
+    std::cout << "Intended Heading: " << heading << '\n';
     rotate_to_heading(heading, IS_TURBO); 
 
 }
@@ -246,7 +248,7 @@ void AutoDrive::rotate_and_drive_to_position(std::pair<double, double> position,
         position); // inches
     if (ISBACKTOPOSITION) distance_to_position = -distance_to_position;
         
-    drive_to_position(position, ISBACKTOPOSITION);
+    drive_to_position(position, ISBACKTOPOSITION, IS_TURBO);
 
 }
 
@@ -354,6 +356,8 @@ void AutoDrive::turbo_turn(double heading)
     heading = fmod(heading, 360);
     if (heading < 0)
         heading += 360;
+    
+    std::cout << "TURBO TURN HEADING: " << heading << std::cout;
 
     double angle_to_rotate = heading - tm->get_current_heading();
     angle_to_rotate = fmod(angle_to_rotate, 360); // make sure the angle to rotate is -360 to 360
