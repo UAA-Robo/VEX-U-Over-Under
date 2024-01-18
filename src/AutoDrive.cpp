@@ -3,7 +3,7 @@
 
 AutoDrive::AutoDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry) : Drive(hardware, robotConfig, telemetry) {
         mp = new Map(telemetry, robotConfig, IS_SKILLS);
-        pg = new PathGenerator(robotConfig, mp);
+        pg = new PathGenerator(robotConfig, mp, tm);
         rc = robotConfig;
     }
 
@@ -18,12 +18,14 @@ void AutoDrive::drive() {
     // tm->set_position({0,0});
     // tm->set_heading(0);
 
-    run_catapult_catapult_strategy();
+    // run_catapult_catapult_strategy();
     // turbo_drive_distance(21.0, true);
     
     //test_turbo();
     // test_odometry();
-    //execute_skills_plan(); //! ELIMINATE OPPONENTS
+    // std::cout << mp->buffers.at(0)->in_buffer({-47.0, 31.0}) << '\n';
+    std::cout << pg->path_is_clear(tm->get_current_position(), {-35.0, 58.0}) << '\n';
+    // execute_skills_plan(); //! ELIMINATE OPPONENTS
     // std::vector<std::pair<double, double>> path;
     // std::pair<double, double> curr_position = rc->starting_pos;
     // std::pair<double, double> targ_position = {-36.0, -60.0};
@@ -420,7 +422,7 @@ void AutoDrive::run_plow_strategy() {
         tm->get_current_position(), target_pos), true
     );
     vex::wait(500, vex::timeUnits::msec);
-    vex::wait(50000, vex::timeUnits::msec);
+    // vex::wait(50000, vex::timeUnits::msec);
     // snowplow_in();
     // drive_to_position(prep_pos, true);
     // turbo_drive_distance(21.0, false);

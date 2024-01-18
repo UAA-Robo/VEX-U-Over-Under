@@ -14,6 +14,12 @@ class Buffer {
         /// @param position The coordinates of the given position.
         /// @return True or false whether the position is in the buffer region.
         bool in_buffer(std::pair<double, double> position) {
+            // std::cout << "ran" << '\n';
+            // std::cout << upper_left_corner.first << '\n';
+            // std::cout << (position.first >= upper_left_corner.first) << '\n';
+            // std::cout << (position.first <= bottom_right_corner.first) << '\n';
+            // std::cout << (position.second <= upper_left_corner.second) << '\n';
+            // std::cout << (position.second >= bottom_right_corner.second) << '\n';
             if (position.first >= upper_left_corner.first &&
             position.first <= bottom_right_corner.first &&
             position.second <= upper_left_corner.second &&
