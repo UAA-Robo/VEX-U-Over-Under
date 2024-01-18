@@ -149,7 +149,7 @@ int Drive::run_catapult_thread(void* param)
     }
 }
 
-void Drive::launch_catapult() {
+void Drive::start_catapult() {
     START_CATAPULT_LAUNCH = true;
 }
 

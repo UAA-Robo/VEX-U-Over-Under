@@ -165,7 +165,7 @@ void UserDrive::snowplow_controls() {
 
 void UserDrive::catapult_controls()
 {
-    if (button_R1.value == 1) launch_catapult();
+    if (button_R1.value == 1) start_catapult();
     else stop_catapult();
 }
 

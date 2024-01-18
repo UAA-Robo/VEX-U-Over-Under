@@ -18,16 +18,16 @@ void AutoDrive::drive() {
     // tm->set_position({0,0});
     // tm->set_heading(0);
 
-    // run_catapult_catapult_strategy();
+    run_catapult_catapult_strategy();
     // turbo_drive_distance(21.0, true);
 
     // test_odometry();
     // std::cout << mp->buffers.at(0)->in_buffer({-47.0, 31.0}) << '\n';
     // std::cout << pg->path_is_clear(tm->get_current_position(), {-35.0, 58.0}) << '\n';
-    path = pg->generate_path(tm->get_current_position(), {20.0, -20.0}); //TODO: Testing
-    for (int i = 0; i < path.size(); ++i) {
-        std::cout << "(" << path.at(i).first << ", " << path.at(i).second << ")" << '\n';
-    }
+    // path = pg->generate_path(tm->get_current_position(), {20.0, -20.0}); //TODO: Testing
+    // for (int i = 0; i < path.size(); ++i) {
+    //     std::cout << "(" << path.at(i).first << ", " << path.at(i).second << ")" << '\n';
+    // }
     // execute_skills_plan(); //! ELIMINATE OPPONENTS
     // std::vector<std::pair<double, double>> path;
     // std::pair<double, double> curr_position = rc->starting_pos;
@@ -232,9 +232,11 @@ void AutoDrive::rotate_to_position(std::pair<double, double> final_position, boo
 {
     // if (IS_USING_GPS_POSITION) tm->set_current_heading(tm->getGPSPosition());
     double heading = tm->get_heading_between_points(tm->get_current_position(), final_position); // Gets absolute angle
-    std::cout << "Intended Heading: " << heading << '\n';
+    
     if (ISBACKROTATION)
         heading -= 180;
+
+    std::cout << "Intended Heading: " << heading << '\n';
     rotate_to_heading(heading, IS_TURBO); 
 
 }
@@ -260,7 +262,7 @@ void AutoDrive::rotate_and_drive_to_position(std::pair<double, double> position,
         position); // inches
     if (ISBACKTOPOSITION) distance_to_position = -distance_to_position;
         
-    drive_to_position(position, ISBACKTOPOSITION);
+    drive_to_position(position, ISBACKTOPOSITION, IS_TURBO);
 
 }
 
@@ -347,13 +349,16 @@ void AutoDrive::turbo_drive_distance(double distance, bool IS_REVERSE) {
     hw->left_drivetrain_motors.resetPosition();
     hw->right_drivetrain_motors.resetPosition();
 
+    double velocity = 80;
+    if (rc->ROBOT == SCRATETTE) velocity = 30;
+
     if (IS_REVERSE) {
-        hw->left_drivetrain_motors.spinTo(-num_wheel_revolutions, vex::rotationUnits::rev, 80.0, vex::velocityUnits::pct, false);
-        hw->right_drivetrain_motors.spinTo(-num_wheel_revolutions, vex::rotationUnits::rev, 80.0, vex::velocityUnits::pct, false);
+        hw->left_drivetrain_motors.spinTo(-num_wheel_revolutions, vex::rotationUnits::rev, velocity, vex::velocityUnits::pct, false);
+        hw->right_drivetrain_motors.spinTo(-num_wheel_revolutions, vex::rotationUnits::rev, velocity, vex::velocityUnits::pct, false);
     }
     else {
-        hw->left_drivetrain_motors.spinTo(num_wheel_revolutions, vex::rotationUnits::rev, 80.0, vex::velocityUnits::pct, false);
-        hw->right_drivetrain_motors.spinTo(num_wheel_revolutions, vex::rotationUnits::rev, 80.0, vex::velocityUnits::pct, false);
+        hw->left_drivetrain_motors.spinTo(num_wheel_revolutions, vex::rotationUnits::rev, velocity, vex::velocityUnits::pct, false);
+        hw->right_drivetrain_motors.spinTo(num_wheel_revolutions, vex::rotationUnits::rev, velocity, vex::velocityUnits::pct, false);
     }
     vex::wait(50, vex::timeUnits::msec);
     while(fabs(hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0.0 || fabs(hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0.0); //Blocks other tasks from starting 
@@ -368,6 +373,8 @@ void AutoDrive::turbo_turn(double heading)
     heading = fmod(heading, 360);
     if (heading < 0)
         heading += 360;
+    
+    std::cout << "TURBO TURN HEADING: " << heading << std::endl;
 
     double angle_to_rotate = heading - tm->get_current_heading();
     angle_to_rotate = fmod(angle_to_rotate, 360); // make sure the angle to rotate is -360 to 360
@@ -383,6 +390,10 @@ void AutoDrive::turbo_turn(double heading)
     hw->right_drivetrain_motors.resetPosition();
 
     double velocity = 80;
+
+    if (rc->ROBOT == SCRATETTE) {
+        velocity = 20;
+    }
 
     hw->left_drivetrain_motors.spinFor(-revolutions, vex::rotationUnits::rev, velocity, 
         vex::velocityUnits::pct, false);
@@ -626,11 +637,20 @@ void AutoDrive::run_plow_strategy() {
 }
 
 void AutoDrive::run_catapult_catapult_strategy() {
+    // Start catapult thread
+
+    //TODO start this earlier
+    vex::task catapult_task = vex::task(run_catapult_thread, this, 2);
+
+    start_catapult();
+    vex::wait(500, vex::timeUnits::msec);
+    stop_catapult();
+
     // TODO change initial location?
     std::pair<double, double> goal_position;
     double goal_heading;
 
-    const int NUMBER_TRIBALLS = 3;
+    const int NUMBER_TRIBALLS = 5;
     if (rc->ROBOT == SCRAT) {
 
     } else { // SCRATETTE
@@ -647,7 +667,7 @@ void AutoDrive::run_catapult_catapult_strategy() {
         expand_intake();
         vex::wait(2, vex::timeUnits::sec);
         stop_intake_expansion();
-        //activate_intake(); // TODO uncomment
+        activate_intake(); // TODO uncomment
         //while(1);
 
         for (int i = 0; i < NUMBER_TRIBALLS; i++) {
@@ -655,22 +675,23 @@ void AutoDrive::run_catapult_catapult_strategy() {
             std::cout << "  Heading: " << tm->get_current_heading() << std::endl;
             std::cout << "  Position: " << tm->get_current_position().first << "," << tm->get_current_position().second << std::endl;
             // Lower red offset
-            rotate_and_drive_to_position(mp->loadzones[1], true, false, true, true); 
+
+            turbo_drive_distance(8, true);
+
+            //rotate_and_drive_to_position(mp->loadzones[1], true, false, true, true); 
             //while(1);
-            std::cout << "  Heading: " << tm->get_current_heading() << std::endl;
-            std::cout << "  Position: " << tm->get_current_position().first << "," << tm->get_current_position().second << std::endl;
-            rotate_to_position(mp->goals[2], true, false, false, true);
-            vex::wait(1, vex::timeUnits::sec);
-            //launch_catapult();
-            std::cout << "  Heading: " << tm->get_current_heading() << std::endl;
-            std::cout << "  Position: " << tm->get_current_position().first << "," << tm->get_current_position().second << std::endl;
-            rotate_and_drive_to_position(mp->loadzones[1], false, true, false, true); 
-            std::cout << "  Heading: " << tm->get_current_heading() << std::endl;
-            std::cout << "  Position: " << tm->get_current_position().first << "," << tm->get_current_position().second << std::endl;
+            //rotate_to_position(mp->goals[2], true, false, false, true);
+            //vex::wait(1, vex::timeUnits::sec);
+
+            start_catapult();
+            vex::wait(500, vex::timeUnits::msec);
+            stop_catapult();
+            turbo_drive_distance(9, false);
+            //rotate_and_drive_to_position(mp->loadzones[1], false, true, false, true); 
         }
 
         stop_intake();
-        retract_intake();
+        //retract_intake();
         vex::wait(2, vex::timeUnits::sec);
         stop_intake_expansion();
     }
