@@ -86,7 +86,7 @@ protected:
     static int run_catapult_thread(void* param);
 
     /// @brief Trigger the catapult motors to start turning to launch
-    void launch_catapult();
+    void start_catapult();
 
     /// @brief Trigger the catapult to stop and reset at the limit swiitch.
     void stop_catapult();
