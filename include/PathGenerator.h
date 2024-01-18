@@ -15,8 +15,7 @@ class PathGenerator {
         /// @param path The path vector to modify.
         /// @param source_pos The current position of the robot.
         /// @param target_pos The target position for the robot.
-        void generate_path(
-            std::vector<std::pair<double, double>> &path,
+        std::vector<std::pair<double, double>> generate_path(
             std::pair<double, double> source_pos,
             std::pair<double, double> target_pos
         );

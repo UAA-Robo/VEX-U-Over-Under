@@ -8,14 +8,11 @@ PathGenerator::PathGenerator(RobotConfig* robotConfig, Map* map, Telemetry* tele
     tm = telemetry;
 }
 
-void PathGenerator::generate_path(
-            std::vector<std::pair<double, double>> &path,
+std::vector<std::pair<double, double>> PathGenerator::generate_path(
             std::pair<double, double> source_pos,
             std::pair<double, double> target_pos
         ) {
-            std::cout << "4" << '\n';
-            path.clear();
-            std::cout << "5" << '\n';
+            std::vector<std::pair<double, double>> path;
             int curr_region = mp->in_which_region(source_pos, -1, 1);
             int target_region = mp->in_which_region(target_pos, -1, 1);
             std::cout << curr_region << " " << target_region << '\n';
@@ -86,10 +83,16 @@ void PathGenerator::generate_path(
                 // for (int i = 0; i < path.size(); ++i)
                 // std::cout << path[i].first << " " << path[i].second << '\n';
             }
+            std::vector<std::pair<double, double>> efficient_path;
 
-            for (int i = 0; i < path.size(); ++i) {
-
+            for (int i = 0; i < path.size() - 2; ++i) {
+                if (!path_is_clear(path.at(i), path.at(i+2))) {
+                    efficient_path.push_back(path.at(i));
+                }
             }
+            efficient_path.push_back(path.at(path.size() - 2));
+            efficient_path.push_back(path.at(path.size() - 2));
+            return efficient_path;
         }
 
 bool PathGenerator::path_is_clear(
