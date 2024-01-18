@@ -20,7 +20,7 @@ std::vector<std::pair<double, double>> PathGenerator::generate_path(
             int direction = 0;
             if (curr_region == target_region) {
                 path.push_back(target_pos);
-                return;
+                return path;
             }
             // while (curr_region != target_region && path[path.size() - 1] != target_pos) {
             // for (int i = 0; i < 4; ++i) {
