@@ -27,8 +27,8 @@ class Map {
         void add_buffer(
         std::pair<double, double> upper_left_corner,
         std::pair<double, double> bottom_right_corner) {
-            Buffer bf(upper_left_corner, bottom_right_corner);
-            buffers.push_back(&bf);
+            Buffer* bf = new Buffer(upper_left_corner, bottom_right_corner);
+            buffers.push_back(bf);
         }
 
         /// @brief Adds a rectangular region to the map.
@@ -105,7 +105,7 @@ class Map {
             rc = robotConfig;
             next_element_id = 0;
             this->IS_SKILLS = IS_SKILLS;
-            double drive_train_adjustment = rc->DRIVETRAIN_WIDTH * sqrt(2) / 2;
+            double drive_train_adjustment = rc->ACTUAL_RADIUS;
 
             // outer walls
             add_wall(0 + x_adjust, 140.40 + y_adjust, 0 + x_adjust, 0 + y_adjust);                  // wall 0                                                  
@@ -380,6 +380,18 @@ class Map {
         std::pair<double, double> get_critical_point(int region, bool IS_UPPER) {
             if (IS_UPPER) return regions[region]->upper_critical_point;
             else return regions[region]->lower_critical_point;
+        }
+
+        /// @brief Detects whether a given position falls in a buffer region.
+        /// @param position The position to check (x, y).
+        /// @return True if in a buffer region, false otherwise.
+        bool in_buffer(std::pair<double, double> position) {
+            for (int i = 0; i < buffers.size(); ++i) {
+                if (buffers.at(i)->in_buffer(position)) {
+                    std::cout << "In buffer: " << i << '\n';
+                    return true;}
+            }
+            return false;
         }
 
 
