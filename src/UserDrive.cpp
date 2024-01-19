@@ -172,10 +172,10 @@ void UserDrive::catapult_controls()
 
 void UserDrive::intake_controls()
 {
-    if (button_A.value == 1){
+    if (button_L1.value == 1){
         expand_intake();
         INTAKE_EXPANDED = true;
-    } else if (button_B.value == 1) {
+    } else if (button_L2.value == 1) {
         retract_intake();
         INTAKE_EXPANDED = false;
     } else {
@@ -183,7 +183,7 @@ void UserDrive::intake_controls()
     }
 
     // Activate intake when expanded
-    if (INTAKE_EXPANDED && button_A.value == 0) {
+    if (INTAKE_EXPANDED && button_L1.value == 0) {
         activate_intake();
     }else {
         stop_intake();
