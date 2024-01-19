@@ -233,7 +233,7 @@ void AutoDrive::rotate_to_heading(double heading, bool IS_TURBO)
     std::cout << "Done turning\n";
 
     hw->drivetrain.stop();                  
-    vex::wait(1000, vex::timeUnits::msec);  // Wait for odometry wheels to update
+    vex::wait(500, vex::timeUnits::msec);  // Wait for odometry wheels to update
 }
 
 
@@ -346,7 +346,7 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
     // std::cout << "    V: " << velocity << " Current Distance: " << current_distance << std::endl;
 
     hw->drivetrain.stop();  // Stop wheels
-    vex::wait(1000, vex::timeUnits::msec);  // Wait for odometry wheels to update
+    vex::wait(500, vex::timeUnits::msec);  // Wait for odometry wheels to update
 }
 void AutoDrive::turbo_drive_distance(double distance, bool IS_REVERSE, double velocity) {
 
@@ -431,7 +431,8 @@ void AutoDrive::run_plow_strategy() {
     pathfind_and_drive_to_position(prep_pos);
     rotate_to_heading(90.0);
     // vex::wait(1000, vex::timeUnits::msec);
-    if (!SNOWPLOW_OUT) right_snowplow_out();
+    //if (!SNOWPLOW_OUT) 
+    left_snowplow_out();
     
     // drive_to_position(target_pos, true);
     // turbo_drive_distance(tm->get_distance_between_points(
@@ -447,7 +448,7 @@ void AutoDrive::run_plow_strategy() {
     turbo_drive_distance(tm->get_distance_between_points(
         tm->get_current_position(), target_pos), true
     );
-    vex::wait(500, vex::timeUnits::msec);
+    //vex::wait(500, vex::timeUnits::msec);
     // vex::wait(50000, vex::timeUnits::msec);
     // vex::wait(50000, vex::timeUnits::msec);
     // snowplow_in();
@@ -457,12 +458,14 @@ void AutoDrive::run_plow_strategy() {
     // rotate_and_drive_to_position(prep_pos, false, true);
     // drive_to_position(prep_pos, false, true);
 
+    left_snowplow_in();
     // Turbo drive backward away from goal
     turbo_drive_distance(tm->get_distance_between_points(
-        tm->get_current_position(), prep_pos), false
+        tm->get_current_position(), {prep_pos.first, prep_pos.second + 5}), false
     );
+
     std::cout << "NOW AT " << tm->get_current_position().first << ",  " << tm->get_current_position().second << " "<< tm->get_current_position().second << " deg" << std::endl;
-    target_pos = mp->goals[1]->get_position();
+    target_pos = mp->goals[0]->get_position();
     prep_pos = target_pos;
     prep_pos.first = target_pos.first - 36.0; // Offset from goal by 3 feet
     std::cout << "GOING TO " << prep_pos.first << " " << prep_pos.second << '\n';
@@ -471,11 +474,12 @@ void AutoDrive::run_plow_strategy() {
     std::cout << "NOW AT " << tm->get_current_position().first << ",  " << tm->get_current_position().second << " "<< tm->get_current_position().second << " deg" << std::endl;
 
     pathfind_and_drive_to_position(prep_pos);
+    snowplow_out();
     // rotate_to_heading(225, true);
     // turbo_drive_distance(47.0, false);
     rotate_to_heading(180.0, false);
     turbo_drive_distance(tm->get_distance_between_points(
-        tm->get_current_position(), mp->goals[0]->get_position()
+        tm->get_current_position(), target_pos
     ), true);
 
     while(1);
