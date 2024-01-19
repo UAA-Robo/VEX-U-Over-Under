@@ -83,16 +83,19 @@ std::vector<std::pair<double, double>> PathGenerator::generate_path(
                 // for (int i = 0; i < path.size(); ++i)
                 // std::cout << path[i].first << " " << path[i].second << '\n';
             }
-            std::vector<std::pair<double, double>> efficient_path;
+            std::vector<std::pair<double, double>> efficient_path = {source_pos};
 
-            for (int i = 0; i < path.size() - 2; ++i) {
-                if (!path_is_clear(path.at(i), path.at(i+2))) {
+            for (int i = 1; i < path.size() - 2; ++i) {
+                if (!path_is_clear(path.at(i-1), path.at(i+1))) {
                     efficient_path.push_back(path.at(i));
                 }
             }
-            efficient_path.push_back(path.at(path.size() - 2));
-            efficient_path.push_back(path.at(path.size() - 2));
-            return efficient_path;
+            efficient_path.push_back(target_pos);
+            for (int i = 0; i < efficient_path.size(); ++i) {
+                std::cout << "(" << efficient_path.at(i).first << ", " << efficient_path.at(i).second << ")" << '\n';
+            }
+            // return efficient_path;
+            return path;
         }
 
 bool PathGenerator::path_is_clear(
@@ -107,7 +110,7 @@ bool PathGenerator::path_is_clear(
         std::pair<double, double> curr_pos = source_pos;
         curr_pos.first += cos(heading_between_points) * i;
         curr_pos.second += sin(heading_between_points) * i;
-        if (int(i) % 2 == 0) std::cout << "(" << curr_pos.first << ", " << curr_pos.second << ")\n";
+        // if (int(i) % 2 == 0) std::cout << "(" << curr_pos.first << ", " << curr_pos.second << ")\n";
         if (mp->in_buffer(curr_pos)) return false;
     }
     return true;
