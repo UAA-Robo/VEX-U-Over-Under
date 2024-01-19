@@ -464,7 +464,7 @@ void AutoDrive::run_plow_strategy() {
     std::cout << "NOW AT " << tm->get_current_position().first << ",  " << tm->get_current_position().second << " "<< tm->get_current_position().second << " deg" << std::endl;
     target_pos = mp->goals[1]->get_position();
     prep_pos = target_pos;
-    prep_pos.first = target_pos.first - 48.0; // Offset from goal by 3 feet
+    prep_pos.first = target_pos.first - 36.0; // Offset from goal by 3 feet
     std::cout << "GOING TO " << prep_pos.first << " " << prep_pos.second << '\n';
     //rotate_and_drive_to_position(prep_pos);
 
