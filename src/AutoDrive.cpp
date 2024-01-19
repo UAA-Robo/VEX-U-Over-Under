@@ -18,7 +18,7 @@ void AutoDrive::drive() {
     // tm->set_position({0,0});
     // tm->set_heading(0);
 
-    run_catapult_catapult_strategy();
+    // run_catapult_catapult_strategy();
     // turbo_drive_distance(21.0, true);
 
     // test_odometry();
@@ -28,7 +28,7 @@ void AutoDrive::drive() {
     // for (int i = 0; i < path.size(); ++i) {
     //     std::cout << "(" << path.at(i).first << ", " << path.at(i).second << ")" << '\n';
     // }
-    // execute_skills_plan(); //! ELIMINATE OPPONENTS
+    execute_skills_plan(); //! ELIMINATE OPPONENTS
     // std::vector<std::pair<double, double>> path;
     // std::pair<double, double> curr_position = rc->starting_pos;
     // std::pair<double, double> targ_position = {-36.0, -60.0};
@@ -106,18 +106,27 @@ void AutoDrive::execute_skills_plan() {
 
 void AutoDrive::drive_along_path() {
     for (int i = 0; i < path.size() - 1; ++i) {
-        if (i < path.size() - 2) {
-            if (!pg->path_is_clear(tm->get_current_position(), path.at(i+1))) {
-                std::vector<std::pair<double, double>> sub_path = pg->generate_path(
-                    tm->get_current_position(), path.at(i+1)
-                );
-                sub_path.erase(sub_path.begin());
-                sub_path.erase(sub_path.end());
-                for (int j = sub_path.size() - 1; j >= 0; --j) {
-                    path.insert(path.begin() + i, sub_path.at(j));
-                }
-            }
-        }
+        // if (i < path.size() - 2) {
+        //         std::cout << "----------------" << '\n';
+        //         std::cout << "Curr: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")\n";
+        //         std::cout << "Thinking: (" << path.at(i).first << ", " << path.at(i).second << ")\n";
+            
+        //     if (!pg->path_is_clear(tm->get_current_position(), path.at(i+1)) ||
+        //     (fabs(tm->get_current_position().first - path.at(i).first) > 3.0 || fabs(
+        //         tm->get_current_position().second - path.at(i).second) > 3.0
+        //     )) {
+        //         std::cout << "Oop" << '\n';
+        //         std::vector<std::pair<double, double>> sub_path = pg->generate_path(
+        //             tm->get_current_position(), path.at(i+1)
+        //         );
+        //         sub_path.erase(sub_path.begin());
+        //         sub_path.erase(sub_path.end());
+        //         for (int j = 0; j < sub_path.size() - 1; ++j) {
+        //             std::cout << "new path: (" << sub_path.at(j).first << ", " << sub_path.at(j).second << ")" << '\n';
+        //             rotate_and_drive_to_position(path.at(j+1), false);
+        //         }
+        //     }
+        // }
         // std::cout << "Before move" << '\n';
         // std::cout << "Path: (" << path.at(i).first << ", " << path.at(i).second << ") Next: ("<< path.at(i+1).first << ", " << path.at(i+1).second << ")" << std::endl;
         // std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
@@ -130,6 +139,7 @@ void AutoDrive::drive_along_path() {
 }
 
 void AutoDrive::pathfind_and_drive_to_position(std::pair<double, double> target_position) {
+    path.clear();
     path = pg->generate_path(tm->get_current_position(), target_position);
     drive_along_path();
 }
@@ -428,9 +438,9 @@ void AutoDrive::run_plow_strategy() {
     prep_pos.second = target_pos.second + 21.0; // Offset from goal by almost 2 feet
     // target_pos.second += rc->DRIVETRAIN_RADIUS - 2;
     pathfind_and_drive_to_position(prep_pos);
-    this->rotate_to_heading(90.0);
+    rotate_to_heading(90.0);
     // vex::wait(1000, vex::timeUnits::msec);
-    if (!SNOWPLOW_OUT) snowplow_out();
+    if (!SNOWPLOW_OUT) right_snowplow_out();
     
     // drive_to_position(target_pos, true);
     // turbo_drive_distance(tm->get_distance_between_points(
@@ -446,6 +456,7 @@ void AutoDrive::run_plow_strategy() {
     );
     vex::wait(500, vex::timeUnits::msec);
     // vex::wait(50000, vex::timeUnits::msec);
+    // vex::wait(50000, vex::timeUnits::msec);
     // snowplow_in();
     // drive_to_position(prep_pos, true);
     // turbo_drive_distance(21.0, false);
@@ -455,24 +466,51 @@ void AutoDrive::run_plow_strategy() {
     turbo_drive_distance(tm->get_distance_between_points(
         tm->get_current_position(), prep_pos), false
     );
-    // Ram at side-top of red goal
-    // snowplow_out();
-    std::cout << "1" << '\n';
+    std::cout << "NOW AT " << tm->get_current_position().first << " " << tm->get_current_position().second << '\n';
     target_pos = mp->goals[0]->get_position();
     prep_pos = target_pos;
-    std::cout << "2" << '\n';
-    prep_pos.first -= 31.0;
-    target_pos.first += rc->DRIVETRAIN_RADIUS - 2;
-    std::cout << "3" << '\n';
+    prep_pos.first = target_pos.first - 48.0; // Offset from goal by 3 feet
     pathfind_and_drive_to_position(prep_pos);
-    this->rotate_to_heading(180.0);
-    // drive_to_position(target_pos, true);
-    // turbo_drive_distance(31.0, true);
-    // drive_to_position(mp->get_point_with_offset(mp->goals[0], false), true, true);
+    // rotate_to_heading(225, true);
+    // turbo_drive_distance(47.0, false);
+    rotate_to_heading(180.0, false);
     turbo_drive_distance(tm->get_distance_between_points(
-        tm->get_current_position(), target_pos), true
-    );
-    vex::wait(500, vex::timeUnits::msec);
+        tm->get_current_position(), mp->goals[0]->get_position()
+    ), true);
+
+    // // rotate_to_heading(180.0, true);
+    // // turbo_drive_distance(31.0, true);
+    // // turbo_drive_distance(30.0, false);
+    // // rotate_to_heading(270.0);
+    // // turbo_drive_distance(22.5, false);
+    // // rotate_to_heading(180.0, true);
+    // // turbo_drive_distance(31.0, true);
+    // // turbo_drive_distance(30.0, false);
+    // // rotate_to_heading(135.0, true);
+    // // turbo_drive_distance(47.0, true);
+    // // rotate_to_heading(270.0, true);
+
+    // target_pos = mp->goals[4]->get_position();
+    // prep_pos.second = target_pos.second - 21.0;
+    // turbo_drive_distance(tm->get_distance_between_points(
+    //     tm->get_current_position(), target_pos), true
+    // );
+
+    // turbo_drive_distance(tm->get_distance_between_points(
+    //     tm->get_current_position(), prep_pos), false
+    // );
+    // // rotate_to_heading(315.0, true);
+    // // turbo_drive_distance(47.0, true);
+    // // rotate_to_heading(180.0, true);
+    // // turbo_drive_distance(31.0, true);
+    // // turbo_drive_distance(30.0, true);
+    // // rotate_to_heading(90.0, true);
+    // // turbo_drive_distance(22.5, false);
+    // // rotate_to_heading(180.0, true);
+    // // turbo_drive_distance(31.0, true);
+    // // turbo_drive_distance(30.0, false);
+    // // rotate_to_heading(225, true);
+    // // turbo_drive_distance(47.0, true);
     // snowplow_in();
     // drive_to_position(prep_pos, true);
     // turbo_drive_distance(31.0, false);
