@@ -18,7 +18,7 @@ void AutoDrive::drive() {
     // tm->set_position({0,0});
     // tm->set_heading(0);
 
-    run_catapult_catapult_strategy();
+    //run_catapult_catapult_strategy();
     // turbo_drive_distance(21.0, true);
 
     // test_odometry();
@@ -28,7 +28,7 @@ void AutoDrive::drive() {
     // for (int i = 0; i < path.size(); ++i) {
     //     std::cout << "(" << path.at(i).first << ", " << path.at(i).second << ")" << '\n';
     // }
-    //execute_skills_plan(); //! ELIMINATE OPPONENTS
+    execute_skills_plan(); //! ELIMINATE OPPONENTS
     // std::vector<std::pair<double, double>> path;
     // std::pair<double, double> curr_position = rc->starting_pos;
     // std::pair<double, double> targ_position = {-36.0, -60.0};
@@ -442,6 +442,8 @@ void AutoDrive::run_plow_strategy() {
     // rotate_and_drive_to_position(mp->goals[3], true, false, true);
     // drive_to_position(mp->get_point_with_offset(mp->goals[3], false), true, true);
     std::cout << target_pos.first << " " << target_pos.second << " " << tm->get_distance_between_points(tm->get_current_position(), target_pos) << '\n';
+    
+    // Turbo drive forward into goal
     turbo_drive_distance(tm->get_distance_between_points(
         tm->get_current_position(), target_pos), true
     );
@@ -454,13 +456,20 @@ void AutoDrive::run_plow_strategy() {
     // drive_to_position(prep_pos, false, true);
     // rotate_and_drive_to_position(prep_pos, false, true);
     // drive_to_position(prep_pos, false, true);
+
+    // Turbo drive backward away from goal
     turbo_drive_distance(tm->get_distance_between_points(
         tm->get_current_position(), prep_pos), false
     );
-    std::cout << "NOW AT " << tm->get_current_position().first << " " << tm->get_current_position().second << '\n';
-    target_pos = mp->goals[0]->get_position();
+    std::cout << "NOW AT " << tm->get_current_position().first << ",  " << tm->get_current_position().second << " "<< tm->get_current_position().second << " deg" << std::endl;
+    target_pos = mp->goals[1]->get_position();
     prep_pos = target_pos;
     prep_pos.first = target_pos.first - 48.0; // Offset from goal by 3 feet
+    std::cout << "GOING TO " << prep_pos.first << " " << prep_pos.second << '\n';
+    //rotate_and_drive_to_position(prep_pos);
+
+    std::cout << "NOW AT " << tm->get_current_position().first << ",  " << tm->get_current_position().second << " "<< tm->get_current_position().second << " deg" << std::endl;
+
     pathfind_and_drive_to_position(prep_pos);
     // rotate_to_heading(225, true);
     // turbo_drive_distance(47.0, false);
@@ -468,6 +477,8 @@ void AutoDrive::run_plow_strategy() {
     turbo_drive_distance(tm->get_distance_between_points(
         tm->get_current_position(), mp->goals[0]->get_position()
     ), true);
+
+    while(1);
 
     // // rotate_to_heading(180.0, true);
     // // turbo_drive_distance(31.0, true);
