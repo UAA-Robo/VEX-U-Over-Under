@@ -599,63 +599,47 @@ void AutoDrive::run_plow_strategy() {
 }
 
 void AutoDrive::run_catapult_catapult_strategy() {
-    // Start catapult thread
 
-    //TODO start this earlier
+    const int NUMBER_TRIBALLS = 24;
+
+    // Expand intake
+    expand_intake();
+    vex::wait(500, vex::timeUnits::msec);
+    stop_intake_expansion();
+
+    // Start Catapult thread
     vex::task catapult_task = vex::task(run_catapult_thread, this, 2);
 
+    // Set catapult down
+    start_catapult();
+    vex::wait(500, vex::timeUnits::msec);
+    stop_catapult();
+    
+    // Launch triball
     start_catapult();
     vex::wait(500, vex::timeUnits::msec);
     stop_catapult();
 
-    // TODO change initial location?
-    std::pair<double, double> goal_position;
-    double goal_heading;
+    // Start intake
+    activate_intake();
 
-    const int NUMBER_TRIBALLS = 5;
-    if (rc->ROBOT == SCRAT) {
+    // Move + Launch
+    for (int i = 0; i < NUMBER_TRIBALLS; i++) {
+        turbo_drive_distance(8, true);
 
-    } else { // SCRATETTE
+        start_catapult();
+        vex::wait(500, vex::timeUnits::msec);
+        stop_catapult();
 
-        //TODO modify this
-        goal_heading = mp->loadzones[1]->get_interaction_angle();
-        tm->set_heading(goal_heading);
-
-        std::cout << "Heading: " << tm->get_current_heading() << std::endl;
-        goal_position = mp->get_point_with_offset(mp->loadzones[1], false);
-        tm->set_position(goal_position);
-        std::cout << "Position: " << tm->get_current_position().first << "," << tm->get_current_position().second << std::endl;
-
-        expand_intake();
-        vex::wait(2, vex::timeUnits::sec);
-        stop_intake_expansion();
-        activate_intake(); // TODO uncomment
-        //while(1);
-
-        for (int i = 0; i < NUMBER_TRIBALLS; i++) {
-            std::cout << i << std::endl;
-            std::cout << "  Heading: " << tm->get_current_heading() << std::endl;
-            std::cout << "  Position: " << tm->get_current_position().first << "," << tm->get_current_position().second << std::endl;
-            // Lower red offset
-
-            turbo_drive_distance(8, true);
-
-            //rotate_and_drive_to_position(mp->loadzones[1], true, false, true, true); 
-            //while(1);
-            //rotate_to_position(mp->goals[2], true, false, false, true);
-            //vex::wait(1, vex::timeUnits::sec);
-
-            start_catapult();
-            vex::wait(500, vex::timeUnits::msec);
-            stop_catapult();
-            turbo_drive_distance(9, false);
-            //rotate_and_drive_to_position(mp->loadzones[1], false, true, false, true); 
-        }
-
-        stop_intake();
-        //retract_intake();
-        vex::wait(2, vex::timeUnits::sec);
-        stop_intake_expansion();
+        turbo_drive_distance(8.5, false);
     }
+
+    stop_intake();
+
+
+    retract_intake();
+    vex::wait(500, vex::timeUnits::msec);
+    stop_intake_expansion();
+
 
 }

@@ -5,6 +5,8 @@ Drive::Drive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry)
     hw = hardware;
     rc = robotConfig;
     tm = telemetry;
+
+    //setup_bot();
     // pid = new PID(rc, tm);
 }
 
@@ -156,3 +158,32 @@ void Drive::start_catapult() {
 void Drive::stop_catapult() {
     START_CATAPULT_LAUNCH = false;
 }
+
+// void Drive::setup_bot() {
+
+//     // Expand intake
+//     std::cout << "EXPANDING" << std::endl;
+//     expand_intake();
+//     vex::wait(500, vex::timeUnits::msec);
+//     stop_intake_expansion();
+
+//     std::cout << "CATAPULTING" << std::endl;
+//     // Start catapult thread and close catapult
+//     vex::task catapult_task = vex::task(run_catapult_thread, this, 2);
+
+//     start_catapult();
+//     vex::wait(500, vex::timeUnits::msec);
+//     stop_catapult();
+
+//     vex::wait(1000, vex::timeUnits::msec);
+
+//     std::cout << "RETRACTING" << std::endl;
+//     // Retract intake
+//     retract_intake();
+//     vex::wait(500, vex::timeUnits::msec);
+//     stop_intake_expansion();
+//     //vex::wait(5000, vex::timeUnits::msec);
+
+//     std::cout << "ENDING" << std::endl;
+
+// }

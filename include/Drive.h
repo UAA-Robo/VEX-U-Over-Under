@@ -10,6 +10,9 @@ class Drive
 {
 public:
     virtual void drive() {}
+    
+    /// @brief Gets bot ready to start by retracting intake and catapult
+    //void setup_bot();
 
 protected:
     Drive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry);
@@ -88,8 +91,10 @@ protected:
     /// @brief Trigger the catapult motors to start turning to launch
     void start_catapult();
 
-    /// @brief Trigger the catapult to stop and reset at the limit swiitch.
+    /// @brief Trigger the catapult to stop and reset at the limit switch.
     void stop_catapult();
+
+
 
     bool START_CATAPULT_LAUNCH = false;
     bool CATAPULT_STOPPED = true;

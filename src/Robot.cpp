@@ -18,3 +18,7 @@ void Robot::drive() {
 void Robot::driveAuto() {
     autoDrive->drive();
 }
+
+void Robot::setup() {
+   //autoDrive->setup_bot();
+}
