@@ -46,7 +46,7 @@ void Drive::move_drivetrain(std::pair<double, double> velocity_percent)
 
 void Drive::activate_intake()
 {
-    if (rc->ROBOT == SCRAT) hw->intake.spin(vex::directionType::rev, 8.0, vex::voltageUnits::volt);
+    if (rc->ROBOT == SCRAT) hw->intake.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
     else hw->intake.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
     hw->controller.Screen.setCursor(1, 1);
     hw->controller.Screen.print("Activating Intake!");

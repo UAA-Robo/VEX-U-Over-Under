@@ -18,7 +18,7 @@ void AutoDrive::drive() {
     // tm->set_position({0,0});
     // tm->set_heading(0);
 
-    // run_catapult_catapult_strategy();
+    run_catapult_catapult_strategy();
     // turbo_drive_distance(21.0, true);
 
     // test_odometry();
@@ -28,7 +28,7 @@ void AutoDrive::drive() {
     // for (int i = 0; i < path.size(); ++i) {
     //     std::cout << "(" << path.at(i).first << ", " << path.at(i).second << ")" << '\n';
     // }
-    execute_skills_plan(); //! ELIMINATE OPPONENTS
+    //execute_skills_plan(); //! ELIMINATE OPPONENTS
     // std::vector<std::pair<double, double>> path;
     // std::pair<double, double> curr_position = rc->starting_pos;
     // std::pair<double, double> targ_position = {-36.0, -60.0};
@@ -348,7 +348,7 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
     hw->drivetrain.stop();  // Stop wheels
     vex::wait(1000, vex::timeUnits::msec);  // Wait for odometry wheels to update
 }
-void AutoDrive::turbo_drive_distance(double distance, bool IS_REVERSE) {
+void AutoDrive::turbo_drive_distance(double distance, bool IS_REVERSE, double velocity) {
 
     std::cout << rc->WHEEL_CIRCUMFERENCE << '\n';
     double num_wheel_revolutions = distance / rc->WHEEL_CIRCUMFERENCE;
@@ -358,9 +358,6 @@ void AutoDrive::turbo_drive_distance(double distance, bool IS_REVERSE) {
 
     hw->left_drivetrain_motors.resetPosition();
     hw->right_drivetrain_motors.resetPosition();
-
-    double velocity = 80;
-    if (rc->ROBOT == SCRATETTE) velocity = 30;
 
     if (IS_REVERSE) {
         hw->left_drivetrain_motors.spinTo(-num_wheel_revolutions, vex::rotationUnits::rev, velocity, vex::velocityUnits::pct, false);
@@ -638,21 +635,20 @@ void AutoDrive::run_plow_strategy() {
 
 void AutoDrive::run_catapult_catapult_strategy() {
 
-    const int NUMBER_TRIBALLS = 24;
+    const int NUMBER_TRIBALLS = 20;
+    
+    double velocity = 50;
+    if (rc->ROBOT == SCRATETTE) velocity = 40;
 
     // Expand intake
     expand_intake();
+    if (rc->ROBOT == SCRAT)  vex::wait(500, vex::timeUnits::msec);
     vex::wait(500, vex::timeUnits::msec);
     stop_intake_expansion();
 
     // Start Catapult thread
-    vex::task catapult_task = vex::task(run_catapult_thread, this, 2);
+    vex::task catapult_task = vex::task(run_catapult_thread, this, 1);
 
-    // Set catapult down
-    start_catapult();
-    vex::wait(500, vex::timeUnits::msec);
-    stop_catapult();
-    
     // Launch triball
     start_catapult();
     vex::wait(500, vex::timeUnits::msec);
@@ -662,22 +658,26 @@ void AutoDrive::run_catapult_catapult_strategy() {
     activate_intake();
 
     // Move + Launch
-    for (int i = 0; i < NUMBER_TRIBALLS; i++) {
-        turbo_drive_distance(8, true);
+    for (int i = 0; i < NUMBER_TRIBALLS - 1; i++) {
+        turbo_drive_distance(6, true, velocity);
 
         start_catapult();
         vex::wait(500, vex::timeUnits::msec);
         stop_catapult();
 
-        turbo_drive_distance(8.5, false);
+        turbo_drive_distance(6.2, false, velocity);
     }
 
+    // Launches last triball and finishes outword
+    turbo_drive_distance(6, true, velocity);
+    start_catapult();
+    vex::wait(500, vex::timeUnits::msec);
+    stop_catapult();
+
     stop_intake();
-
-
     retract_intake();
     vex::wait(500, vex::timeUnits::msec);
+    if (rc->ROBOT == SCRAT)  vex::wait(500, vex::timeUnits::msec);
     stop_intake_expansion();
-
 
 }

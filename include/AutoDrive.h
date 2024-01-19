@@ -106,7 +106,8 @@ private:
     /// @brief Drive a specified distance at high speed.
     /// @param distance The distance to drive.
     /// @param IS_REVERSE True if driving backwards, false otherwise.
-    void turbo_drive_distance(double distance, bool IS_REVERSE);
+    /// @param velocity Speed that it drives.
+    void turbo_drive_distance(double distance, bool IS_REVERSE, double velocity = 80);
 
     /// @brief  Rotates the shortest distance ONLY using encoders on wheels (no odometry).
     ///     Good for turning that needs to be fast and might never get to position (ramming). 
