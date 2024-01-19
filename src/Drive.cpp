@@ -77,7 +77,7 @@ void Drive::retract_intake()
 
 void Drive::stop_intake_expansion()
 {
-    hw->intake_expansion.stop();
+    hw->intake_expansion.stop(vex::brakeType::coast);
 }
 
 void Drive::snowplow_out() {

@@ -356,17 +356,11 @@ void AutoDrive::turbo_drive_distance(double distance, bool IS_REVERSE, double ve
     
     // std::pair<double, double> vel = calculateDriveTrainVel(velPercent);
 
-    hw->left_drivetrain_motors.resetPosition();
-    hw->right_drivetrain_motors.resetPosition();
+    hw->drivetrain.resetPosition();
 
-    if (IS_REVERSE) {
-        hw->left_drivetrain_motors.spinTo(-num_wheel_revolutions, vex::rotationUnits::rev, velocity, vex::velocityUnits::pct, false);
-        hw->right_drivetrain_motors.spinTo(-num_wheel_revolutions, vex::rotationUnits::rev, velocity, vex::velocityUnits::pct, false);
-    }
-    else {
-        hw->left_drivetrain_motors.spinTo(num_wheel_revolutions, vex::rotationUnits::rev, velocity, vex::velocityUnits::pct, false);
-        hw->right_drivetrain_motors.spinTo(num_wheel_revolutions, vex::rotationUnits::rev, velocity, vex::velocityUnits::pct, false);
-    }
+    if (IS_REVERSE) num_wheel_revolutions = -num_wheel_revolutions;
+    hw->drivetrain.spinTo(num_wheel_revolutions, vex::rotationUnits::rev, velocity, vex::velocityUnits::pct, false);
+    
     vex::wait(50, vex::timeUnits::msec);
     while(fabs(hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0.0 || fabs(hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0.0); //Blocks other tasks from starting 
 

@@ -14,7 +14,7 @@ public:
     vex::brain brain;
     vex::controller controller = vex::controller(vex::controllerType::primary);
 
-    // Drive train
+    // Entire drivetrain for moving forward/backward evenly
     vex::motor_group drivetrain = vex::motor_group(
         front_left_drivetrain_motor, middle_left_drivetrain_motor, back_left_drivetrain_motor,
         front_right_drivetrain_motor, middle_right_drivetrain_motor, back_right_drivetrain_motor);
