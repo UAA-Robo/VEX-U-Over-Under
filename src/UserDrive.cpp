@@ -42,7 +42,7 @@ UserDrive::UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *te
 
 void UserDrive::drive()
 {
-    //vex::task catapult_task = vex::task(run_catapult_thread, this, 1);
+    vex::task catapult_task = vex::task(run_catapult_thread, this, 1);
 
     while(true) {
         get_inputs();

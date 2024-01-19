@@ -129,23 +129,18 @@ int Drive::run_catapult_thread(void* param)
     bool CATAPULT_STOPPED = false;
     while(true) {
         //STOP catapult
-        // Prevents catapult/limit switch from bouncing
+
         if (dr->hw->catapult_limit_switch.value() == 1 && !dr->START_CATAPULT_LAUNCH) {
-            CATAPULT_STOPPED = true;
-        }
-
-        if (dr->START_CATAPULT_LAUNCH) CATAPULT_STOPPED = false;
-
-        if (CATAPULT_STOPPED) {
             if (dr->rc->ROBOT == SCRAT) {
                 dr->hw->catapult.stop();
             } else {  // Scrattete needs force down to stop catapult since no rachette
+                dr->hw->catapult.stop();
                 dr->hw->catapult.spin(vex::directionType::rev, 1, vex::voltageUnits::volt);
             };
             
         } else  {
             dr->hw->catapult.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
-            CATAPULT_STOPPED = false;
+            //CATAPULT_STOPPED = false;
         }
         vex::wait(10, vex::timeUnits::msec);
     }
