@@ -623,7 +623,12 @@ void AutoDrive::run_dumb_plow_strategy() {
     std::pair<double, double> prep_pos;
     std::pair<double, double> target_pos;
 
-    // Ram at top of red goal
+    // Go to hardcoded critical point first
+    std::pair<double, double> hardcoded_position = mp->get_critical_point(2, true);
+    hardcoded_position.first -= 3;
+    rotate_and_drive_to_position(hardcoded_position);
+
+    // Go to Red goal top offset
     target_pos = mp->goals[3]->get_position();
     prep_pos.first = 70.02 - 14.0;
     prep_pos.second = target_pos.second + 21.0; // Offset from goal by almost 2 feet
@@ -642,7 +647,7 @@ void AutoDrive::run_dumb_plow_strategy() {
     left_snowplow_in();
     // Turbo drive backward away from goal
     turbo_drive_distance(tm->get_distance_between_points(
-        tm->get_current_position(), {prep_pos.first, prep_pos.second + 5}), false
+        tm->get_current_position(), {prep_pos.first, prep_pos.second + 4}), false
     );
 
 
@@ -650,7 +655,7 @@ void AutoDrive::run_dumb_plow_strategy() {
     std::cout << "NOW AT " << tm->get_current_position().first << ",  " << tm->get_current_position().second << " "<< tm->get_current_position().second << " deg" << std::endl;
     target_pos = mp->goals[1]->get_position();
     prep_pos = target_pos;
-    prep_pos.first = target_pos.first - 36.0; // Offset from goal by 3 feet
+    prep_pos.first = target_pos.first - rc->ACTUAL_RADIUS - 36.0; // Offset from goal by 3 feet
     std::cout << "GOING TO-------------------" << prep_pos.first << " " << prep_pos.second << '\n';
 
     pathfind_and_drive_to_position(prep_pos);
