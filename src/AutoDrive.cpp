@@ -89,7 +89,7 @@ void AutoDrive::execute_skills_plan() {
             },
             true
         );
-        for (int i = 0; i < 4; ++i) run_plow_strategy(); // Until end of match
+        run_dumb_plow_strategy(); // Until end of match
     }
 
     else {
@@ -106,34 +106,10 @@ void AutoDrive::execute_skills_plan() {
 
 void AutoDrive::drive_along_path() {
     for (int i = 0; i < path.size() - 1; ++i) {
-        // if (i < path.size() - 2) {
-        //         std::cout << "----------------" << '\n';
-        //         std::cout << "Curr: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")\n";
-        //         std::cout << "Thinking: (" << path.at(i).first << ", " << path.at(i).second << ")\n";
-            
-        //     if (!pg->path_is_clear(tm->get_current_position(), path.at(i+1)) ||
-        //     (fabs(tm->get_current_position().first - path.at(i).first) > 3.0 || fabs(
-        //         tm->get_current_position().second - path.at(i).second) > 3.0
-        //     )) {
-        //         std::cout << "Oop" << '\n';
-        //         std::vector<std::pair<double, double>> sub_path = pg->generate_path(
-        //             tm->get_current_position(), path.at(i+1)
-        //         );
-        //         sub_path.erase(sub_path.begin());
-        //         sub_path.erase(sub_path.end());
-        //         for (int j = 0; j < sub_path.size() - 1; ++j) {
-        //             std::cout << "new path: (" << sub_path.at(j).first << ", " << sub_path.at(j).second << ")" << '\n';
-        //             rotate_and_drive_to_position(path.at(j+1), false);
-        //         }
-        //     }
-        // }
-        // std::cout << "Before move" << '\n';
-        // std::cout << "Path: (" << path.at(i).first << ", " << path.at(i).second << ") Next: ("<< path.at(i+1).first << ", " << path.at(i+1).second << ")" << std::endl;
-        // std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
+        std::cout << "PATH current " << tm->get_current_position().first << ", " << tm->get_current_position().second << " | " << tm->get_current_heading()<< std::endl;
+        std::cout << "PATH going to " << path.at(i+1).first <<  ", "<< path.at(i+1).second  << std::endl;
+        
         rotate_and_drive_to_position(path.at(i+1), false);
-        // std::cout << "After move" << '\n';
-        // std::cout << "Path: (" << path.at(i+1).first << ", " << path.at(i+1).second << std::endl;
-        // std::cout << "Odemetry: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ") " << tm->get_current_heading() << std::endl;
         vex::wait(50, vex::timeUnits::msec);
     }
 }
@@ -640,6 +616,52 @@ void AutoDrive::run_plow_strategy() {
     // vex::wait(500, vex::timeUnits::msec);
     //// snowplow_in();
     // drive_to_position(prep_pos, true);
+}
+
+void AutoDrive::run_dumb_plow_strategy() {
+
+    std::pair<double, double> prep_pos;
+    std::pair<double, double> target_pos;
+
+    // Ram at top of red goal
+    target_pos = mp->goals[3]->get_position();
+    prep_pos.first = 70.02 - 14.0;
+    prep_pos.second = target_pos.second + 21.0; // Offset from goal by almost 2 feet
+    pathfind_and_drive_to_position(prep_pos);
+    rotate_to_heading(90.0);
+
+    left_snowplow_out();
+    
+    std::cout << target_pos.first << " " << target_pos.second << " " << tm->get_distance_between_points(tm->get_current_position(), target_pos) << '\n';
+    
+    // Turbo drive forward into goal
+    turbo_drive_distance(tm->get_distance_between_points(
+        tm->get_current_position(), target_pos), true
+    );
+
+    left_snowplow_in();
+    // Turbo drive backward away from goal
+    turbo_drive_distance(tm->get_distance_between_points(
+        tm->get_current_position(), {prep_pos.first, prep_pos.second + 5}), false
+    );
+
+
+
+    std::cout << "NOW AT " << tm->get_current_position().first << ",  " << tm->get_current_position().second << " "<< tm->get_current_position().second << " deg" << std::endl;
+    target_pos = mp->goals[1]->get_position();
+    prep_pos = target_pos;
+    prep_pos.first = target_pos.first - 36.0; // Offset from goal by 3 feet
+    std::cout << "GOING TO-------------------" << prep_pos.first << " " << prep_pos.second << '\n';
+
+    pathfind_and_drive_to_position(prep_pos);
+    snowplow_out();
+    // rotate_to_heading(225, true);
+    // turbo_drive_distance(47.0, false);
+    rotate_to_heading(180.0, false);
+    turbo_drive_distance(tm->get_distance_between_points(
+        tm->get_current_position(), target_pos
+    ), true);
+
 }
 
 void AutoDrive::run_catapult_catapult_strategy() {
