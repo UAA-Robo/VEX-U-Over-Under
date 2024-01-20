@@ -247,7 +247,8 @@ class Map {
                 {23.08 + x_adjust, 0.0 + y_adjust},
                 {22.89 + x_adjust, 23.08 + y_adjust},
                 {46.83 + x_adjust, 0.0 + y_adjust},
-                {34.955 + x_adjust, 34.86 + y_adjust},
+                //{34.955 + x_adjust, 34.86 + y_adjust},
+                {34.955 + x_adjust, 128.965 + 1 + y_adjust}, // Add one to not get stuck on bar
                 {34.955 + x_adjust, 11.445 + y_adjust}
             );
             add_simple_region( // Left Offensive Region
