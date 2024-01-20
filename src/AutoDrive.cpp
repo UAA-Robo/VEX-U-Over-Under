@@ -284,7 +284,7 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
         min_velocity = 10;
         max_velocity = 50;
     }
-    const double stopping_aggression = 0.1; // Lower number is higher aggression (steeper slope)
+    const double stopping_aggression = 0.3; //0.1; // Lower number is higher aggression (steeper slope)
     double velocity;
 
     // 1 if forward, -1 if backward
@@ -625,7 +625,9 @@ void AutoDrive::run_dumb_plow_strategy() {
 
     // Go to hardcoded critical point first
     std::pair<double, double> hardcoded_position = mp->get_critical_point(2, true);
-    hardcoded_position.first -= 3;
+    rotate_and_drive_to_position(hardcoded_position);
+    
+    hardcoded_position.first += 16;
     rotate_and_drive_to_position(hardcoded_position);
 
     // Go to Red goal top offset
@@ -647,7 +649,7 @@ void AutoDrive::run_dumb_plow_strategy() {
     left_snowplow_in();
     // Turbo drive backward away from goal
     turbo_drive_distance(tm->get_distance_between_points(
-        tm->get_current_position(), {prep_pos.first, prep_pos.second + 4}), false
+        tm->get_current_position(), {prep_pos.first, prep_pos.second + 5}), false
     );
 
 
