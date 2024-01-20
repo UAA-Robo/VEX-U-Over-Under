@@ -73,7 +73,7 @@ void AutoDrive::rotate_to_heading(double heading, bool IS_TURBO)
     if (heading < 0) heading += 360;
     double min_velocity = 20;
     double max_velocity = 50;
-    double stopping_aggression = 0.025; //0.015; // Lower number is higher aggression (steeper slope)
+    double stopping_aggression = 0.015; //0.015; // Lower number is higher aggression (steeper slope)
 
     // Scratette will go faster bc she has bigger wheels
     if (rc->ROBOT == SCRATETTE) {
@@ -438,22 +438,24 @@ void AutoDrive::run_dumb_plow_strategy() {
 
     // Go to Red goal top offset
     target_pos = mp->goals[3]->get_position();
-    prep_pos.first = 70.02 - 14.0;
-    prep_pos.second = target_pos.second + 21.0; // Offset from goal by almost 2 feet
+    // prep_pos.first = 70.02 - 14.0;
+    prep_pos = target_pos;
+    prep_pos.second += 21.0; // Offset from goal by almost 2 feet
     pathfind_and_drive_to_position(prep_pos);
-    rotate_to_heading(90.0);
+    // rotate_to_heading(90.0);
+    rotate_to_heading(270.0);
 
-    left_snowplow_out();
+    // left_snowplow_out();
         
     // Turbo drive forward into goal
     turbo_drive_distance(tm->get_distance_between_points(
-        tm->get_current_position(), target_pos), true
+        tm->get_current_position(), target_pos), false
     );
 
     left_snowplow_in();
     // Turbo drive backward away from goal
     turbo_drive_distance(tm->get_distance_between_points(
-        tm->get_current_position(), {prep_pos.first, prep_pos.second + 5}), false
+        tm->get_current_position(), {prep_pos.first, prep_pos.second + 5}), true
     );
 
     target_pos = mp->goals[1]->get_position();
@@ -462,6 +464,7 @@ void AutoDrive::run_dumb_plow_strategy() {
 
     pathfind_and_drive_to_position(prep_pos);
     snowplow_out();
+    vex::wait(500, vex::timeUnits::msec);
     // rotate_to_heading(225, true);
     // turbo_drive_distance(47.0, false);
     rotate_to_heading(180.0, false);
