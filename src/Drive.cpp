@@ -13,7 +13,7 @@ Drive::Drive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry)
 std::pair<double, double> Drive::calculate_drivetrain_velocity(std::pair<double, double> velocity_percent)
 {
     double vertical_velocity_percent = velocity_percent.first / 100;
-    double horizontal_velocity_percent = velocity_percent.second / 100;
+    double horizontal_velocity_percent = velocity_percent.second / 110; // To reduce sensitivity when turning 
 
     // Calculate raw left and right motor velocity
     double raw_left_velocity = vertical_velocity_percent + horizontal_velocity_percent;
@@ -26,8 +26,9 @@ std::pair<double, double> Drive::calculate_drivetrain_velocity(std::pair<double,
     double left_velocity_multiplier = raw_left_velocity / normalization_factor;
     double right_velocity_multiplier = raw_right_velocity / normalization_factor;
 
-    double left_velocity = 100 * left_velocity_multiplier;
-    double right_velocity = 100 * right_velocity_multiplier;
+    // Multiplying by 100 breaks it?? Why?
+    double left_velocity = 95 * left_velocity_multiplier;
+    double right_velocity = 95 * right_velocity_multiplier;
 
     return {left_velocity, right_velocity};
 }

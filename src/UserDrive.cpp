@@ -69,7 +69,7 @@ void UserDrive::drivetrain_controls() {
     if (std::abs(left_right.value) < DEADZONE) {
         left_right.value = 0;
     }
-    forward_backward.value = forward_backward.value / (M_PI / 2) * 100;
+    //forward_backward.value = forward_backward.value / (M_PI / 2) * 100;
 
     move_drivetrain({forward_backward.value, left_right.value});
 }
