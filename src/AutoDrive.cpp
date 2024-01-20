@@ -26,25 +26,22 @@ void AutoDrive::execute_skills_plan() {
         // Launch match loads
 
         // So robot can turn
-        drive_to_position(
-            {
-                rc->starting_pos.first + (rc->ACTUAL_WIDTH / 2.0),
-                rc->starting_pos.second - (rc->ACTUAL_WIDTH / 2.0)
-            },
-            true
-        );
+        run_catapult_catapult_strategy();
+
+        // drive_to_position(
+        //     {
+        //         rc->starting_pos.first + (rc->ACTUAL_WIDTH / 2.0),
+        //         rc->starting_pos.second - (rc->ACTUAL_WIDTH / 2.0)
+        //     },
+        //     true
+        // );
         run_dumb_plow_strategy(); // Until end of match
     }
 
     else {
         // SCRATETTE auto skills plan
-        drive_to_position(
-            {
-                rc->starting_pos.first + (rc->ACTUAL_WIDTH / 2.0),
-                rc->starting_pos.second + (rc->ACTUAL_WIDTH / 2.0)
-            },
-            true
-        );
+        run_catapult_catapult_strategy();
+
     }
 }
 
@@ -73,7 +70,7 @@ void AutoDrive::rotate_to_heading(double heading, bool IS_TURBO)
     if (heading < 0) heading += 360;
     double min_velocity = 20;
     double max_velocity = 50;
-    double stopping_aggression = 0.015; //0.015; // Lower number is higher aggression (steeper slope)
+    double stopping_aggression = 0.03; //0.015; // Lower number is higher aggression (steeper slope)
 
     // Scratette will go faster bc she has bigger wheels
     if (rc->ROBOT == SCRATETTE) {
@@ -476,10 +473,11 @@ void AutoDrive::run_dumb_plow_strategy() {
 
 void AutoDrive::run_catapult_catapult_strategy() {
 
-    const int NUMBER_TRIBALLS = 20;
+    int NUMBER_TRIBALLS = 10;
+    if (rc->ROBOT == SCRATETTE) NUMBER_TRIBALLS = 24;
     
     double velocity = 50;
-    if (rc->ROBOT == SCRATETTE) velocity = 40;
+    if (rc->ROBOT == SCRATETTE) velocity = 50;
 
     // Expand intake
     expand_intake();
@@ -505,8 +503,8 @@ void AutoDrive::run_catapult_catapult_strategy() {
         start_catapult();
         vex::wait(500, vex::timeUnits::msec);
         stop_catapult();
-
-        turbo_drive_distance(6.2, false, velocity);
+        if (rc->ROBOT == SCRATETTE) turbo_drive_distance(7, false, velocity);
+        else turbo_drive_distance(6.2, false, velocity);
     }
 
     // Launches last triball and finishes outword

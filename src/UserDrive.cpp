@@ -42,6 +42,13 @@ UserDrive::UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *te
 
 void UserDrive::drive()
 {
+    // Expand intake
+    expand_intake();
+    if (rc->ROBOT == SCRAT)  vex::wait(500, vex::timeUnits::msec);
+    vex::wait(500, vex::timeUnits::msec);
+    stop_intake_expansion();
+
+    // Then start catapult thread
     vex::task catapult_task = vex::task(run_catapult_thread, this, 1);
 
     while(true) {

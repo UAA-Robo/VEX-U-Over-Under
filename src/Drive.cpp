@@ -134,7 +134,9 @@ int Drive::run_catapult_thread(void* param)
         if (dr->hw->catapult_limit_switch.value() == 1 && !dr->START_CATAPULT_LAUNCH) {
             // Robots need downward force to stop catapult
             dr->hw->catapult.stop();
-            dr->hw->catapult.spin(vex::directionType::rev, 1, vex::voltageUnits::volt);
+            if (dr->rc->ROBOT== SCRAT) dr->hw->catapult.spin(vex::directionType::rev, 1.0, vex::voltageUnits::volt);
+            else  dr->hw->catapult.spin(vex::directionType::rev, 1, vex::voltageUnits::volt);
+            
         } else  {
             dr->hw->catapult.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
         }
