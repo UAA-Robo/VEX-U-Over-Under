@@ -29,12 +29,6 @@ private:
     /// @brief Starts the auto strategy for SKILLS.
     void execute_skills_plan();
 
-    /// @brief Starts the odometry testing.
-    void test_odometry();
-
-    /// @brief Starts turbo drive testing.
-    void test_turbo();
-
     double robot_angle_offset = 0; // For Granny bc she veers left
 
     /// @brief Drives to all coordinates stored in the local path vector.
