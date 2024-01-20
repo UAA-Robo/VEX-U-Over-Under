@@ -95,6 +95,11 @@ protected:
     void stop_catapult();
 
 
+    void run_catapult_catapult_strategy(int number_triballs=10);
+
+    void turbo_drive_distance(double distance, bool IS_REVERSE, double velocity = 80);
+
+
 
     bool START_CATAPULT_LAUNCH = false;
     bool CATAPULT_STOPPED = true;

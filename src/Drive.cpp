@@ -180,3 +180,69 @@ void Drive::stop_catapult() {
 //     std::cout << "ENDING" << std::endl;
 
 // }
+
+void Drive::run_catapult_catapult_strategy(int number_triballs) {
+
+    
+    double velocity = 50;
+    if (rc->ROBOT == SCRATETTE) velocity = 50;
+
+    // Expand intake
+    expand_intake();
+    if (rc->ROBOT == SCRAT)  vex::wait(500, vex::timeUnits::msec);
+    vex::wait(500, vex::timeUnits::msec);
+    stop_intake_expansion();
+
+    // Start Catapult thread
+    vex::task catapult_task = vex::task(run_catapult_thread, this, 1);
+
+    // Launch triball
+    start_catapult();
+    vex::wait(500, vex::timeUnits::msec);
+    stop_catapult();
+
+    // Start intake
+    activate_intake();
+
+    // Move + Launch
+    for (int i = 0; i < number_triballs - 1; i++) {
+        turbo_drive_distance(6, true, velocity);
+
+        start_catapult();
+        vex::wait(500, vex::timeUnits::msec);
+        stop_catapult();
+        if (rc->ROBOT == SCRATETTE) turbo_drive_distance(7, false, velocity);
+        else turbo_drive_distance(6.2, false, velocity);
+    }
+
+    // Launches last triball and finishes outword
+    turbo_drive_distance(6, true, velocity);
+    start_catapult();
+    vex::wait(500, vex::timeUnits::msec);
+    stop_catapult();
+
+    stop_intake();
+    retract_intake();
+    vex::wait(500, vex::timeUnits::msec);
+    if (rc->ROBOT == SCRAT)  vex::wait(500, vex::timeUnits::msec);
+    stop_intake_expansion();
+
+}
+
+
+void Drive::turbo_drive_distance(double distance, bool IS_REVERSE, double velocity) {
+
+    double num_wheel_revolutions = distance / rc->WHEEL_CIRCUMFERENCE;
+    
+    // std::pair<double, double> vel = calculateDriveTrainVel(velPercent);
+
+    hw->drivetrain.resetPosition();
+
+    if (IS_REVERSE) num_wheel_revolutions = -num_wheel_revolutions;
+    hw->drivetrain.spinTo(num_wheel_revolutions, vex::rotationUnits::rev, velocity, vex::velocityUnits::pct, false);
+    
+    vex::wait(50, vex::timeUnits::msec);
+    while(fabs(hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0.0 || fabs(hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0.0); //Blocks other tasks from starting 
+
+
+}

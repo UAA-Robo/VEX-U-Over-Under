@@ -97,11 +97,6 @@ private:
     void drive_to_position(std::pair<double, double> position, bool ISBACKTOPOSITION = false,
         bool IS_TURBO = false);
 
-    /// @brief Drive a specified distance at high speed.
-    /// @param distance The distance to drive.
-    /// @param IS_REVERSE True if driving backwards, false otherwise.
-    /// @param velocity Speed that it drives.
-    void turbo_drive_distance(double distance, bool IS_REVERSE, double velocity = 80);
 
     /// @brief  Rotates the shortest distance ONLY using encoders on wheels (no odometry).
     ///     Good for turning that needs to be fast and might never get to position (ramming). 
@@ -113,10 +108,6 @@ private:
 
     /// @brief Dumber version of the plow strategy in the game.
     void run_dumb_plow_strategy();
-
-
-    /// @brief Executes catapult strategy
-    void run_catapult_catapult_strategy();
 
     /// @brief Prompts the robot to climb up a certain distance
     /// @param height The height the robot has to climb

@@ -22,26 +22,11 @@ void AutoDrive::drive() {
 void AutoDrive::execute_skills_plan() {
 
     if (rc->ROBOT == SCRAT) {
-
-        // Launch match loads
-
-        // So robot can turn
-        run_catapult_catapult_strategy();
-
-        // drive_to_position(
-        //     {
-        //         rc->starting_pos.first + (rc->ACTUAL_WIDTH / 2.0),
-        //         rc->starting_pos.second - (rc->ACTUAL_WIDTH / 2.0)
-        //     },
-        //     true
-        // );
+        run_catapult_catapult_strategy(10);
         run_dumb_plow_strategy(); // Until end of match
-    }
-
-    else {
+    } else {
         // SCRATETTE auto skills plan
-        run_catapult_catapult_strategy();
-
+        run_catapult_catapult_strategy(30);
     }
 }
 
@@ -246,22 +231,7 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
     hw->drivetrain.stop();  // Stop wheels
     vex::wait(500, vex::timeUnits::msec);  // Wait for odometry wheels to update
 }
-void AutoDrive::turbo_drive_distance(double distance, bool IS_REVERSE, double velocity) {
 
-    double num_wheel_revolutions = distance / rc->WHEEL_CIRCUMFERENCE;
-    
-    // std::pair<double, double> vel = calculateDriveTrainVel(velPercent);
-
-    hw->drivetrain.resetPosition();
-
-    if (IS_REVERSE) num_wheel_revolutions = -num_wheel_revolutions;
-    hw->drivetrain.spinTo(num_wheel_revolutions, vex::rotationUnits::rev, velocity, vex::velocityUnits::pct, false);
-    
-    vex::wait(50, vex::timeUnits::msec);
-    while(fabs(hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0.0 || fabs(hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0.0); //Blocks other tasks from starting 
-
-
-}
 
 void AutoDrive::turbo_turn(double heading)
 {
@@ -471,52 +441,3 @@ void AutoDrive::run_dumb_plow_strategy() {
 
 }
 
-void AutoDrive::run_catapult_catapult_strategy() {
-
-    int NUMBER_TRIBALLS = 10;
-    if (rc->ROBOT == SCRATETTE) NUMBER_TRIBALLS = 24;
-    
-    double velocity = 50;
-    if (rc->ROBOT == SCRATETTE) velocity = 50;
-
-    // Expand intake
-    expand_intake();
-    if (rc->ROBOT == SCRAT)  vex::wait(500, vex::timeUnits::msec);
-    vex::wait(500, vex::timeUnits::msec);
-    stop_intake_expansion();
-
-    // Start Catapult thread
-    vex::task catapult_task = vex::task(run_catapult_thread, this, 1);
-
-    // Launch triball
-    start_catapult();
-    vex::wait(500, vex::timeUnits::msec);
-    stop_catapult();
-
-    // Start intake
-    activate_intake();
-
-    // Move + Launch
-    for (int i = 0; i < NUMBER_TRIBALLS - 1; i++) {
-        turbo_drive_distance(6, true, velocity);
-
-        start_catapult();
-        vex::wait(500, vex::timeUnits::msec);
-        stop_catapult();
-        if (rc->ROBOT == SCRATETTE) turbo_drive_distance(7, false, velocity);
-        else turbo_drive_distance(6.2, false, velocity);
-    }
-
-    // Launches last triball and finishes outword
-    turbo_drive_distance(6, true, velocity);
-    start_catapult();
-    vex::wait(500, vex::timeUnits::msec);
-    stop_catapult();
-
-    stop_intake();
-    retract_intake();
-    vex::wait(500, vex::timeUnits::msec);
-    if (rc->ROBOT == SCRAT)  vex::wait(500, vex::timeUnits::msec);
-    stop_intake_expansion();
-
-}
