@@ -133,7 +133,7 @@ void AutoDrive::rotate_to_heading(double heading, bool IS_TURBO)
     if (heading < 0) heading += 360;
     double min_velocity = 20;
     double max_velocity = 50;
-    double stopping_aggression = 0.015; // Lower number is higher aggression (steeper slope)
+    double stopping_aggression = 0.025; //0.015; // Lower number is higher aggression (steeper slope)
 
     // Scratette will go faster bc she has bigger wheels
     if (rc->ROBOT == SCRATETTE) {
