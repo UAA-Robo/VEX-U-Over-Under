@@ -42,7 +42,7 @@ UserDrive::UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *te
 
 void UserDrive::drive()
 {
-    vex::task catapult_task = vex::task(run_catapult_thread, this, 1);
+    //vex::task catapult_task = vex::task(run_catapult_thread, this, 1);
 
     while(true) {
         get_inputs();
@@ -51,6 +51,7 @@ void UserDrive::drive()
         catapult_controls();
         intake_controls();
         snowplow_controls();
+        climb_controls();
 
         set_previous_inputs(); // Tracks previous inputs to compare to
         if (macro_loop_iteration == macro_length) IS_MACRO_RUNNING = false;
@@ -188,4 +189,18 @@ void UserDrive::intake_controls()
     }else {
         stop_intake();
     }
+}
+
+
+void UserDrive::climb_controls() {
+    if (button_A.value == 1) {
+        start_climb_up();
+        start_release_climb_lock();
+    }
+    else stop_climb();
+
+    // if (button_B.value == 1) start_release_climb_lock();
+    // else if (button_X.value == 1) start_engage_climb_lock();
+    // else stop_climb_lock();
+
 }

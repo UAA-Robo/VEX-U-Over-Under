@@ -177,3 +177,30 @@ void Drive::stop_catapult() {
 //     std::cout << "ENDING" << std::endl;
 
 // }
+
+
+void Drive::start_climb_up() {
+    hw->climb_motors.spin(vex::directionType::fwd, 6.0, vex::voltageUnits::volt);
+}
+
+void Drive::start_climb_down() {
+    hw->climb_motors.spin(vex::directionType::rev, 6.0, vex::voltageUnits::volt);
+}
+
+void Drive::stop_climb() {
+    hw->climb_motors.stop();
+
+}
+
+void Drive::start_release_climb_lock() {
+    hw->climb_lock_motor.spin(vex::directionType::fwd, 6.0, vex::voltageUnits::volt);
+}
+
+void Drive::start_engage_climb_lock() {
+    hw->climb_lock_motor.spin(vex::directionType::rev, 6.0, vex::voltageUnits::volt);
+}
+
+
+void Drive::stop_climb_lock() {
+    hw->climb_lock_motor.stop();
+}

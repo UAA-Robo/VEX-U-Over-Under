@@ -94,7 +94,23 @@ protected:
     /// @brief Trigger the catapult to stop and reset at the limit switch.
     void stop_catapult();
 
+    /// @brief Starts the climbing motors for climbing up.
+    void start_climb_up();
 
+    /// @brief Starts the climbing motors for climbing down.
+    void start_climb_down();
+
+    /// @brief Stops climbing motors.
+    void stop_climb();
+
+    /// @brief Starts motors for releasing the climb lock. 
+    void start_release_climb_lock();
+
+    /// @brief Starts motors for engaging the climb lock. 
+    void start_engage_climb_lock();
+
+    /// @brief Stop climb lock motors. 
+    void stop_climb_lock();
 
     bool START_CATAPULT_LAUNCH = false;
     bool CATAPULT_STOPPED = true;

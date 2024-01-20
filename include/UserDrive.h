@@ -53,8 +53,11 @@ private:
     /// @brief Controls the snowplow. X button expands the plows out and Y retracts them in.
     void snowplow_controls();
 
-    /// @brief Controls the intake. A button expands the intake out and Y retracts them in.
+    /// @brief Controls the intake. L1 button expands the intake out and L2 retracts them in.
     void intake_controls();
+
+    /// @brief Controls the climbing. A is climb up. B is retract the lock and X is disengage.
+    void climb_controls();
 
     bool INTAKE_EXPANDED = false;
 
