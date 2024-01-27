@@ -49,8 +49,10 @@ void UserDrive::drive()
     stop_intake_expansion();
 
     // Then start catapult thread
-    if (rc->ROBOT == SCRATETTE) run_catapult_catapult_strategy(30);
-    else vex::task catapult_task = vex::task(run_catapult_thread, this, 1);
+    //if (rc->ROBOT == SCRATETTE) run_catapult_catapult_strategy(30);
+    //else vex::task catapult_task = vex::task(run_catapult_thread, this, 1);
+    vex::task catapult_task = vex::task(run_catapult_thread, this, 1);
+
 
     while(true) {
         get_inputs();

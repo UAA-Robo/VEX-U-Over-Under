@@ -39,6 +39,8 @@ RobotConfig::RobotConfig(Hardware* hardware)
 
         // Max width
         ACTUAL_WIDTH = 17.6;  
+
+        MAX_CATAPULT_ANGLE = 60;
     }
     else
     {
@@ -64,6 +66,8 @@ RobotConfig::RobotConfig(Hardware* hardware)
 
         // Max width
         ACTUAL_WIDTH = 14.50; 
+
+        MAX_CATAPULT_ANGLE = 75;
 
     }
     DRIVETRAIN_RADIUS = DRIVETRAIN_WIDTH * sqrt(2) / 2.0;

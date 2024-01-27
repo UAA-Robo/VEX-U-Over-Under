@@ -25,6 +25,8 @@ public:
     double ODOMETRY_DIAMETER;
 
     robot_name ROBOT;
+
+    double MAX_CATAPULT_ANGLE;  // Max angle catapult can rotate (degrees)
     
 
     // Starting position

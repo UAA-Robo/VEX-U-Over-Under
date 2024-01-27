@@ -127,11 +127,16 @@ int Drive::run_catapult_thread(void* param)
 {
     // WARNING: DON'T print in this thread or it will take too long and miss the catapult press
     Drive* dr = static_cast<Drive*>(param);
+    dr->hw->catapult_sensor.resetPosition();
+    
 
+    // 0 deg is really 358-2 deg
+    double MAX_ANGLE = dr->rc->MAX_CATAPULT_ANGLE - 5; // To slow down early
+    double angle; 
     while(true) {
-        //STOP catapult
-
-        if (dr->hw->catapult_limit_switch.value() == 1 && !dr->START_CATAPULT_LAUNCH) {
+        // STOP catapult
+        angle = dr->hw->catapult_sensor.angle(vex::deg);
+        if (angle >= MAX_ANGLE && angle <= 350 && !dr->START_CATAPULT_LAUNCH) {
             // Robots need downward force to stop catapult
             dr->hw->catapult.stop();
             if (dr->rc->ROBOT== SCRAT) dr->hw->catapult.spin(vex::directionType::rev, 1.0, vex::voltageUnits::volt);
@@ -140,6 +145,12 @@ int Drive::run_catapult_thread(void* param)
         } else  {
             dr->hw->catapult.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
         }
+
+        // if (!dr->START_CATAPULT_LAUNCH) {
+        //     dr->hw->catapult.stop();
+        // } else  {
+        //     dr->hw->catapult.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
+        // }
         vex::wait(10, vex::timeUnits::msec);
     }
 }

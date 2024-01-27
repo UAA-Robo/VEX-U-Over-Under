@@ -28,10 +28,16 @@ Hardware::Hardware()
     intake_expansion.setStopping(vex::brakeType::coast);
 
 
+    left_odometry.resetPosition();
+    right_odometry.resetPosition();
+    back_odometry.resetPosition();
+
     // Catapult
     right_catapult_motor.setStopping(vex::brakeType::brake);
     left_catapult_motor.setStopping(vex::brakeType::brake);
     catapult.setStopping(vex::brakeType::brake);
+
+    catapult_sensor.resetPosition();
 
     // Retract plows initially
     right_plow.set(true);

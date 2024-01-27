@@ -43,6 +43,9 @@ public:
     vex::rotation right_odometry =  vex::rotation(vex::PORT7);
     vex::rotation back_odometry =  vex::rotation(vex::PORT8);
 
+    // Catapult
+    vex::rotation catapult_sensor = vex::rotation(vex::PORT9);
+
     // Distance Sensor
     vex::distance distanceSensor = vex::distance(vex::PORT20);  // Change port later
 
