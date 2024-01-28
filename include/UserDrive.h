@@ -24,16 +24,8 @@ private:
 
     std::vector<input*> input_list;
     std::vector<int32_t> controller_values;
-
-    int macro_loop_iteration;
-    int macro_length;
-    bool IS_MACRO_RUNNING, IS_MACRO_RECORDING;
     input forward_backward, left_right, button_L1, button_L2, button_R1, button_R2, button_A,
     button_B, button_X, button_Y, button_up, button_down, button_left, button_right;
-    std::vector<std::vector<int>> macro_inputs;
-
-    /// @brief Controls for recording and running macros
-    void macro_controls();
 
     /// @brief Stores inputs from either controller or recorded macro to variables accessible by
     ///        action functions
