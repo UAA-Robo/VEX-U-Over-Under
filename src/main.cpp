@@ -30,8 +30,9 @@ bool isControlled;
 /*---------------------------------------------------------------------------*/
 
 void pre_auton(void) {
-  vex::wait(20, vex::msec);
-  return;
+	// icebot->setup();
+	// vex::wait(5000, vex::timeUnits::msec);
+	return;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -76,12 +77,15 @@ void usercontrol(void) {
 int main() {
   
 
+
 	//Competition callbacks
 	Competition.autonomous(autonomous);
 	Competition.drivercontrol(usercontrol);
-  
+
 	// Run the pre-autonomous function.
 	pre_auton();
+  
+
 
 	// Prevent main from exiting with an infinite loop.
 	while (true) {

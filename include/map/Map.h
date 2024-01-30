@@ -27,8 +27,8 @@ class Map {
         void add_buffer(
         std::pair<double, double> upper_left_corner,
         std::pair<double, double> bottom_right_corner) {
-            Buffer bf(upper_left_corner, bottom_right_corner);
-            buffers.push_back(&bf);
+            Buffer* bf = new Buffer(upper_left_corner, bottom_right_corner);
+            buffers.push_back(bf);
         }
 
         /// @brief Adds a rectangular region to the map.
@@ -105,7 +105,7 @@ class Map {
             rc = robotConfig;
             next_element_id = 0;
             this->IS_SKILLS = IS_SKILLS;
-            double drive_train_adjustment = rc->DRIVETRAIN_WIDTH * sqrt(2) / 2;
+            double drive_train_adjustment = rc->ACTUAL_RADIUS;
 
             // outer walls
             add_wall(0 + x_adjust, 140.40 + y_adjust, 0 + x_adjust, 0 + y_adjust);                  // wall 0                                                  
@@ -181,18 +181,18 @@ class Map {
 
             // triball goals--interaction point
                 // red
-            add_goal(11.66 + x_adjust, 93.77 + y_adjust, 'R', ONE_EIGHTY);                          // goal 0
-            add_goal(11.66 + x_adjust, 46.64 + y_adjust, 'R', ZERO);                                // goal 1
-            add_goal(23.32 + x_adjust, 81.985 + y_adjust, 'R', NINETY);                             // goal 2
-            add_goal(23.32 + x_adjust, 70.20 + y_adjust, 'R', NINETY);                              // goal 3
-            add_goal(23.32 + x_adjust, 58.41 + y_adjust, 'R', NINETY);                              // goal 4
+            add_goal(117.09 + x_adjust, 81.985 + y_adjust, 'R', ONE_EIGHTY);                          // goal 0
+            add_goal(117.09 + x_adjust, 70.20 + y_adjust, 'R', ZERO);                                // goal 1
+            add_goal(117.09 + x_adjust, 58.41 + y_adjust, 'R', NINETY);                             // goal 2
+            add_goal(128.75 + x_adjust, 93.77 + y_adjust, 'R', NINETY);                              // goal 3
+            add_goal(128.75 + x_adjust, 46.64 + y_adjust, 'R', NINETY);                              // goal 4
 
                 //blue
-            add_goal(117.09 + x_adjust, 81.985 + y_adjust, 'B', TWO_SEVENTY);                       // goal 5
-            add_goal(117.09 + x_adjust, 70.20 + y_adjust, 'B', TWO_SEVENTY);                        // goal 6
-            add_goal(117.09 + x_adjust, 58.41 + y_adjust, 'B', TWO_SEVENTY);                        // goal 7
-            add_goal(128.75 + x_adjust, 93.77 + y_adjust, 'B', ONE_EIGHTY);                         // goal 8
-            add_goal(128.75 + x_adjust, 46.64 + y_adjust, 'B', ZERO);                               // goal 9
+            add_goal(11.66 + x_adjust, 93.77 + y_adjust, 'B', TWO_SEVENTY);                       // goal 5
+            add_goal(11.66 + x_adjust, 46.64 + y_adjust, 'B', TWO_SEVENTY);                        // goal 6
+            add_goal(23.32 + x_adjust, 81.985 + y_adjust, 'B', TWO_SEVENTY);                        // goal 7
+            add_goal(23.32 + x_adjust, 70.20 + y_adjust, 'B', ONE_EIGHTY);                         // goal 8
+            add_goal(23.32 + x_adjust, 58.41 + y_adjust, 'B', ZERO);                               // goal 9
 
 
         /*
@@ -247,7 +247,8 @@ class Map {
                 {23.08 + x_adjust, 0.0 + y_adjust},
                 {22.89 + x_adjust, 23.08 + y_adjust},
                 {46.83 + x_adjust, 0.0 + y_adjust},
-                {34.955 + x_adjust, 34.86 + y_adjust},
+                //{34.955 + x_adjust, 34.86 + y_adjust},
+                {34.955 + x_adjust, 128.965 + 1 + y_adjust}, // Add one to not get stuck on bar
                 {34.955 + x_adjust, 11.445 + y_adjust}
             );
             add_simple_region( // Left Offensive Region
@@ -382,6 +383,44 @@ class Map {
             else return regions[region]->lower_critical_point;
         }
 
+        /// @brief Detects whether a given position falls in a buffer region.
+        /// @param position The position to check (x, y).
+        /// @return True if in a buffer region, false otherwise.
+        bool in_buffer(std::pair<double, double> position) {
+            for (int i = 0; i < buffers.size(); ++i) {
+                if (buffers.at(i)->in_buffer(position)) {
+                    std::cout << "In buffer: " << i << '\n';
+                    return true;}
+            }
+            return false;
+        }
+
+
+
+        /// @brief Provides the position of interaction for a game element based off its interaction_angle
+        /// @param element GameElement passed in to recieve new value
+        /// @param CAN_TURN_AROUND Determines if the bot should have enough room to rotate
+        /// @return GameElement position with offset
+        std::pair<double, double> get_point_with_offset(InteractionObject* element, bool CAN_TURN_AROUND)
+        {
+            double offset_distance = rc->ACTUAL_WIDTH / 2.0;
+            std::pair<double, double> new_position = element->get_position();
+
+            std::cout << "MAP ORIGINAL POS: " << new_position.first << ", " << new_position.second << std::endl;
+
+            // If the robot should be able to rotate, add more offset
+            if (CAN_TURN_AROUND) { offset_distance = rc->ACTUAL_WIDTH * sqrt(2) / 2.0 + 1; } // change later
+
+            std::cout << "MAP POINT OFFSET DISTANCE: " << offset_distance << std::endl;
+            new_position.first += -1 * offset_distance 
+                * cos(element->get_interaction_angle() * M_PI/180);
+            new_position.second += -1 * offset_distance 
+                * sin(element->get_interaction_angle() * M_PI/180);
+            std::cout << "MAP OFFSET POS: " << new_position.first << ", " << new_position.second << std::endl;
+
+            return new_position;
+        }
+
         // coordinates-angle-readjustment - Wa did this it's so cool!
         double x_adjust = -70.20;    // inches
         double y_adjust = -70.20;    // inches
@@ -402,12 +441,12 @@ class Map {
         double* ZERO = new double(0 + heading_adjust);
 
         // Map Elements
-        std::vector<GameElement*> loadzones;
-        std::vector<GameElement*> startzones;
-        std::vector<GameElement*> goals;
-        std::vector<GameElement*> triballs;
-        std::vector<GameElement*> walls;
-        std::vector<GameElement*> bars;
+        std::vector<InteractionObject*> loadzones;
+        std::vector<Obstacle*> startzones;
+        std::vector<InteractionObject*> goals;
+        std::vector<InteractionObject*> triballs;
+        std::vector<Obstacle*> walls;
+        std::vector<InteractionObject*> bars;
         std::vector<Buffer*> buffers;
         std::vector<Region*> regions;
         int next_region_id = 0;

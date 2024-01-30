@@ -10,6 +10,9 @@ class Drive
 {
 public:
     virtual void drive() {}
+    
+    /// @brief Gets bot ready to start by retracting intake and catapult
+    //void setup_bot();
 
 protected:
     Drive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry);
@@ -45,7 +48,7 @@ protected:
     /// @param velocity_percent   Pair of doubles from -100 to 100:
     ///                           {verticalVelocityPercent, horizontalVelocityPercent} 
     void move_drivetrain_distance(std::pair<double, double> velocity_percent, double distance);
-
+    
     /// @brief Activates the intake
     void activate_intake();
 
@@ -64,8 +67,20 @@ protected:
     /// @brief Pushes air out when X button is pressed to expand snowplow.
     void snowplow_out();
 
+    /// @brief Pushes air into right_snowplow independently
+    void right_snowplow_out();
+
+    /// @brief Pushes air into left_snowplow independently
+    void left_snowplow_out();
+
     /// @brief Sucks air in when Y button is pressed to retract snowplow.
     void snowplow_in();
+
+    /// @brief Sucks air into the right_plow independently
+    void right_snowplow_in();
+
+    /// @brief Sucks air into the left_plow independently
+    void left_snowplow_in();
 
     /// @brief Spins the catapult motors until limit switch is hit or launch/stop_catapult is 
     ///     called. Loops forever because it is on it's own thread.
@@ -74,11 +89,19 @@ protected:
     static int run_catapult_thread(void* param);
 
     /// @brief Trigger the catapult motors to start turning to launch
-    void launch_catapult();
+    void start_catapult();
 
-    /// @brief Trigger the catapult to stop and reset at the limit swiitch.
+    /// @brief Trigger the catapult to stop and reset at the limit switch.
     void stop_catapult();
 
+
+    void run_catapult_catapult_strategy(int number_triballs=10);
+
+    void turbo_drive_distance(double distance, bool IS_REVERSE, double velocity = 80);
+
+
+
     bool START_CATAPULT_LAUNCH = false;
-    bool CATAPULT_STOPPED = false;
+    bool CATAPULT_STOPPED = true;
+    bool SNOWPLOW_OUT = false;
 };

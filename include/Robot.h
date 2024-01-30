@@ -21,6 +21,9 @@ public:
     /// @brief    Initializes the autonomous-period code.
     void driveAuto();
 
+    /// @brief  Sets up bot.
+    void setup();
+
 
 
 private:
