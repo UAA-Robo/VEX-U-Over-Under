@@ -24,5 +24,8 @@ private:
     /// @brief Controls the intake. A button expands the intake out and Y retracts them in.
     void intake_controls();
 
+    /// @brief Turns on/off catapult strategy when R2 is pressed.
+    void activate_catapult_strategy();
+
     bool INTAKE_EXPANDED = false;
 };

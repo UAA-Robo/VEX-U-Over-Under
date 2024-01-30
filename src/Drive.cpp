@@ -192,10 +192,8 @@ void Drive::stop_catapult() {
 
 // }
 
-void Drive::run_catapult_catapult_strategy(int number_triballs) {
-
-    
-    double velocity = 50;
+void Drive::run_catapult_strategy(int number_triballs) {
+        double velocity = 50;
     if (rc->ROBOT == SCRATETTE) velocity = 50;
 
     // Expand intake
@@ -212,19 +210,8 @@ void Drive::run_catapult_catapult_strategy(int number_triballs) {
     vex::wait(500, vex::timeUnits::msec);
     stop_catapult();
 
-    // Start intake
-    activate_intake();
-
-    // Move + Launch
-    for (int i = 0; i < number_triballs - 1; i++) {
-        turbo_drive_distance(6, true, velocity);
-
-        start_catapult();
-        vex::wait(500, vex::timeUnits::msec);
-        stop_catapult();
-        if (rc->ROBOT == SCRATETTE) turbo_drive_distance(7, false, velocity);
-        else turbo_drive_distance(6.2, false, velocity);
-    }
+    // Call Drive function for catapult strategy
+    run_catapult_once(number_triballs);
 
     // Launches last triball and finishes outword
     turbo_drive_distance(6, true, velocity);
@@ -240,6 +227,25 @@ void Drive::run_catapult_catapult_strategy(int number_triballs) {
 
 }
 
+void Drive::run_catapult_once(int number_triballs) {
+    double velocity = 50;
+    if (rc->ROBOT == SCRATETTE) velocity = 50;
+
+    // start intake
+    activate_intake();
+
+    // Move + Launch
+    for (int i = 0; i < number_triballs - 1; i++) {
+        turbo_drive_distance(6, true, velocity);
+
+        start_catapult();
+        vex::wait(500, vex::timeUnits::msec);
+        stop_catapult();
+        if (rc->ROBOT == SCRATETTE) turbo_drive_distance(7, false, velocity);
+        else turbo_drive_distance(6.2, false, velocity);
+    }
+
+}
 
 void Drive::turbo_drive_distance(double distance, bool IS_REVERSE, double velocity) {
 
