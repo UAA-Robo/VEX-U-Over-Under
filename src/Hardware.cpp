@@ -21,7 +21,7 @@ Hardware::Hardware()
 
     // Intake
     right_intake_motor.setStopping(vex::brakeType::hold);
-    left_catapult_motor.setStopping(vex::brakeType::hold);  
+    right_intake_motor.setStopping(vex::brakeType::hold);  
 
     right_intake_expansion_motor.setStopping(vex::brakeType::coast);
     left_intake_expansion_motor.setStopping(vex::brakeType::coast);
@@ -33,8 +33,7 @@ Hardware::Hardware()
     back_odometry.resetPosition();
 
     // Catapult
-    right_catapult_motor.setStopping(vex::brakeType::brake);
-    left_catapult_motor.setStopping(vex::brakeType::brake);
+    catapult.setStopping(vex::brakeType::brake);
     catapult.setStopping(vex::brakeType::brake);
 
     catapult_sensor.resetPosition();

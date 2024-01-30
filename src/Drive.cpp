@@ -192,49 +192,59 @@ void Drive::stop_catapult() {
 
 // }
 
-void Drive::run_catapult_catapult_strategy(int number_triballs) {
+void Drive::run_catapult_strategy(int number_triballs) {
 
-    
+    bool IS_CLOCKWISE_ARC = true;
+    if (rc->ROBOT == SCRATETTE)  IS_CLOCKWISE_ARC = false;
     double velocity = 50;
-    if (rc->ROBOT == SCRATETTE) velocity = 50;
+    if (rc->ROBOT == SCRATETTE) velocity = 35;
 
     // Expand intake
     expand_intake();
     if (rc->ROBOT == SCRAT)  vex::wait(500, vex::timeUnits::msec);
+
     vex::wait(500, vex::timeUnits::msec);
     stop_intake_expansion();
 
     // Start Catapult thread
     vex::task catapult_task = vex::task(run_catapult_thread, this, 1);
 
-    // Launch triball
-    start_catapult();
-    vex::wait(500, vex::timeUnits::msec);
-    stop_catapult();
+    // Arc once in place and launch preload
+    // arc_in_place(6, velocity, IS_CLOCKWISE_ARC, true);
+    // start_catapult();
+    // vex::wait(500, vex::timeUnits::msec);
+    // stop_catapult();
+    // stop_catapult();
+    // arc_in_place(6.0, velocity, IS_CLOCKWISE_ARC, false);
 
     // Start intake
     activate_intake();
 
     // Move + Launch
     for (int i = 0; i < number_triballs - 1; i++) {
-        turbo_drive_distance(6, true, velocity);
+        
+        //arc_in_place(6, velocity, IS_CLOCKWISE_ARC, true);
+        // turbo_drive_distance(6, true, velocity);
+        arc(12, 45, 50, true);
+        vex::wait(500, vex::timeUnits::msec); // TODO take out
 
         start_catapult();
         vex::wait(500, vex::timeUnits::msec);
         stop_catapult();
-        if (rc->ROBOT == SCRATETTE) turbo_drive_distance(7, false, velocity);
-        else turbo_drive_distance(6.2, false, velocity);
+        //arc_in_place(5.8, velocity, IS_CLOCKWISE_ARC, false);
+        //arc(6, 30, 50, false);
+        arc(12, 45, 55, false);
     }
 
     // Launches last triball and finishes outword
     turbo_drive_distance(6, true, velocity);
     start_catapult();
-    vex::wait(500, vex::timeUnits::msec);
+    vex::wait(50, vex::timeUnits::msec);
     stop_catapult();
 
     stop_intake();
     retract_intake();
-    vex::wait(500, vex::timeUnits::msec);
+    vex::wait(50, vex::timeUnits::msec);
     if (rc->ROBOT == SCRAT)  vex::wait(500, vex::timeUnits::msec);
     stop_intake_expansion();
 
@@ -253,7 +263,83 @@ void Drive::turbo_drive_distance(double distance, bool IS_REVERSE, double veloci
     hw->drivetrain.spinTo(num_wheel_revolutions, vex::rotationUnits::rev, velocity, vex::velocityUnits::pct, false);
     
     vex::wait(50, vex::timeUnits::msec);
-    while(fabs(hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0.0 || fabs(hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0.0); //Blocks other tasks from starting 
+    //Blocks other tasks from starting 
+    while(fabs(hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0.0 
+    || fabs(hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0.0){
+            vex::wait(20, vex::timeUnits::msec); // To let other threads run
+    } 
 
+}
+
+void Drive::arc_in_place(double distance, double velocity, bool IS_CLOCKWISE, bool IS_BACKWARD) {
+    double num_wheel_revolutions = distance / rc->WHEEL_CIRCUMFERENCE;
+
+    
+    if (IS_BACKWARD) num_wheel_revolutions = -num_wheel_revolutions;
+    
+    hw->drivetrain.resetPosition();
+    if (IS_CLOCKWISE) {
+        hw->left_drivetrain_motors.spinTo(num_wheel_revolutions, vex::rotationUnits::rev, 
+            velocity, vex::velocityUnits::pct, false);
+    }else {
+        hw->right_drivetrain_motors.spinTo(num_wheel_revolutions, vex::rotationUnits::rev, velocity, 
+            vex::velocityUnits::pct, false);
+    }
+
+    vex::wait(100, vex::timeUnits::msec);
+    //Blocks other tasks from starting 
+    while(fabs(hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0.0 
+        || fabs(hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0.0) {
+            vex::wait(20, vex::timeUnits::msec); // To let other threads run
+    }
+
+};
+
+void Drive::arc(double distance, double left_velocity, double right_velocity, bool IS_BACKWARD) {
+    
+    double num_wheel_revolutions = distance / rc->WHEEL_CIRCUMFERENCE;
+
+    vex::directionType direction = vex::directionType::fwd;
+    
+    if (IS_BACKWARD) {
+        num_wheel_revolutions = -num_wheel_revolutions;
+        direction = vex::directionType::rev;
+    }
+
+    
+    hw->drivetrain.resetPosition();
+
+    if (left_velocity > right_velocity) {
+        hw->left_drivetrain_motors.spinTo(num_wheel_revolutions, vex::rotationUnits::rev, 
+            left_velocity, vex::velocityUnits::pct, false);
+        hw->right_drivetrain_motors.spin(direction, right_velocity, vex::velocityUnits::pct);
+
+        vex::wait(100, vex::timeUnits::msec);
+        // Wait until left side is almost finished and then stop right side
+        while(fabs(hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0 ) {
+            vex::wait(20, vex::timeUnits::msec); // To let other threads run
+        }
+        hw->right_drivetrain_motors.stop();
+
+    }else {
+        hw->left_drivetrain_motors.spin(direction, left_velocity, 
+            vex::velocityUnits::pct);
+        hw->right_drivetrain_motors.spinTo(num_wheel_revolutions, vex::rotationUnits::rev, 
+            right_velocity, vex::velocityUnits::pct, false);
+
+
+        vex::wait(100, vex::timeUnits::msec);
+        // Wait until left side is almost finished and then stop right side
+        while(fabs(hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0 ) {
+            vex::wait(20, vex::timeUnits::msec); // To let other threads run
+        }
+        hw->left_drivetrain_motors.stop();
+    }
+
+    //Blocks other tasks from starting 
+    while(fabs(hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0.0 
+        || fabs(hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0.0) {
+            vex::wait(20, vex::timeUnits::msec); // To let other threads run
+    }
 
 }

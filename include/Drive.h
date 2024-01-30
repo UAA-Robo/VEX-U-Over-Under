@@ -95,11 +95,33 @@ protected:
     void stop_catapult();
 
 
-    void run_catapult_catapult_strategy(int number_triballs=10);
+    void run_catapult_strategy(int number_triballs=10);
 
     void turbo_drive_distance(double distance, bool IS_REVERSE, double velocity = 80);
+    
+
+    /// @brief Drives in arc with one side stationary. Does NOT use odometry.
+    /// @param distance Distance (inches) to arc.
+    /// @param velocity Velocity (% from 0-100) to drive
+    /// @param IS_CLOCKWISE True if arcing clockwise, False if counterclockwise
+    /// @param IS_BACKWARD  True if arcing backward, False is arcing forward
+    void arc_in_place(double distance, double velocity, bool IS_CLOCKWISE, bool IS_BACKWARD = false);
 
 
+    /// @brief Drives in arc with using both sides of drivetrain. Does NOT use odometry.
+    /// @param distance Max distance to drive with furthest traveling side
+    /// @param left_velocity 
+
+    /// @param IS_CLOCKWISE 
+    /// @param IS_BACKWARD 
+
+    /// @brief Drives in arc with using both sides of drivetrain. Does NOT use odometry.
+    /// @param distance Max distance to drive with furthest traveling side
+    /// @param left_velocity  Velocity (%) for left drivetrain side
+    /// @param right_velocity Velocity (%) for right drivetrain side
+    /// @param IS_BACKWARD True if arcing backward, False is arcing forward
+    void arc(double distance, double left_velocity, double right_velocity, 
+        bool IS_BACKWARD = false);
 
     bool START_CATAPULT_LAUNCH = false;
     bool CATAPULT_STOPPED = true;

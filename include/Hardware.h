@@ -54,9 +54,12 @@ public:
     vex::digital_out left_plow = vex::digital_out(brain.ThreeWirePort.C); //left
 
     // Catapult
-    vex::motor left_catapult_motor = vex::motor(vex::PORT14, vex::ratio18_1, true);
-    vex::motor right_catapult_motor = vex::motor(vex::PORT15, vex::ratio18_1, false);
-    vex::motor_group catapult = vex::motor_group(left_catapult_motor, right_catapult_motor);
+    vex::motor left_front_catapult_motor = vex::motor(vex::PORT14, vex::ratio18_1, true);
+    vex::motor left_back_catapult_motor = vex::motor(vex::PORT20, vex::ratio18_1, false);
+    vex::motor right_front_catapult_motor = vex::motor(vex::PORT15, vex::ratio18_1, false);
+    vex::motor right_back_catapult_motor = vex::motor(vex::PORT16, vex::ratio18_1, true);
+    vex::motor_group catapult = vex::motor_group(left_front_catapult_motor, 
+        left_back_catapult_motor, right_front_catapult_motor, right_back_catapult_motor);
 
     // Intake
     vex::motor left_intake_motor = vex::motor(vex::PORT3, vex::ratio18_1, true);
