@@ -19,6 +19,7 @@ void UserDrive::drive()
 
 
     while(true) {
+        activate_catapult_strategy();
         drivetrain_controls();
         catapult_controls();
         intake_controls();
@@ -80,4 +81,21 @@ void UserDrive::intake_controls()
     }else {
         stop_intake();
     }
+}
+
+void UserDrive::activate_catapult_strategy()
+{
+    if (hw->controller.ButtonR2.pressing()) { run_catapult_once(2); }
+
+    // if (hw->controller.ButtonR2.pressing() && STRATEGY_ON) {
+    //     STRATEGY_ON = false;
+    //     stop_intake();
+    //     retract_intake();
+    //     vex::wait(500, vex::msec);  // give time for ability to turn on
+    // }
+    // else if (hw->controller.ButtonR2.pressing() && !STRATEGY_ON) {
+    //     STRATEGY_ON = true;
+    //     expand_intake();
+    //     vex::wait(500, vex::msec);  // give time for ability to turn off
+    // }
 }

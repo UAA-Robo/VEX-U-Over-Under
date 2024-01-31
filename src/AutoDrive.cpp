@@ -22,11 +22,11 @@ void AutoDrive::drive() {
 void AutoDrive::execute_skills_plan() {
 
     if (rc->ROBOT == SCRAT) {
-        run_catapult_catapult_strategy(10);
+        run_catapult_strategy(10);
         run_dumb_plow_strategy(); // Until end of match
     } else {
         // SCRATETTE auto skills plan
-        run_catapult_catapult_strategy(30);
+        run_catapult_strategy(30);
     }
 }
 
@@ -278,7 +278,6 @@ void AutoDrive::climb_distance(double height) {
     hw->climb_motors.spinFor(climb_wheel_revolution, vex::rotationUnits::rev, velocity,
         vex::velocityUnits::pct);
 }
-
 
 
 void AutoDrive::run_plow_strategy() {
