@@ -102,10 +102,11 @@ protected:
 
     /// @brief Drives in arc with one side stationary. Does NOT use odometry.
     /// @param distance Distance (inches) to arc.
-    /// @param velocity Velocity (% from 0-100) to drive
+    /// @param min_velocity Starting velocity (% from 0-100) to drive
+    /// @param max_velocity Max Acceleration Velocity  (% from 0-100) to drive
     /// @param IS_CLOCKWISE True if arcing clockwise, False if counterclockwise
     /// @param IS_BACKWARD  True if arcing backward, False is arcing forward
-    void arc_in_place(double distance, double velocity, bool IS_CLOCKWISE, bool IS_BACKWARD = false);
+    void arc_in_place(double distance, double min_velocity=20, double max_velocity=80, bool IS_CLOCKWISE=true, bool IS_BACKWARD = false);
 
 
     /// @brief Drives in arc with using both sides of drivetrain. Does NOT use odometry.
@@ -120,8 +121,7 @@ protected:
     /// @param left_velocity  Velocity (%) for left drivetrain side
     /// @param right_velocity Velocity (%) for right drivetrain side
     /// @param IS_BACKWARD True if arcing backward, False is arcing forward
-    void arc(double distance, double left_velocity, double right_velocity, 
-        bool IS_BACKWARD = false);
+    void arc(double distance, double min_velocity, double max_velocity, double velocity_side_difference, bool IS_CLOCKWISE, bool IS_BACKWARD);
 
     bool START_CATAPULT_LAUNCH = false;
     bool CATAPULT_STOPPED = true;
