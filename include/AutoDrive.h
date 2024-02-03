@@ -105,9 +105,9 @@ private:
     void drive_to_position(
         std::pair<double, double> position, bool ISBACKTOPOSITION = false,
         bool IS_TURBO = false,
-        double min_velocity=20,
-        double max_velocity=80,
-        double stopping_aggression=0.3    
+        double min_velocity=5,
+        double max_velocity=40,
+        double stopping_aggression=0.1
     );
 
 

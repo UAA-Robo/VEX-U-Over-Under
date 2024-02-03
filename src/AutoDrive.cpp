@@ -17,7 +17,7 @@ void AutoDrive::drive() {
 
     // Testing
     tm->set_heading(270.0);
-    tm->set_position({12.0, 0.0});
+    tm->set_position({-12.0, 0.0});
     
     
     test_odometry();
@@ -26,7 +26,10 @@ void AutoDrive::drive() {
 
 void AutoDrive::test_odometry() {
 
-    drive_to_position({-12.0, -24.0});
+    drive_to_position({-12.0, -48.0});
+    vex::wait(30, vex::timeUnits::msec);
+    drive_to_position({-12.0, 0.0}, true);
+
 }
 
 void AutoDrive::execute_skills_plan() {
@@ -229,8 +232,14 @@ void AutoDrive::drive_to_position(
     // Turn until within 0.5 inches of desired distance or until it overshoots 
     // (change in distance starts majorly increasing instead of decreasing)
     while (fabs(current_distance) > 0.5 && (previous_distance - current_distance) >= -0.01) {
-        // Speeds up as leaving initial position and slows down as approaching destination
 
+        // TODO take out
+        // std::cout << hw->back_odometry.position(vex::rotationUnits::rev) << ", "
+        //     << hw->left_odometry.position(vex::rotationUnits::rev) << ", "
+        //     << hw->right_odometry.position(vex::rotationUnits::rev) << std::endl;
+        std::cout << "(" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")\n";
+
+        // Speeds up as leaving initial position and slows down as approaching destination
         if (current_distance >= distance/2) {
             // First half of distance
             velocity = atan(distance - current_distance) * 2 * (max_velocity-min_velocity) / M_PI 
@@ -248,6 +257,7 @@ void AutoDrive::drive_to_position(
     }
 
     hw->drivetrain.stop();  // Stop wheels
+    std::cout << "HERE" << std::endl;
     vex::wait(500, vex::timeUnits::msec);  // Wait for odometry wheels to update
 }
 
