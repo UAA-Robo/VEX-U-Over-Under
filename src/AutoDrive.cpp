@@ -20,8 +20,9 @@ void AutoDrive::drive() {
     tm->set_position({0.0, 0.0});
     
     
-    test_odometry();
+    // test_odometry();
     // execute_skills_plan(); //! ELIMINATE OPPONENTS
+    execute_head_to_head();
 }
 
 void AutoDrive::test_odometry() {
@@ -43,6 +44,25 @@ void AutoDrive::execute_skills_plan() {
         // SCRATETTE auto skills plan
         run_catapult_strategy(30);
     }
+}
+
+void AutoDrive::execute_head_to_head() {
+
+    //* For SCRAT
+    tm->set_position({-17.0, -57.0});
+    tm->set_heading(180.0);
+    std::pair<double, double> target = {47.0, -57.0};
+
+    drive_to_position(target, true);
+    rotate_to_heading(190.0);
+    left_snowplow_out();
+    turbo_drive_distance(6.0, true, 40.0);
+    rotate_to_heading(270.0);
+    left_snowplow_in();
+    std::cout << "Done!\n";
+
+
+
 }
 
 void AutoDrive::drive_along_path() {

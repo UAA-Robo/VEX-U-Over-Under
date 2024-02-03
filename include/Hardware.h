@@ -50,8 +50,8 @@ public:
     vex::distance distanceSensor = vex::distance(vex::PORT20);  // Change port later
 
     // Pneumatic test
-    vex::digital_out right_plow = vex::digital_out(brain.ThreeWirePort.B); //right
-    vex::digital_out left_plow = vex::digital_out(brain.ThreeWirePort.C); //left
+    vex::digital_out right_plow = vex::digital_out(brain.ThreeWirePort.C); //right
+    vex::digital_out left_plow = vex::digital_out(brain.ThreeWirePort.B); //left
 
     // Catapult
     vex::motor left_catapult_motor = vex::motor(vex::PORT14, vex::ratio18_1, true);
