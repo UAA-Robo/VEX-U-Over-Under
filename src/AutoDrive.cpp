@@ -16,8 +16,8 @@ void AutoDrive::drive() {
     hw->right_intake_expansion_motor.setStopping(vex::brakeType::hold);
 
     // Testing
-    tm->set_heading(270.0);
-    tm->set_position({-12.0, 0.0});
+    tm->set_heading(0.0);
+    tm->set_position({0.0, 0.0});
     
     
     test_odometry();
@@ -26,9 +26,11 @@ void AutoDrive::drive() {
 
 void AutoDrive::test_odometry() {
 
-    drive_to_position({-12.0, -48.0});
-    vex::wait(30, vex::timeUnits::msec);
-    drive_to_position({-12.0, 0.0}, true);
+    // drive_to_position({-12.0, -48.0});
+    // vex::wait(30, vex::timeUnits::msec);
+    // drive_to_position({-12.0, 0.0}, true);
+    rotate_to_heading(2.0);
+    std::cout << "Done!\n";
 
 }
 
@@ -96,15 +98,16 @@ void AutoDrive::rotate_to_heading(
 
     // Slow for small angles bc function doesn't slow things down enough.
     if (angle_to_travel < 35) {
-        min_velocity = 20;
-        max_velocity = 25;
+        min_velocity = 3;
+        max_velocity = 8;
+        stopping_aggression = 0.02;
         
         // Scratette will go faster bc she has bigger wheels
-        if (rc->ROBOT == SCRATETTE) {
-            min_velocity = 10;
-            max_velocity = 15;
-            stopping_aggression = 0.2;
-        }
+        // if (rc->ROBOT == SCRATETTE) {
+        //     min_velocity = 10;
+        //     max_velocity = 15;
+        //     stopping_aggression = 0.2;
+        // }
     }
     // std::cout << "Angle to travel: " << angle_to_travel << std::endl;
 
@@ -119,6 +122,10 @@ void AutoDrive::rotate_to_heading(
     // Turn until within 1 degrees of desired heading or until it overshoots
     // (change in angle starts majorly increasing instead of decreasing)
     while (angle_to_travel > 1 && (previous_angle_to_travel - angle_to_travel) >= -0.05) { 
+        
+        std::cout << tm->get_current_heading() << '\n';
+        std::cout << "(" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << '\n';
+
         if (angle_to_travel > total_angle_to_travel/2) {
             // First half of distance
             velocity = atan(fabs(total_angle_to_travel - angle_to_travel)) * 2 

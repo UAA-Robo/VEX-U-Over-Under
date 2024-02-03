@@ -46,9 +46,9 @@ private:
     void rotate_to_heading(
         double heading,
         bool IS_TURBO=false,
-        double min_velocity=20,
-        double max_velocity=50,
-        double stopping_aggression=0.03
+        double min_velocity=3,
+        double max_velocity=18,
+        double stopping_aggression=0.02
     );
 
     /// @brief Rotates the robot to align with a coordinate on the field.  Assumes 0 degrees is at 
