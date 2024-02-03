@@ -143,7 +143,7 @@ int Drive::run_catapult_thread(void* param)
             else  dr->hw->catapult.spin(vex::directionType::rev, 1, vex::voltageUnits::volt);
             
         } else  {
-            dr->hw->catapult.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
+            dr->hw->catapult.spin(vex::directionType::rev, 6.0, vex::voltageUnits::volt);
         }
 
         // if (!dr->START_CATAPULT_LAUNCH) {
