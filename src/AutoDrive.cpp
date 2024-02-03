@@ -49,14 +49,14 @@ void AutoDrive::execute_skills_plan() {
 void AutoDrive::execute_head_to_head() {
 
     //* For SCRAT
-    tm->set_position({-17.0, -57.0});
+    tm->set_position({-17.0, -63.0});
     tm->set_heading(180.0);
-    std::pair<double, double> target = {47.0, -57.0};
+    std::pair<double, double> target = {45.0, -63.0};
 
     drive_to_position(target, true);
-    rotate_to_heading(190.0);
+    rotate_to_heading(200.0);
     left_snowplow_out();
-    turbo_drive_distance(6.0, true, 40.0);
+    turbo_drive_distance(10.0, true, 80.0);
     rotate_to_heading(270.0);
     left_snowplow_in();
     std::cout << "Done!\n";
