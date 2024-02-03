@@ -26,6 +26,8 @@ private:
 
     std::vector<std::pair<double, double>> path;
 
+    void test_odometry();
+
     /// @brief Starts the auto strategy for SKILLS.
     void execute_skills_plan();
 
@@ -41,7 +43,13 @@ private:
     /// @brief Rotates the shortest distance by turning left or right to the heading. Uses odometry sensors.
     /// @param heading Double that is the counterclockwise angle in degrees from the x asis.
     /// @param IS_TURBO Set to true to drive at high speed. Defaults to false.
-    void rotate_to_heading(double heading, bool IS_TURBO = false);
+    void rotate_to_heading(
+        double heading,
+        bool IS_TURBO=false,
+        double min_velocity=20,
+        double max_velocity=50,
+        double stopping_aggression=0.03
+    );
 
     /// @brief Rotates the robot to align with a coordinate on the field.  Assumes 0 degrees is at 
     /// the positive x axis.
@@ -94,8 +102,13 @@ private:
     /// @param position Pair of doubles: {X, Y}
     /// @param ISBACKTOPOSITION A bool value that determines the direction the bot moves.
     /// @param IS_TURBO Set to true to drive at high speed. Defaults to false.
-    void drive_to_position(std::pair<double, double> position, bool ISBACKTOPOSITION = false,
-        bool IS_TURBO = false);
+    void drive_to_position(
+        std::pair<double, double> position, bool ISBACKTOPOSITION = false,
+        bool IS_TURBO = false,
+        double min_velocity=20,
+        double max_velocity=80,
+        double stopping_aggression=0.3    
+    );
 
 
     /// @brief  Rotates the shortest distance ONLY using encoders on wheels (no odometry).

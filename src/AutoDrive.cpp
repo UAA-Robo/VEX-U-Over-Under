@@ -15,8 +15,18 @@ void AutoDrive::drive() {
     hw->left_intake_expansion_motor.setStopping(vex::brakeType::hold);
     hw->right_intake_expansion_motor.setStopping(vex::brakeType::hold);
 
+    // Testing
+    tm->set_heading(270.0);
+    tm->set_position({12.0, 0.0});
+    
+    
+    test_odometry();
+    // execute_skills_plan(); //! ELIMINATE OPPONENTS
+}
 
-    execute_skills_plan(); //! ELIMINATE OPPONENTS
+void AutoDrive::test_odometry() {
+
+    drive_to_position({-12.0, -24.0});
 }
 
 void AutoDrive::execute_skills_plan() {
@@ -44,8 +54,13 @@ void AutoDrive::pathfind_and_drive_to_position(std::pair<double, double> target_
     drive_along_path();
 }
 
-void AutoDrive::rotate_to_heading(double heading, bool IS_TURBO)
-{
+void AutoDrive::rotate_to_heading(
+    double heading,
+    bool IS_TURBO,
+    double min_velocity,
+    double max_velocity,
+    double stopping_aggression
+) {
     if (IS_TURBO) {
         turbo_turn(heading);
         return;
@@ -53,16 +68,16 @@ void AutoDrive::rotate_to_heading(double heading, bool IS_TURBO)
 
     heading = fmod(heading, 360);
     if (heading < 0) heading += 360;
-    double min_velocity = 20;
-    double max_velocity = 50;
-    double stopping_aggression = 0.03; //0.015; // Lower number is higher aggression (steeper slope)
+    // double min_velocity = 20;
+    // double max_velocity = 50;
+    // double stopping_aggression = 0.03; //0.015; // Lower number is higher aggression (steeper slope)
 
     // Scratette will go faster bc she has bigger wheels
-    if (rc->ROBOT == SCRATETTE) {
-        min_velocity = 10;
-        max_velocity = 30;
-        stopping_aggression = 0.03;
-    }
+    // if (min_velocity == 20 && max_velocity == 50 && ->ROBOT == SCRATETTE) {
+    //     min_velocity = 10;
+    //     max_velocity = 30;
+    //     stopping_aggression = 0.03;
+    // }
 
     double velocity;
 
@@ -176,9 +191,13 @@ void AutoDrive::rotate_and_drive_to_position(InteractionObject *element, bool IS
     rotate_and_drive_to_position(position, IS_BACK_POSITION, IS_TURBO);
 }
 
-void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBACKTOPOSITION,
-    bool IS_TURBO) 
-{
+void AutoDrive::drive_to_position(
+    std::pair<double, double> position, bool ISBACKTOPOSITION,
+    bool IS_TURBO,
+    double min_velocity,
+    double max_velocity,
+    double stopping_aggression
+) {
 
     double current_distance = tm->get_distance_between_points(tm->get_current_position(), position);
     double distance = current_distance; // Distance goal    
@@ -189,15 +208,15 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
         return;
     }
 
-    double min_velocity = 20;
-    double max_velocity = 80;
+    // double min_velocity = 20;
+    // double max_velocity = 80;
 
     // Scratette will go faster bc she has bigger wheels
-    if (rc->ROBOT == SCRATETTE) {
-        min_velocity = 10;
-        max_velocity = 50;
-    }
-    const double stopping_aggression = 0.3; //0.1; // Lower number is higher aggression (steeper slope)
+    // if (rc->ROBOT == SCRATETTE) {
+    //     min_velocity = 10;
+    //     max_velocity = 50;
+    // }
+    // const double stopping_aggression = 0.3; //0.1; // Lower number is higher aggression (steeper slope)
     double velocity;
 
     // 1 if forward, -1 if backward

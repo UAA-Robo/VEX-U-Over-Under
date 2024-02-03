@@ -49,12 +49,14 @@ public:
     void set_position(std::pair<double, double> position);
     
     /// public so map can access address
-    double odometry_heading = rc->starting_heading;  //In degrees
+    double odometry_heading;  //In degrees
 
 private:
     Hardware *hw;
     RobotConfig *rc;
 
-    double odometry_x_position = rc->starting_pos.first;  // In inches
-    double odometry_y_position = rc->starting_pos.second;  // In inches
+    double odometry_x_position;  // In inches
+    double odometry_y_position;  // In inches
+
+    double previous_left_odometry, previous_right_odometry, previous_back_odometry;
 };

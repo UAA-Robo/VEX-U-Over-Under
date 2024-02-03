@@ -31,8 +31,8 @@ public:
 
     // Starting position
     //! TODO: This is for SCRAT ONLY
-    std::pair<double, double> starting_pos = {-53.23, 53.23}; // old is -53.23, 53.23
-    double starting_heading = 135.0;
+    // std::pair<double, double> starting_pos = {-53.23, 53.23}; // old is -53.23, 53.23
+    // double starting_heading = 135.0;
 
 private:
     Hardware* hw;
