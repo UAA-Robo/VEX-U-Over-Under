@@ -5,6 +5,7 @@ AutoDrive::AutoDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *te
         mp = new Map(telemetry, robotConfig, IS_SKILLS);
         pg = new PathGenerator(robotConfig, mp, tm);
         rc = robotConfig;
+        pid = new PID(rc, hw, tm);
     }
 
 void AutoDrive::drive() {
@@ -15,8 +16,12 @@ void AutoDrive::drive() {
     hw->left_intake_expansion_motor.setStopping(vex::brakeType::hold);
     hw->right_intake_expansion_motor.setStopping(vex::brakeType::hold);
 
+    tm->set_heading(0.0);
+    tm->set_position({0.0, 0.0});
 
-    execute_skills_plan(); //! ELIMINATE OPPONENTS
+    drive_to_position({10.0, 0.0}, false, false);
+
+    // execute_skills_plan(); //! ELIMINATE OPPONENTS
 }
 
 void AutoDrive::execute_skills_plan() {
@@ -180,6 +185,9 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
     bool IS_TURBO) 
 {
 
+    // Resets pid for current linear path on function call
+    pid->reset_linear_drive(tm->get_current_position(), tm->get_current_heading());
+
     double current_distance = tm->get_distance_between_points(tm->get_current_position(), position);
     double distance = current_distance; // Distance goal    
     double previous_distance = current_distance; 
@@ -202,8 +210,10 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
 
     // 1 if forward, -1 if backward
     double drive_direction = ISBACKTOPOSITION ? -1: 1;
-    hw->drivetrain.spin(vex::directionType::fwd, min_velocity * drive_direction, 
-        vex::velocityUnits::pct);
+    // hw->drivetrain.spin(vex::directionType::fwd, min_velocity * drive_direction, 
+    //     vex::velocityUnits::pct);
+    hw->drivetrain.spin(vex::directionType::fwd, min_velocity*drive_direction/100.0*12.0,
+        vex::voltageUnits::volt);
     // std::cout << "Left velocity: " << hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct) << " Right velocity: " << hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct) << std::endl;
     vex::wait(30, vex::timeUnits::msec);
     
@@ -220,7 +230,9 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
             // Second half of distance
             velocity = atan(stopping_aggression * current_distance) * 2 * max_velocity / M_PI;
         }
-        hw->drivetrain.setVelocity(velocity * drive_direction, vex::velocityUnits::pct);
+        // hw->drivetrain.setVelocity(velocity * drive_direction, vex::velocityUnits::pct);
+        pid->correct_linear_drive(velocity*drive_direction/100.0*12.0,
+            velocity*drive_direction/100.0*12.0);
       
         vex::wait(50, vex::timeUnits::msec);  // Wait for odometry wheels to update
 

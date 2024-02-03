@@ -102,27 +102,7 @@ void UserDrive::get_inputs() {
     controller_values[12] = (int32_t)hw->controller.ButtonLeft.pressing();
     controller_values[13] = (int32_t)hw->controller.ButtonRight.pressing();
 
-    if (IS_MACRO_RUNNING) {
-        hw->controller.Screen.print("MACRO: RUNNING");
-        for (int i = 0; i < input_list.size(); ++i) {
-            input_list[i]->value = macro_inputs[macro_loop_iteration][i];
-        }
-        button_up.value = hw->controller.ButtonUp.pressing(); // Stop running macro early by user
-                                                              // input
-        button_down.value = false;                            // Cannot record a macro while running a macro!
-    }
-    else
-        for (int i = 0; i < input_list.size(); ++i)
-            input_list[i]->value = controller_values[i];
-    if (IS_MACRO_RECORDING)
-    {
-        hw->controller.Screen.print("MACRO: RECORDING");
-        for (int i = 0; i < input_list.size(); ++i)
-            macro_inputs[macro_loop_iteration].push_back(controller_values[i]);
-        macro_inputs[macro_loop_iteration][10] = 0;
-        button_down.value = hw->controller.ButtonDown.pressing();
-        macro_inputs.push_back(std::vector<int>());
-    }
+    for (int i = 0; i < input_list.size(); ++i) input_list[i]->value = controller_values[i];
 }
 
 void UserDrive::set_previous_inputs()

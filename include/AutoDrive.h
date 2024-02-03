@@ -1,6 +1,7 @@
 #pragma once
 #include "Drive.h"
 #include "PathGenerator.h"
+#include "PID.h"
 #include "vex.h"
 
 /// @brief   Contains the methods for the robot to autonomously navigate.
@@ -23,6 +24,7 @@ private:
     PathGenerator *pg;
     Map *mp;
     RobotConfig *rc;
+    PID *pid;
 
     std::vector<std::pair<double, double>> path;
 
