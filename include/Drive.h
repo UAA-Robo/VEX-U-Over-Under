@@ -52,6 +52,9 @@ protected:
     /// @brief Activates the intake
     void activate_intake();
 
+    /// @brief Reverses the intake
+    void reverse_intake();
+
     /// @brief Stops the intake
     void stop_intake();
 
