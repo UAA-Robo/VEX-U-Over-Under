@@ -76,11 +76,16 @@ void UserDrive::intake_controls()
     }
 
     // Activate intake when expanded
-    if (INTAKE_EXPANDED && !hw->controller.ButtonL1.pressing()) {
-        activate_intake();
-    }else {
+    if (hw->controller.ButtonB.pressing()) {
+        reverse_intake();
+    }
+    else if (INTAKE_EXPANDED && !hw->controller.ButtonL1.pressing()) {
+        activate_intake();  
+    } 
+    else {
         stop_intake();
     }
+
 }
 
 void UserDrive::activate_catapult_strategy()

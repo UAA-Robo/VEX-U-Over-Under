@@ -53,6 +53,14 @@ void Drive::activate_intake()
     hw->controller.Screen.print("Activating Intake!");
 }
 
+void Drive::reverse_intake()
+{
+    if (rc->ROBOT == SCRAT) hw->intake.spin(vex::directionType::fwd, 12.0, vex::voltageUnits::volt);
+    else hw->intake.spin(vex::directionType::fwd, 12.0, vex::voltageUnits::volt);
+    hw->controller.Screen.setCursor(1, 1);
+    hw->controller.Screen.print("Reversing Intake!");
+}
+
 
 void Drive::stop_intake()
 {
