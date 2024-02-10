@@ -209,31 +209,21 @@ void Drive::run_catapult_strategy(int number_triballs) {
     // Start Catapult thread
     vex::task catapult_task = vex::task(run_catapult_thread, this, 1);
 
-    // Arc once in place and launch preload
-    // arc_in_place(6, velocity, IS_CLOCKWISE_ARC, true);
-    // start_catapult();
-    // vex::wait(500, vex::timeUnits::msec);
-    // stop_catapult();
-    // stop_catapult();
-    // arc_in_place(6.0, velocity, IS_CLOCKWISE_ARC, false);
-
     // Start intake
-    //activate_intake();
+    activate_intake();
 
     // Move + Launch
     for (int i = 0; i < number_triballs - 1; i++) {
 
-        //arc_in_place(12, 30, 90, IS_CLOCKWISE_ARC, true);
-        arc(12, 5, 30, 0.95, false, true);
-        vex::wait(500, vex::timeUnits::msec); // TODO take out
+        turbo_drive_distance(5.5, true); 
+        turbo_turn_relative(335, 50); // Will go shortest distance so actually -35
 
-        // start_catapult();
-        // vex::wait(500, vex::timeUnits::msec);
-        // stop_catapult();
+        start_catapult();
+        vex::wait(500, vex::timeUnits::msec);
+        stop_catapult();
 
-        vex::wait(3, vex::timeUnits::sec);
-        //arc_in_place(12, 30, 90, IS_CLOCKWISE_ARC, false);
-        arc(12, 5, 30, 0.95, false, false);
+        turbo_turn_relative(25, 50);
+        turbo_drive_distance(5.6, false);
     }
 
     // Launches last triball and finishes outword
@@ -268,6 +258,40 @@ void Drive::turbo_drive_distance(double distance, bool IS_REVERSE, double veloci
     || fabs(hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0.0){
             vex::wait(20, vex::timeUnits::msec); // To let other threads run
     } 
+
+}
+
+void Drive::turbo_turn(double heading, double velocity)
+{
+    // Corrects heading to be from 0-360 from the x axis counterclockwise if applicable
+    heading = fmod(heading, 360);
+    if (heading < 0)
+        heading += 360;
+
+    double angle_to_rotate = heading - tm->get_current_heading();
+    angle_to_rotate = fmod(angle_to_rotate, 360); // make sure the angle to rotate is -360 to 360
+    turbo_turn_relative(angle_to_rotate, velocity);
+}
+
+void Drive::turbo_turn_relative(double relative_angle, double velocity) {
+    // Determines whether to rotate left or right based on the  shortest distance
+    if (360 - fabs(relative_angle) < relative_angle)
+        relative_angle = relative_angle - 360;
+    
+    double revolutions = relative_angle  * (rc->DRIVETRAIN_WIDTH) * M_PI 
+        / (360 * rc->WHEEL_CIRCUMFERENCE);
+
+    hw->left_drivetrain_motors.resetPosition();
+    hw->right_drivetrain_motors.resetPosition();
+
+    hw->left_drivetrain_motors.spinFor(-revolutions, vex::rotationUnits::rev, velocity, 
+        vex::velocityUnits::pct, false);
+    hw->right_drivetrain_motors.spinFor(revolutions, vex::rotationUnits::rev, velocity, 
+        vex::velocityUnits::pct);
+
+    // Blocks other tasks from starting
+    while (fabs(hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0 
+        || fabs(hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0); 
 
 }
 

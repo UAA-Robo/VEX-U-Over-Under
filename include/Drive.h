@@ -99,6 +99,18 @@ protected:
 
     void turbo_drive_distance(double distance, bool IS_REVERSE, double velocity = 80);
     
+    /// @brief  Rotates the shortest distance ONLY using encoders on wheels (no odometry).
+    ///     Good for turning that needs to be fast and might never get to position (ramming). 
+    /// @param heading  Double that is the counterclockwise angle in degrees from the x axis
+    /// @param velocity  Velocity to turn at (%)
+    void turbo_turn(double heading, double velocity=60);
+
+    /// @brief  Rotates to the relative angle  ONLY using encoders on wheels (no odometry).
+    ///     Good for turning that needs to be fast and might never get to position (ramming). 
+    /// @param relative_angle  Double that is the counterclockwise angle in degrees RELATIVE to 
+    ///     the current robot heading.
+    /// @param velocity  Velocity to turn at (%)
+    void turbo_turn_relative(double relative_angle, double velocity=60);
 
     /// @brief Drives in arc with one side stationary. Does NOT use odometry.
     /// @param distance Distance (inches) to arc.

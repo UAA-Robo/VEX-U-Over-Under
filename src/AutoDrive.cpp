@@ -233,42 +233,7 @@ void AutoDrive::drive_to_position(std::pair<double, double> position, bool ISBAC
 }
 
 
-void AutoDrive::turbo_turn(double heading)
-{
-    // Corrects heading to be from 0-360 from the x axis counterclockwise if applicable
-    heading = fmod(heading, 360);
-    if (heading < 0)
-        heading += 360;
 
-    double angle_to_rotate = heading - tm->get_current_heading();
-    angle_to_rotate = fmod(angle_to_rotate, 360); // make sure the angle to rotate is -360 to 360
-
-    // Determines whether to rotate left or right based on the  shortest distance
-    if (360 - fabs(angle_to_rotate) < angle_to_rotate)
-        angle_to_rotate = angle_to_rotate - 360;
-    
-    double revolutions = angle_to_rotate  * (rc->DRIVETRAIN_WIDTH) * M_PI 
-        / (360 * rc->WHEEL_CIRCUMFERENCE);
-
-    hw->left_drivetrain_motors.resetPosition();
-    hw->right_drivetrain_motors.resetPosition();
-
-    double velocity = 80;
-
-    if (rc->ROBOT == SCRATETTE) {
-        velocity = 20;
-    }
-
-    hw->left_drivetrain_motors.spinFor(-revolutions, vex::rotationUnits::rev, velocity, 
-        vex::velocityUnits::pct, false);
-    hw->right_drivetrain_motors.spinFor(revolutions, vex::rotationUnits::rev, velocity, 
-        vex::velocityUnits::pct);
-
-    // Blocks other tasks from starting
-    while (fabs(hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0 
-        || fabs(hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0); 
-
-}
 
 void AutoDrive::climb_distance(double height) {
     double climb_wheel_circumference = rc->CLIMB_WHEEL_DIAMETER * M_PI;

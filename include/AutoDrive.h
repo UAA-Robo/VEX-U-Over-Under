@@ -98,10 +98,7 @@ private:
         bool IS_TURBO = false);
 
 
-    /// @brief  Rotates the shortest distance ONLY using encoders on wheels (no odometry).
-    ///     Good for turning that needs to be fast and might never get to position (ramming). 
-    /// @param heading  Double that is the counterclockwise angle in degrees from the x asis.
-    void turbo_turn(double heading);
+
 
     /// @brief Executes the plow strategy in the game.
     void run_plow_strategy();
