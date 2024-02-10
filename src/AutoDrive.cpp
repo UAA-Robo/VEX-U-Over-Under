@@ -16,9 +16,28 @@ void AutoDrive::drive() {
     hw->right_intake_expansion_motor.setStopping(vex::brakeType::hold);
 
 
-    execute_skills_plan(); //! ELIMINATE OPPONENTS
+    execute_head_to_head_plan(); //! ELIMINATE OPPONENTS
 }
 
+
+void AutoDrive::execute_head_to_head_plan() {
+
+    if (rc->ROBOT == SCRAT) {
+        // TODO
+    } else {
+        // SCRATETTE auto skills plan
+        run_catapult_strategy(12);
+
+
+        // Go to barrier and touch it
+        turbo_drive_distance(8, true, 50);
+        turbo_turn_relative(45, 30);
+        turbo_drive_distance(14, false, 50);
+        turbo_turn_relative(90, 30);
+        turbo_drive_distance(40, false, 50);
+
+    }
+}
 void AutoDrive::execute_skills_plan() {
 
     if (rc->ROBOT == SCRAT) {

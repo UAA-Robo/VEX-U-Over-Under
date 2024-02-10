@@ -201,9 +201,7 @@ void Drive::run_catapult_strategy(int number_triballs) {
 
     // Expand intake
     expand_intake();
-    if (rc->ROBOT == SCRAT)  vex::wait(500, vex::timeUnits::msec);
-
-    vex::wait(500, vex::timeUnits::msec);
+    vex::wait(1000, vex::timeUnits::msec);
     stop_intake_expansion();
 
     // Start Catapult thread
@@ -219,7 +217,7 @@ void Drive::run_catapult_strategy(int number_triballs) {
         turbo_turn_relative(335, 50); // Will go shortest distance so actually -35
 
         start_catapult();
-        vex::wait(500, vex::timeUnits::msec);
+        vex::wait(100, vex::timeUnits::msec);
         stop_catapult();
 
         turbo_turn_relative(25, 50);
@@ -227,15 +225,18 @@ void Drive::run_catapult_strategy(int number_triballs) {
     }
 
     // Launches last triball and finishes outword
-    turbo_drive_distance(6, true, velocity);
+    turbo_drive_distance(5.5, true, velocity);
+    turbo_turn_relative(335, 50);
+
     start_catapult();
-    vex::wait(50, vex::timeUnits::msec);
+    vex::wait(100, vex::timeUnits::msec);
     stop_catapult();
+
+    turbo_turn_relative(25, 50);
 
     stop_intake();
     retract_intake();
-    vex::wait(50, vex::timeUnits::msec);
-    if (rc->ROBOT == SCRAT)  vex::wait(500, vex::timeUnits::msec);
+    vex::wait(1000, vex::timeUnits::msec);
     stop_intake_expansion();
 
 }
