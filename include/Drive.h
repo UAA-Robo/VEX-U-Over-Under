@@ -101,9 +101,13 @@ protected:
     /// @param number_triballs Value passed into run_catapult_once()
     void run_catapult_strategy(int number_triballs=10);
 
-    /// @brief Intake triball, drive up and launch
-    /// @param number_triballs Repeats process for how many triball is passed. (Default: once)
-    void run_catapult_once(int number_triballs=2);
+    /// @brief Intake triball, drive back and launch
+    void run_catapult_once();
+
+    /// @brief Intake triball, drive back, turn, and launch
+    /// @param FINISH_OUTWARD If true, will finish away from loading zone, if false, will fi
+    /// finish against loading zone
+    void run_catapult_arc_once(bool FINISH_OUTWARD=false);
 
     void turbo_drive_distance(double distance, bool IS_REVERSE, double velocity = 80);
     
