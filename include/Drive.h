@@ -52,6 +52,9 @@ protected:
     /// @brief Activates the intake
     void activate_intake();
 
+    /// @brief Reverses the intake
+    void reverse_intake();
+
     /// @brief Stops the intake
     void stop_intake();
 
@@ -94,8 +97,13 @@ protected:
     /// @brief Trigger the catapult to stop and reset at the limit switch.
     void stop_catapult();
 
-
+    /// @brief Runs strategy to shoot all triball across field
+    /// @param number_triballs Value passed into run_catapult_once()
     void run_catapult_strategy(int number_triballs=10);
+
+    /// @brief Intake triball, drive up and launch
+    /// @param number_triballs Repeats process for how many triball is passed. (Default: once)
+    void run_catapult_once(int number_triballs=2);
 
     void turbo_drive_distance(double distance, bool IS_REVERSE, double velocity = 80);
     

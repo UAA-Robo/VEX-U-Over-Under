@@ -264,7 +264,6 @@ void AutoDrive::climb_distance(double height) {
 }
 
 
-
 void AutoDrive::run_plow_strategy() {
 
     std::pair<double, double> prep_pos;

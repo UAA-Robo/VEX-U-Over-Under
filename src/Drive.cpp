@@ -53,6 +53,14 @@ void Drive::activate_intake()
     hw->controller.Screen.print("Activating Intake!");
 }
 
+void Drive::reverse_intake()
+{
+    if (rc->ROBOT == SCRAT) hw->intake.spin(vex::directionType::fwd, 12.0, vex::voltageUnits::volt);
+    else hw->intake.spin(vex::directionType::fwd, 12.0, vex::voltageUnits::volt);
+    hw->controller.Screen.setCursor(1, 1);
+    hw->controller.Screen.print("Reversing Intake!");
+}
+
 
 void Drive::stop_intake()
 {
@@ -193,11 +201,8 @@ void Drive::stop_catapult() {
 // }
 
 void Drive::run_catapult_strategy(int number_triballs) {
-
-    bool IS_CLOCKWISE_ARC = true;
-    if (rc->ROBOT == SCRATETTE)  IS_CLOCKWISE_ARC = false;
-    double velocity = 50;
-    if (rc->ROBOT == SCRATETTE) velocity = 35;
+        double velocity = 50;
+    if (rc->ROBOT == SCRATETTE) velocity = 50;
 
     // Expand intake
     expand_intake();
@@ -241,6 +246,25 @@ void Drive::run_catapult_strategy(int number_triballs) {
 
 }
 
+void Drive::run_catapult_once(int number_triballs) {
+    double velocity = 50;
+    if (rc->ROBOT == SCRATETTE) velocity = 50;
+
+    // start intake
+    activate_intake();
+
+    // Move + Launch
+    for (int i = 0; i < number_triballs - 1; i++) {
+        turbo_drive_distance(6, true, velocity);
+
+        start_catapult();
+        vex::wait(500, vex::timeUnits::msec);
+        stop_catapult();
+        if (rc->ROBOT == SCRATETTE) turbo_drive_distance(7, false, velocity);
+        else turbo_drive_distance(6.2, false, velocity);
+    }
+
+}
 
 void Drive::turbo_drive_distance(double distance, bool IS_REVERSE, double velocity) {
 
