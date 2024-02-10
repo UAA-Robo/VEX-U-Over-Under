@@ -56,8 +56,10 @@ void AutoDrive::execute_head_to_head() {
     drive_to_position(target, true);
     rotate_to_heading(200.0);
     left_snowplow_out();
-    turbo_drive_distance(10.0, true, 80.0);
-    rotate_to_heading(270.0);
+    turbo_drive_distance(4.0, true, 50.0);
+    turbo_turn(270.0, 50.0);
+    // rotate_to_heading(225.0);
+    // turbo_turn(270.0, 50.0);
     left_snowplow_in();
     std::cout << "Done!\n";
 
@@ -87,7 +89,7 @@ void AutoDrive::rotate_to_heading(
     double stopping_aggression
 ) {
     if (IS_TURBO) {
-        turbo_turn(heading);
+        turbo_turn(heading, 80.0);
         return;
     }
 
@@ -289,7 +291,7 @@ void AutoDrive::drive_to_position(
 }
 
 
-void AutoDrive::turbo_turn(double heading)
+void AutoDrive::turbo_turn(double heading, double velocity = (80.0))
 {
     // Corrects heading to be from 0-360 from the x axis counterclockwise if applicable
     heading = fmod(heading, 360);
@@ -309,7 +311,7 @@ void AutoDrive::turbo_turn(double heading)
     hw->left_drivetrain_motors.resetPosition();
     hw->right_drivetrain_motors.resetPosition();
 
-    double velocity = 80;
+    // double velocity = 80;
 
     if (rc->ROBOT == SCRATETTE) {
         velocity = 20;
