@@ -35,7 +35,7 @@ public:
     double starting_heading = 135.0;
 
     // For encoder driving distance
-    // If motors are declared as 18:1 in hardware.h, 18:1 is 1, 36:1 is 0.5, 6:1 is 3
+    // If motors are declared as 18:1 in hardware.h, 18:1 is 1, 36:1 is 2, 6:1 is 0.33
     double DRIVETRAIN_GEAR_RATIO_MULTIPLIER;  
 
 private:

@@ -15,10 +15,7 @@ void AutoDrive::drive() {
     hw->left_intake_expansion_motor.setStopping(vex::brakeType::hold);
     hw->right_intake_expansion_motor.setStopping(vex::brakeType::hold);
 
-    turbo_drive_distance(12, false, 10);
-    //turbo_turn_relative(90, 10);
-
-    //execute_skills_plan(); //! ELIMINATE OPPONENTS
+    execute_head_to_head_plan(); //! ELIMINATE OPPONENTS
 }
 
 

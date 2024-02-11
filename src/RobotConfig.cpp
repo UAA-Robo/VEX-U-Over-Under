@@ -72,7 +72,7 @@ RobotConfig::RobotConfig(Hardware* hardware)
 
         MAX_CATAPULT_ANGLE = 75;
         
-        DRIVETRAIN_GEAR_RATIO_MULTIPLIER = 0.5; // 36:1
+        DRIVETRAIN_GEAR_RATIO_MULTIPLIER = 0.33; // 36:1
 
     }
     DRIVETRAIN_RADIUS = DRIVETRAIN_WIDTH * sqrt(2) / 2.0;
