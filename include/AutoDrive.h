@@ -31,12 +31,8 @@ private:
     /// @brief Starts the auto strategy for SKILLS.
     void execute_skills_plan();
 
-<<<<<<< HEAD
-    void execute_head_to_head();
-=======
     /// @brief Starts the auto strategy for HEAD TOHEAD
     void execute_head_to_head_plan();
->>>>>>> catapult-strat
 
     double robot_angle_offset = 0; // For Granny bc she veers left
 
@@ -118,15 +114,6 @@ private:
     );
 
 
-<<<<<<< HEAD
-    /// @brief  Rotates the shortest distance ONLY using encoders on wheels (no odometry).
-    ///     Good for turning that needs to be fast and might never get to position (ramming). 
-    /// @param heading  Double that is the counterclockwise angle in degrees from the x asis.
-    /// @param velocity The velocity to turn at.
-    void turbo_turn(double heading, double velocity);
-=======
-
->>>>>>> catapult-strat
 
     /// @brief Executes the plow strategy in the game.
     void run_plow_strategy();
