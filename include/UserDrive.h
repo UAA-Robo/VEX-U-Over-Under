@@ -28,4 +28,5 @@ private:
     void activate_catapult_strategy();
 
     bool INTAKE_EXPANDED = false;
+    bool CATAPULT_STRATEGY_RAN = false;
 };

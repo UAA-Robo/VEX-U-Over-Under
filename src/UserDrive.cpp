@@ -76,26 +76,32 @@ void UserDrive::intake_controls()
     }
 
     // Activate intake when expanded
-    if (INTAKE_EXPANDED && !hw->controller.ButtonL1.pressing()) {
-        activate_intake();
-    }else {
+    if (hw->controller.ButtonB.pressing()) {
+        reverse_intake();
+    }
+    else if (INTAKE_EXPANDED && !hw->controller.ButtonL1.pressing()) {
+        activate_intake();  
+    } 
+    else {
         stop_intake();
     }
+
 }
 
 void UserDrive::activate_catapult_strategy()
 {
-    if (hw->controller.ButtonR2.pressing()) { run_catapult_once(2); }
 
-    // if (hw->controller.ButtonR2.pressing() && STRATEGY_ON) {
-    //     STRATEGY_ON = false;
-    //     stop_intake();
-    //     retract_intake();
-    //     vex::wait(500, vex::msec);  // give time for ability to turn on
-    // }
-    // else if (hw->controller.ButtonR2.pressing() && !STRATEGY_ON) {
-    //     STRATEGY_ON = true;
-    //     expand_intake();
-    //     vex::wait(500, vex::msec);  // give time for ability to turn off
-    // }
+    if (hw->controller.ButtonR2.pressing()) { 
+        if (!CATAPULT_STRATEGY_RAN) {
+            // Expand intake
+            expand_intake();
+            vex::wait(500, vex::timeUnits::msec);
+            stop_intake_expansion();
+        }
+            run_catapult_once(); 
+        CATAPULT_STRATEGY_RAN = true;
+    }else {
+        CATAPULT_STRATEGY_RAN = false;
+    }
+
 }

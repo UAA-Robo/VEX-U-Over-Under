@@ -15,26 +15,28 @@ void AutoDrive::drive() {
     hw->left_intake_expansion_motor.setStopping(vex::brakeType::hold);
     hw->right_intake_expansion_motor.setStopping(vex::brakeType::hold);
 
-    // Testing
-    tm->set_heading(0.0);
-    tm->set_position({0.0, 0.0});
-    
-    
-    // test_odometry();
-    // execute_skills_plan(); //! ELIMINATE OPPONENTS
-    execute_head_to_head();
+    execute_head_to_head_plan(); //! ELIMINATE OPPONENTS
 }
 
-void AutoDrive::test_odometry() {
 
-    // drive_to_position({-12.0, -48.0});
-    // vex::wait(30, vex::timeUnits::msec);
-    // drive_to_position({-12.0, 0.0}, true);
-    rotate_to_heading(2.0);
-    std::cout << "Done!\n";
+void AutoDrive::execute_head_to_head_plan() {
 
+    if (rc->ROBOT == SCRAT) {
+        // TODO
+    } else {
+        // SCRATETTE auto skills plan
+        run_catapult_strategy(12);
+
+
+        // Go to barrier and touch it
+        turbo_drive_distance(8, true, 50);
+        turbo_turn_relative(45, 30);
+        turbo_drive_distance(14, false, 50);
+        turbo_turn_relative(90, 30);
+        turbo_drive_distance(40, false, 50);
+
+    }
 }
-
 void AutoDrive::execute_skills_plan() {
 
     if (rc->ROBOT == SCRAT) {
@@ -291,42 +293,7 @@ void AutoDrive::drive_to_position(
 }
 
 
-void AutoDrive::turbo_turn(double heading, double velocity = (80.0))
-{
-    // Corrects heading to be from 0-360 from the x axis counterclockwise if applicable
-    heading = fmod(heading, 360);
-    if (heading < 0)
-        heading += 360;
 
-    double angle_to_rotate = heading - tm->get_current_heading();
-    angle_to_rotate = fmod(angle_to_rotate, 360); // make sure the angle to rotate is -360 to 360
-
-    // Determines whether to rotate left or right based on the  shortest distance
-    if (360 - fabs(angle_to_rotate) < angle_to_rotate)
-        angle_to_rotate = angle_to_rotate - 360;
-    
-    double revolutions = angle_to_rotate  * (rc->DRIVETRAIN_WIDTH) * M_PI 
-        / (360 * rc->WHEEL_CIRCUMFERENCE);
-
-    hw->left_drivetrain_motors.resetPosition();
-    hw->right_drivetrain_motors.resetPosition();
-
-    // double velocity = 80;
-
-    if (rc->ROBOT == SCRATETTE) {
-        velocity = 20;
-    }
-
-    hw->left_drivetrain_motors.spinFor(-revolutions, vex::rotationUnits::rev, velocity, 
-        vex::velocityUnits::pct, false);
-    hw->right_drivetrain_motors.spinFor(revolutions, vex::rotationUnits::rev, velocity, 
-        vex::velocityUnits::pct);
-
-    // Blocks other tasks from starting
-    while (fabs(hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0 
-        || fabs(hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0); 
-
-}
 
 void AutoDrive::climb_distance(double height) {
     double climb_wheel_circumference = rc->CLIMB_WHEEL_DIAMETER * M_PI;

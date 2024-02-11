@@ -41,11 +41,14 @@ RobotConfig::RobotConfig(Hardware* hardware)
         ACTUAL_WIDTH = 17.6;  
 
         MAX_CATAPULT_ANGLE = 60;
+
+        DRIVETRAIN_GEAR_RATIO_MULTIPLIER = 1; // 18:1
     }
     else
     {
         std::cout << "Robot is SCRAT\n";
         ROBOT = SCRAT;
+
 
         /*
         ----SET DIMENSIONS (in) --------------------------------------------------------------
@@ -58,7 +61,7 @@ RobotConfig::RobotConfig(Hardware* hardware)
         ODOMETRY_BACK_RADIUS = 4.125; 
         ODOMETRY_BACK_OFFSET = 0;
 
-        WHEEL_CIRCUMFERENCE = 3.125 * M_PI;
+        WHEEL_CIRCUMFERENCE = 3.25 * M_PI;
 
         // Distance (in inch) between left and right side of the drivetrain 
         // (measured from the center of the wheels)
@@ -68,6 +71,8 @@ RobotConfig::RobotConfig(Hardware* hardware)
         ACTUAL_WIDTH = 14.50; 
 
         MAX_CATAPULT_ANGLE = 75;
+        
+        DRIVETRAIN_GEAR_RATIO_MULTIPLIER = 0.33; // 36:1
 
     }
     DRIVETRAIN_RADIUS = DRIVETRAIN_WIDTH * sqrt(2) / 2.0;

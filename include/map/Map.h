@@ -165,12 +165,12 @@ class Map {
             // load Zones
             
                 // red
-            add_loadzone(22.89 / 2 + x_adjust, 129.11 + y_adjust, 'R', FORTY_FIVE);                 // loadzone 0
-            add_loadzone(22.89 / 2 + x_adjust, 11.30  + y_adjust, 'R', ONE_THIRTY_FIVE);            // loadzone 1
+            add_loadzone(17.33 * sqrt(2) / 2 + x_adjust, 140.41 - 17.33 * sqrt(2) / 2 + y_adjust, 'R', FORTY_FIVE);                    // loadzone 0
+            add_loadzone(17.33 * sqrt(2) / 2 + x_adjust, 17.33 * sqrt(2) / 2 + y_adjust, 'R', ONE_THIRTY_FIVE);                        // loadzone 1
 
                 // blue
-            add_loadzone(122.76 + x_adjust, 129.11 + y_adjust, 'B', NEG_FORTY_FIVE);                // loadzone 2
-            add_loadzone(122.76 + x_adjust, 11.30 + y_adjust, 'B', NEG_ONE_THIRTY_FIVE);            // loadzone 3
+            add_loadzone(140.41 - 17.33 * sqrt(2) / 2 + x_adjust, 140.41 - 17.33 * sqrt(2) / 2 + y_adjust, 'B', NEG_FORTY_FIVE);       // loadzone 2
+            add_loadzone(140.41 - 17.33 *sqrt(2) / 2 + x_adjust, 17.33 * sqrt(2) / 2 + y_adjust, 'B', NEG_ONE_THIRTY_FIVE);            // loadzone 3
 
 
             // corners-starting zones

@@ -28,11 +28,11 @@ public:
     vex::motor_group right_drivetrain_motors = vex::motor_group(
         front_right_drivetrain_motor, middle_right_drivetrain_motor, back_right_drivetrain_motor);
 
+    // NOTE: Scrat is 36:1 so DRIVETRAIN_GEAR_RATIO_MULTIPLIER declared 0.5 in hardware
     // Left drivetrain side
     vex::motor front_left_drivetrain_motor = vex::motor(vex::PORT11, vex::ratio18_1, false);
     vex::motor middle_left_drivetrain_motor = vex::motor(vex::PORT12, vex::ratio18_1, false);
     vex::motor back_left_drivetrain_motor = vex::motor(vex::PORT13, vex::ratio18_1, false);
-
     // Right drivetrain side
     vex::motor front_right_drivetrain_motor = vex::motor(vex::PORT17, vex::ratio18_1, true);
     vex::motor middle_right_drivetrain_motor = vex::motor(vex::PORT19, vex::ratio18_1, true);
@@ -54,8 +54,8 @@ public:
     vex::digital_out left_plow = vex::digital_out(brain.ThreeWirePort.B); //left
 
     // Catapult
-    vex::motor left_catapult_motor = vex::motor(vex::PORT14, vex::ratio18_1, true);
-    vex::motor right_catapult_motor = vex::motor(vex::PORT15, vex::ratio18_1, false);
+    vex::motor left_catapult_motor = vex::motor(vex::PORT15, vex::ratio18_1, true);
+    vex::motor right_catapult_motor = vex::motor(vex::PORT16, vex::ratio18_1, false);
     vex::motor_group catapult = vex::motor_group(left_catapult_motor, right_catapult_motor);
 
     // Intake
