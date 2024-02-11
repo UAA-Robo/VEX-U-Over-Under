@@ -2,6 +2,11 @@
 
 Hardware::Hardware()
 {
+
+    // Right drivetrain side
+    vex::motor front_right_drivetrain_motor = vex::motor(vex::PORT17, vex::ratio18_1, true);
+    vex::motor middle_right_drivetrain_motor = vex::motor(vex::PORT19, vex::ratio18_1, true);
+    vex::motor back_right_drivetrain_motor = vex::motor(vex::PORT18, vex::ratio18_1, true);
     // Motor breaking
 
     // Drivetrain

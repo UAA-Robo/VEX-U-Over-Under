@@ -147,18 +147,12 @@ int Drive::run_catapult_thread(void* param)
         if (angle >= MAX_ANGLE && angle <= 350 && !dr->START_CATAPULT_LAUNCH) {
             // Robots need downward force to stop catapult
             dr->hw->catapult.stop();
-            if (dr->rc->ROBOT== SCRAT) dr->hw->catapult.spin(vex::directionType::rev, 1.0, vex::voltageUnits::volt);
-            else  dr->hw->catapult.spin(vex::directionType::rev, 1, vex::voltageUnits::volt);
+            dr->hw->catapult.spin(vex::directionType::rev, 1, vex::voltageUnits::volt);
             
         } else  {
             dr->hw->catapult.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
         }
-
-        // if (!dr->START_CATAPULT_LAUNCH) {
-        //     dr->hw->catapult.stop();
-        // } else  {
-        //     dr->hw->catapult.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
-        // }
+        
         vex::wait(10, vex::timeUnits::msec);
     }
 }
@@ -231,27 +225,33 @@ void Drive::run_catapult_arc_once(bool FINISH_OUTWARD) {
 
     // Move + Launch
     turbo_drive_distance(5.5, true, drive_velocity); 
-    turbo_turn_relative(335, turn_velocity); // Will go shortest distance so actually -35
 
+    if (rc->ROBOT == SCRAT)  turbo_turn_relative(25, turn_velocity);
+    else turbo_turn_relative(335, turn_velocity); // Will go shortest distance so actually -25
+    
     start_catapult();
     vex::wait(100, vex::timeUnits::msec);
     stop_catapult();
 
-    turbo_turn_relative(25, turn_velocity);
+    if (rc->ROBOT == SCRAT)  turbo_turn_relative(335, turn_velocity);
+    else turbo_turn_relative(25, turn_velocity); 
+
     if (!FINISH_OUTWARD) turbo_drive_distance(5.6, false, drive_velocity);
 
 }
 
 void Drive::turbo_drive_distance(double distance, bool IS_REVERSE, double velocity) {
 
-    double num_wheel_revolutions = distance / rc->WHEEL_CIRCUMFERENCE;
+    double num_wheel_revolutions = distance / rc->WHEEL_CIRCUMFERENCE 
+        * rc->DRIVETRAIN_GEAR_RATIO_MULTIPLIER;
     
     // std::pair<double, double> vel = calculateDriveTrainVel(velPercent);
 
     hw->drivetrain.resetPosition();
 
     if (IS_REVERSE) num_wheel_revolutions = -num_wheel_revolutions;
-    hw->drivetrain.spinTo(num_wheel_revolutions, vex::rotationUnits::rev, velocity, vex::velocityUnits::pct, false);
+    hw->drivetrain.spinTo(num_wheel_revolutions, vex::rotationUnits::rev, velocity, 
+        vex::velocityUnits::pct, false);
     
     vex::wait(50, vex::timeUnits::msec);
     //Blocks other tasks from starting 
@@ -280,7 +280,7 @@ void Drive::turbo_turn_relative(double relative_angle, double velocity) {
         relative_angle = relative_angle - 360;
     
     double revolutions = relative_angle  * (rc->DRIVETRAIN_WIDTH) * M_PI 
-        / (360 * rc->WHEEL_CIRCUMFERENCE);
+        / (360 * rc->WHEEL_CIRCUMFERENCE) * rc->DRIVETRAIN_GEAR_RATIO_MULTIPLIER;
 
     hw->left_drivetrain_motors.resetPosition();
     hw->right_drivetrain_motors.resetPosition();
@@ -302,7 +302,8 @@ void Drive::arc_in_place(double distance, double min_velocity, double max_veloci
     const double stopping_aggression = 0.5; //0.1; // Lower number is higher aggression (steeper slope)
     double velocity = min_velocity;
 
-    double num_wheel_revolutions = distance / rc->WHEEL_CIRCUMFERENCE;
+    double num_wheel_revolutions = distance / rc->WHEEL_CIRCUMFERENCE 
+        * rc->DRIVETRAIN_GEAR_RATIO_MULTIPLIER;;
     if (IS_BACKWARD) num_wheel_revolutions = -num_wheel_revolutions;
     
     hw->drivetrain.resetPosition();
@@ -335,71 +336,23 @@ void Drive::arc_in_place(double distance, double min_velocity, double max_veloci
         vex::wait(50, vex::timeUnits::msec);
         current_distance = fabs(drivetrain_side.position(vex::rotationUnits::rev)) 
             * rc->WHEEL_CIRCUMFERENCE;
-        std::cout << current_distance << std::endl;
+        //std::cout << current_distance << std::endl;
     }
 
 };
 
-// void Drive::arc(double distance, double left_velocity, double right_velocity, bool IS_BACKWARD) {
-    
-//     double num_wheel_revolutions = distance / rc->WHEEL_CIRCUMFERENCE;
-
-//     vex::directionType direction = vex::directionType::fwd;
-    
-//     if (IS_BACKWARD) {
-//         num_wheel_revolutions = -num_wheel_revolutions;
-//         direction = vex::directionType::rev;
-//     }
-
-    
-//     hw->drivetrain.resetPosition();
-
-//     if (left_velocity > right_velocity) {
-        
-//         hw->left_drivetrain_motors.spinTo(num_wheel_revolutions, vex::rotationUnits::rev, 
-//             left_velocity, vex::velocityUnits::pct, false);
-//         hw->right_drivetrain_motors.spin(direction, right_velocity, vex::velocityUnits::pct);
-
-//         vex::wait(100, vex::timeUnits::msec);
-//         // Wait until left side is almost finished and then stop right side
-//         while(fabs(hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0 ) {
-//             vex::wait(20, vex::timeUnits::msec); // To let other threads run
-//         }
-//         hw->right_drivetrain_motors.stop();
-
-//     }else {
-//         hw->left_drivetrain_motors.spin(direction, left_velocity, 
-//             vex::velocityUnits::pct);
-//         hw->right_drivetrain_motors.spinTo(num_wheel_revolutions, vex::rotationUnits::rev, 
-//             right_velocity, vex::velocityUnits::pct, false);
-
-
-//         vex::wait(100, vex::timeUnits::msec);
-//         // Wait until left side is almost finished and then stop right side
-//         while(fabs(hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0 ) {
-//             vex::wait(20, vex::timeUnits::msec); // To let other threads run
-//         }
-//         hw->left_drivetrain_motors.stop();
-//     }
-
-//     //Blocks other tasks from starting 
-//     while(fabs(hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0.0 
-//         || fabs(hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0.0) {
-//             vex::wait(20, vex::timeUnits::msec); // To let other threads run
-//     }
-
-// }
 
 
 void Drive::arc(double distance, double min_velocity, double max_velocity, double velocity_side_difference, bool IS_CLOCKWISE, bool IS_BACKWARD) {
     
-    double num_wheel_revolutions = distance / rc->WHEEL_CIRCUMFERENCE;
+    double num_wheel_revolutions = distance / rc->WHEEL_CIRCUMFERENCE
+        * rc->DRIVETRAIN_GEAR_RATIO_MULTIPLIER;;
     double stopping_aggression = 0.1;
 
     vex::directionType direction = vex::directionType::fwd;
     
     if (IS_BACKWARD) {
-        num_wheel_revolutions = -num_wheel_revolutions;
+        num_wheel_revolutions = -num_wheel_revolutions ;
         direction = vex::directionType::rev;
     }
 
@@ -441,7 +394,7 @@ void Drive::arc(double distance, double min_velocity, double max_velocity, doubl
         vex::wait(50, vex::timeUnits::msec);
         current_distance = fabs(faster_motors.position(vex::rotationUnits::rev)) 
             * rc->WHEEL_CIRCUMFERENCE;
-        std::cout << current_distance << std::endl;
+        //std::cout << current_distance << std::endl;
     }
 
 
