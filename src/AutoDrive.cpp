@@ -22,35 +22,37 @@ void AutoDrive::drive() {
 void AutoDrive::execute_head_to_head_plan() {
 
     if (rc->ROBOT == SCRAT) {
-        // TODO
+      
         tm->set_position({-17.0, -67.2});
         tm->set_heading(180.0);
 
+        // Retract catapult
         expand_intake();
-        vex::wait(1000, vex::timeUnits::msec);
+        vex::wait(800, vex::timeUnits::msec);
         stop_intake_expansion();
         vex::task catapult_task = vex::task(run_catapult_thread, this, 1);
-        vex::wait(1000, vex::timeUnits::msec);
+        vex::wait(300, vex::timeUnits::msec);
         retract_intake();
-        vex::wait(500, vex::timeUnits::msec);
+        vex::wait(300, vex::timeUnits::msec);
         stop_intake_expansion();
 
-        std::pair<double, double> target = {47.0, -67.2};
+        std::pair<double, double> target = {46, -67.2};
 
+        // Drive to loading zone and turn parrallel
         drive_to_position(target, true);
-        rotate_to_heading(200.0);
+        turbo_turn(200.0);
+
+        // Sweep triball out
         left_snowplow_out();
-        turbo_drive_distance(12.0, true, 50.0);
+        turbo_drive_distance(12.0, true, 70.0);
         turbo_turn(270.0, 50.0);
-        // rotate_to_heading(225.0);
-        // turbo_turn(270.0, 50.0);
         left_snowplow_in();
         turbo_turn(225.0, 50.0);
-        turbo_drive_distance(8.0, true, 50.0);
-        rotate_to_heading(270.0);
-        turbo_drive_distance(16.0, true, 50.0);
+        turbo_drive_distance(10.0, true, 50.0);
+        turbo_turn(270.0);
+        turbo_drive_distance(14.0, true, 50.0);
 
-        turbo_drive_distance(24.0, true);
+        //turbo_drive_distance(24.0, true);
         std::cout << "Done!\n";
     } else {
         // SCRATETTE auto skills plan
