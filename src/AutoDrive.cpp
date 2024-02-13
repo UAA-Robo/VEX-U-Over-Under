@@ -22,7 +22,6 @@ void AutoDrive::drive() {
 void AutoDrive::execute_head_to_head_plan() {
 
     if (rc->ROBOT == SCRAT) {
-      
         tm->set_position({-17.0, -67.2});
         tm->set_heading(180.0);
 
@@ -51,6 +50,17 @@ void AutoDrive::execute_head_to_head_plan() {
         turbo_drive_distance(10.0, true, 50.0);
         turbo_turn(270.0);
         turbo_drive_distance(14.0, true, 50.0);
+
+
+        // Sweep other triballs into net
+        turbo_drive_distance(15.0, false, 70.0);
+        rotate_and_drive_to_position({35,-35}, true, false);
+        left_snowplow_out();
+        rotate_and_drive_to_position({10,-24}, true, false);
+        right_snowplow_out();
+        rotate_and_drive_to_position({10, -8}, true, false);
+
+        rotate_and_drive_to_position({40,-8}, true, true);  // Turbo!
 
         //turbo_drive_distance(24.0, true);
         std::cout << "Done!\n";
@@ -93,32 +103,19 @@ void AutoDrive::pathfind_and_drive_to_position(std::pair<double, double> target_
     drive_along_path();
 }
 
-void AutoDrive::rotate_to_heading(
-    double heading,
-    bool IS_TURBO,
-    double min_velocity,
-    double max_velocity,
-    double stopping_aggression
-) {
+void AutoDrive::rotate_to_heading( double heading, bool IS_TURBO) {
     if (IS_TURBO) {
-        turbo_turn(heading, 80.0);
+        turbo_turn(heading, this->turbo_turn_velocity);
         return;
     }
 
     heading = fmod(heading, 360);
     if (heading < 0) heading += 360;
-    // double min_velocity = 20;
-    // double max_velocity = 50;
-    // double stopping_aggression = 0.03; //0.015; // Lower number is higher aggression (steeper slope)
-
-    // Scratette will go faster bc she has bigger wheels
-    // if (min_velocity == 20 && max_velocity == 50 && ->ROBOT == SCRATETTE) {
-    //     min_velocity = 10;
-    //     max_velocity = 30;
-    //     stopping_aggression = 0.03;
-    // }
 
     double velocity;
+    double min_velocity = this->min_turn_velocity;
+    double max_velocity = max_turn_velocity;
+    double stopping_aggression = turn_stopping_aggression;
 
     // 1 if counterclockwise, -1 if clockwise depending on which direction is shorter to turn
     double turn_direction = ((fabs(heading - tm->get_current_heading()) > 180) 
@@ -236,36 +233,22 @@ void AutoDrive::rotate_and_drive_to_position(InteractionObject *element, bool IS
 }
 
 void AutoDrive::drive_to_position(
-    std::pair<double, double> position, bool ISBACKTOPOSITION,
-    bool IS_TURBO,
-    double min_velocity,
-    double max_velocity,
-    double stopping_aggression
-) {
+    std::pair<double, double> position, bool ISBACKTOPOSITION, bool IS_TURBO) {
 
     double current_distance = tm->get_distance_between_points(tm->get_current_position(), position);
     double distance = current_distance; // Distance goal    
     double previous_distance = current_distance; 
 
     if (IS_TURBO) {
-        turbo_drive_distance(distance, ISBACKTOPOSITION);
+        turbo_drive_distance(distance, ISBACKTOPOSITION, this->turbo_drive_velocity);
         return;
     }
 
-    // double min_velocity = 20;
-    // double max_velocity = 80;
-
-    // Scratette will go faster bc she has bigger wheels
-    // if (rc->ROBOT == SCRATETTE) {
-    //     min_velocity = 10;
-    //     max_velocity = 50;
-    // }
-    // const double stopping_aggression = 0.3; //0.1; // Lower number is higher aggression (steeper slope)
     double velocity;
 
     // 1 if forward, -1 if backward
     double drive_direction = ISBACKTOPOSITION ? -1: 1;
-    hw->drivetrain.spin(vex::directionType::fwd, min_velocity * drive_direction, 
+    hw->drivetrain.spin(vex::directionType::fwd, this->min_drive_velocity * drive_direction, 
         vex::velocityUnits::pct);
     // std::cout << "Left velocity: " << hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct) << " Right velocity: " << hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct) << std::endl;
     vex::wait(30, vex::timeUnits::msec);
@@ -273,21 +256,17 @@ void AutoDrive::drive_to_position(
     // Turn until within 0.5 inches of desired distance or until it overshoots 
     // (change in distance starts majorly increasing instead of decreasing)
     while (fabs(current_distance) > 0.5 && (previous_distance - current_distance) >= -0.01) {
-
-        // TODO take out
-        // std::cout << hw->back_odometry.position(vex::rotationUnits::rev) << ", "
-        //     << hw->left_odometry.position(vex::rotationUnits::rev) << ", "
-        //     << hw->right_odometry.position(vex::rotationUnits::rev) << std::endl;
         std::cout << "(" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")\n";
 
         // Speeds up as leaving initial position and slows down as approaching destination
         if (current_distance >= distance/2) {
             // First half of distance
-            velocity = atan(distance - current_distance) * 2 * (max_velocity-min_velocity) / M_PI 
-                + min_velocity;
+            velocity = atan(distance - current_distance) * 2 * (this->max_drive_velocity - this->min_drive_velocity) / M_PI 
+                + this->min_drive_velocity;
         } else {
             // Second half of distance
-            velocity = atan(stopping_aggression * current_distance) * 2 * max_velocity / M_PI;
+            velocity = atan(this->drive_stopping_aggression * current_distance) * 2 
+                * this->max_drive_velocity / M_PI;
         }
         hw->drivetrain.setVelocity(velocity * drive_direction, vex::velocityUnits::pct);
       

@@ -46,13 +46,7 @@ private:
     /// @brief Rotates the shortest distance by turning left or right to the heading. Uses odometry sensors.
     /// @param heading Double that is the counterclockwise angle in degrees from the x asis.
     /// @param IS_TURBO Set to true to drive at high speed. Defaults to false.
-    void rotate_to_heading(
-        double heading,
-        bool IS_TURBO=false,
-        double min_velocity=3,
-        double max_velocity=18,
-        double stopping_aggression=0.02
-    );
+    void rotate_to_heading(double heading, bool IS_TURBO=false);
 
     /// @brief Rotates the robot to align with a coordinate on the field.  Assumes 0 degrees is at 
     /// the positive x axis.
@@ -107,11 +101,7 @@ private:
     /// @param IS_TURBO Set to true to drive at high speed. Defaults to false.
     void drive_to_position(
         std::pair<double, double> position, bool ISBACKTOPOSITION = false,
-        bool IS_TURBO = false,
-        double min_velocity=5,
-        double max_velocity=40,
-        double stopping_aggression=0.1
-    );
+        bool IS_TURBO = false);
 
 
 
@@ -124,5 +114,16 @@ private:
     /// @brief Prompts the robot to climb up a certain distance
     /// @param height The height the robot has to climb
     void climb_distance(double height);
+
+    double min_turn_velocity = 3;
+    double max_turn_velocity = 18;
+    double turn_stopping_aggression = 0.02;
+    double turbo_turn_velocity = 50;
+
+    double min_drive_velocity = 5;
+    double max_drive_velocity = 40;
+    double drive_stopping_aggression = 0.1;
+    double turbo_drive_velocity = 80;
+
 
 };
