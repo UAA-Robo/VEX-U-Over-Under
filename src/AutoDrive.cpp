@@ -22,7 +22,7 @@ void AutoDrive::drive() {
 void AutoDrive::execute_head_to_head_plan() {
 
     if (rc->ROBOT == SCRAT) {
-        tm->set_position({-17.0, -67.2});
+        tm->set_position({-17.0, -61});
         tm->set_heading(180.0);
 
         // Retract catapult
@@ -35,7 +35,7 @@ void AutoDrive::execute_head_to_head_plan() {
         vex::wait(300, vex::timeUnits::msec);
         stop_intake_expansion();
 
-        std::pair<double, double> target = {46, -67.2};
+        std::pair<double, double> target = {46, -61};
 
         // Drive to loading zone and turn parrallel
         drive_to_position(target, true);
@@ -47,20 +47,41 @@ void AutoDrive::execute_head_to_head_plan() {
         turbo_turn(270.0, 50.0);
         left_snowplow_in();
         turbo_turn(225.0, 50.0);
-        turbo_drive_distance(10.0, true, 50.0);
+        turbo_drive_distance(8.0, true, 70.0);
         turbo_turn(270.0);
         turbo_drive_distance(14.0, true, 50.0);
 
 
         // Sweep other triballs into net
-        turbo_drive_distance(15.0, false, 70.0);
-        rotate_and_drive_to_position({35,-35}, true, false);
-        left_snowplow_out();
-        rotate_and_drive_to_position({10,-24}, true, false);
-        right_snowplow_out();
-        rotate_and_drive_to_position({10, -8}, true, false);
+        turbo_drive_distance(10.0, false, 60.0);
+        this->turbo_turn_velocity = 20;
+        // rotate_to_position({35,-35}, true, true);
+        // drive_to_position({35,-35}, true, false);
 
-        rotate_and_drive_to_position({40,-8}, true, true);  // Turbo!
+        //rotate_and_drive_to_position({30,-30}, true, false);
+        rotate_to_position({30,-30}, true, true); // Needs to be turbo
+        drive_to_position({30,-30}, true, false);
+
+
+        left_snowplow_out();
+
+        // rotate_to_position({10,-24}, true, true);
+        // drive_to_position({10,-24}, true, false);
+        rotate_and_drive_to_position({10,-20}, true, false);
+
+        right_snowplow_out();
+        // rotate_to_position({10, -4}, true, true);
+        // drive_to_position({10, -4}, true, false);
+        rotate_and_drive_to_position({10, -4}, true, false);
+
+        
+        // rotate_to_position({20, -4}, true, true);
+        // drive_to_position({20, -4}, true, false);
+        rotate_and_drive_to_position({20, -4}, true, false);
+
+        rotate_to_heading(135);
+
+        rotate_and_drive_to_position({40,-4}, true, true);  // Turbo!
 
         //turbo_drive_distance(24.0, true);
         std::cout << "Done!\n";
@@ -190,8 +211,12 @@ void AutoDrive::rotate_to_position(std::pair<double, double> final_position, boo
     // if (IS_USING_GPS_POSITION) tm->set_current_heading(tm->getGPSPosition());
     double heading = tm->get_heading_between_points(tm->get_current_position(), final_position); // Gets absolute angle
     
-    if (ISBACKROTATION)
+    
+    if (ISBACKROTATION)  {
         heading -= 180;
+        if (heading < 0) heading += 360;
+    }
+    std::cout << "HEADING GOAL for " <<final_position.first << ", " << final_position.second << ": " << heading << std::endl;
 
     rotate_to_heading(heading, IS_TURBO); 
 

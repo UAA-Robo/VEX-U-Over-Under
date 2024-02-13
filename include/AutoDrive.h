@@ -115,9 +115,9 @@ private:
     /// @param height The height the robot has to climb
     void climb_distance(double height);
 
-    double min_turn_velocity = 3;
+    double min_turn_velocity = 5;
     double max_turn_velocity = 18;
-    double turn_stopping_aggression = 0.02;
+    double turn_stopping_aggression = 0.08;
     double turbo_turn_velocity = 50;
 
     double min_drive_velocity = 5;
