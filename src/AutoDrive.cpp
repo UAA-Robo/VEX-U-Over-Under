@@ -43,45 +43,40 @@ void AutoDrive::execute_head_to_head_plan() {
 
         // Sweep triball out
         left_snowplow_out();
-        turbo_drive_distance(12.0, true, 70.0);
+        turbo_drive_distance(12.0, true, 50.0);
         turbo_turn(270.0, 50.0);
         left_snowplow_in();
         turbo_turn(225.0, 50.0);
-        turbo_drive_distance(8.0, true, 70.0);
+        turbo_drive_distance(8.0, true, 50.0);
         turbo_turn(270.0);
         turbo_drive_distance(14.0, true, 50.0);
 
 
         // Sweep other triballs into net
-        turbo_drive_distance(10.0, false, 60.0);
+        turbo_drive_distance(10.0, false, 40.0);
+
+
         this->turbo_turn_velocity = 20;
+        this->turbo_drive_velocity=30;
         // rotate_to_position({35,-35}, true, true);
         // drive_to_position({35,-35}, true, false);
 
         //rotate_and_drive_to_position({30,-30}, true, false);
-        rotate_to_position({30,-30}, true, true); // Needs to be turbo
-        drive_to_position({30,-30}, true, false);
+        rotate_to_position({35,-30}, true, true); // Needs to be turbo
+        drive_to_position({35,-30}, true, false);
 
 
-        left_snowplow_out();
 
-        // rotate_to_position({10,-24}, true, true);
-        // drive_to_position({10,-24}, true, false);
-        rotate_and_drive_to_position({10,-20}, true, false);
+        snowplow_out();
+        rotate_and_drive_to_position({30,-5}, true, false);
 
-        right_snowplow_out();
-        // rotate_to_position({10, -4}, true, true);
-        // drive_to_position({10, -4}, true, false);
-        rotate_and_drive_to_position({10, -4}, true, false);
+        rotate_and_drive_to_position({50,-5}, true, true);
 
-        
-        // rotate_to_position({20, -4}, true, true);
-        // drive_to_position({20, -4}, true, false);
-        rotate_and_drive_to_position({20, -4}, true, false);
 
-        rotate_to_heading(135);
+    
 
-        rotate_and_drive_to_position({40,-4}, true, true);  // Turbo!
+       
+
 
         //turbo_drive_distance(24.0, true);
         std::cout << "Done!\n";
