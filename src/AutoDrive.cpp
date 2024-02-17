@@ -39,6 +39,8 @@ void AutoDrive::execute_head_to_head_plan() {
 
         // Drive to loading zone and turn parrallel
         drive_to_position(target, true);
+        // 1
+        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << std::endl;
         turbo_turn(200.0);
 
         // Sweep triball out
@@ -50,27 +52,77 @@ void AutoDrive::execute_head_to_head_plan() {
         turbo_drive_distance(8.0, true, 50.0);
         turbo_turn(270.0);
         turbo_drive_distance(14.0, true, 50.0);
+        // 2
+        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << std::endl;
+    
 
 
         // Sweep other triballs into net
         turbo_drive_distance(10.0, false, 40.0);
-
+        // 3
+        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << std::endl;
 
         this->turbo_turn_velocity = 20;
         this->turbo_drive_velocity=30;
-        // rotate_to_position({35,-35}, true, true);
-        // drive_to_position({35,-35}, true, false);
 
-        //rotate_and_drive_to_position({30,-30}, true, false);
-        rotate_to_position({35,-30}, true, true); // Needs to be turbo
-        drive_to_position({35,-30}, true, false);
+        //rotate_and_drive_to_position({34.98, -34.98}, true);
+
+        rotate_to_position({34.98, -34.98}, true, true);
+        drive_to_position({34.98, -34.98}, true, false);
+        //4
+        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << std::endl;
+
+        rotate_to_position({34.98, -24}, true, true);
+        right_snowplow_out();
+        drive_to_position({34.98, -24}, true, true);
+        //5
+        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << std::endl;
+
+
+        right_snowplow_in();
+        rotate_to_position({12, -24}, true, true);
+        drive_to_position({12, -24}, true);
+        vex::wait(50, vex::timeUnits::msec);
+
+        // 6
+        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << std::endl;
+        rotate_to_position({12, 0}, true, true);
+        drive_to_position({12, 0}, true, true);
+        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << std::endl;
+
+        // drive into  goal
+        right_snowplow_out();
+        rotate_to_heading(180);
+        left_snowplow_out();
+        turbo_drive_distance(40, true, 50.0);
+
+        // back up from goal
+        turbo_drive_distance(5, false, 50.0);
+        rotate_to_position({24, -24}, true, true);
+        drive_to_position({24, -24}, false);
+
+        // 
+        rotate_to_heading(225, true);
+        turbo_drive_distance(20, false, 40.0);
+
+        expand_intake();
+        vex::wait(1000, vex::timeUnits::msec);
+        stop_intake_expansion();
+
+;
+        // // rotate_to_position({35,-35}, true, true);
+        // // drive_to_position({35,-35}, true, false);
+
+        // //rotate_and_drive_to_position({30,-30}, true, false);
+        // rotate_to_position({35,-30}, true, true); // Needs to be turbo
+        // drive_to_position({35,-30}, true, false);
 
 
 
-        snowplow_out();
-        rotate_and_drive_to_position({30,-5}, true, false);
+        // snowplow_out();
+        // rotate_and_drive_to_position({30,-5}, true, false);
 
-        rotate_and_drive_to_position({50,-5}, true, true);
+        // rotate_and_drive_to_position({50,-5}, true, true);
 
 
     
@@ -170,8 +222,8 @@ void AutoDrive::rotate_to_heading( double heading, bool IS_TURBO) {
     // (change in angle starts majorly increasing instead of decreasing)
     while (angle_to_travel > 1 && (previous_angle_to_travel - angle_to_travel) >= -0.05) { 
         
-        std::cout << tm->get_current_heading() << '\n';
-        std::cout << "(" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << '\n';
+        // std::cout << tm->get_current_heading() << '\n';
+        // std::cout << "(" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << '\n';
 
         if (angle_to_travel > total_angle_to_travel/2) {
             // First half of distance
@@ -276,7 +328,7 @@ void AutoDrive::drive_to_position(
     // Turn until within 0.5 inches of desired distance or until it overshoots 
     // (change in distance starts majorly increasing instead of decreasing)
     while (fabs(current_distance) > 0.5 && (previous_distance - current_distance) >= -0.01) {
-        std::cout << "(" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")\n";
+        // std::cout << "(" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")\n";
 
         // Speeds up as leaving initial position and slows down as approaching destination
         if (current_distance >= distance/2) {
