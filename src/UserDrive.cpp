@@ -109,8 +109,15 @@ void UserDrive::activate_catapult_strategy()
 
 void UserDrive::climb_controls()
 {
-    if (hw->controller.ButtonA.pressing()) {
+    if (hw->controller.ButtonDown.pressing()) {
+        hw->right_climb_motor.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
+        hw->left_climb_motor.spin(vex::directionType::fwd, 12.0, vex::voltageUnits::volt);
+    } else if(hw->controller.ButtonUp.pressing()) {
         hw->right_climb_motor.spin(vex::directionType::fwd, 12.0, vex::voltageUnits::volt);
         hw->left_climb_motor.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
+    } else {
+        hw->right_climb_motor.stop();
+        hw->left_climb_motor.stop();
+
     }
 }
