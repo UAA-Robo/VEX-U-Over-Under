@@ -86,7 +86,7 @@ void AutoDrive::execute_head_to_head_plan() {
 
         // 6
         std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << std::endl;
-        rotate_to_position({12, 0}, true, true);
+        rotate_to_position({12, 0}, true, false);
         drive_to_position({12, 0}, true);
         std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << std::endl;
 
@@ -358,14 +358,14 @@ void AutoDrive::drive_to_position(
 
 
 
-void AutoDrive::climb_distance(double height) {
-    double climb_wheel_circumference = rc->CLIMB_WHEEL_DIAMETER * M_PI;
-    double climb_wheel_revolution = height / climb_wheel_circumference;
-    double velocity = 100;  // TODO: change later
+// void AutoDrive::climb_distance(double height) {
+//     double climb_wheel_circumference = rc->CLIMB_WHEEL_DIAMETER * M_PI;
+//     double climb_wheel_revolution = height / climb_wheel_circumference;
+//     double velocity = 100;  // TODO: change later
 
-    hw->climb_motors.spinFor(climb_wheel_revolution, vex::rotationUnits::rev, velocity,
-        vex::velocityUnits::pct);
-}
+//     hw->climb_motors.spinFor(climb_wheel_revolution, vex::rotationUnits::rev, velocity,
+//         vex::velocityUnits::pct);
+// }
 
 
 void AutoDrive::run_plow_strategy() {
