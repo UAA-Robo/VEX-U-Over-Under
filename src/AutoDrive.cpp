@@ -15,6 +15,9 @@ void AutoDrive::drive() {
     hw->left_intake_expansion_motor.setStopping(vex::brakeType::hold);
     hw->right_intake_expansion_motor.setStopping(vex::brakeType::hold);
 
+    // tm->set_heading(0);
+    // rotate_to_heading(180);
+    
     execute_head_to_head_plan(); //! ELIMINATE OPPONENTS
 }
 
@@ -40,7 +43,7 @@ void AutoDrive::execute_head_to_head_plan() {
         // Drive to loading zone and turn parrallel
         drive_to_position(target, true);
         // 1
-        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << std::endl;
+        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
         turbo_turn(200.0);
 
         // Sweep triball out
@@ -53,55 +56,59 @@ void AutoDrive::execute_head_to_head_plan() {
         turbo_turn(270.0);
         turbo_drive_distance(14.0, true, 50.0);
         // 2
-        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << std::endl;
+        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
     
-
+        tm->set_heading(270);
+        tm->set_position({61, -31});
 
         // Sweep other triballs into net
-        turbo_drive_distance(10.0, false, 40.0);
+        //turbo_drive_distance(10.0, false, 40.0);
+        drive_to_position({61, -41}, false);
         // 3
-        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << std::endl;
+        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
 
         this->turbo_turn_velocity = 20;
         this->turbo_drive_velocity=30;
 
         //rotate_and_drive_to_position({34.98, -34.98}, true);
 
-        rotate_to_position({34.98, -34.98}, true, true);
+        rotate_to_position({34.98, -34.98}, true, false);
         drive_to_position({34.98, -34.98}, true);
         //4
-        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << std::endl;
+        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
 
-        rotate_to_position({34.98, -24}, true, true);
+        rotate_to_position({34.98, -24}, true, false);
         right_snowplow_out();
         drive_to_position({34.98, -24}, true);
         //5
-        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << std::endl;
+        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
 
 
         right_snowplow_in();
-        rotate_to_position({12, -24}, true, true);
-        drive_to_position({12, -24}, true);
+        rotate_to_position({16, -16}, true, false);
+        drive_to_position({16, -16}, true);
         vex::wait(50, vex::timeUnits::msec);
 
         // 6
-        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << std::endl;
-        rotate_to_position({12, 0}, true, false);
-        drive_to_position({12, 0}, true);
-        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << std::endl;
+        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
+        rotate_to_position({16, 0}, true, false);
+        drive_to_position({16, 0}, true);
+        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
 
         // drive into  goal
         right_snowplow_out();
         rotate_to_heading(180, true);
         left_snowplow_out();
-        ///turbo_drive_distance(40, true, 50.0);
-        drive_to_position({52, 0}, true);
+        turbo_drive_distance(50, true, 50.0);
+        //drive_to_position({52, 0}, true);
         snowplow_in();
 
         // back up from goal
         turbo_drive_distance(5, false, 40.0);
-        rotate_to_position({24, -24}, true, true);
-        drive_to_position({24, -24}, false);
+
+        rotate_and_drive_to_position({24, -24}, false, false);
+        // rotate_to_position({24, -24}, false, true);
+        // drive_to_position({24, -24}, false);
 
         // 
         rotate_to_heading(225, true);
@@ -174,13 +181,14 @@ void AutoDrive::pathfind_and_drive_to_position(std::pair<double, double> target_
 }
 
 void AutoDrive::rotate_to_heading( double heading, bool IS_TURBO) {
+
+    heading = fmod(heading, 360);
+    if (heading < 0) heading += 360;
+
     if (IS_TURBO) {
         turbo_turn(heading, this->turbo_turn_velocity);
         return;
     }
-
-    heading = fmod(heading, 360);
-    if (heading < 0) heading += 360;
 
     double velocity;
     double min_velocity = this->min_turn_velocity;
@@ -222,7 +230,7 @@ void AutoDrive::rotate_to_heading( double heading, bool IS_TURBO) {
 
     // Turn until within 1 degrees of desired heading or until it overshoots
     // (change in angle starts majorly increasing instead of decreasing)
-    while (angle_to_travel > 1 && (previous_angle_to_travel - angle_to_travel) >= -0.05) { 
+    while (angle_to_travel > 1 && (previous_angle_to_travel - angle_to_travel) > 0.05) { 
         
         // std::cout << tm->get_current_heading() << '\n';
         // std::cout << "(" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << '\n';
@@ -263,7 +271,6 @@ void AutoDrive::rotate_to_position(std::pair<double, double> final_position, boo
     
     if (ISBACKROTATION)  {
         heading -= 180;
-        if (heading < 0) heading += 360;
     }
     std::cout << "HEADING GOAL for " <<final_position.first << ", " << final_position.second << ": " << heading << std::endl;
 

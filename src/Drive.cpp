@@ -276,9 +276,8 @@ void Drive::turbo_turn(double heading, double velocity)
 
 void Drive::turbo_turn_relative(double relative_angle, double velocity) {
     // Determines whether to rotate left or right based on the  shortest distance
-    if (360 - fabs(relative_angle) < relative_angle)
-        relative_angle = relative_angle - 360;
-    
+    if (360 - fabs(relative_angle) < relative_angle) relative_angle = relative_angle - 360;
+    //if (relative_angle > 180) 
     double revolutions = relative_angle  * (rc->DRIVETRAIN_WIDTH) * M_PI 
         / (360 * rc->WHEEL_CIRCUMFERENCE) * rc->DRIVETRAIN_GEAR_RATIO_MULTIPLIER;
 
