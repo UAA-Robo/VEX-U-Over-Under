@@ -68,13 +68,13 @@ void AutoDrive::execute_head_to_head_plan() {
         //rotate_and_drive_to_position({34.98, -34.98}, true);
 
         rotate_to_position({34.98, -34.98}, true, true);
-        drive_to_position({34.98, -34.98}, true, false);
+        drive_to_position({34.98, -34.98}, true);
         //4
         std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << std::endl;
 
         rotate_to_position({34.98, -24}, true, true);
         right_snowplow_out();
-        drive_to_position({34.98, -24}, true, true);
+        drive_to_position({34.98, -24}, true);
         //5
         std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << std::endl;
 
@@ -87,17 +87,19 @@ void AutoDrive::execute_head_to_head_plan() {
         // 6
         std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << std::endl;
         rotate_to_position({12, 0}, true, true);
-        drive_to_position({12, 0}, true, true);
+        drive_to_position({12, 0}, true);
         std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << std::endl;
 
         // drive into  goal
         right_snowplow_out();
-        rotate_to_heading(180);
+        rotate_to_heading(180, true);
         left_snowplow_out();
-        turbo_drive_distance(40, true, 50.0);
+        ///turbo_drive_distance(40, true, 50.0);
+        drive_to_position({52, 0}, true);
+        snowplow_in();
 
         // back up from goal
-        turbo_drive_distance(5, false, 50.0);
+        turbo_drive_distance(5, false, 40.0);
         rotate_to_position({24, -24}, true, true);
         drive_to_position({24, -24}, false);
 
