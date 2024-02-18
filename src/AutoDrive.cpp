@@ -16,7 +16,7 @@ void AutoDrive::drive() {
     hw->right_intake_expansion_motor.setStopping(vex::brakeType::hold);
 
     // tm->set_heading(0);
-    // rotate_to_heading(180);
+    // rotate_to_heading(90);
     
     execute_head_to_head_plan(); //! ELIMINATE OPPONENTS
 }
@@ -85,34 +85,55 @@ void AutoDrive::execute_head_to_head_plan() {
 
 
         right_snowplow_in();
-        rotate_to_position({16, -16}, true, false);
-        drive_to_position({16, -16}, true);
+        rotate_to_position({16, -20}, true, false);
+        drive_to_position({16, -20}, true);
         vex::wait(50, vex::timeUnits::msec);
 
         // 6
         std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
-        rotate_to_position({16, 0}, true, false);
-        drive_to_position({16, 0}, true);
+        rotate_to_position({16, -10}, true, false);
+        drive_to_position({16, -10}, true);
+        // 7
         std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
 
         // drive into  goal
         right_snowplow_out();
-        rotate_to_heading(180, true);
+        //rotate_to_heading(180);
+        rotate_to_position({52, -10}, true);
         left_snowplow_out();
         turbo_drive_distance(50, true, 50.0);
+
+        // 8
+        std::cout << " 8 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
         //drive_to_position({52, 0}, true);
         snowplow_in();
 
-        // back up from goal
-        turbo_drive_distance(5, false, 40.0);
+        tm->set_heading(180);
+        tm->set_position({41, -10});
 
-        rotate_and_drive_to_position({24, -24}, false, false);
-        // rotate_to_position({24, -24}, false, true);
-        // drive_to_position({24, -24}, false);
+
+        // Go to bar
+        drive_to_position({31, -10});
+        // 9
+        std::cout << " 9 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
+        //turbo_drive_distance(5, false, 30.0); // back up from goal
+
+        // 10
+        std::cout << " 10 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
+        //rotate_and_drive_to_position({24, -24});
+        rotate_to_heading(220);
+        turbo_drive_distance(44, false, 30);
+
+        //10.5
+        //std::cout << "10.5 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
 
         // 
-        rotate_to_heading(225, true);
-        turbo_drive_distance(20, false, 40.0);
+        //rotate_and_drive_to_position({6, -42});
+
+        // 11
+        std::cout << "11 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
+        //rotate_to_heading(225, true);
+        //turbo_drive_distance(20, false, 40.0);
 
         expand_intake();
         vex::wait(1000, vex::timeUnits::msec);
@@ -230,8 +251,14 @@ void AutoDrive::rotate_to_heading( double heading, bool IS_TURBO) {
 
     // Turn until within 1 degrees of desired heading or until it overshoots
     // (change in angle starts majorly increasing instead of decreasing)
-    while (angle_to_travel > 1 && (previous_angle_to_travel - angle_to_travel) > 0.05) { 
-        
+    
+    const double INITIAL_TIME = hw->brain.timer(vex::timeUnits::msec);
+    const double TIMEOUT = 4000; // 4.0 seconds
+
+
+    while (angle_to_travel > 1 && (hw->brain.timer(vex::timeUnits::msec) - INITIAL_TIME) < TIMEOUT
+    && (previous_angle_to_travel - angle_to_travel) > -0.05) { 
+
         // std::cout << tm->get_current_heading() << '\n';
         // std::cout << "(" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << '\n';
 

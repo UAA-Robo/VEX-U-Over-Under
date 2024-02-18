@@ -149,6 +149,5 @@ protected:
 
     bool START_CATAPULT_LAUNCH = false;
     bool CATAPULT_STOPPED = true;
-    bool SNOWPLOW_OUT = false;
     
 };

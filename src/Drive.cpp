@@ -90,45 +90,32 @@ void Drive::stop_intake_expansion()
 }
 
 void Drive::snowplow_out() {
-    hw->right_plow.set(false);
-    hw->left_plow.set(false);
-    SNOWPLOW_OUT = true;
+    hw->right_plow.set(true);
+    hw->left_plow.set(true);
 }
 
 void Drive::right_snowplow_out() {
-    hw->right_plow.set(false);
-    SNOWPLOW_OUT = true;
+    hw->right_plow.set(true);
+
 }
 
 void Drive::left_snowplow_out() {
-    hw->left_plow.set(false);
-    SNOWPLOW_OUT = true;
+    hw->left_plow.set(true);
+
 }
 
 void Drive::snowplow_in() {
-    hw->right_plow.set(true);
-    hw->left_plow.set(true);
-    SNOWPLOW_OUT = false;
+    hw->right_plow.set(false);
+    hw->left_plow.set(false);
+
 }
 
 void Drive::right_snowplow_in() {
-    hw->right_plow.set(true);
-    if (!hw->right_plow.value() || !hw->left_plow.value()) {
-        SNOWPLOW_OUT = true;
-    }
-    else {
-        SNOWPLOW_OUT = false;
-    }
+    hw->right_plow.set(false);
 }
 
 void Drive::left_snowplow_in() {
-    hw->left_plow.set(true);
-    if (!hw->right_plow.value() || !hw->left_plow.value()) {
-        SNOWPLOW_OUT = true;
-    }
-    else {
-        SNOWPLOW_OUT = false;
-    }
+    hw->left_plow.set(false);
 }
 
 int Drive::run_catapult_thread(void* param)
