@@ -139,28 +139,7 @@ void AutoDrive::execute_head_to_head_plan() {
         vex::wait(1000, vex::timeUnits::msec);
         stop_intake_expansion();
 
-;
-        // // rotate_to_position({35,-35}, true, true);
-        // // drive_to_position({35,-35}, true, false);
 
-        // //rotate_and_drive_to_position({30,-30}, true, false);
-        // rotate_to_position({35,-30}, true, true); // Needs to be turbo
-        // drive_to_position({35,-30}, true, false);
-
-
-
-        // snowplow_out();
-        // rotate_and_drive_to_position({30,-5}, true, false);
-
-        // rotate_and_drive_to_position({50,-5}, true, true);
-
-
-    
-
-       
-
-
-        //turbo_drive_distance(24.0, true);
         std::cout << "Done!\n";
     } else {
         // SCRATETTE auto skills plan
