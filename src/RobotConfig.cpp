@@ -40,7 +40,7 @@ RobotConfig::RobotConfig(Hardware* hardware)
         // Max width
         ACTUAL_WIDTH = 17.6;  
 
-        MAX_CATAPULT_ANGLE = 60;
+        MAX_CATAPULT_ANGLE = 65;
 
         DRIVETRAIN_GEAR_RATIO_MULTIPLIER = 1; // 18:1
     }
@@ -70,7 +70,7 @@ RobotConfig::RobotConfig(Hardware* hardware)
         // Max width
         ACTUAL_WIDTH = 14.50; 
 
-        MAX_CATAPULT_ANGLE = 70;
+        MAX_CATAPULT_ANGLE = 65;
         
         DRIVETRAIN_GEAR_RATIO_MULTIPLIER = 0.33; // 36:1
 

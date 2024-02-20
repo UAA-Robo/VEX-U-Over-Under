@@ -91,6 +91,8 @@ void UserDrive::intake_controls()
         }
         INTAKE_EXPANDED = false;
         intake_count = 0;
+    } else if (INTAKE_IS_REVERSING && !hw->controller.ButtonL2.pressing()) {
+        stop_intake();
     } else if (hw->controller.ButtonR2.pressing()) {
         if (!INTAKE_EXPANDED) {
             expand_intake();
@@ -106,6 +108,7 @@ void UserDrive::intake_controls()
             INTAKE_HELD = false;
         }
         reverse_intake();
+        INTAKE_IS_REVERSING = true;
     }
     if (intake_count >= 800) stop_intake_expansion();
     intake_count += 20;
