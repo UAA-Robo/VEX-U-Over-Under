@@ -99,7 +99,10 @@ protected:
 
     /// @brief Runs strategy to shoot all triball across field
     /// @param number_triballs Value passed into run_catapult_once()
-    void run_catapult_strategy(int number_triballs=10);
+    /// @param TURN Assumes at right loading zon (if facing opponent). If true, will turn towards 
+    /// goal to shoot
+
+    void run_catapult_strategy(int number_triballs=10,  bool TURN = true);
 
     /// @brief Intake triball, drive back and launch
     void run_catapult_once();
@@ -107,7 +110,9 @@ protected:
     /// @brief Intake triball, drive back, turn, and launch
     /// @param FINISH_OUTWARD If true, will finish away from loading zone, if false, will fi
     /// finish against loading zone
-    void run_catapult_arc_once(bool FINISH_OUTWARD=false);
+    /// @param TURN Assumes at right loading zone (if facing opponent). If true, will turn towards 
+    /// goal to shoot
+    void run_catapult_arc_once(bool FINISH_OUTWARD=false, bool TURN=true);
 
     void turbo_drive_distance(double distance, bool IS_REVERSE, double velocity = 80);
     
@@ -149,6 +154,5 @@ protected:
 
     bool START_CATAPULT_LAUNCH = false;
     bool CATAPULT_STOPPED = true;
-    bool SNOWPLOW_OUT = false;
     
 };

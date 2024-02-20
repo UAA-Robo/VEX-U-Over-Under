@@ -93,45 +93,32 @@ void Drive::stop_intake_expansion()
 }
 
 void Drive::snowplow_out() {
-    hw->right_plow.set(false);
-    hw->left_plow.set(false);
-    SNOWPLOW_OUT = true;
+    hw->right_plow.set(true);
+    hw->left_plow.set(true);
 }
 
 void Drive::right_snowplow_out() {
-    hw->right_plow.set(false);
-    SNOWPLOW_OUT = true;
+    hw->right_plow.set(true);
+
 }
 
 void Drive::left_snowplow_out() {
-    hw->left_plow.set(false);
-    SNOWPLOW_OUT = true;
+    hw->left_plow.set(true);
+
 }
 
 void Drive::snowplow_in() {
-    hw->right_plow.set(true);
-    hw->left_plow.set(true);
-    SNOWPLOW_OUT = false;
+    hw->right_plow.set(false);
+    hw->left_plow.set(false);
+
 }
 
 void Drive::right_snowplow_in() {
-    hw->right_plow.set(true);
-    if (!hw->right_plow.value() || !hw->left_plow.value()) {
-        SNOWPLOW_OUT = true;
-    }
-    else {
-        SNOWPLOW_OUT = false;
-    }
+    hw->right_plow.set(false);
 }
 
 void Drive::left_snowplow_in() {
-    hw->left_plow.set(true);
-    if (!hw->right_plow.value() || !hw->left_plow.value()) {
-        SNOWPLOW_OUT = true;
-    }
-    else {
-        SNOWPLOW_OUT = false;
-    }
+    hw->left_plow.set(false);
 }
 
 int Drive::run_catapult_thread(void* param)
@@ -169,13 +156,14 @@ void Drive::stop_catapult() {
 }
 
 
-void Drive::run_catapult_strategy(int number_triballs) {
+void Drive::run_catapult_strategy(int number_triballs, bool TURN) {
     double velocity = 50;
     if (rc->ROBOT == SCRATETTE) velocity = 50;
 
     // Expand intake
     expand_intake();
     vex::wait(1000, vex::timeUnits::msec);
+
     stop_intake_expansion();
 
     // Start Catapult thread
@@ -184,15 +172,16 @@ void Drive::run_catapult_strategy(int number_triballs) {
 
     // Move + Launch
     for (int i = 0; i < number_triballs - 1; i++) {
-        run_catapult_arc_once();
+        run_catapult_arc_once(false, TURN);
     }
 
     // Launches last triball and finishes outward
-    run_catapult_arc_once(true);
+    run_catapult_arc_once(true, TURN);
 
     stop_intake();
     retract_intake();
-    vex::wait(1000, vex::timeUnits::msec);
+    if (rc->ROBOT == SCRATETTE) vex::wait(1000, vex::timeUnits::msec);
+    else vex::wait(500, vex::timeUnits::msec);
     stop_intake_expansion();
 
 }
@@ -215,31 +204,33 @@ void Drive::run_catapult_once() {
 
 }
 
-void Drive::run_catapult_arc_once(bool FINISH_OUTWARD) {
+void Drive::run_catapult_arc_once(bool FINISH_OUTWARD, bool TURN) {
     double drive_velocity = 50;
     double turn_velocity = 30;
+    double outward_distance = 4.5;
+    double inward_disntance = 4.7;
     if (rc->ROBOT == SCRATETTE)  {
         drive_velocity = 80;
         turn_velocity = 50;
+        outward_distance = 5.5;
+        inward_disntance = 5.6;
     }
 
     // start intake
     activate_intake();
 
     // Move + Launch
-    turbo_drive_distance(5.5, true, drive_velocity); 
+    turbo_drive_distance(outward_distance, true, drive_velocity); 
 
-    if (rc->ROBOT == SCRAT)  turbo_turn_relative(25, turn_velocity);
-    else turbo_turn_relative(335, turn_velocity); // Will go shortest distance so actually -25
+    if (TURN) turbo_turn_relative(325, turn_velocity); // Will go shortest distance so actually -35
     
     start_catapult();
     vex::wait(100, vex::timeUnits::msec);
     stop_catapult();
 
-    if (rc->ROBOT == SCRAT)  turbo_turn_relative(335, turn_velocity);
-    else turbo_turn_relative(25, turn_velocity); 
+    if (TURN) turbo_turn_relative(35, turn_velocity); 
 
-    if (!FINISH_OUTWARD) turbo_drive_distance(5.6, false, drive_velocity);
+    if (!FINISH_OUTWARD) turbo_drive_distance(inward_disntance, false, drive_velocity);
 
 }
 
@@ -279,9 +270,8 @@ void Drive::turbo_turn(double heading, double velocity)
 
 void Drive::turbo_turn_relative(double relative_angle, double velocity) {
     // Determines whether to rotate left or right based on the  shortest distance
-    if (360 - fabs(relative_angle) < relative_angle)
-        relative_angle = relative_angle - 360;
-    
+    if (360 - fabs(relative_angle) < relative_angle) relative_angle = relative_angle - 360;
+    //if (relative_angle > 180) 
     double revolutions = relative_angle  * (rc->DRIVETRAIN_WIDTH) * M_PI 
         / (360 * rc->WHEEL_CIRCUMFERENCE) * rc->DRIVETRAIN_GEAR_RATIO_MULTIPLIER;
 

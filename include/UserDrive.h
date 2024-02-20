@@ -27,6 +27,9 @@ private:
     /// @brief Turns on/off catapult strategy when R2 is pressed.
     void activate_catapult_strategy();
 
+    /// @brief Press A button to activate climb motors
+    void climb_controls();
+
     bool INTAKE_EXPANDED = false;
     bool INTAKE_HELD = false;
     bool INTAKE_IS_REVERSING = false;

@@ -15,7 +15,10 @@ void AutoDrive::drive() {
     hw->left_intake_expansion_motor.setStopping(vex::brakeType::hold);
     hw->right_intake_expansion_motor.setStopping(vex::brakeType::hold);
 
-    execute_head_to_head_plan(); //! ELIMINATE OPPONENTS
+    // tm->set_heading(0);
+    // rotate_to_heading(90);
+    
+    execute_skills_plan(); //! ELIMINATE OPPONENTS
 }
 
 
@@ -40,7 +43,7 @@ void AutoDrive::execute_head_to_head_plan() {
         // Drive to loading zone and turn parrallel
         drive_to_position(target, true);
         // 1
-        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << std::endl;
+        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
         turbo_turn(200.0);
 
         // Sweep triball out
@@ -53,84 +56,90 @@ void AutoDrive::execute_head_to_head_plan() {
         turbo_turn(270.0);
         turbo_drive_distance(14.0, true, 50.0);
         // 2
-        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << std::endl;
+        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
     
-
+        tm->set_heading(270);
+        tm->set_position({61, -31});
 
         // Sweep other triballs into net
-        turbo_drive_distance(10.0, false, 40.0);
+        //turbo_drive_distance(10.0, false, 40.0);
+        drive_to_position({61, -41}, false);
         // 3
-        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << std::endl;
+        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
 
         this->turbo_turn_velocity = 20;
         this->turbo_drive_velocity=30;
 
         //rotate_and_drive_to_position({34.98, -34.98}, true);
 
-        rotate_to_position({34.98, -34.98}, true, true);
-        drive_to_position({34.98, -34.98}, true, false);
+        rotate_to_position({34.98, -34.98}, true, false);
+        drive_to_position({34.98, -34.98}, true);
         //4
-        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << std::endl;
+        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
 
-        rotate_to_position({34.98, -24}, true, true);
+        rotate_to_position({34.98, -24}, true, false);
         right_snowplow_out();
-        drive_to_position({34.98, -24}, true, true);
+        drive_to_position({34.98, -24}, true);
         //5
-        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << std::endl;
+        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
 
 
         right_snowplow_in();
-        rotate_to_position({12, -24}, true, true);
-        drive_to_position({12, -24}, true);
+        rotate_to_position({16, -20}, true, false);
+        drive_to_position({16, -20}, true);
         vex::wait(50, vex::timeUnits::msec);
 
         // 6
-        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << std::endl;
-        rotate_to_position({12, 0}, true, true);
-        drive_to_position({12, 0}, true, true);
-        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << std::endl;
+        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
+        rotate_to_position({16, -10}, true, false);
+        drive_to_position({16, -10}, true);
+        // 7
+        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
 
         // drive into  goal
         right_snowplow_out();
-        rotate_to_heading(180);
+        //rotate_to_heading(180);
+        rotate_to_position({52, -10}, true);
         left_snowplow_out();
-        turbo_drive_distance(40, true, 50.0);
+        turbo_drive_distance(50, true, 50.0);
 
-        // back up from goal
-        turbo_drive_distance(5, false, 50.0);
-        rotate_to_position({24, -24}, true, true);
-        drive_to_position({24, -24}, false);
+        // 8
+        std::cout << " 8 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
+        //drive_to_position({52, 0}, true);
+        snowplow_in();
+
+        tm->set_heading(180);
+        tm->set_position({41, -10});
+
+
+        // Go to bar
+        drive_to_position({31, -10});
+        // 9
+        std::cout << " 9 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
+        //turbo_drive_distance(5, false, 30.0); // back up from goal
+
+        // 10
+        std::cout << " 10 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
+        //rotate_and_drive_to_position({24, -24});
+        rotate_to_heading(220);
+        turbo_drive_distance(44, false, 30);
+
+        //10.5
+        //std::cout << "10.5 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
 
         // 
-        rotate_to_heading(225, true);
-        turbo_drive_distance(20, false, 40.0);
+        //rotate_and_drive_to_position({6, -42});
+
+        // 11
+        std::cout << "11 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
+        //rotate_to_heading(225, true);
+        //turbo_drive_distance(20, false, 40.0);
 
         expand_intake();
         vex::wait(1000, vex::timeUnits::msec);
         stop_intake_expansion();
 
-;
-        // // rotate_to_position({35,-35}, true, true);
-        // // drive_to_position({35,-35}, true, false);
 
-        // //rotate_and_drive_to_position({30,-30}, true, false);
-        // rotate_to_position({35,-30}, true, true); // Needs to be turbo
-        // drive_to_position({35,-30}, true, false);
-
-
-
-        // snowplow_out();
-        // rotate_and_drive_to_position({30,-5}, true, false);
-
-        // rotate_and_drive_to_position({50,-5}, true, true);
-
-
-    
-
-       
-
-
-        //turbo_drive_distance(24.0, true);
         std::cout << "Done!\n";
     } else {
         // SCRATETTE auto skills plan
@@ -149,11 +158,29 @@ void AutoDrive::execute_head_to_head_plan() {
 void AutoDrive::execute_skills_plan() {
 
     if (rc->ROBOT == SCRAT) {
-        run_catapult_strategy(10);
-        run_dumb_plow_strategy(); // Until end of match
+        tm->set_position({-60, -60});
+        tm->set_heading(225);
+
+        run_catapult_strategy(7, true);
+
+        // // Estimate of where we are
+        tm->set_position({-56, -56}); 
+        tm->set_heading(225);
+
+        retract_intake();
+        vex::wait(500, vex::timeUnits::msec);
+        stop_intake_expansion();
+        
+
+
+        rotate_and_drive_to_position({-17.0, -61}, true);
+        rotate_to_position({46, -61}, true);
+
+        run_plow_strategy(); // Until end of match
     } else {
+        // Don't need to set position/angle bc everything is relative 
         // SCRATETTE auto skills plan
-        run_catapult_strategy(30);
+        run_catapult_strategy(30, false);
     }
 }
 
@@ -172,13 +199,14 @@ void AutoDrive::pathfind_and_drive_to_position(std::pair<double, double> target_
 }
 
 void AutoDrive::rotate_to_heading( double heading, bool IS_TURBO) {
+
+    heading = fmod(heading, 360);
+    if (heading < 0) heading += 360;
+
     if (IS_TURBO) {
         turbo_turn(heading, this->turbo_turn_velocity);
         return;
     }
-
-    heading = fmod(heading, 360);
-    if (heading < 0) heading += 360;
 
     double velocity;
     double min_velocity = this->min_turn_velocity;
@@ -220,8 +248,14 @@ void AutoDrive::rotate_to_heading( double heading, bool IS_TURBO) {
 
     // Turn until within 1 degrees of desired heading or until it overshoots
     // (change in angle starts majorly increasing instead of decreasing)
-    while (angle_to_travel > 1 && (previous_angle_to_travel - angle_to_travel) >= -0.05) { 
-        
+    
+    const double INITIAL_TIME = hw->brain.timer(vex::timeUnits::msec);
+    const double TIMEOUT = 4000; // 4.0 seconds
+
+
+    while (angle_to_travel > 1 && (hw->brain.timer(vex::timeUnits::msec) - INITIAL_TIME) < TIMEOUT
+    && (previous_angle_to_travel - angle_to_travel) > -0.05) { 
+
         // std::cout << tm->get_current_heading() << '\n';
         // std::cout << "(" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << '\n';
 
@@ -261,7 +295,6 @@ void AutoDrive::rotate_to_position(std::pair<double, double> final_position, boo
     
     if (ISBACKROTATION)  {
         heading -= 180;
-        if (heading < 0) heading += 360;
     }
     std::cout << "HEADING GOAL for " <<final_position.first << ", " << final_position.second << ": " << heading << std::endl;
 
@@ -356,173 +389,81 @@ void AutoDrive::drive_to_position(
 
 
 
-void AutoDrive::climb_distance(double height) {
-    double climb_wheel_circumference = rc->CLIMB_WHEEL_DIAMETER * M_PI;
-    double climb_wheel_revolution = height / climb_wheel_circumference;
-    double velocity = 100;  // TODO: change later
+// void AutoDrive::climb_distance(double height) {
+//     double climb_wheel_circumference = rc->CLIMB_WHEEL_DIAMETER * M_PI;
+//     double climb_wheel_revolution = height / climb_wheel_circumference;
+//     double velocity = 100;  // TODO: change later
 
-    hw->climb_motors.spinFor(climb_wheel_revolution, vex::rotationUnits::rev, velocity,
-        vex::velocityUnits::pct);
-}
+//     hw->climb_motors.spinFor(climb_wheel_revolution, vex::rotationUnits::rev, velocity,
+//         vex::velocityUnits::pct);
+// }
 
 
 void AutoDrive::run_plow_strategy() {
+    // Assumes start at {-17.0, -61}, 180 deg
 
-    std::pair<double, double> prep_pos;
-    std::pair<double, double> target_pos;
+    std::pair<double, double> target = {46, -61};
+    // Drive to loading zone and turn parrallel
+    drive_to_position(target, true);
+    // 1
+    std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
+    turbo_turn(200.0);
 
-    // Ram at top of red goal
-    target_pos = mp->goals[3]->get_position();
-    prep_pos.first = 70.02 - 14.0;
-    prep_pos.second = target_pos.second + 21.0; // Offset from goal by almost 2 feet
-    // target_pos.second += rc->DRIVETRAIN_RADIUS - 2;
-    pathfind_and_drive_to_position(prep_pos);
-    rotate_to_heading(90.0);
-    // vex::wait(1000, vex::timeUnits::msec);
-    //if (!SNOWPLOW_OUT) 
+    // Sweep triball out
     left_snowplow_out();
-    
-    // Turbo drive forward into goal
-    turbo_drive_distance(tm->get_distance_between_points(
-        tm->get_current_position(), target_pos), true
-    );
-
+    turbo_drive_distance(12.0, true, 50.0);
+    turbo_turn(270.0, 50.0);
     left_snowplow_in();
-    // Turbo drive backward away from goal
-    turbo_drive_distance(tm->get_distance_between_points(
-        tm->get_current_position(), {prep_pos.first, prep_pos.second + 5}), false
-    );
-    target_pos = mp->goals[0]->get_position();
-    prep_pos = target_pos;
-    prep_pos.first = target_pos.first - 36.0; // Offset from goal by 3 feet
+    turbo_turn(225.0, 50.0);
+    turbo_drive_distance(8.0, true, 50.0);
+    turbo_turn(270.0);
+    turbo_drive_distance(14.0, true, 50.0);
+    // 2
+    std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
 
-    pathfind_and_drive_to_position(prep_pos);
-    snowplow_out();
-    rotate_to_heading(180.0, false);
-    turbo_drive_distance(tm->get_distance_between_points(
-        tm->get_current_position(), target_pos
-    ), true);
+    tm->set_heading(270);
+    tm->set_position({61, -31});
 
-    while(1);
+    // Sweep other triballs into net
+    //turbo_drive_distance(10.0, false, 40.0);
+    drive_to_position({61, -41}, false);
+    // 3
+    std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
 
-    turbo_drive_distance(tm->get_distance_between_points(
-        tm->get_current_position(), prep_pos), false
-    );
+    this->turbo_turn_velocity = 20;
+    this->turbo_drive_velocity=30;
 
-    // Ram at side-bottom of red goal
-    // snowplow_out();
-    target_pos = mp->goals[2]->get_position();
-    prep_pos = target_pos;
-    prep_pos.first -= 31.0;
-    target_pos.first += rc->DRIVETRAIN_RADIUS - 2;
-    pathfind_and_drive_to_position(prep_pos);
-    this->rotate_to_heading(180.0);
-    turbo_drive_distance(tm->get_distance_between_points(
-        tm->get_current_position(), target_pos), true
-    );
-    vex::wait(500, vex::timeUnits::msec);
-    turbo_drive_distance(tm->get_distance_between_points(
-        tm->get_current_position(), prep_pos), false
-    );
+    //rotate_and_drive_to_position({34.98, -34.98}, true);
 
-    // Ram at bottom of red goal
-    // snowplow_out();
-    target_pos = mp->goals[4]->get_position();
-    prep_pos.first = 70.02 - 14.0;
-    prep_pos.second = target_pos.second - 21.0; // Offset from goal by almost 2 feet
-    target_pos.second -= rc->DRIVETRAIN_RADIUS - 2;
-    pathfind_and_drive_to_position(prep_pos);
-    rotate_to_heading(270.0);
-    turbo_drive_distance(tm->get_distance_between_points(
-        tm->get_current_position(), target_pos), true
-    );
-    vex::wait(500, vex::timeUnits::msec);
-    turbo_drive_distance(tm->get_distance_between_points(
-        tm->get_current_position(), prep_pos), false
-    );
+    rotate_to_position({34.98, -34.98}, true, false);
+    drive_to_position({34.98, -34.98}, true);
+    //4
+    std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
 
-    // Returning direction -------------------------------------------------------------------------
+    rotate_to_position({34.98, -24}, true, false);
+    right_snowplow_out();
+    drive_to_position({34.98, -24}, true);
+    //5
+    std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
 
-    // Ram at side-bottom of red goal
-    // snowplow_out();
-    target_pos = mp->goals[2]->get_position();
-    prep_pos = target_pos;
-    prep_pos.first -= 31.0;
-    target_pos.first += rc->DRIVETRAIN_RADIUS - 2 ;
-    pathfind_and_drive_to_position(prep_pos);
-    rotate_to_heading(0.0);
-    turbo_drive_distance(tm->get_distance_between_points(
-        tm->get_current_position(), target_pos), true
-    );
-    vex::wait(500, vex::timeUnits::msec);
-    turbo_drive_distance(tm->get_distance_between_points(
-        tm->get_current_position(), prep_pos), false
-    );
 
-    // Ram at side-top of red goal
-    // snowplow_out();
-    target_pos = mp->goals[0]->get_position();
-    prep_pos = target_pos;
-    prep_pos.first -= 31.0;
-    target_pos.first += rc->DRIVETRAIN_RADIUS;
-    pathfind_and_drive_to_position(prep_pos);
-    rotate_to_heading(0.0);
-    turbo_drive_distance(tm->get_distance_between_points(
-        tm->get_current_position(), target_pos), true
-    );
-    vex::wait(500, vex::timeUnits::msec);
-    turbo_drive_distance(tm->get_distance_between_points(
-        tm->get_current_position(), prep_pos), false
-    );
-}
+    right_snowplow_in();
+    rotate_to_position({16, -20}, true, false);
+    drive_to_position({16, -20}, true);
+    vex::wait(50, vex::timeUnits::msec);
 
-void AutoDrive::run_dumb_plow_strategy() {
+    // 6
+    std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
+    rotate_to_position({16, -10}, true, false);
+    drive_to_position({16, -10}, true);
+    // 7
+    std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
 
-    std::pair<double, double> prep_pos;
-    std::pair<double, double> target_pos;
-
-    // Go to hardcoded critical point first
-    std::pair<double, double> hardcoded_position = mp->get_critical_point(2, true);
-    rotate_and_drive_to_position(hardcoded_position);
-    
-    hardcoded_position.first += 16;
-    rotate_and_drive_to_position(hardcoded_position);
-
-    // Go to Red goal top offset
-    target_pos = mp->goals[3]->get_position();
-    // prep_pos.first = 70.02 - 14.0;
-    prep_pos = target_pos;
-    prep_pos.second += 21.0; // Offset from goal by almost 2 feet
-    pathfind_and_drive_to_position(prep_pos);
-    // rotate_to_heading(90.0);
-    rotate_to_heading(270.0);
-
-    // left_snowplow_out();
-        
-    // Turbo drive forward into goal
-    turbo_drive_distance(tm->get_distance_between_points(
-        tm->get_current_position(), target_pos), false
-    );
-
-    left_snowplow_in();
-    // Turbo drive backward away from goal
-    turbo_drive_distance(tm->get_distance_between_points(
-        tm->get_current_position(), {prep_pos.first, prep_pos.second + 5}), true
-    );
-
-    target_pos = mp->goals[1]->get_position();
-    prep_pos = target_pos;
-    prep_pos.first = target_pos.first - rc->ACTUAL_RADIUS - 36.0; // Offset from goal by 3 feet
-
-    pathfind_and_drive_to_position(prep_pos);
-    snowplow_out();
-    vex::wait(500, vex::timeUnits::msec);
-    // rotate_to_heading(225, true);
-    // turbo_drive_distance(47.0, false);
-    rotate_to_heading(180.0, false);
-    turbo_drive_distance(tm->get_distance_between_points(
-        tm->get_current_position(), target_pos
-    ), true);
-
+    // drive into  goal
+    right_snowplow_out();
+    //rotate_to_heading(180);
+    rotate_to_position({52, -10}, true);
+    left_snowplow_out();
+    turbo_drive_distance(50, true, 50.0);
 }
 
