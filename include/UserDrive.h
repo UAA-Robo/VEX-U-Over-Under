@@ -29,4 +29,5 @@ private:
 
     bool INTAKE_EXPANDED = false;
     int intake_count;
+    bool CATAPULT_STRATEGY_RAN = false;
 };

@@ -6,9 +6,9 @@
 Telemetry::Telemetry(Hardware* hardware, RobotConfig* robotConfig) {
     hw = hardware;
     rc = robotConfig;
-    odometry_x_position = rc->starting_pos.first;
-    odometry_y_position = rc->starting_pos.second;
-    odometry_heading = rc->starting_heading;
+    // odometry_x_position = rc->starting_pos.first;
+    // odometry_y_position = rc->starting_pos.second;
+    // odometry_heading = rc->starting_heading;
 
     if (rc->ROBOT == SCRAT) vex::task logTask = vex::task(update_position, this, 1);
 }
@@ -16,8 +16,17 @@ Telemetry::Telemetry(Hardware* hardware, RobotConfig* robotConfig) {
 int Telemetry::update_position(void* param) {
     Telemetry* tm = static_cast<Telemetry*>(param);
 
+    for (int i = 0; i < 100; ++i) {
+        tm->hw->left_odometry.setPosition(0.0, vex::rotationUnits::rev);
+        tm->hw->right_odometry.setPosition(0.0, vex::rotationUnits::rev);
+        tm->hw->back_odometry.setPosition(0.0, vex::rotationUnits::rev);
+    }
+    vex::wait(100, vex::timeUnits::msec); 
+
     // Updates continuously
     while(true) {
+
+
 
         double left_odometry_revolutions = tm->hw->left_odometry.position(vex::rotationUnits::rev);
         double right_odometry_revolutions = tm->hw->right_odometry.position(vex::rotationUnits::rev);
@@ -26,7 +35,6 @@ int Telemetry::update_position(void* param) {
         tm->hw->left_odometry.resetPosition();
         tm->hw->right_odometry.resetPosition();
         tm->hw->back_odometry.resetPosition();
-
 
         const double ODOMETRY_WIDTH = 2 * tm->rc->ODOMETRY_LEFT_RIGHT_RADIUS;
         

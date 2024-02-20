@@ -147,18 +147,12 @@ int Drive::run_catapult_thread(void* param)
         if (angle >= MAX_ANGLE && angle <= 350 && !dr->START_CATAPULT_LAUNCH) {
             // Robots need downward force to stop catapult
             dr->hw->catapult.stop();
-            if (dr->rc->ROBOT== SCRAT) dr->hw->catapult.spin(vex::directionType::rev, 1.0, vex::voltageUnits::volt);
-            else  dr->hw->catapult.spin(vex::directionType::rev, 1, vex::voltageUnits::volt);
+            dr->hw->catapult.spin(vex::directionType::rev, 1, vex::voltageUnits::volt);
             
         } else  {
             dr->hw->catapult.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
         }
-
-        // if (!dr->START_CATAPULT_LAUNCH) {
-        //     dr->hw->catapult.stop();
-        // } else  {
-        //     dr->hw->catapult.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
-        // }
+        
         vex::wait(10, vex::timeUnits::msec);
     }
 }
@@ -171,103 +165,240 @@ void Drive::stop_catapult() {
     START_CATAPULT_LAUNCH = false;
 }
 
-// void Drive::setup_bot() {
-
-//     // Expand intake
-//     std::cout << "EXPANDING" << std::endl;
-//     expand_intake();
-//     vex::wait(500, vex::timeUnits::msec);
-//     stop_intake_expansion();
-
-//     std::cout << "CATAPULTING" << std::endl;
-//     // Start catapult thread and close catapult
-//     vex::task catapult_task = vex::task(run_catapult_thread, this, 2);
-
-//     start_catapult();
-//     vex::wait(500, vex::timeUnits::msec);
-//     stop_catapult();
-
-//     vex::wait(1000, vex::timeUnits::msec);
-
-//     std::cout << "RETRACTING" << std::endl;
-//     // Retract intake
-//     retract_intake();
-//     vex::wait(500, vex::timeUnits::msec);
-//     stop_intake_expansion();
-//     //vex::wait(5000, vex::timeUnits::msec);
-
-//     std::cout << "ENDING" << std::endl;
-
-// }
 
 void Drive::run_catapult_strategy(int number_triballs) {
-        double velocity = 50;
+    double velocity = 50;
     if (rc->ROBOT == SCRATETTE) velocity = 50;
 
     // Expand intake
     expand_intake();
-    if (rc->ROBOT == SCRAT)  vex::wait(500, vex::timeUnits::msec);
-    vex::wait(500, vex::timeUnits::msec);
+    vex::wait(1000, vex::timeUnits::msec);
     stop_intake_expansion();
 
     // Start Catapult thread
     vex::task catapult_task = vex::task(run_catapult_thread, this, 1);
 
-    // Launch triball
-    start_catapult();
-    vex::wait(500, vex::timeUnits::msec);
-    stop_catapult();
 
-    // Call Drive function for catapult strategy
-    run_catapult_once(number_triballs);
+    // Move + Launch
+    for (int i = 0; i < number_triballs - 1; i++) {
+        run_catapult_arc_once();
+    }
 
-    // Launches last triball and finishes outword
-    turbo_drive_distance(6, true, velocity);
-    start_catapult();
-    vex::wait(500, vex::timeUnits::msec);
-    stop_catapult();
+    // Launches last triball and finishes outward
+    run_catapult_arc_once(true);
 
     stop_intake();
     retract_intake();
-    vex::wait(500, vex::timeUnits::msec);
-    if (rc->ROBOT == SCRAT)  vex::wait(500, vex::timeUnits::msec);
+    vex::wait(1000, vex::timeUnits::msec);
     stop_intake_expansion();
 
 }
 
-void Drive::run_catapult_once(int number_triballs) {
+void Drive::run_catapult_once() {
     double velocity = 50;
-    if (rc->ROBOT == SCRATETTE) velocity = 50;
+    if (rc->ROBOT == SCRATETTE) velocity = 80;
 
     // start intake
     activate_intake();
 
     // Move + Launch
-    for (int i = 0; i < number_triballs - 1; i++) {
-        turbo_drive_distance(6, true, velocity);
+    turbo_drive_distance(5.5, true, velocity);
 
-        start_catapult();
-        vex::wait(500, vex::timeUnits::msec);
-        stop_catapult();
-        if (rc->ROBOT == SCRATETTE) turbo_drive_distance(7, false, velocity);
-        else turbo_drive_distance(6.2, false, velocity);
+    start_catapult();
+    vex::wait(500, vex::timeUnits::msec);
+    stop_catapult();
+
+    turbo_drive_distance(5.6, false, velocity);
+
+}
+
+void Drive::run_catapult_arc_once(bool FINISH_OUTWARD) {
+    double drive_velocity = 50;
+    double turn_velocity = 30;
+    if (rc->ROBOT == SCRATETTE)  {
+        drive_velocity = 80;
+        turn_velocity = 50;
     }
+
+    // start intake
+    activate_intake();
+
+    // Move + Launch
+    turbo_drive_distance(5.5, true, drive_velocity); 
+
+    if (rc->ROBOT == SCRAT)  turbo_turn_relative(25, turn_velocity);
+    else turbo_turn_relative(335, turn_velocity); // Will go shortest distance so actually -25
+    
+    start_catapult();
+    vex::wait(100, vex::timeUnits::msec);
+    stop_catapult();
+
+    if (rc->ROBOT == SCRAT)  turbo_turn_relative(335, turn_velocity);
+    else turbo_turn_relative(25, turn_velocity); 
+
+    if (!FINISH_OUTWARD) turbo_drive_distance(5.6, false, drive_velocity);
 
 }
 
 void Drive::turbo_drive_distance(double distance, bool IS_REVERSE, double velocity) {
 
-    double num_wheel_revolutions = distance / rc->WHEEL_CIRCUMFERENCE;
+    double num_wheel_revolutions = distance / rc->WHEEL_CIRCUMFERENCE 
+        * rc->DRIVETRAIN_GEAR_RATIO_MULTIPLIER;
     
     // std::pair<double, double> vel = calculateDriveTrainVel(velPercent);
 
     hw->drivetrain.resetPosition();
 
     if (IS_REVERSE) num_wheel_revolutions = -num_wheel_revolutions;
-    hw->drivetrain.spinTo(num_wheel_revolutions, vex::rotationUnits::rev, velocity, vex::velocityUnits::pct, false);
+    hw->drivetrain.spinTo(num_wheel_revolutions, vex::rotationUnits::rev, velocity, 
+        vex::velocityUnits::pct, false);
     
     vex::wait(50, vex::timeUnits::msec);
-    while(fabs(hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0.0 || fabs(hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0.0); //Blocks other tasks from starting 
-
+    //Blocks other tasks from starting 
+    while(fabs(hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0.0 
+    || fabs(hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0.0){
+            vex::wait(20, vex::timeUnits::msec); // To let other threads run
+    } 
 
 }
+
+void Drive::turbo_turn(double heading, double velocity)
+{
+    // Corrects heading to be from 0-360 from the x axis counterclockwise if applicable
+    heading = fmod(heading, 360);
+    if (heading < 0)
+        heading += 360;
+
+    double angle_to_rotate = heading - tm->get_current_heading();
+    angle_to_rotate = fmod(angle_to_rotate, 360); // make sure the angle to rotate is -360 to 360
+    turbo_turn_relative(angle_to_rotate, velocity);
+}
+
+void Drive::turbo_turn_relative(double relative_angle, double velocity) {
+    // Determines whether to rotate left or right based on the  shortest distance
+    if (360 - fabs(relative_angle) < relative_angle)
+        relative_angle = relative_angle - 360;
+    
+    double revolutions = relative_angle  * (rc->DRIVETRAIN_WIDTH) * M_PI 
+        / (360 * rc->WHEEL_CIRCUMFERENCE) * rc->DRIVETRAIN_GEAR_RATIO_MULTIPLIER;
+
+    hw->left_drivetrain_motors.resetPosition();
+    hw->right_drivetrain_motors.resetPosition();
+
+    hw->left_drivetrain_motors.spinFor(-revolutions, vex::rotationUnits::rev, velocity, 
+        vex::velocityUnits::pct, false);
+    hw->right_drivetrain_motors.spinFor(revolutions, vex::rotationUnits::rev, velocity, 
+        vex::velocityUnits::pct);
+
+    // Blocks other tasks from starting
+    while (fabs(hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0 
+        || fabs(hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct)) > 0); 
+
+}
+
+void Drive::arc_in_place(double distance, double min_velocity, double max_velocity, bool IS_CLOCKWISE, bool IS_BACKWARD) {
+
+
+    const double stopping_aggression = 0.5; //0.1; // Lower number is higher aggression (steeper slope)
+    double velocity = min_velocity;
+
+    double num_wheel_revolutions = distance / rc->WHEEL_CIRCUMFERENCE 
+        * rc->DRIVETRAIN_GEAR_RATIO_MULTIPLIER;;
+    if (IS_BACKWARD) num_wheel_revolutions = -num_wheel_revolutions;
+    
+    hw->drivetrain.resetPosition();
+
+    vex::motor_group drivetrain_side = hw->right_drivetrain_motors;
+    if (IS_CLOCKWISE) {
+        drivetrain_side = hw->left_drivetrain_motors;
+    }
+    drivetrain_side.spinTo(num_wheel_revolutions, vex::rotationUnits::rev, velocity, 
+            vex::velocityUnits::pct, false);
+
+    vex::wait(30, vex::timeUnits::msec);
+
+    float current_distance = fabs(drivetrain_side.position(vex::rotationUnits::rev)) 
+        * rc->WHEEL_CIRCUMFERENCE;
+
+    // Speeds up as it gets leaves, slows down as it gets closer
+    while(distance - current_distance > 0.5) {
+        if (current_distance >= distance/2) {
+            // First half of distance
+            velocity = atan(distance - current_distance) * 2 * (max_velocity-min_velocity) / M_PI 
+                + min_velocity;
+        } else {
+            // Second half of distance
+            velocity = atan(stopping_aggression * current_distance) * 2 * max_velocity / M_PI;
+        }
+
+        drivetrain_side.setVelocity(velocity, vex::velocityUnits::pct);
+
+        vex::wait(50, vex::timeUnits::msec);
+        current_distance = fabs(drivetrain_side.position(vex::rotationUnits::rev)) 
+            * rc->WHEEL_CIRCUMFERENCE;
+        //std::cout << current_distance << std::endl;
+    }
+
+};
+
+
+
+void Drive::arc(double distance, double min_velocity, double max_velocity, double velocity_side_difference, bool IS_CLOCKWISE, bool IS_BACKWARD) {
+    
+    double num_wheel_revolutions = distance / rc->WHEEL_CIRCUMFERENCE
+        * rc->DRIVETRAIN_GEAR_RATIO_MULTIPLIER;;
+    double stopping_aggression = 0.1;
+
+    vex::directionType direction = vex::directionType::fwd;
+    
+    if (IS_BACKWARD) {
+        num_wheel_revolutions = -num_wheel_revolutions ;
+        direction = vex::directionType::rev;
+    }
+
+    double faster_velocity = min_velocity;
+    
+    hw->drivetrain.resetPosition();
+
+    vex::motor_group faster_motors = hw->left_drivetrain_motors;
+    vex::motor_group slower_motors = hw->right_drivetrain_motors;
+
+    if (!IS_CLOCKWISE) {
+        faster_motors = hw->right_drivetrain_motors;
+        slower_motors = hw->left_drivetrain_motors;
+    }
+
+    faster_motors.spinTo(num_wheel_revolutions, vex::rotationUnits::rev, 
+        faster_velocity, vex::velocityUnits::pct, false);
+    slower_motors.spin(direction, faster_velocity * velocity_side_difference, vex::velocityUnits::pct);
+
+    vex::wait(30, vex::timeUnits::msec);
+
+    float current_distance = fabs(faster_motors.position(vex::rotationUnits::rev)) 
+        * rc->WHEEL_CIRCUMFERENCE;
+
+    // Speeds up as it gets leaves, slows down as it gets closer
+    while(distance - current_distance > 0.5) {
+        if (current_distance >= distance/2) {
+            // First half of distance
+            faster_velocity = atan(distance - current_distance) * 2 * (max_velocity-min_velocity) / M_PI 
+                + min_velocity;
+        } else {
+            // Second half of distance
+            faster_velocity = atan(stopping_aggression * current_distance) * 2 * max_velocity / M_PI;
+        }
+
+        faster_motors.setVelocity(faster_velocity, vex::velocityUnits::pct);
+        slower_motors.setVelocity(faster_velocity * velocity_side_difference, vex::velocityUnits::pct);
+
+        vex::wait(50, vex::timeUnits::msec);
+        current_distance = fabs(faster_motors.position(vex::rotationUnits::rev)) 
+            * rc->WHEEL_CIRCUMFERENCE;
+        //std::cout << current_distance << std::endl;
+    }
+
+
+    slower_motors.stop();
+
+}
+

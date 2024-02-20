@@ -101,15 +101,54 @@ protected:
     /// @param number_triballs Value passed into run_catapult_once()
     void run_catapult_strategy(int number_triballs=10);
 
-    /// @brief Intake triball, drive up and launch
-    /// @param number_triballs Repeats process for how many triball is passed. (Default: once)
-    void run_catapult_once(int number_triballs=2);
+    /// @brief Intake triball, drive back and launch
+    void run_catapult_once();
+
+    /// @brief Intake triball, drive back, turn, and launch
+    /// @param FINISH_OUTWARD If true, will finish away from loading zone, if false, will fi
+    /// finish against loading zone
+    void run_catapult_arc_once(bool FINISH_OUTWARD=false);
 
     void turbo_drive_distance(double distance, bool IS_REVERSE, double velocity = 80);
+    
+    /// @brief  Rotates the shortest distance ONLY using encoders on wheels (no odometry).
+    ///     Good for turning that needs to be fast and might never get to position (ramming). 
+    /// @param heading  Double that is the counterclockwise angle in degrees from the x axis
+    /// @param velocity  Velocity to turn at (%)
+    void turbo_turn(double heading, double velocity=60);
+
+    /// @brief  Rotates to the relative angle  ONLY using encoders on wheels (no odometry).
+    ///     Good for turning that needs to be fast and might never get to position (ramming). 
+    /// @param relative_angle  Double that is the counterclockwise angle in degrees RELATIVE to 
+    ///     the current robot heading.
+    /// @param velocity  Velocity to turn at (%)
+    void turbo_turn_relative(double relative_angle, double velocity=60);
+
+    /// @brief Drives in arc with one side stationary. Does NOT use odometry.
+    /// @param distance Distance (inches) to arc.
+    /// @param min_velocity Starting velocity (% from 0-100) to drive
+    /// @param max_velocity Max Acceleration Velocity  (% from 0-100) to drive
+    /// @param IS_CLOCKWISE True if arcing clockwise, False if counterclockwise
+    /// @param IS_BACKWARD  True if arcing backward, False is arcing forward
+    void arc_in_place(double distance, double min_velocity=20, double max_velocity=80, bool IS_CLOCKWISE=true, bool IS_BACKWARD = false);
 
 
+    /// @brief Drives in arc with using both sides of drivetrain. Does NOT use odometry.
+    /// @param distance Max distance to drive with furthest traveling side
+    /// @param left_velocity 
+
+    /// @param IS_CLOCKWISE 
+    /// @param IS_BACKWARD 
+
+    /// @brief Drives in arc with using both sides of drivetrain. Does NOT use odometry.
+    /// @param distance Max distance to drive with furthest traveling side
+    /// @param left_velocity  Velocity (%) for left drivetrain side
+    /// @param right_velocity Velocity (%) for right drivetrain side
+    /// @param IS_BACKWARD True if arcing backward, False is arcing forward
+    void arc(double distance, double min_velocity, double max_velocity, double velocity_side_difference, bool IS_CLOCKWISE, bool IS_BACKWARD);
 
     bool START_CATAPULT_LAUNCH = false;
     bool CATAPULT_STOPPED = true;
     bool SNOWPLOW_OUT = false;
+    
 };
