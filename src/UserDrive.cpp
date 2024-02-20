@@ -52,10 +52,14 @@ void UserDrive::drivetrain_controls() {
 
 
 void UserDrive::snowplow_controls() {
-    if (hw->controller.ButtonX.pressing()) {
-        snowplow_out();
-    }else if (hw->controller.ButtonY.pressing()) {
-        snowplow_in();
+    if (hw->controller.ButtonA.pressing()) {
+        if (!PLOW_EXPANDED) {
+            snowplow_out();
+            PLOW_EXPANDED = true;
+        } else {
+            snowplow_in();
+            PLOW_EXPANDED = false;
+        }
     }
 }
 
@@ -69,17 +73,21 @@ void UserDrive::catapult_controls()
 
 void UserDrive::intake_controls()
 {
-    if (hw->controller.ButtonR1.pressing()) {
+    if (hw->controller.ButtonX.pressing()) {
+        stop_intake();
+    } else if (hw->controller.ButtonR1.pressing()) {
         if (!INTAKE_EXPANDED) {
             expand_intake();
             activate_intake();    
         }
         INTAKE_EXPANDED = true;
         intake_count = 0;
-    } else if (!hw->controller.ButtonR2.pressing() && !hw->controller.ButtonL2.pressing()) {
+    } else if (!hw->controller.ButtonR2.pressing() && !hw->controller.ButtonL2.pressing()
+    && !INTAKE_HELD) {
         if (INTAKE_EXPANDED) {
             retract_intake();
             stop_intake();
+            INTAKE_HELD = false;
         }
         INTAKE_EXPANDED = false;
         intake_count = 0;
@@ -87,14 +95,17 @@ void UserDrive::intake_controls()
         if (!INTAKE_EXPANDED) {
             expand_intake();
             hw->right_intake_motor.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
+            INTAKE_HELD = true;
         }
         INTAKE_EXPANDED = true;
         intake_count = 0;
     } else if (hw->controller.ButtonL2.pressing()) {
         if (INTAKE_EXPANDED) {
             retract_intake();
-            hw->right_intake_motor.stop();
+            // stop_intake();
+            INTAKE_HELD = false;
         }
+        reverse_intake();
     }
     if (intake_count >= 800) stop_intake_expansion();
     intake_count += 20;
@@ -117,7 +128,7 @@ void UserDrive::intake_controls()
 void UserDrive::activate_catapult_strategy()
 {
 
-    if (hw->controller.ButtonR2.pressing()) { 
+    if (hw->controller.ButtonB.pressing()) { 
         if (!CATAPULT_STRATEGY_RAN) {
             // Expand intake
             expand_intake();

@@ -28,6 +28,8 @@ private:
     void activate_catapult_strategy();
 
     bool INTAKE_EXPANDED = false;
+    bool INTAKE_HELD = false;
+    bool PLOW_EXPANDED = false;
     int intake_count;
     bool CATAPULT_STRATEGY_RAN = false;
 };
