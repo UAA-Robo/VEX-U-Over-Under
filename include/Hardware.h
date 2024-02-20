@@ -59,7 +59,7 @@ public:
     vex::motor_group catapult = vex::motor_group(left_catapult_motor, right_catapult_motor);
 
     // Intake
-    vex::motor left_intake_motor = vex::motor(vex::PORT3, vex::ratio18_1, true);
+    vex::motor left_intake_motor = vex::motor(vex::PORT2, vex::ratio18_1, true);
     vex::motor right_intake_motor = vex::motor(vex::PORT10, vex::ratio18_1, false);
     vex::motor_group intake = vex::motor_group(left_intake_motor, right_intake_motor);
 
@@ -70,13 +70,11 @@ public:
     // Limit switches
     vex::digital_in catapult_limit_switch = vex::digital_in(brain.ThreeWirePort.H);
     
-    // Climb motors
-    // vex::motor front_climb_motor = vex::motor(vex::PORT9, vex::ratio36_1, false);
-    // vex::motor middle_climb_motor = vex::motor(vex::PORT1, vex::ratio36_1, true);
-    // vex::motor back_climb_motor = vex::motor(vex::PORT2, vex::ratio36_1, false);
-    // vex::motor_group climb_motors = vex::motor_group(front_climb_motor, middle_climb_motor, back_climb_motor);
+
 
     vex::motor right_climb_motor = vex::motor(vex::PORT1, vex::ratio36_1);
-    vex::motor left_climb_motor = vex::motor(vex::PORT2, vex::ratio36_1);
+    vex::motor left_climb_motor = vex::motor(vex::PORT21, vex::ratio36_1);
+    vex::motor climb_lock = vex::motor(vex::PORT14, vex::ratio36_1);
+
 
 };

@@ -120,4 +120,12 @@ void UserDrive::climb_controls()
         hw->left_climb_motor.stop();
 
     }
+
+    if (hw->controller.ButtonLeft.pressing()) {
+        hw->climb_lock.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
+    } else if (hw->controller.ButtonRight.pressing()) {
+        hw->climb_lock.spin(vex::directionType::fwd, 12.0, vex::voltageUnits::volt);
+    } else {
+        hw->climb_lock.stop();
+    }
 }
