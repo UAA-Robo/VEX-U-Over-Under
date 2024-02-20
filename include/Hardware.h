@@ -60,7 +60,6 @@ public:
 
     // Intake
     vex::motor left_intake_motor = vex::motor(vex::PORT2, vex::ratio18_1, true);
-    vex::motor left_intake_motor = vex::motor(vex::PORT2, vex::ratio18_1, true);
     vex::motor right_intake_motor = vex::motor(vex::PORT10, vex::ratio18_1, false);
     vex::motor_group intake = vex::motor_group(left_intake_motor, right_intake_motor);
 

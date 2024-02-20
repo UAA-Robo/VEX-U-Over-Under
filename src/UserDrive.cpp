@@ -98,7 +98,7 @@ void UserDrive::intake_controls()
         stop_intake();
         INTAKE_IS_REVERSING = false;
     } else if (hw->controller.ButtonR2.pressing()) {
-        if (!INTAKE_EXPANDED) {
+        if (!INTAKE_EXPANDED || !hw->intake.isSpinning()) {
             expand_intake();
             hw->right_intake_motor.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
             INTAKE_HELD = true;
