@@ -19,6 +19,9 @@ RobotConfig::RobotConfig(Hardware* hardware)
         hw->left_odometry.setReversed(false);
         hw->back_odometry.setReversed(true);
 
+        hw->right_intake_motor.setReversed(true);
+        hw->left_intake_motor.setReversed(false);
+
         /*
         ----SET DIMENSIONS (in) --------------------------------------------------------------
         */
