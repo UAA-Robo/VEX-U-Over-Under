@@ -80,7 +80,7 @@ int main() {
 
 	//Competition callbacks
 	Competition.autonomous(autonomous);
-	Competition.drivercontrol(autonomous);
+	Competition.drivercontrol(usercontrol);
 
 	// Run the pre-autonomous function.
 	pre_auton();

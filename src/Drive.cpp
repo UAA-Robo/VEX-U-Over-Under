@@ -13,7 +13,11 @@ Drive::Drive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *telemetry)
 std::pair<double, double> Drive::calculate_drivetrain_velocity(std::pair<double, double> velocity_percent)
 {
     double vertical_velocity_percent = velocity_percent.first / 100;
-    double horizontal_velocity_percent = velocity_percent.second / 110; // To reduce sensitivity when turning 
+
+    double horizontal_velocity_percent;
+
+    if (rc->ROBOT == SCRAT) horizontal_velocity_percent = velocity_percent.second / 300; // To reduce sensitivity when turning 
+    else  horizontal_velocity_percent = velocity_percent.second / 110;
 
     // Calculate raw left and right motor velocity
     double raw_left_velocity = vertical_velocity_percent + horizontal_velocity_percent;
