@@ -6,7 +6,11 @@ UserDrive::UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *te
 
 void UserDrive::drive()
 {
+
+    hw->right_intake_expansion_motor.setBrake(vex::brakeType::hold);
+    hw->left_intake_expansion_motor.setBrake(vex::brakeType::hold);
     // Expand intake
+    intake_count = 0;
     expand_intake();
     if (rc->ROBOT == SCRAT)  vex::wait(500, vex::timeUnits::msec);
     vex::wait(500, vex::timeUnits::msec);
@@ -58,33 +62,55 @@ void UserDrive::snowplow_controls() {
 
 void UserDrive::catapult_controls()
 {
-    if (hw->controller.ButtonR1.pressing()) start_catapult();
+    if (hw->controller.ButtonL1.pressing()) start_catapult();
     else stop_catapult();
 }
 
 
 void UserDrive::intake_controls()
 {
-    if (hw->controller.ButtonL1.pressing()){
-        expand_intake();
+    if (hw->controller.ButtonR1.pressing()) {
+        if (!INTAKE_EXPANDED) {
+            expand_intake();
+            activate_intake();    
+        }
         INTAKE_EXPANDED = true;
-    } else if (hw->controller.ButtonL2.pressing()) {
-        retract_intake();
+        intake_count = 0;
+    } else if (!hw->controller.ButtonR2.pressing() && !hw->controller.ButtonL2.pressing()) {
+        if (INTAKE_EXPANDED) {
+            retract_intake();
+            stop_intake();
+        }
         INTAKE_EXPANDED = false;
-    } else {
-        stop_intake_expansion();
+        intake_count = 0;
+    } else if (hw->controller.ButtonR2.pressing()) {
+        if (!INTAKE_EXPANDED) {
+            expand_intake();
+            hw->right_intake_motor.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
+        }
+        INTAKE_EXPANDED = true;
+        intake_count = 0;
+    } else if (hw->controller.ButtonL2.pressing()) {
+        if (INTAKE_EXPANDED) {
+            retract_intake();
+            hw->right_intake_motor.stop();
+        }
     }
+    if (intake_count >= 800) stop_intake_expansion();
+    intake_count += 20;
 
-    // Activate intake when expanded
-    if (hw->controller.ButtonB.pressing()) {
-        reverse_intake();
-    }
-    else if (INTAKE_EXPANDED && !hw->controller.ButtonL1.pressing()) {
-        activate_intake();  
-    } 
-    else {
-        stop_intake();
-    }
+    // // Activate intake when expanded
+    // if (hw->controller.ButtonB.pressing()) {
+    //     reverse_intake();
+    // }
+    // else if (INTAKE_EXPANDED && !hw->controller.ButtonL1.pressing()) {
+    //     activate_intake();  
+    // } 
+    // else {
+    //     stop_intake();
+    // }
+
+
 
 }
 
