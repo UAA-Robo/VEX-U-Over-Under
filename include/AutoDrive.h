@@ -26,8 +26,13 @@ private:
 
     std::vector<std::pair<double, double>> path;
 
+    void test_odometry();
+
     /// @brief Starts the auto strategy for SKILLS.
     void execute_skills_plan();
+
+    /// @brief Starts the auto strategy for HEAD TOHEAD
+    void execute_head_to_head_plan();
 
     double robot_angle_offset = 0; // For Granny bc she veers left
 
@@ -41,7 +46,7 @@ private:
     /// @brief Rotates the shortest distance by turning left or right to the heading. Uses odometry sensors.
     /// @param heading Double that is the counterclockwise angle in degrees from the x asis.
     /// @param IS_TURBO Set to true to drive at high speed. Defaults to false.
-    void rotate_to_heading(double heading, bool IS_TURBO = false);
+    void rotate_to_heading(double heading, bool IS_TURBO=false);
 
     /// @brief Rotates the robot to align with a coordinate on the field.  Assumes 0 degrees is at 
     /// the positive x axis.
@@ -94,14 +99,11 @@ private:
     /// @param position Pair of doubles: {X, Y}
     /// @param ISBACKTOPOSITION A bool value that determines the direction the bot moves.
     /// @param IS_TURBO Set to true to drive at high speed. Defaults to false.
-    void drive_to_position(std::pair<double, double> position, bool ISBACKTOPOSITION = false,
+    void drive_to_position(
+        std::pair<double, double> position, bool ISBACKTOPOSITION = false,
         bool IS_TURBO = false);
 
 
-    /// @brief  Rotates the shortest distance ONLY using encoders on wheels (no odometry).
-    ///     Good for turning that needs to be fast and might never get to position (ramming). 
-    /// @param heading  Double that is the counterclockwise angle in degrees from the x asis.
-    void turbo_turn(double heading);
 
     /// @brief Executes the plow strategy in the game.
     void run_plow_strategy();
@@ -112,5 +114,16 @@ private:
     /// @brief Prompts the robot to climb up a certain distance
     /// @param height The height the robot has to climb
     void climb_distance(double height);
+
+    double min_turn_velocity = 5;
+    double max_turn_velocity = 18;
+    double turn_stopping_aggression = 0.08;
+    double turbo_turn_velocity = 50;
+
+    double min_drive_velocity = 5;
+    double max_drive_velocity = 40;
+    double drive_stopping_aggression = 0.1;
+    double turbo_drive_velocity = 80;
+
 
 };

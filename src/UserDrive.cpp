@@ -6,7 +6,11 @@ UserDrive::UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *te
 
 void UserDrive::drive()
 {
+
+    hw->right_intake_expansion_motor.setBrake(vex::brakeType::hold);
+    hw->left_intake_expansion_motor.setBrake(vex::brakeType::hold);
     // Expand intake
+    intake_count = 0;
     expand_intake();
     if (rc->ROBOT == SCRAT)  vex::wait(500, vex::timeUnits::msec);
     vex::wait(500, vex::timeUnits::msec);
@@ -48,59 +52,99 @@ void UserDrive::drivetrain_controls() {
 
 
 void UserDrive::snowplow_controls() {
-    if (hw->controller.ButtonX.pressing()) {
-        snowplow_out();
-    }else if (hw->controller.ButtonY.pressing()) {
-        snowplow_in();
+    if (hw->controller.ButtonA.pressing()) {
+        if (!PLOW_EXPANDED) {
+            snowplow_out();
+            PLOW_EXPANDED = true;
+        } else {
+            snowplow_in();
+            PLOW_EXPANDED = false;
+        }
     }
 }
 
 
 void UserDrive::catapult_controls()
 {
-    if (hw->controller.ButtonR1.pressing()) start_catapult();
+    if (hw->controller.ButtonL1.pressing()) start_catapult();
     else stop_catapult();
 }
 
 
 void UserDrive::intake_controls()
 {
-    if (hw->controller.ButtonL1.pressing()){
-        expand_intake();
-        INTAKE_EXPANDED = true;
-    } else if (hw->controller.ButtonL2.pressing()) {
-        retract_intake();
-        INTAKE_EXPANDED = false;
-    } else {
-        stop_intake_expansion();
-    }
-
-    // Activate intake when expanded
-    if (hw->controller.ButtonB.pressing()) {
-        reverse_intake();
-    }
-    else if (INTAKE_EXPANDED && !hw->controller.ButtonL1.pressing()) {
-        activate_intake();  
-    } 
-    else {
+    if (hw->controller.ButtonX.pressing()) {
         stop_intake();
+    } else if (hw->controller.ButtonR1.pressing()) {
+        if (!INTAKE_EXPANDED) {
+            expand_intake();
+            activate_intake();    
+        }
+        INTAKE_EXPANDED = true;
+        intake_count = 0;
+    } else if (!hw->controller.ButtonR2.pressing() && !hw->controller.ButtonL2.pressing()
+    && !INTAKE_HELD && !INTAKE_IS_REVERSING) {
+        std::cout << "up\n";
+        if (INTAKE_EXPANDED) {
+            retract_intake();
+            stop_intake();
+            INTAKE_HELD = false;
+        }
+        INTAKE_EXPANDED = false;
+        intake_count = 0;
+    } else if (INTAKE_IS_REVERSING && !hw->controller.ButtonL2.pressing()) {
+        std::cout << "stopping reverse\n";
+        stop_intake();
+        INTAKE_IS_REVERSING = false;
+    } else if (hw->controller.ButtonR2.pressing()) {
+        if (!INTAKE_EXPANDED) {
+            expand_intake();
+            hw->right_intake_motor.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
+            INTAKE_HELD = true;
+        }
+        INTAKE_EXPANDED = true;
+        intake_count = 0;
+    } else if (hw->controller.ButtonL2.pressing()) {
+        if (INTAKE_EXPANDED) {
+            retract_intake();
+            // stop_intake();
+            INTAKE_HELD = false;
+        }
+        reverse_intake();
+        INTAKE_IS_REVERSING = true;
     }
+    if (intake_count >= 800) stop_intake_expansion();
+    intake_count += 20;
+
+    // // Activate intake when expanded
+    // if (hw->controller.ButtonB.pressing()) {
+    //     reverse_intake();
+    // }
+    // else if (INTAKE_EXPANDED && !hw->controller.ButtonL1.pressing()) {
+    //     activate_intake();  
+    // } 
+    // else {
+    //     stop_intake();
+    // }
+
+
 
 }
 
 void UserDrive::activate_catapult_strategy()
 {
-    if (hw->controller.ButtonR2.pressing()) { run_catapult_once(2); }
 
-    // if (hw->controller.ButtonR2.pressing() && STRATEGY_ON) {
-    //     STRATEGY_ON = false;
-    //     stop_intake();
-    //     retract_intake();
-    //     vex::wait(500, vex::msec);  // give time for ability to turn on
-    // }
-    // else if (hw->controller.ButtonR2.pressing() && !STRATEGY_ON) {
-    //     STRATEGY_ON = true;
-    //     expand_intake();
-    //     vex::wait(500, vex::msec);  // give time for ability to turn off
-    // }
+    if (hw->controller.ButtonB.pressing()) { 
+        if (!CATAPULT_STRATEGY_RAN) {
+            // Expand intake
+            expand_intake();
+            vex::wait(500, vex::timeUnits::msec);
+            stop_intake_expansion();
+        }
+            run_catapult_once(); 
+        CATAPULT_STRATEGY_RAN = true;
+    }else {
+        CATAPULT_STRATEGY_RAN = false;
+    }
+
 }
