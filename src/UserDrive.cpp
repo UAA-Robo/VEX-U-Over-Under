@@ -83,7 +83,8 @@ void UserDrive::intake_controls()
         INTAKE_EXPANDED = true;
         intake_count = 0;
     } else if (!hw->controller.ButtonR2.pressing() && !hw->controller.ButtonL2.pressing()
-    && !INTAKE_HELD) {
+    && !INTAKE_HELD && !INTAKE_IS_REVERSING) {
+        std::cout << "up\n";
         if (INTAKE_EXPANDED) {
             retract_intake();
             stop_intake();
@@ -92,7 +93,9 @@ void UserDrive::intake_controls()
         INTAKE_EXPANDED = false;
         intake_count = 0;
     } else if (INTAKE_IS_REVERSING && !hw->controller.ButtonL2.pressing()) {
+        std::cout << "stopping reverse\n";
         stop_intake();
+        INTAKE_IS_REVERSING = false;
     } else if (hw->controller.ButtonR2.pressing()) {
         if (!INTAKE_EXPANDED) {
             expand_intake();
