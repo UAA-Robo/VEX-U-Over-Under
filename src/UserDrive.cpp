@@ -47,7 +47,12 @@ void UserDrive::drivetrain_controls() {
         left_right = 0;
     }
 
-    move_drivetrain({forward_backward, left_right});
+    move_drivetrain(
+        {
+            forward_backward * fwd_bwd_joystick_multiplier,
+            left_right * left_right_joystick_multiplier
+        }
+    );
 }
 
 
@@ -76,10 +81,12 @@ void UserDrive::intake_controls()
 {
     if (hw->controller.ButtonX.pressing()) {
         stop_intake();
+        left_right_joystick_multiplier = 0.8;
     } else if (hw->controller.ButtonR1.pressing()) {
         if (!INTAKE_EXPANDED) {
             expand_intake();
-            activate_intake();    
+            activate_intake();
+            left_right_joystick_multiplier = 0.4;    
         }
         INTAKE_EXPANDED = true;
         intake_count = 0;
@@ -89,6 +96,7 @@ void UserDrive::intake_controls()
         if (INTAKE_EXPANDED) {
             retract_intake();
             stop_intake();
+            left_right_joystick_multiplier = 0.8;
             INTAKE_HELD = false;
         }
         INTAKE_EXPANDED = false;
@@ -96,10 +104,12 @@ void UserDrive::intake_controls()
     } else if (INTAKE_IS_REVERSING && !hw->controller.ButtonL2.pressing()) {
         std::cout << "stopping reverse\n";
         stop_intake();
+        left_right_joystick_multiplier = 0.8;
         INTAKE_IS_REVERSING = false;
     } else if (hw->controller.ButtonR2.pressing()) {
         if (!INTAKE_EXPANDED || !hw->intake.isSpinning()) {
             expand_intake();
+            left_right_joystick_multiplier = 0.4;
             hw->right_intake_motor.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
             INTAKE_HELD = true;
         }
@@ -108,6 +118,7 @@ void UserDrive::intake_controls()
     } else if (hw->controller.ButtonL2.pressing()) {
         if (INTAKE_EXPANDED) {
             retract_intake();
+            left_right_joystick_multiplier = 0.8;
             // stop_intake();
             INTAKE_HELD = false;
         }
@@ -138,6 +149,7 @@ void UserDrive::activate_catapult_strategy()
     if (hw->controller.ButtonB.pressing()) { 
         if (!CATAPULT_STRATEGY_RAN) {
             // Expand intake
+            INTAKE_EXPANDED = true;
             expand_intake();
             vex::wait(500, vex::timeUnits::msec);
             stop_intake_expansion();
@@ -171,4 +183,11 @@ void UserDrive::climb_controls()
     } else {
         hw->climb_lock.stop();
     }
+}
+
+void UserDrive::super_slow_mode() {
+    if (hw->controller.ButtonY.pressing() && left_right_joystick_multiplier == 1.0) 
+        left_right_joystick_multiplier = 0.25;
+    else if (hw->controller.ButtonY.pressing() && left_right_joystick_multiplier == 0.25)
+        left_right_joystick_multiplier = 1.0;
 }
