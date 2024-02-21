@@ -147,7 +147,8 @@ void AutoDrive::execute_head_to_head_plan() {
 
         // 11
         std::cout << "11 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
-
+        
+        turbo_drive_distance(5, false, 30); // Make sure to get to bar
 
         expand_intake();
         vex::wait(1000, vex::timeUnits::msec);
