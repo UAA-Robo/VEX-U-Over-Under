@@ -12,14 +12,15 @@ void UserDrive::drive()
     // Expand intake
     intake_count = 0;
     expand_intake();
-    if (rc->ROBOT == SCRAT)  vex::wait(500, vex::timeUnits::msec);
+    if (rc->ROBOT == SCRAT) vex::wait(500, vex::timeUnits::msec);
     vex::wait(500, vex::timeUnits::msec);
     stop_intake_expansion();
+    INTAKE_EXPANDED = true;
 
     // Then start catapult thread
         //if (rc->ROBOT == SCRATETTE) run_catapult_catapult_strategy(30);
         //else vex::task catapult_task = vex::task(run_catapult_thread, this, 1);
-        catapult_task = vex::task(run_catapult_thread_plz_work, this, 2);
+        catapult_task = vex::task(run_catapult_thread, this, 2);
 
     while(true) {
 
@@ -47,6 +48,12 @@ void UserDrive::drivetrain_controls() {
     if (std::abs(left_right) < DEADZONE) {
         left_right = 0;
     }
+
+    // Keep responsive arcing
+    // if (forward_backward != 0 && left_right != 0 && !INTAKE_EXPANDED && !INTAKE_HELD) {
+    //     left_right /= left_right_joystick_multiplier * 0.8;
+    // }
+    
 
     move_drivetrain(
         {
@@ -82,14 +89,14 @@ void UserDrive::intake_controls()
 {
     if (hw->controller.ButtonX.pressing()) {
         stop_intake();
-        left_right_joystick_multiplier = 0.8;
+        left_right_joystick_multiplier = HIGH_DRIVETRAIN_VELOCITY;
     } else if (hw->controller.ButtonR1.pressing()) {
         if (!INTAKE_EXPANDED || INTAKE_HELD) {
             INTAKE_HELD = false;
             expand_intake();
             activate_intake();
             CATAPULT_DISABLED = false;
-            left_right_joystick_multiplier = 0.4;    
+            left_right_joystick_multiplier = LOW_DRIVETRAIN_VELOCITY;    
         }
         INTAKE_EXPANDED = true;
         intake_count = 0;
@@ -99,20 +106,20 @@ void UserDrive::intake_controls()
             retract_intake();
             stop_intake();
             CATAPULT_DISABLED = true;
-            left_right_joystick_multiplier = 0.8;
+            left_right_joystick_multiplier = HIGH_DRIVETRAIN_VELOCITY;
             INTAKE_HELD = false;
         }
         INTAKE_EXPANDED = false;
         intake_count = 0;
     } else if (INTAKE_IS_REVERSING && !hw->controller.ButtonL2.pressing()) {
         stop_intake();
-        left_right_joystick_multiplier = 0.8;
+        left_right_joystick_multiplier = HIGH_DRIVETRAIN_VELOCITY;
         INTAKE_IS_REVERSING = false;
     } else if (hw->controller.ButtonR2.pressing()) {
         if (!INTAKE_EXPANDED || !hw->intake.isSpinning()) {
             expand_intake();
             CATAPULT_DISABLED = false;
-            left_right_joystick_multiplier = 0.4;
+            left_right_joystick_multiplier = LOW_DRIVETRAIN_VELOCITY;
             hw->right_intake_motor.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
             INTAKE_HELD = true;
         }
@@ -122,9 +129,10 @@ void UserDrive::intake_controls()
         if (INTAKE_EXPANDED) {
             retract_intake();
             CATAPULT_DISABLED = true;
-            left_right_joystick_multiplier = 0.8;
+            left_right_joystick_multiplier = HIGH_DRIVETRAIN_VELOCITY;
             // stop_intake();
             INTAKE_HELD = false;
+            intake_count = 0;
         }
         reverse_intake();
         INTAKE_IS_REVERSING = true;
@@ -194,42 +202,10 @@ void UserDrive::climb_controls()
     }
 }
 
-int UserDrive::run_catapult_thread_plz_work(void* param)
-{
-    std::cout << "Plz work version Created\n";
-    // WARNING: DON'T print in this thread or it will take too long and miss the catapult press
-    UserDrive* dr = static_cast<UserDrive*>(param);
-    dr->hw->catapult_sensor.resetPosition();
-    
-
-    // 0 deg is really 358-2 deg
-    double MAX_ANGLE = dr->rc->MAX_CATAPULT_ANGLE - 5; // To slow down early
-    double angle; 
-    while(true) {
-        // STOP catapult
-        angle = dr->hw->catapult_sensor.angle(vex::deg);
-        if (dr->START_CATAPULT_LAUNCH) {
-            std::cout << "Starting catapult launch\n";
-        }
-        if (angle >= MAX_ANGLE && angle <= 350 && !dr->START_CATAPULT_LAUNCH) {
-            // Robots need downward force to stop catapult
-            dr->hw->catapult.stop();
-            std::cout << "1 volt\n";
-            dr->hw->catapult.spin(vex::directionType::rev, 1, vex::voltageUnits::volt);
-            
-        } else  {
-            std::cout << "12 volts\n";
-            dr->hw->catapult.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
-            dr->hw->left_drivetrain_motors.spin(vex::directionType::fwd, 4.0, vex::voltageUnits::volt);
-        }
-        
-        vex::wait(10, vex::timeUnits::msec);
-    }
-}
-
 void UserDrive::last_chance() {
     if (hw->controller.ButtonY.pressing()) {
         catapult_task.stop();
-        catapult_task = vex::task(run_catapult_thread_plz_work, this, 2);
+        catapult_task = vex::task(run_catapult_thread, this, 2);
+        hw->catapult.spin(vex::directionType::rev, 6.0, vex::voltageUnits::volt);
     }
 }

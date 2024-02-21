@@ -33,16 +33,15 @@ private:
     /// @brief Press A button to activate climb motors
     void climb_controls();
 
-    /// @brief Should never use
-    /// @param param Pain
-    /// @return Suffering
-    static int run_catapult_thread_plz_work(void* param);
-
     /// @brief Reconnect to the catapult thread when we disconnect.
     void last_chance();
 
+    const float LOW_DRIVETRAIN_VELOCITY = 0.35;
+    const float HIGH_DRIVETRAIN_VELOCITY = 0.35;
+
     float fwd_bwd_joystick_multiplier = 1.0;
-    float left_right_joystick_multiplier = 0.8;
+    float left_right_joystick_multiplier = HIGH_DRIVETRAIN_VELOCITY;
+
     bool CATAPULT_DISABLED = false;
     bool INTAKE_EXPANDED = false;
     bool INTAKE_HELD = false;
