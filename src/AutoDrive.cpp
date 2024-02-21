@@ -15,11 +15,15 @@ void AutoDrive::drive() {
     hw->left_intake_expansion_motor.setStopping(vex::brakeType::hold);
     hw->right_intake_expansion_motor.setStopping(vex::brakeType::hold);
 
-    tm->set_heading(0);
-    rotate_to_heading(20);
+    // tm->set_heading(0);
+    // tm->set_position({0,0});
+    // //rotate_to_heading(45);
+    // drive_to_position({24, 0});
+    // std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
+
 
     
-    //execute_head_to_head_plan(); //! ELIMINATE OPPONENTS
+    execute_head_to_head_plan(); //! ELIMINATE OPPONENTS
 }
 
 
@@ -39,7 +43,7 @@ void AutoDrive::execute_head_to_head_plan() {
         vex::wait(300, vex::timeUnits::msec);
         stop_intake_expansion();
 
-        std::pair<double, double> target = {46, -61};
+        std::pair<double, double> target = {43, -61}; //{46, -61}
 
         // Drive to loading zone and turn parrallel
         drive_to_position(target, true);
@@ -111,6 +115,7 @@ void AutoDrive::execute_head_to_head_plan() {
 
         tm->set_heading(180);
         tm->set_position({41, -10});
+        
 
 
         // Go to bar
@@ -122,7 +127,7 @@ void AutoDrive::execute_head_to_head_plan() {
         // 10
         std::cout << " 10 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
         //rotate_and_drive_to_position({24, -24});
-        rotate_to_heading(220);
+        rotate_to_heading(235);
         turbo_drive_distance(44, false, 30);
 
         //10.5
@@ -237,7 +242,7 @@ void AutoDrive::rotate_to_heading( double heading, bool IS_TURBO) {
     double previous_angle_to_travel = angle_to_travel + 1; // For not overshooting
 
     // Slow for small angles bc function doesn't slow things down enough.
-    if (angle_to_travel < 35) {
+    if (angle_to_travel < 55) {
         min_velocity = 3;
         max_velocity = 8;
         stopping_aggression = 0.02;
