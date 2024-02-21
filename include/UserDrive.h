@@ -8,6 +8,9 @@ public:
     void drive();
     
 private:
+
+    vex::task catapult_task;
+
     bool CATAPULT_RUNNING = false;
     bool CATAPULT_STOPPED = false;
 
@@ -29,6 +32,14 @@ private:
 
     /// @brief Press A button to activate climb motors
     void climb_controls();
+
+    /// @brief Should never use
+    /// @param param Pain
+    /// @return Suffering
+    static int run_catapult_thread_plz_work(void* param);
+
+    /// @brief Reconnect to the catapult thread when we disconnect.
+    void last_chance();
 
     float fwd_bwd_joystick_multiplier = 1.0;
     float left_right_joystick_multiplier = 0.8;

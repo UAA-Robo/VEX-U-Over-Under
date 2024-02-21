@@ -19,7 +19,7 @@ void UserDrive::drive()
     // Then start catapult thread
         //if (rc->ROBOT == SCRATETTE) run_catapult_catapult_strategy(30);
         //else vex::task catapult_task = vex::task(run_catapult_thread, this, 1);
-        vex::task catapult_task = vex::task(run_catapult_thread, this, 2);
+        catapult_task = vex::task(run_catapult_thread_plz_work, this, 2);
 
     while(true) {
 
@@ -29,7 +29,8 @@ void UserDrive::drive()
         intake_controls();
         snowplow_controls();
         climb_controls();
-        
+        last_chance();
+
         vex::wait(20, vex::msec);  // Wait necessary to give time to other threads
     }
 }
@@ -190,5 +191,45 @@ void UserDrive::climb_controls()
         hw->climb_lock.spin(vex::directionType::fwd, 12.0, vex::voltageUnits::volt);
     } else {
         hw->climb_lock.stop();
+    }
+}
+
+int UserDrive::run_catapult_thread_plz_work(void* param)
+{
+    std::cout << "Plz work version Created\n";
+    // WARNING: DON'T print in this thread or it will take too long and miss the catapult press
+    UserDrive* dr = static_cast<UserDrive*>(param);
+    dr->hw->catapult_sensor.resetPosition();
+    
+
+    // 0 deg is really 358-2 deg
+    double MAX_ANGLE = dr->rc->MAX_CATAPULT_ANGLE - 5; // To slow down early
+    double angle; 
+    while(true) {
+        // STOP catapult
+        angle = dr->hw->catapult_sensor.angle(vex::deg);
+        if (dr->START_CATAPULT_LAUNCH) {
+            std::cout << "Starting catapult launch\n";
+        }
+        if (angle >= MAX_ANGLE && angle <= 350 && !dr->START_CATAPULT_LAUNCH) {
+            // Robots need downward force to stop catapult
+            dr->hw->catapult.stop();
+            std::cout << "1 volt\n";
+            dr->hw->catapult.spin(vex::directionType::rev, 1, vex::voltageUnits::volt);
+            
+        } else  {
+            std::cout << "12 volts\n";
+            dr->hw->catapult.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
+            dr->hw->left_drivetrain_motors.spin(vex::directionType::fwd, 4.0, vex::voltageUnits::volt);
+        }
+        
+        vex::wait(10, vex::timeUnits::msec);
+    }
+}
+
+void UserDrive::last_chance() {
+    if (hw->controller.ButtonY.pressing()) {
+        catapult_task.stop();
+        catapult_task = vex::task(run_catapult_thread_plz_work, this, 2);
     }
 }
