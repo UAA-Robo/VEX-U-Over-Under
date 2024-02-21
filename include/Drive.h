@@ -154,5 +154,6 @@ protected:
 
     bool START_CATAPULT_LAUNCH = false;
     bool CATAPULT_STOPPED = true;
+    bool CATAPULT_THREAD_RUNNING = false;
     
 };

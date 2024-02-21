@@ -30,11 +30,9 @@ private:
     /// @brief Press A button to activate climb motors
     void climb_controls();
 
-    /// @brief Slows turning down by a lot.
-    void super_slow_mode();
-
     float fwd_bwd_joystick_multiplier = 1.0;
     float left_right_joystick_multiplier = 0.8;
+    bool CATAPULT_DISABLED = false;
     bool INTAKE_EXPANDED = false;
     bool INTAKE_HELD = false;
     bool INTAKE_IS_REVERSING = false;

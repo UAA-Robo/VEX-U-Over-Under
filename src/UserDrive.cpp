@@ -17,19 +17,19 @@ void UserDrive::drive()
     stop_intake_expansion();
 
     // Then start catapult thread
-    //if (rc->ROBOT == SCRATETTE) run_catapult_catapult_strategy(30);
-    //else vex::task catapult_task = vex::task(run_catapult_thread, this, 1);
-    vex::task catapult_task = vex::task(run_catapult_thread, this, 1);
-
+        //if (rc->ROBOT == SCRATETTE) run_catapult_catapult_strategy(30);
+        //else vex::task catapult_task = vex::task(run_catapult_thread, this, 1);
+        vex::task catapult_task = vex::task(run_catapult_thread, this, 2);
 
     while(true) {
+
         activate_catapult_strategy();
         drivetrain_controls();
         catapult_controls();
         intake_controls();
         snowplow_controls();
         climb_controls();
-
+        
         vex::wait(20, vex::msec);  // Wait necessary to give time to other threads
     }
 }
@@ -72,7 +72,7 @@ void UserDrive::snowplow_controls() {
 
 void UserDrive::catapult_controls()
 {
-    if (hw->controller.ButtonL1.pressing()) start_catapult();
+    if (hw->controller.ButtonL1.pressing() && !CATAPULT_DISABLED) start_catapult();
     else stop_catapult();
 }
 
@@ -83,32 +83,34 @@ void UserDrive::intake_controls()
         stop_intake();
         left_right_joystick_multiplier = 0.8;
     } else if (hw->controller.ButtonR1.pressing()) {
-        if (!INTAKE_EXPANDED) {
+        if (!INTAKE_EXPANDED || INTAKE_HELD) {
+            INTAKE_HELD = false;
             expand_intake();
             activate_intake();
+            CATAPULT_DISABLED = false;
             left_right_joystick_multiplier = 0.4;    
         }
         INTAKE_EXPANDED = true;
         intake_count = 0;
     } else if (!hw->controller.ButtonR2.pressing() && !hw->controller.ButtonL2.pressing()
     && !INTAKE_HELD && !INTAKE_IS_REVERSING) {
-        std::cout << "up\n";
         if (INTAKE_EXPANDED) {
             retract_intake();
             stop_intake();
+            CATAPULT_DISABLED = true;
             left_right_joystick_multiplier = 0.8;
             INTAKE_HELD = false;
         }
         INTAKE_EXPANDED = false;
         intake_count = 0;
     } else if (INTAKE_IS_REVERSING && !hw->controller.ButtonL2.pressing()) {
-        std::cout << "stopping reverse\n";
         stop_intake();
         left_right_joystick_multiplier = 0.8;
         INTAKE_IS_REVERSING = false;
     } else if (hw->controller.ButtonR2.pressing()) {
         if (!INTAKE_EXPANDED || !hw->intake.isSpinning()) {
             expand_intake();
+            CATAPULT_DISABLED = false;
             left_right_joystick_multiplier = 0.4;
             hw->right_intake_motor.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
             INTAKE_HELD = true;
@@ -118,6 +120,7 @@ void UserDrive::intake_controls()
     } else if (hw->controller.ButtonL2.pressing()) {
         if (INTAKE_EXPANDED) {
             retract_intake();
+            CATAPULT_DISABLED = true;
             left_right_joystick_multiplier = 0.8;
             // stop_intake();
             INTAKE_HELD = false;
@@ -146,7 +149,7 @@ void UserDrive::intake_controls()
 void UserDrive::activate_catapult_strategy()
 {
 
-    if (hw->controller.ButtonB.pressing()) { 
+    if (hw->controller.ButtonB.pressing()) {
         if (!CATAPULT_STRATEGY_RAN) {
             // Expand intake
             INTAKE_EXPANDED = true;
@@ -154,9 +157,14 @@ void UserDrive::activate_catapult_strategy()
             vex::wait(500, vex::timeUnits::msec);
             stop_intake_expansion();
         }
+        if (rc->ROBOT == SCRATETTE) {
+            expand_intake();
+            vex::wait(100, vex::timeUnits::msec);
+            stop_intake_expansion();
+        }
             run_catapult_once(); 
         CATAPULT_STRATEGY_RAN = true;
-    }else {
+    } else {
         CATAPULT_STRATEGY_RAN = false;
     }
 
@@ -183,11 +191,4 @@ void UserDrive::climb_controls()
     } else {
         hw->climb_lock.stop();
     }
-}
-
-void UserDrive::super_slow_mode() {
-    if (hw->controller.ButtonY.pressing() && left_right_joystick_multiplier == 1.0) 
-        left_right_joystick_multiplier = 0.25;
-    else if (hw->controller.ButtonY.pressing() && left_right_joystick_multiplier == 0.25)
-        left_right_joystick_multiplier = 1.0;
 }
