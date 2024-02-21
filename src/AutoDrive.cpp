@@ -15,10 +15,11 @@ void AutoDrive::drive() {
     hw->left_intake_expansion_motor.setStopping(vex::brakeType::hold);
     hw->right_intake_expansion_motor.setStopping(vex::brakeType::hold);
 
-    // tm->set_heading(0);
-    // rotate_to_heading(90);
+    tm->set_heading(0);
+    rotate_to_heading(20);
+
     
-    execute_skills_plan(); //! ELIMINATE OPPONENTS
+    //execute_head_to_head_plan(); //! ELIMINATE OPPONENTS
 }
 
 
@@ -158,14 +159,21 @@ void AutoDrive::execute_head_to_head_plan() {
 void AutoDrive::execute_skills_plan() {
 
     if (rc->ROBOT == SCRAT) {
-        tm->set_position({-60, -60});
+        tm->set_position({-53, -53});
         tm->set_heading(225);
+
+        //1
+        std::cout << "1 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
+
 
         run_catapult_strategy(7, true);
 
+        //2
+        std::cout << "2 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
+
         // // Estimate of where we are
-        tm->set_position({-56, -56}); 
-        tm->set_heading(225);
+        // tm->set_position({-50.5, -48}); 
+        // tm->set_heading(225);
 
         retract_intake();
         vex::wait(500, vex::timeUnits::msec);
@@ -174,7 +182,12 @@ void AutoDrive::execute_skills_plan() {
 
 
         rotate_and_drive_to_position({-17.0, -61}, true);
+        //3
+        std::cout << "3 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
         rotate_to_position({46, -61}, true);
+
+        //4
+        std::cout << "4 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
 
         run_plow_strategy(); // Until end of match
     } else {
