@@ -131,7 +131,6 @@ void Drive::left_snowplow_in() {
 
 int Drive::run_catapult_thread(void* param)
 {
-    std::cout << "Created\n";
     // WARNING: DON'T print in this thread or it will take too long and miss the catapult press
     Drive* dr = static_cast<Drive*>(param);
     dr->hw->catapult_sensor.resetPosition();
@@ -151,7 +150,11 @@ int Drive::run_catapult_thread(void* param)
             dr->hw->catapult.spin(vex::directionType::rev, 1, vex::voltageUnits::volt);
             
         } else  {
-            dr->hw->catapult.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
+            if (dr->rc->ROBOT == SCRATETTE) {
+                dr->hw->catapult.spin(vex::directionType::rev, 10.0, vex::voltageUnits::volt);
+            } else {
+                dr->hw->catapult.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
+            }
         }
         
         vex::wait(10, vex::timeUnits::msec);
@@ -160,7 +163,6 @@ int Drive::run_catapult_thread(void* param)
 }
 
 void Drive::start_catapult() {
-    std::cout << "Pressed\n";
     START_CATAPULT_LAUNCH = true;
 }
 
@@ -222,7 +224,7 @@ void Drive::run_catapult_once() {
     else vex::wait(500, vex::timeUnits::msec);
     stop_catapult();
 
-    if (rc->ROBOT == SCRATETTE) vex::wait(400, vex::timeUnits::msec);
+    if (rc->ROBOT == SCRATETTE) vex::wait(800, vex::timeUnits::msec);
 
     turbo_drive_distance(5.6, false, velocity);
 

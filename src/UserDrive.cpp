@@ -155,7 +155,6 @@ void UserDrive::intake_controls()
     }
     if (intake_count >= 500) stop_intake_expansion();
     intake_count += 20;
-    // std::cout << intake_count << std::endl;
 
     // // Activate intake when expanded
     // if (hw->controller.ButtonB.pressing()) {
