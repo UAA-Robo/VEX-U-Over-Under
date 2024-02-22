@@ -53,13 +53,13 @@ void AutoDrive::execute_head_to_head_plan() {
 
         // Sweep triball out
         left_snowplow_out();
-        turbo_drive_distance(12.0, true, 50.0);
+        turbo_drive_distance(13.5, true, 50.0);
         turbo_turn(270.0, 50.0);
         left_snowplow_in();
         turbo_turn(225.0, 50.0);
         turbo_drive_distance(8.0, true, 50.0);
         turbo_turn(270.0);
-        turbo_drive_distance(14.0, true, 50.0);
+        turbo_drive_distance(14.0, true, 70.0);
         vex::wait(300, vex::timeUnits::msec);
         // 2
         std::cout << "2 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
@@ -148,7 +148,7 @@ void AutoDrive::execute_head_to_head_plan() {
         // 11
         std::cout << "11 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
         
-        turbo_drive_distance(5, false, 30); // Make sure to get to bar
+        turbo_drive_distance(5, false, 30); //
 
         expand_intake();
         vex::wait(1000, vex::timeUnits::msec);
@@ -254,7 +254,7 @@ void AutoDrive::rotate_to_heading( double heading, bool IS_TURBO) {
 
     // Slow for small angles bc function doesn't slow things down enough.
     if (angle_to_travel <= 63) {
-        min_velocity = 6;
+        //min_velocity = 6;
         max_velocity = 8;
         stopping_aggression = 0.02;
         
@@ -273,7 +273,7 @@ void AutoDrive::rotate_to_heading( double heading, bool IS_TURBO) {
     hw->right_drivetrain_motors.spin(vex::directionType::fwd, min_velocity * turn_direction, 
     vex::velocityUnits::pct);
     // std::cout << "Left velocity: " << hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct) << " Right velocity: " << hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct) << std::endl;
-    vex::wait(30, vex::timeUnits::msec);    
+    vex::wait(100, vex::timeUnits::msec);    
 
     // Turn until within 1 degrees of desired heading or until it overshoots
     // (change in angle starts majorly increasing instead of decreasing)
@@ -385,7 +385,7 @@ void AutoDrive::drive_to_position(
     hw->drivetrain.spin(vex::directionType::fwd, this->min_drive_velocity * drive_direction, 
         vex::velocityUnits::pct);
     // std::cout << "Left velocity: " << hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct) << " Right velocity: " << hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct) << std::endl;
-    vex::wait(30, vex::timeUnits::msec);
+    vex::wait(100, vex::timeUnits::msec);
     
     // Turn until within 0.5 inches of desired distance or until it overshoots 
     // (change in distance starts majorly increasing instead of decreasing)
