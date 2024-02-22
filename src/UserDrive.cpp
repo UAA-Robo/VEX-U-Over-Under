@@ -88,18 +88,21 @@ void UserDrive::catapult_controls()
 void UserDrive::intake_controls()
 {
     if (hw->controller.ButtonX.pressing()) {
+        // Stop intake
         stop_intake();
         left_right_joystick_multiplier = HIGH_DRIVETRAIN_VELOCITY;
     } else if (hw->controller.ButtonR1.pressing()) {
+        // Expand while held and start intake
         if (!INTAKE_EXPANDED || INTAKE_HELD) {
             INTAKE_HELD = false;
             expand_intake();
             activate_intake();
             CATAPULT_DISABLED = false;
-            left_right_joystick_multiplier = LOW_DRIVETRAIN_VELOCITY;    
+            left_right_joystick_multiplier = LOW_DRIVETRAIN_VELOCITY;
+            intake_count = 0;    
         }
         INTAKE_EXPANDED = true;
-        intake_count = 0;
+        
     } else if (!hw->controller.ButtonR2.pressing() && !hw->controller.ButtonL2.pressing()
     && !INTAKE_HELD && !INTAKE_IS_REVERSING) {
         if (INTAKE_EXPANDED) {
@@ -108,9 +111,10 @@ void UserDrive::intake_controls()
             CATAPULT_DISABLED = true;
             left_right_joystick_multiplier = HIGH_DRIVETRAIN_VELOCITY;
             INTAKE_HELD = false;
+            intake_count = 0;
         }
         INTAKE_EXPANDED = false;
-        intake_count = 0;
+        
     } else if (INTAKE_IS_REVERSING && !hw->controller.ButtonL2.pressing()) {
         stop_intake();
         left_right_joystick_multiplier = HIGH_DRIVETRAIN_VELOCITY;
@@ -137,8 +141,9 @@ void UserDrive::intake_controls()
         reverse_intake();
         INTAKE_IS_REVERSING = true;
     }
-    if (intake_count >= 800) stop_intake_expansion();
+    if (intake_count >= 500) stop_intake_expansion();
     intake_count += 20;
+    std::cout << intake_count << std::endl;
 
     // // Activate intake when expanded
     // if (hw->controller.ButtonB.pressing()) {
