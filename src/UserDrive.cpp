@@ -7,8 +7,8 @@ UserDrive::UserDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *te
 void UserDrive::drive()
 {
 
-    hw->right_intake_expansion_motor.setBrake(vex::brakeType::hold);
-    hw->left_intake_expansion_motor.setBrake(vex::brakeType::hold);
+    hw->right_intake_expansion_motor.setBrake(vex::brakeType::brake);
+    hw->left_intake_expansion_motor.setBrake(vex::brakeType::brake);
     // Expand intake
     intake_count = 0;
     expand_intake();
@@ -17,10 +17,11 @@ void UserDrive::drive()
     stop_intake_expansion();
     INTAKE_EXPANDED = true;
 
+
     // Then start catapult thread
-        //if (rc->ROBOT == SCRATETTE) run_catapult_catapult_strategy(30);
-        //else vex::task catapult_task = vex::task(run_catapult_thread, this, 1);
-        catapult_task = vex::task(run_catapult_thread, this, 2);
+    //if (rc->ROBOT == SCRATETTE) run_catapult_catapult_strategy(30);
+    //else vex::task catapult_task = vex::task(run_catapult_thread, this, 1);
+    catapult_task = vex::task(run_catapult_thread, this, 2);
 
     while(true) {
 
