@@ -16,9 +16,14 @@ void AutoDrive::drive() {
     hw->right_intake_expansion_motor.setStopping(vex::brakeType::hold);
 
     // tm->set_heading(0);
-    // rotate_to_heading(90);
+    // tm->set_position({0,0});
+    // //rotate_to_heading(45);
+    // drive_to_position({24, 0});
+    // std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
+
+
     
-    execute_skills_plan(); //! ELIMINATE OPPONENTS
+    execute_head_to_head_plan(); //! ELIMINATE OPPONENTS
 }
 
 
@@ -38,7 +43,7 @@ void AutoDrive::execute_head_to_head_plan() {
         vex::wait(300, vex::timeUnits::msec);
         stop_intake_expansion();
 
-        std::pair<double, double> target = {46, -61};
+        std::pair<double, double> target = {43, -61}; //{46, -61}
 
         // Drive to loading zone and turn parrallel
         drive_to_position(target, true);
@@ -48,18 +53,23 @@ void AutoDrive::execute_head_to_head_plan() {
 
         // Sweep triball out
         left_snowplow_out();
-        turbo_drive_distance(12.0, true, 50.0);
+        turbo_drive_distance(13.5, true, 50.0);
         turbo_turn(270.0, 50.0);
         left_snowplow_in();
         turbo_turn(225.0, 50.0);
         turbo_drive_distance(8.0, true, 50.0);
         turbo_turn(270.0);
-        turbo_drive_distance(14.0, true, 50.0);
+        turbo_drive_distance(14.0, true, 70.0);
+        vex::wait(300, vex::timeUnits::msec);
         // 2
-        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
+        std::cout << "2 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
     
         tm->set_heading(270);
         tm->set_position({61, -31});
+
+        // 3.5
+        std::cout << "3.5 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
+
 
         // Sweep other triballs into net
         //turbo_drive_distance(10.0, false, 40.0);
@@ -108,32 +118,37 @@ void AutoDrive::execute_head_to_head_plan() {
         //drive_to_position({52, 0}, true);
         snowplow_in();
 
+
+        float y_position = tm->get_current_position().second;
         tm->set_heading(180);
-        tm->set_position({41, -10});
+        tm->set_position({40, y_position});
+
+        //8.5 
+        std::cout << " 8.5 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
+        
 
 
         // Go to bar
-        drive_to_position({31, -10});
+        drive_to_position({30, y_position});
         // 9
         std::cout << " 9 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
         //turbo_drive_distance(5, false, 30.0); // back up from goal
 
         // 10
         std::cout << " 10 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
-        //rotate_and_drive_to_position({24, -24});
-        rotate_to_heading(220);
-        turbo_drive_distance(44, false, 30);
+        rotate_and_drive_to_position({7, -39});
+        //rotate_to_heading(240);
+        //turbo_drive_distance(44, false, 30);
 
         //10.5
         //std::cout << "10.5 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
-
         // 
         //rotate_and_drive_to_position({6, -42});
 
         // 11
         std::cout << "11 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
-        //rotate_to_heading(225, true);
-        //turbo_drive_distance(20, false, 40.0);
+        
+        turbo_drive_distance(5, false, 30); //
 
         expand_intake();
         vex::wait(1000, vex::timeUnits::msec);
@@ -158,14 +173,21 @@ void AutoDrive::execute_head_to_head_plan() {
 void AutoDrive::execute_skills_plan() {
 
     if (rc->ROBOT == SCRAT) {
-        tm->set_position({-60, -60});
+        tm->set_position({-53, -53});
         tm->set_heading(225);
+
+        //1
+        std::cout << "1 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
+
 
         run_catapult_strategy(7, true);
 
+        //2
+        std::cout << "2 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
+
         // // Estimate of where we are
-        tm->set_position({-56, -56}); 
-        tm->set_heading(225);
+        // tm->set_position({-50.5, -48}); 
+        // tm->set_heading(225);
 
         retract_intake();
         vex::wait(500, vex::timeUnits::msec);
@@ -174,7 +196,12 @@ void AutoDrive::execute_skills_plan() {
 
 
         rotate_and_drive_to_position({-17.0, -61}, true);
+        //3
+        std::cout << "3 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
         rotate_to_position({46, -61}, true);
+
+        //4
+        std::cout << "4 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
 
         run_plow_strategy(); // Until end of match
     } else {
@@ -203,6 +230,8 @@ void AutoDrive::rotate_to_heading( double heading, bool IS_TURBO) {
     heading = fmod(heading, 360);
     if (heading < 0) heading += 360;
 
+    std::cout << "HERE POSITION GOAL for: " << heading << std::endl;
+
     if (IS_TURBO) {
         turbo_turn(heading, this->turbo_turn_velocity);
         return;
@@ -224,8 +253,8 @@ void AutoDrive::rotate_to_heading( double heading, bool IS_TURBO) {
     double previous_angle_to_travel = angle_to_travel + 1; // For not overshooting
 
     // Slow for small angles bc function doesn't slow things down enough.
-    if (angle_to_travel < 35) {
-        min_velocity = 3;
+    if (angle_to_travel <= 63) {
+        //min_velocity = 6;
         max_velocity = 8;
         stopping_aggression = 0.02;
         
@@ -244,7 +273,7 @@ void AutoDrive::rotate_to_heading( double heading, bool IS_TURBO) {
     hw->right_drivetrain_motors.spin(vex::directionType::fwd, min_velocity * turn_direction, 
     vex::velocityUnits::pct);
     // std::cout << "Left velocity: " << hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct) << " Right velocity: " << hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct) << std::endl;
-    vex::wait(30, vex::timeUnits::msec);    
+    vex::wait(100, vex::timeUnits::msec);    
 
     // Turn until within 1 degrees of desired heading or until it overshoots
     // (change in angle starts majorly increasing instead of decreasing)
@@ -254,7 +283,7 @@ void AutoDrive::rotate_to_heading( double heading, bool IS_TURBO) {
 
 
     while (angle_to_travel > 1 && (hw->brain.timer(vex::timeUnits::msec) - INITIAL_TIME) < TIMEOUT
-    && (previous_angle_to_travel - angle_to_travel) > -0.05) { 
+    && (previous_angle_to_travel - angle_to_travel) > -0.09) { 
 
         // std::cout << tm->get_current_heading() << '\n';
         // std::cout << "(" << tm->get_current_position().first << ", " << tm->get_current_position().second << ")" << '\n';
@@ -356,7 +385,7 @@ void AutoDrive::drive_to_position(
     hw->drivetrain.spin(vex::directionType::fwd, this->min_drive_velocity * drive_direction, 
         vex::velocityUnits::pct);
     // std::cout << "Left velocity: " << hw->left_drivetrain_motors.velocity(vex::velocityUnits::pct) << " Right velocity: " << hw->right_drivetrain_motors.velocity(vex::velocityUnits::pct) << std::endl;
-    vex::wait(30, vex::timeUnits::msec);
+    vex::wait(100, vex::timeUnits::msec);
     
     // Turn until within 0.5 inches of desired distance or until it overshoots 
     // (change in distance starts majorly increasing instead of decreasing)
