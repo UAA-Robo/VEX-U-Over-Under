@@ -39,8 +39,8 @@ private:
     
 
 
-    const float LOW_DRIVETRAIN_VELOCITY = 0.5;
-    const float HIGH_DRIVETRAIN_VELOCITY = 0.5;
+    const float LOW_DRIVETRAIN_VELOCITY = rc->IN_PLACE_LEFT_RIGHT_MULTIPLIER;
+    const float HIGH_DRIVETRAIN_VELOCITY = rc->IN_PLACE_LEFT_RIGHT_MULTIPLIER;
 
     float fwd_bwd_joystick_multiplier = 1.0;
     float left_right_joystick_multiplier = HIGH_DRIVETRAIN_VELOCITY;

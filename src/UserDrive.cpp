@@ -56,8 +56,8 @@ void UserDrive::drivetrain_controls() {
     // Keep responsive arcing
     if (forward_backward != 0 && left_right != 0 && !INTAKE_EXPANDED && !INTAKE_HELD) {
         left_right /= left_right_joystick_multiplier;
-        left_right *= 0.3;
-        forward_backward *= 0.5;
+        left_right *= rc->ARCING_LEFT_RIGHT_MULTIPLIER;
+        forward_backward *= rc->ARCING_FORWARD_BACKWARD_MULTIPLIER;
     }
     
 

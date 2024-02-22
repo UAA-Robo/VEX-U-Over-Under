@@ -43,7 +43,11 @@ RobotConfig::RobotConfig(Hardware* hardware)
         // Max width
         ACTUAL_WIDTH = 17.6;  
 
-        MAX_CATAPULT_ANGLE = 66;
+        MAX_CATAPULT_ANGLE = 72;
+
+        ARCING_FORWARD_BACKWARD_MULTIPLIER = 1.0;
+        ARCING_LEFT_RIGHT_MULTIPLIER = 1.0;
+        IN_PLACE_LEFT_RIGHT_MULTIPLIER = 1.0;
 
         DRIVETRAIN_GEAR_RATIO_MULTIPLIER = 1; // 18:1
     }
@@ -75,6 +79,10 @@ RobotConfig::RobotConfig(Hardware* hardware)
 
         MAX_CATAPULT_ANGLE = 65;
         
+        ARCING_FORWARD_BACKWARD_MULTIPLIER = 0.5;
+        ARCING_LEFT_RIGHT_MULTIPLIER = 0.3;
+        IN_PLACE_LEFT_RIGHT_MULTIPLIER = 0.5;
+
         DRIVETRAIN_GEAR_RATIO_MULTIPLIER = 0.33; // 36:1
 
     }
