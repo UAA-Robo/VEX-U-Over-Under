@@ -153,7 +153,9 @@ int Drive::run_catapult_thread(void* param)
     while(true) {
         // STOP catapult
         angle = dr->hw->catapult_sensor.angle(vex::deg);
-        if (angle >= MAX_ANGLE && angle <= 350 && !dr->START_CATAPULT_LAUNCH) {
+        if (dr->CATAPULT_RELEASED) {
+            dr->hw->catapult.stop(vex::brakeType::coast);
+        } else if (angle >= MAX_ANGLE && angle <= 350 && !dr->START_CATAPULT_LAUNCH) {
             // Robots need downward force to stop catapult
             dr->hw->catapult.stop();
             dr->hw->catapult.spin(vex::directionType::rev, 1, vex::voltageUnits::volt);
@@ -163,6 +165,7 @@ int Drive::run_catapult_thread(void* param)
         }
         
         vex::wait(10, vex::timeUnits::msec);
+        //dr->CATAPULT_RELEASED = false;
     }
 }
 
@@ -173,6 +176,14 @@ void Drive::start_catapult() {
 
 void Drive::stop_catapult() {
     START_CATAPULT_LAUNCH = false;
+}
+
+void Drive::release_catapult() {
+    CATAPULT_RELEASED = true;
+}
+
+void Drive::engage_catapult() {
+    CATAPULT_RELEASED = false;
 }
 
 

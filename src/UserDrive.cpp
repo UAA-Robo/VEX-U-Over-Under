@@ -75,14 +75,20 @@ void UserDrive::snowplow_controls() {
             snowplow_in();
             PLOW_EXPANDED = false;
         }
+        plow_count += 20;
     }
 }
 
 
 void UserDrive::catapult_controls()
 {
-    if (hw->controller.ButtonL1.pressing() && !CATAPULT_DISABLED) start_catapult();
+    if (rc->ROBOT == SCRATETTE && hw->controller.ButtonA.pressing()) release_catapult();
+    else if (hw->controller.ButtonL1.pressing() && !CATAPULT_DISABLED) start_catapult();
     else stop_catapult();
+
+    if (!hw->controller.ButtonA.pressing()) engage_catapult();
+
+
 }
 
 

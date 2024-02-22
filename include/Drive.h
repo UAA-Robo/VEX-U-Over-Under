@@ -97,6 +97,12 @@ protected:
     /// @brief Trigger the catapult to stop and reset at the limit switch.
     void stop_catapult();
 
+    /// @brief Trigger catapult to release
+    void release_catapult();
+
+    /// @brief Re-engage catapult
+    void engage_catapult();
+
     /// @brief Runs strategy to shoot all triball across field
     /// @param number_triballs Value passed into run_catapult_once()
     /// @param TURN Assumes at right loading zon (if facing opponent). If true, will turn towards 
@@ -154,6 +160,8 @@ protected:
 
     bool START_CATAPULT_LAUNCH = false;
     bool CATAPULT_STOPPED = true;
+    bool CATAPULT_RELEASED = false;
     bool CATAPULT_THREAD_RUNNING = false;
+
     
 };

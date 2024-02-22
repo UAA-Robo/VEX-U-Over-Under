@@ -36,6 +36,9 @@ private:
     /// @brief Reconnect to the catapult thread when we disconnect.
     void last_chance();
 
+    
+
+
     const float LOW_DRIVETRAIN_VELOCITY = 0.35;
     const float HIGH_DRIVETRAIN_VELOCITY = 0.35;
 
@@ -47,6 +50,7 @@ private:
     bool INTAKE_HELD = false;
     bool INTAKE_IS_REVERSING = false;
     bool PLOW_EXPANDED = false;
+    int plow_count;
     int intake_count;
     bool CATAPULT_STRATEGY_RAN = false;
 };
