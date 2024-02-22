@@ -158,6 +158,7 @@ protected:
     /// @param IS_BACKWARD True if arcing backward, False is arcing forward
     void arc(double distance, double min_velocity, double max_velocity, double velocity_side_difference, bool IS_CLOCKWISE, bool IS_BACKWARD);
 
+    int snowplow_timeout = 0;
     bool START_CATAPULT_LAUNCH = false;
     bool CATAPULT_STOPPED = true;
     bool CATAPULT_RELEASED = false;

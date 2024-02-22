@@ -22,22 +22,6 @@ std::pair<double, double> Drive::calculate_drivetrain_velocity(std::pair<double,
     // Calculate raw left and right motor velocity
     double raw_left_velocity = vertical_velocity_percent + horizontal_velocity_percent;
     double raw_right_velocity = vertical_velocity_percent - horizontal_velocity_percent;
-    if (horizontal_velocity_percent < 0.0) {
-        raw_left_velocity = vertical_velocity_percent * expf(-(1.0 + horizontal_velocity_percent)*3.0);
-        raw_right_velocity = vertical_velocity_percent;
-    }
-    else if (horizontal_velocity_percent > 0.0) {
-        raw_left_velocity = vertical_velocity_percent;
-        raw_right_velocity = vertical_velocity_percent * expf(-(1.0 - horizontal_velocity_percent)*3.0);
-    }
-    if (vertical_velocity_percent < 0.05 && horizontal_velocity_percent < 0.0 ) {
-        raw_left_velocity = horizontal_velocity_percent;
-        raw_right_velocity = -horizontal_velocity_percent;
-    }
-    else if (vertical_velocity_percent < 0.05 && horizontal_velocity_percent > 0.0) {
-        raw_left_velocity = horizontal_velocity_percent;
-        raw_right_velocity = -horizontal_velocity_percent;
-    }
 
     // Normalize the motor velocity
     double max_raw_velocity = std::max(std::abs(raw_left_velocity), std::abs(raw_right_velocity));
@@ -107,12 +91,15 @@ void Drive::retract_intake()
 void Drive::stop_intake_expansion()
 {
     //hw->intake_expansion.stop(vex::brakeType::coast);
-    hw->intake_expansion.stop(vex::brakeType::brake);
+    hw->intake_expansion.stop(vex::brakeType::hold);
 }
 
 void Drive::snowplow_out() {
-    hw->right_plow.set(true);
-    hw->left_plow.set(true);
+    if (snowplow_timeout > 20) {
+        hw->right_plow.set(true);
+        hw->left_plow.set(true);
+        snowplow_timeout = 0;
+    }
 }
 
 void Drive::right_snowplow_out() {
@@ -126,8 +113,11 @@ void Drive::left_snowplow_out() {
 }
 
 void Drive::snowplow_in() {
-    hw->right_plow.set(false);
-    hw->left_plow.set(false);
+    if (snowplow_timeout > 20) {
+        hw->right_plow.set(false);
+        hw->left_plow.set(false);
+        snowplow_timeout = 0;
+    }
 
 }
 

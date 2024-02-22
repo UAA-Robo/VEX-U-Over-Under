@@ -33,6 +33,7 @@ void UserDrive::drive()
         climb_controls();
         last_chance();
 
+        snowplow_timeout += 20;
         vex::wait(20, vex::msec);  // Wait necessary to give time to other threads
     }
 }
@@ -51,9 +52,9 @@ void UserDrive::drivetrain_controls() {
     }
 
     // Keep responsive arcing
-    // if (forward_backward != 0 && left_right != 0 && !INTAKE_EXPANDED && !INTAKE_HELD) {
-    //     left_right /= left_right_joystick_multiplier * 0.8;
-    // }
+    if (forward_backward != 0 && left_right != 0 && !INTAKE_EXPANDED && !INTAKE_HELD) {
+        left_right /= left_right_joystick_multiplier * 0.05;
+    }
     
 
     move_drivetrain(
@@ -150,7 +151,7 @@ void UserDrive::intake_controls()
     }
     if (intake_count >= 500) stop_intake_expansion();
     intake_count += 20;
-    std::cout << intake_count << std::endl;
+    // std::cout << intake_count << std::endl;
 
     // // Activate intake when expanded
     // if (hw->controller.ButtonB.pressing()) {
