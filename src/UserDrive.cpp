@@ -12,8 +12,10 @@ void UserDrive::drive()
     // Expand intake
     intake_count = 0;
     expand_intake();
-    if (rc->ROBOT == SCRAT) vex::wait(500, vex::timeUnits::msec);
-    vex::wait(500, vex::timeUnits::msec);
+    vex::wait(300, vex::timeUnits::msec);
+    // Start catapult
+    catapult_task = vex::task(run_catapult_thread, this, 2);
+    vex::wait(300, vex::timeUnits::msec);
     stop_intake_expansion();
     INTAKE_EXPANDED = true;
 
@@ -21,7 +23,7 @@ void UserDrive::drive()
     // Then start catapult thread
     //if (rc->ROBOT == SCRATETTE) run_catapult_catapult_strategy(30);
     //else vex::task catapult_task = vex::task(run_catapult_thread, this, 1);
-    catapult_task = vex::task(run_catapult_thread, this, 2);
+    
 
     while(true) {
 
