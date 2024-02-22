@@ -218,8 +218,11 @@ void Drive::run_catapult_once() {
     turbo_drive_distance(5.5, true, velocity);
 
     start_catapult();
-    vex::wait(500, vex::timeUnits::msec);
+    if (rc->ROBOT == SCRATETTE) vex::wait(200, vex::timeUnits::msec);
+    else vex::wait(500, vex::timeUnits::msec);
     stop_catapult();
+
+    if (rc->ROBOT == SCRATETTE) vex::wait(400, vex::timeUnits::msec);
 
     turbo_drive_distance(5.6, false, velocity);
 
