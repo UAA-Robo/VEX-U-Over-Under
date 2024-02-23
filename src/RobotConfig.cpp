@@ -14,6 +14,7 @@ RobotConfig::RobotConfig(Hardware* hardware)
         std::cout << "IS SCRATETTE" << std::endl;
         ROBOT = SCRATETTE;
 
+        INTAKE_WAIT = 700;
         // Odometry wheel are flipped from Scrat
         hw->left_odometry.setReversed(false);
         hw->left_odometry.setReversed(false);
@@ -56,6 +57,7 @@ RobotConfig::RobotConfig(Hardware* hardware)
         std::cout << "Robot is SCRAT\n";
         ROBOT = SCRAT;
 
+        INTAKE_WAIT = 500;
 
         /*
         ----SET DIMENSIONS (in) --------------------------------------------------------------

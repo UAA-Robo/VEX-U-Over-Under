@@ -153,7 +153,7 @@ void UserDrive::intake_controls()
         reverse_intake();
         INTAKE_IS_REVERSING = true;
     }
-    if (intake_count >= 500) stop_intake_expansion();
+    if (intake_count >= rc->INTAKE_WAIT) stop_intake_expansion();
     intake_count += 20;
     // std::cout << intake_count << std::endl;
 
