@@ -44,7 +44,7 @@ RobotConfig::RobotConfig(Hardware* hardware)
         // Max width
         ACTUAL_WIDTH = 17.6;  
 
-        MAX_CATAPULT_ANGLE = 72;
+        MAX_CATAPULT_ANGLE = 66;
 
         ARCING_FORWARD_BACKWARD_MULTIPLIER = 1.0;
         ARCING_LEFT_RIGHT_MULTIPLIER = 1.0;
