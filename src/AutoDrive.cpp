@@ -17,6 +17,10 @@ void AutoDrive::drive()
     hw->left_intake_expansion_motor.setStopping(vex::brakeType::hold);
     hw->right_intake_expansion_motor.setStopping(vex::brakeType::hold);
 
+
+
+    
+
     // tm->set_heading(0);
     // tm->set_position({0,0});
     // //rotate_to_heading(45);

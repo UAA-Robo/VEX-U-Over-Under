@@ -220,8 +220,8 @@ void UserDrive::activate_catapult_strategy()
 
 void UserDrive::last_chance() {
     if (hw->controller.ButtonY.pressing()) {
-        catapult_task.stop();
-        catapult_task = vex::task(run_catapult_thread, this, 2);
+        // catapult_task.stop();
+        // catapult_task = vex::task(run_catapult_thread, this, 2);
         hw->catapult.spin(vex::directionType::rev, 6.0, vex::voltageUnits::volt);
     }
 }
