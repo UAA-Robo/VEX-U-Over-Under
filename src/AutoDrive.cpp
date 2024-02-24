@@ -190,10 +190,10 @@ void AutoDrive::execute_skills_plan()
         vex::wait(500, vex::timeUnits::msec);
         stop_intake_expansion();
 
-        rotate_and_drive_to_position({-17.0, -61}, true);
+        rotate_and_drive_to_position({-17.0, -60}, true);
         // 3
         std::cout << "3 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
-        rotate_to_position({46, -61}, true); //-61
+        rotate_to_position({46, -60}, true); //-61
 
         // 4
         std::cout << "4 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
