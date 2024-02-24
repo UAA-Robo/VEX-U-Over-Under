@@ -23,7 +23,7 @@ void AutoDrive::drive()
     // drive_to_position({24, 0});
     // std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
 
-    execute_head_to_head_plan(); //! ELIMINATE OPPONENTS
+    execute_skills_plan(); //! ELIMINATE OPPONENTS
 }
 
 void AutoDrive::execute_head_to_head_plan()
@@ -172,34 +172,7 @@ void AutoDrive::execute_skills_plan()
 
     if (rc->ROBOT == SCRAT)
     {
-        tm->set_position({-54, -54});
-        tm->set_heading(225);
-
-        // 1
-        std::cout << "1 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
-
-        run_catapult_strategy(4, true);
-        tm->set_heading(225);
-
-        // 2
-        std::cout << "2 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
-
-        // // Estimate of where we are
-        // tm->set_position({-50.5, -48});
-        // tm->set_heading(225);
-
-        retract_intake();
-        vex::wait(500, vex::timeUnits::msec);
-        stop_intake_expansion();
-
-        rotate_and_drive_to_position({-17.0, -60}, true);
-        // 3
-        std::cout << "3 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
-        rotate_to_position({46, -60}, true); //-61
-
-        // 4
-        std::cout << "4 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
-
+        vex::wait(20, vex::timeUnits::sec);
         run_plow_strategy(); // Until end of match
     }
     else
@@ -441,7 +414,18 @@ void AutoDrive::drive_to_position(
 
 void AutoDrive::run_plow_strategy()
 {
-    // Assumes start at {-17.0, -61}, 180 deg
+        tm->set_position({-17.0, -61});
+        tm->set_heading(180.0);
+
+        // Retract catapult
+        expand_intake();
+        vex::wait(800, vex::timeUnits::msec);
+        stop_intake_expansion();
+        vex::task catapult_task = vex::task(run_catapult_thread, this, 1);
+        vex::wait(300, vex::timeUnits::msec);
+        retract_intake();
+        vex::wait(300, vex::timeUnits::msec);
+        stop_intake_expansion();
 
         std::pair<double, double> target = {43, -61}; //{46, -61}
 
@@ -453,7 +437,7 @@ void AutoDrive::run_plow_strategy()
 
         // Sweep triball out
         left_snowplow_out();
-        turbo_drive_distance(12, true, 50.0); //13.5
+        turbo_drive_distance(13.5, true, 50.0);
         turbo_turn(270.0, 50.0);
         left_snowplow_in();
         turbo_turn(225.0, 50.0);
@@ -510,4 +494,10 @@ void AutoDrive::run_plow_strategy()
         rotate_to_position({52, -10}, true);
         left_snowplow_out();
         turbo_drive_distance(50, true, 50.0);
+
+        // 8
+        std::cout << " 8 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
+        // drive_to_position({52, 0}, true);
+        snowplow_timeout = 30;
+        snowplow_in();
 }
