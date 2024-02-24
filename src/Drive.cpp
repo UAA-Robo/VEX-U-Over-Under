@@ -253,7 +253,7 @@ void Drive::run_catapult_arc_once(bool FINISH_OUTWARD, bool TURN) {
         if (rc->ROBOT == SCRAT) {
              turbo_turn_relative(330, turn_velocity);
 
-        } else  turbo_turn_relative(325, turn_velocity); // Will go shortest distance so actually -35
+        } else  turbo_turn_relative(330, turn_velocity); // Will go shortest distance so actually -35
     }
     start_catapult();
     vex::wait(100, vex::timeUnits::msec);
@@ -263,7 +263,7 @@ void Drive::run_catapult_arc_once(bool FINISH_OUTWARD, bool TURN) {
         if (rc->ROBOT == SCRAT) {
              turbo_turn_relative(30, turn_velocity);
 
-        } else  turbo_turn_relative(35, turn_velocity); 
+        } else  turbo_turn_relative(30, turn_velocity); 
     }
 
     if (!FINISH_OUTWARD) turbo_drive_distance(inward_disntance, false, drive_velocity);

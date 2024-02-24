@@ -9,6 +9,7 @@ AutoDrive::AutoDrive(Hardware *hardware, RobotConfig *robotConfig, Telemetry *te
 
 void AutoDrive::drive()
 {
+    snowplow_timeout = 30;
     // Set braking
     std::cout << "START --------------" << std::endl;
     hw->left_drivetrain_motors.setStopping(vex::brakeType::brake);
@@ -22,7 +23,7 @@ void AutoDrive::drive()
     // drive_to_position({24, 0});
     // std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
 
-    execute_skills_plan(); //! ELIMINATE OPPONENTS
+    execute_head_to_head_plan(); //! ELIMINATE OPPONENTS
 }
 
 void AutoDrive::execute_head_to_head_plan()
@@ -114,6 +115,7 @@ void AutoDrive::execute_head_to_head_plan()
         // 8
         std::cout << " 8 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
         // drive_to_position({52, 0}, true);
+        snowplow_timeout = 30;
         snowplow_in();
 
         float y_position = tm->get_current_position().second;
@@ -160,8 +162,8 @@ void AutoDrive::execute_head_to_head_plan()
         // Go to barrier and touch it
         turbo_drive_distance(8, true, 50);
         turbo_turn_relative(45, 30);
-        turbo_drive_distance(14, false, 50);
-        turbo_turn_relative(90, 30);
+        turbo_drive_distance(10, false, 50);
+        turbo_turn_relative(93, 30);
         turbo_drive_distance(40, false, 50);
     }
 }
