@@ -91,7 +91,7 @@ void Drive::retract_intake()
 void Drive::stop_intake_expansion()
 {
     //hw->intake_expansion.stop(vex::brakeType::coast);
-    hw->intake_expansion.stop(vex::brakeType::hold);
+    hw->intake_expansion.stop(vex::brakeType::brake);
 }
 
 void Drive::snowplow_out() {
@@ -234,7 +234,7 @@ void Drive::run_catapult_arc_once(bool FINISH_OUTWARD, bool TURN) {
     double drive_velocity = 50;
     double turn_velocity = 30;
     double outward_distance = 4.5;
-    double inward_disntance = 4.7;
+    double inward_disntance = 5.2;
     if (rc->ROBOT == SCRATETTE)  {
         drive_velocity = 80;
         turn_velocity = 50;
@@ -254,7 +254,12 @@ void Drive::run_catapult_arc_once(bool FINISH_OUTWARD, bool TURN) {
     vex::wait(100, vex::timeUnits::msec);
     stop_catapult();
 
-    if (TURN) turbo_turn_relative(35, turn_velocity); 
+    if (TURN)  {
+        if (rc->ROBOT == SCRAT) {
+             turbo_turn_relative(30, turn_velocity);
+
+        } else  turbo_turn_relative(35, turn_velocity); 
+    }
 
     if (!FINISH_OUTWARD) turbo_drive_distance(inward_disntance, false, drive_velocity);
 

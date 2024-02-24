@@ -32,7 +32,7 @@ void UserDrive::drive()
         catapult_controls();
         intake_controls();
         snowplow_controls();
-        climb_controls();
+        // climb_controls();
         last_chance();
 
         snowplow_timeout += 20;
@@ -87,11 +87,11 @@ void UserDrive::snowplow_controls() {
 
 void UserDrive::catapult_controls()
 {
-    if (rc->ROBOT == SCRATETTE && hw->controller.ButtonA.pressing()) release_catapult();
+    if (hw->controller.ButtonUp.pressing()) release_catapult();
     else if (hw->controller.ButtonL1.pressing() && !CATAPULT_DISABLED) start_catapult();
     else stop_catapult();
 
-    if (!hw->controller.ButtonA.pressing()) engage_catapult();
+    if (!hw->controller.ButtonUp.pressing()) engage_catapult();
 
 
 }
@@ -195,28 +195,28 @@ void UserDrive::activate_catapult_strategy()
 
 }
 
-void UserDrive::climb_controls()
-{
-    if (hw->controller.ButtonDown.pressing()) {
-        hw->right_climb_motor.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
-        hw->left_climb_motor.spin(vex::directionType::fwd, 12.0, vex::voltageUnits::volt);
-    } else if(hw->controller.ButtonUp.pressing()) {
-        hw->right_climb_motor.spin(vex::directionType::fwd, 12.0, vex::voltageUnits::volt);
-        hw->left_climb_motor.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
-    } else {
-        hw->right_climb_motor.stop();
-        hw->left_climb_motor.stop();
+// void UserDrive::climb_controls()
+// {
+//     if (hw->controller.ButtonDown.pressing()) {
+//         hw->right_climb_motor.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
+//         hw->left_climb_motor.spin(vex::directionType::fwd, 12.0, vex::voltageUnits::volt);
+//     } else if(hw->controller.ButtonUp.pressing()) {
+//         hw->right_climb_motor.spin(vex::directionType::fwd, 12.0, vex::voltageUnits::volt);
+//         hw->left_climb_motor.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
+//     } else {
+//         hw->right_climb_motor.stop();
+//         hw->left_climb_motor.stop();
 
-    }
+//     }
 
-    if (hw->controller.ButtonLeft.pressing()) {
-        hw->climb_lock.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
-    } else if (hw->controller.ButtonRight.pressing()) {
-        hw->climb_lock.spin(vex::directionType::fwd, 12.0, vex::voltageUnits::volt);
-    } else {
-        hw->climb_lock.stop();
-    }
-}
+//     if (hw->controller.ButtonLeft.pressing()) {
+//         hw->climb_lock.spin(vex::directionType::rev, 12.0, vex::voltageUnits::volt);
+//     } else if (hw->controller.ButtonRight.pressing()) {
+//         hw->climb_lock.spin(vex::directionType::fwd, 12.0, vex::voltageUnits::volt);
+//     } else {
+//         hw->climb_lock.stop();
+//     }
+// }
 
 void UserDrive::last_chance() {
     if (hw->controller.ButtonY.pressing()) {

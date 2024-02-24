@@ -30,8 +30,8 @@ private:
     /// @brief Turns on/off catapult strategy when R2 is pressed.
     void activate_catapult_strategy();
 
-    /// @brief Press A button to activate climb motors
-    void climb_controls();
+    // /// @brief Press A button to activate climb motors
+    // void climb_controls();
 
     /// @brief Reconnect to the catapult thread when we disconnect.
     void last_chance();

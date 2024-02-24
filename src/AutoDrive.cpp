@@ -22,7 +22,7 @@ void AutoDrive::drive()
     // drive_to_position({24, 0});
     // std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
 
-    execute_head_to_head_plan(); //! ELIMINATE OPPONENTS
+    execute_skills_plan(); //! ELIMINATE OPPONENTS
 }
 
 void AutoDrive::execute_head_to_head_plan()
@@ -176,7 +176,7 @@ void AutoDrive::execute_skills_plan()
         // 1
         std::cout << "1 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
 
-        run_catapult_strategy(7, true);
+        run_catapult_strategy(4, true);
 
         // 2
         std::cout << "2 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
@@ -189,10 +189,10 @@ void AutoDrive::execute_skills_plan()
         vex::wait(500, vex::timeUnits::msec);
         stop_intake_expansion();
 
-        rotate_and_drive_to_position({-17.0, -61}, true);
+        rotate_and_drive_to_position({-17.0, -59}, true);
         // 3
         std::cout << "3 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
-        rotate_to_position({46, -61}, true);
+        rotate_to_position({46, -59}, true); //-61
 
         // 4
         std::cout << "4 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
@@ -440,66 +440,71 @@ void AutoDrive::run_plow_strategy()
 {
     // Assumes start at {-17.0, -61}, 180 deg
 
-    std::pair<double, double> target = {46, -61};
-    // Drive to loading zone and turn parrallel
-    drive_to_position(target, true);
-    // 1
-    std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
-    turbo_turn(200.0);
+        std::pair<double, double> target = {43, -59}; //{46, -61}
 
-    // Sweep triball out
-    left_snowplow_out();
-    turbo_drive_distance(12.0, true, 50.0);
-    turbo_turn(270.0, 50.0);
-    left_snowplow_in();
-    turbo_turn(225.0, 50.0);
-    turbo_drive_distance(8.0, true, 50.0);
-    turbo_turn(270.0);
-    turbo_drive_distance(14.0, true, 50.0);
-    // 2
-    std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
+        // Drive to loading zone and turn parrallel
+        drive_to_position(target, true);
+        // 1
+        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
+        turbo_turn(200.0);
 
-    tm->set_heading(270);
-    tm->set_position({61, -31});
+        // Sweep triball out
+        left_snowplow_out();
+        turbo_drive_distance(12, true, 50.0); //13.5
+        turbo_turn(270.0, 50.0);
+        left_snowplow_in();
+        turbo_turn(225.0, 50.0);
+        turbo_drive_distance(8.0, true, 50.0);
+        turbo_turn(270.0);
+        turbo_drive_distance(14.0, true, 70.0);
+        vex::wait(300, vex::timeUnits::msec);
+        // 2
+        std::cout << "2 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
 
-    // Sweep other triballs into net
-    // turbo_drive_distance(10.0, false, 40.0);
-    drive_to_position({61, -41}, false);
-    // 3
-    std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
+        tm->set_heading(270);
+        tm->set_position({61, -31});
 
-    this->turbo_turn_velocity = 20;
-    this->turbo_drive_velocity = 30;
+        // 3.5
+        std::cout << "3.5 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
 
-    // rotate_and_drive_to_position({34.98, -34.98}, true);
+        // Sweep other triballs into net
+        // turbo_drive_distance(10.0, false, 40.0);
+        drive_to_position({61, -41}, false);
+        // 3
+        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
 
-    rotate_to_position({34.98, -34.98}, true, false);
-    drive_to_position({34.98, -34.98}, true);
-    // 4
-    std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
+        this->turbo_turn_velocity = 20;
+        this->turbo_drive_velocity = 30;
 
-    rotate_to_position({34.98, -24}, true, false);
-    right_snowplow_out();
-    drive_to_position({34.98, -24}, true);
-    // 5
-    std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
+        // rotate_and_drive_to_position({34.98, -34.98}, true);
 
-    right_snowplow_in();
-    rotate_to_position({16, -20}, true, false);
-    drive_to_position({16, -20}, true);
-    vex::wait(50, vex::timeUnits::msec);
+        rotate_to_position({34.98, -34.98}, true, false);
+        drive_to_position({34.98, -34.98}, true);
+        // 4
+        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
 
-    // 6
-    std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
-    rotate_to_position({16, -10}, true, false);
-    drive_to_position({16, -10}, true);
-    // 7
-    std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
+        rotate_to_position({34.98, -24}, true, false);
+        right_snowplow_out();
+        drive_to_position({34.98, -24}, true);
+        // 5
+        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
 
-    // drive into  goal
-    right_snowplow_out();
-    // rotate_to_heading(180);
-    rotate_to_position({52, -10}, true);
-    left_snowplow_out();
-    turbo_drive_distance(50, true, 50.0);
+        right_snowplow_in();
+        rotate_to_position({16, -20}, true, false);
+        drive_to_position({16, -20}, true);
+        vex::wait(50, vex::timeUnits::msec);
+
+        // 6
+        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
+        rotate_to_position({16, -10}, true, false);
+        drive_to_position({16, -10}, true);
+        // 7
+        std::cout << "position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
+
+        // drive into  goal
+        right_snowplow_out();
+        // rotate_to_heading(180);
+        rotate_to_position({52, -10}, true);
+        left_snowplow_out();
+        turbo_drive_distance(50, true, 50.0);
 }
