@@ -256,7 +256,7 @@ void Drive::run_catapult_arc_once(bool FINISH_OUTWARD, bool TURN) {
 
     if (TURN)  {
         if (rc->ROBOT == SCRAT) {
-             turbo_turn_relative(30, turn_velocity);
+             turbo_turn_relative(35, turn_velocity);
 
         } else  turbo_turn_relative(35, turn_velocity); 
     }

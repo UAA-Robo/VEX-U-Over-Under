@@ -170,13 +170,14 @@ void AutoDrive::execute_skills_plan()
 
     if (rc->ROBOT == SCRAT)
     {
-        tm->set_position({-53, -53});
+        tm->set_position({-54, -54});
         tm->set_heading(225);
 
         // 1
         std::cout << "1 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
 
         run_catapult_strategy(4, true);
+        tm->set_heading(225);
 
         // 2
         std::cout << "2 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
@@ -189,10 +190,10 @@ void AutoDrive::execute_skills_plan()
         vex::wait(500, vex::timeUnits::msec);
         stop_intake_expansion();
 
-        rotate_and_drive_to_position({-17.0, -59}, true);
+        rotate_and_drive_to_position({-17.0, -61}, true);
         // 3
         std::cout << "3 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
-        rotate_to_position({46, -59}, true); //-61
+        rotate_to_position({46, -61}, true); //-61
 
         // 4
         std::cout << "4 position: (" << tm->get_current_position().first << ", " << tm->get_current_position().second << "). Heading: " << tm->get_current_heading() << std::endl;
@@ -440,7 +441,7 @@ void AutoDrive::run_plow_strategy()
 {
     // Assumes start at {-17.0, -61}, 180 deg
 
-        std::pair<double, double> target = {43, -59}; //{46, -61}
+        std::pair<double, double> target = {43, -61}; //{46, -61}
 
         // Drive to loading zone and turn parrallel
         drive_to_position(target, true);
