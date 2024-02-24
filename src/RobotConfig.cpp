@@ -81,7 +81,7 @@ RobotConfig::RobotConfig(Hardware* hardware)
 
         MAX_CATAPULT_ANGLE = 65;
         
-        ARCING_FORWARD_BACKWARD_MULTIPLIER = 0.5;
+        ARCING_FORWARD_BACKWARD_MULTIPLIER = 0.4;
         ARCING_LEFT_RIGHT_MULTIPLIER = 0.3;
         IN_PLACE_LEFT_RIGHT_MULTIPLIER = 0.5;
 

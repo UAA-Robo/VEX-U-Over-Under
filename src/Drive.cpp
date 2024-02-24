@@ -236,10 +236,10 @@ void Drive::run_catapult_arc_once(bool FINISH_OUTWARD, bool TURN) {
     double outward_distance = 4.5;
     double inward_disntance = 5.2;
     if (rc->ROBOT == SCRATETTE)  {
-        drive_velocity = 80;
-        turn_velocity = 50;
+        drive_velocity = 50;
+        turn_velocity = 40;
         outward_distance = 5.5;
-        inward_disntance = 5.6;
+        inward_disntance = 8;
     }
 
     // start intake
