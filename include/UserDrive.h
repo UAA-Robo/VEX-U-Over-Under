@@ -8,6 +8,9 @@ public:
     void drive();
     
 private:
+
+    vex::task catapult_task;
+
     bool CATAPULT_RUNNING = false;
     bool CATAPULT_STOPPED = false;
 
@@ -27,10 +30,27 @@ private:
     /// @brief Turns on/off catapult strategy when R2 is pressed.
     void activate_catapult_strategy();
 
+    // /// @brief Press A button to activate climb motors
+    // void climb_controls();
+
+    /// @brief Reconnect to the catapult thread when we disconnect.
+    void last_chance();
+
+    
+
+
+    const float LOW_DRIVETRAIN_VELOCITY = rc->IN_PLACE_LEFT_RIGHT_MULTIPLIER;
+    const float HIGH_DRIVETRAIN_VELOCITY = rc->IN_PLACE_LEFT_RIGHT_MULTIPLIER;
+
+    float fwd_bwd_joystick_multiplier = 1.0;
+    float left_right_joystick_multiplier = HIGH_DRIVETRAIN_VELOCITY;
+
+    bool CATAPULT_DISABLED = false;
     bool INTAKE_EXPANDED = false;
     bool INTAKE_HELD = false;
     bool INTAKE_IS_REVERSING = false;
     bool PLOW_EXPANDED = false;
+    int plow_count;
     int intake_count;
     bool CATAPULT_STRATEGY_RAN = false;
 };

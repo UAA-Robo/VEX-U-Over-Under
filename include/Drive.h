@@ -97,9 +97,18 @@ protected:
     /// @brief Trigger the catapult to stop and reset at the limit switch.
     void stop_catapult();
 
+    /// @brief Trigger catapult to release
+    void release_catapult();
+
+    /// @brief Re-engage catapult
+    void engage_catapult();
+
     /// @brief Runs strategy to shoot all triball across field
     /// @param number_triballs Value passed into run_catapult_once()
-    void run_catapult_strategy(int number_triballs=10);
+    /// @param TURN Assumes at right loading zon (if facing opponent). If true, will turn towards 
+    /// goal to shoot
+
+    void run_catapult_strategy(int number_triballs=10,  bool TURN = true);
 
     /// @brief Intake triball, drive back and launch
     void run_catapult_once();
@@ -107,7 +116,9 @@ protected:
     /// @brief Intake triball, drive back, turn, and launch
     /// @param FINISH_OUTWARD If true, will finish away from loading zone, if false, will fi
     /// finish against loading zone
-    void run_catapult_arc_once(bool FINISH_OUTWARD=false);
+    /// @param TURN Assumes at right loading zone (if facing opponent). If true, will turn towards 
+    /// goal to shoot
+    void run_catapult_arc_once(bool FINISH_OUTWARD=false, bool TURN=true);
 
     void turbo_drive_distance(double distance, bool IS_REVERSE, double velocity = 80);
     
@@ -147,8 +158,11 @@ protected:
     /// @param IS_BACKWARD True if arcing backward, False is arcing forward
     void arc(double distance, double min_velocity, double max_velocity, double velocity_side_difference, bool IS_CLOCKWISE, bool IS_BACKWARD);
 
+    int snowplow_timeout = 0;
     bool START_CATAPULT_LAUNCH = false;
     bool CATAPULT_STOPPED = true;
-    bool SNOWPLOW_OUT = false;
+    bool CATAPULT_RELEASED = false;
+    bool CATAPULT_THREAD_RUNNING = false;
+
     
 };

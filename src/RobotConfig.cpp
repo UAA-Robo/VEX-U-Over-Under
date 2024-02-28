@@ -14,10 +14,14 @@ RobotConfig::RobotConfig(Hardware* hardware)
         std::cout << "IS SCRATETTE" << std::endl;
         ROBOT = SCRATETTE;
 
+        INTAKE_WAIT = 700;
         // Odometry wheel are flipped from Scrat
         hw->left_odometry.setReversed(false);
         hw->left_odometry.setReversed(false);
         hw->back_odometry.setReversed(true);
+
+        hw->left_intake_motor.setReversed(false);
+        hw->right_intake_motor.setReversed(true);
 
         /*
         ----SET DIMENSIONS (in) --------------------------------------------------------------
@@ -40,7 +44,11 @@ RobotConfig::RobotConfig(Hardware* hardware)
         // Max width
         ACTUAL_WIDTH = 17.6;  
 
-        MAX_CATAPULT_ANGLE = 65;
+        MAX_CATAPULT_ANGLE = 66;
+
+        ARCING_FORWARD_BACKWARD_MULTIPLIER = 1.0;
+        ARCING_LEFT_RIGHT_MULTIPLIER = 1.0;
+        IN_PLACE_LEFT_RIGHT_MULTIPLIER = 1.0;
 
         DRIVETRAIN_GEAR_RATIO_MULTIPLIER = 1; // 18:1
     }
@@ -49,6 +57,7 @@ RobotConfig::RobotConfig(Hardware* hardware)
         std::cout << "Robot is SCRAT\n";
         ROBOT = SCRAT;
 
+        INTAKE_WAIT = 500;
 
         /*
         ----SET DIMENSIONS (in) --------------------------------------------------------------
@@ -72,6 +81,10 @@ RobotConfig::RobotConfig(Hardware* hardware)
 
         MAX_CATAPULT_ANGLE = 65;
         
+        ARCING_FORWARD_BACKWARD_MULTIPLIER = 0.4;
+        ARCING_LEFT_RIGHT_MULTIPLIER = 0.3;
+        IN_PLACE_LEFT_RIGHT_MULTIPLIER = 0.5;
+
         DRIVETRAIN_GEAR_RATIO_MULTIPLIER = 0.33; // 36:1
 
     }

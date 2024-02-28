@@ -77,7 +77,6 @@ void usercontrol(void) {
 int main() {
   
 
-
 	//Competition callbacks
 	Competition.autonomous(autonomous);
 	Competition.drivercontrol(usercontrol);

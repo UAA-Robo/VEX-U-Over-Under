@@ -15,6 +15,12 @@ public:
     double DRIVETRAIN_WIDTH; // distance (in inch) between left and right side of the drivetrain (measured from the center of the wheels)
     double ACTUAL_WIDTH; // Largest width of the robot from the outside.
 
+    double ARCING_FORWARD_BACKWARD_MULTIPLIER;
+    double ARCING_LEFT_RIGHT_MULTIPLIER;
+    double IN_PLACE_LEFT_RIGHT_MULTIPLIER;
+
+    int INTAKE_WAIT;
+
     // for MAP offsets (test)
     double DRIVETRAIN_RADIUS;
     double ACTUAL_RADIUS;
